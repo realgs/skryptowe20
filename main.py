@@ -8,6 +8,10 @@ def request_algorithm() -> SortAlgorithm:
     return SortAlgorithm(alg)
 
 if __name__ == "__main__":
-    arr = [4, -10.2, 0, 0, -1, 3.99, 13, 6.4, 4]
+    arr = [4, -10.2, 0, -1, 3.99, 13, 0, 6.4, 4]
     alg = request_algorithm()
-    sorted = Sort(arr, alg)
+    array_string = lambda x: " ".join(map(str, x))
+
+    print(f"Initial array: [{array_string(arr)}", end="]\n")
+    Sort(arr, alg)
+    print(f"Sorted array: [{array_string(arr)}", end="]\n")
