@@ -38,4 +38,12 @@ def QuickSort(arr: []):
 
 
 def InsertSort(arr: []):
-    pass
+    for i in range(1, len(arr)):
+        current_elem = arr[i]
+        current_offset = i
+
+        while current_elem < arr[current_offset - 1] and current_offset > 0:
+            arr[current_offset] = arr[current_offset - 1]
+            current_offset -= 1
+
+        arr[current_offset] = current_elem
