@@ -36,7 +36,5 @@ def insertion_sort(arr):
 array_1 = [2, 1, 1, 5, 81, 2, 19]
 array_2 = [13.4, 9.8, 8.7, 11.2, 92.9, 54.4, 11.2]
 
-print('Sorted array with quicksort:')
-print(quick_sort(array_1, 0, len(array_1)-1))
-print('Sorted array with insertionsort')
-print(insertion_sort(array_2))
+print('Sorted array with quicksort: ', quick_sort(array_1, 0, len(array_1)-1))
+print('Sorted array with insertionsort: ', insertion_sort(array_2))
