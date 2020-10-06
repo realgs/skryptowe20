@@ -32,7 +32,7 @@ def mergesort(array):
         right_idx += 1
 
 
-def __partition_and_sort(array, begin, end):
+def _partition_and_sort(array, begin, end):
     if begin >= end - 1:
         return
 
@@ -50,12 +50,12 @@ def __partition_and_sort(array, begin, end):
             array[left], array[right] = array[right], array[left]
 
     array[pivot], array[right] = array[right], array[pivot]
-    __partition_and_sort(array, begin, right)
-    __partition_and_sort(array, right + 1, end)
+    _partition_and_sort(array, begin, right)
+    _partition_and_sort(array, right + 1, end)
 
 
 def quicksort(array):
-    __partition_and_sort(array, 0, len(array))
+    _partition_and_sort(array, 0, len(array))
 
 
 if __name__ == "__main__":
