@@ -18,11 +18,7 @@ class MyTestCase(unittest.TestCase):
         sorter.sort(self.list_minus, "selection")
         sorter.sort(self.list_all, "selection")
 
-        self.assertEqual(self.list_int_plus, [1, 2, 3, 4, 5, 7, 9])
-        self.assertEqual(self.list_sorted, [1, 2, 3, 4, 5])
-        self.assertEqual(self.list_reversed, [1, 2, 3, 4, 5, 6, 7, 8, 9])
-        self.assertEqual(self.list_minus, [-7, -7, -6, -4, -1])
-        self.assertEqual(self.list_all, [-19, -7.7, -4, -3, -2.4, 0.4, 5, 6, 7, 7, 7.0, 8.6, 9, 9.1])
+        self.assert_list_equality()
 
     def test_quick_sort(self):
         sorter.sort(self.list_int_plus)
@@ -30,7 +26,9 @@ class MyTestCase(unittest.TestCase):
         sorter.sort(self.list_reversed)
         sorter.sort(self.list_minus)
         sorter.sort(self.list_all)
+        self.assert_list_equality()
 
+    def assert_list_equality(self):
         self.assertEqual(self.list_int_plus, [1, 2, 3, 4, 5, 7, 9])
         self.assertEqual(self.list_sorted, [1, 2, 3, 4, 5])
         self.assertEqual(self.list_reversed, [1, 2, 3, 4, 5, 6, 7, 8, 9])
