@@ -71,3 +71,8 @@ fabric.properties
 .idea/caches/build_file_checksums.ser
 
 .DS_Store
+.idea/vcs.xml
+.idea/skryptowe20.iml
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/misc.xml
+.idea/modules.xml
