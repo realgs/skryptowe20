@@ -9,8 +9,10 @@ class TestSortingAlgorithms(unittest.TestCase):
         self.floating_point_numbers_correct_output = [-3.7, -2.51, -2.5, 0., 1.42, 5.5, 5.55]
         self.strings_correct_output = ["cat", "dog", "home", "house", "python", "snake", "zoo"]
 
-    def test_sorting_methods(self):
+    def test_bubble_sort(self):
         self.algorithm_test(bubble_sort)
+
+    def test_shell_sort(self):
         self.algorithm_test(shell_sort)
 
     def algorithm_test(self, sorting_algorithm):
@@ -35,9 +37,9 @@ class TestSortingAlgorithms(unittest.TestCase):
     @staticmethod
     def __get_input_floating_point_number_lists():
         floating_point_number_input_lists = [[-3.7, -2.51, -2.5, 0., 1.42, 5.5, 5.55],
-                              [5.55, 5.5, 1.42, 0., -2.5, -2.51, -3.7],
-                              [-3.7, 0., -2.5, 5.5, 1.42, -2.51,  5.55],
-                              [-2.5, 0., 1.42, 5.5, 5.55, -3.7, -2.51]]
+                                             [5.55, 5.5, 1.42, 0., -2.5, -2.51, -3.7],
+                                             [-3.7, 0., -2.5, 5.5, 1.42, -2.51, 5.55],
+                                             [-2.5, 0., 1.42, 5.5, 5.55, -3.7, -2.51]]
         return floating_point_number_input_lists
 
     @staticmethod
