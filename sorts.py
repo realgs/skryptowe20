@@ -8,7 +8,6 @@ def insertSort(array):
                 j -= 1
         array[j+1] = current
 
-
 def partition(array, start, end):
     pivot = array[start]
     low = start + 1
@@ -30,8 +29,6 @@ def partition(array, start, end):
 
     return high
 
-
-
 def quickSort(array, start, end):
     if start >= end:
         return
@@ -44,6 +41,6 @@ def quickSort(array, start, end):
 arr = [12, 101, 13, 5, 6]
 arr2 = [12, 51, 1333, 5, 16]
 insertSort(arr)
-quickSort(arr1,0,len(arr)-1)
+quickSort(arr2,0,len(arr2)-1)
 print(arr)
 print(arr2)
