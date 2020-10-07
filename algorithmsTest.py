@@ -21,6 +21,10 @@ class TestSortingAlgorithms(unittest.TestCase):
                                       self.floating_point_numbers_correct_output)
         self.algorithm_for_input_test(sorting_algorithm, self.__get_input_string_lists(), self.strings_correct_output)
 
+        empty_list = []
+        sorting_algorithm(empty_list)
+        self.assertListEqual(empty_list, [])
+
     def algorithm_for_input_test(self, sorting_algorithm, input_lists, correct_output_list):
         for i in range(0, len(input_lists)):
             sorting_algorithm(input_lists[i])
