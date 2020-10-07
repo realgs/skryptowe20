@@ -1,16 +1,10 @@
-def swap(arr, index1, index2):
-    temp = arr[index1]
-    arr[index1] = arr[index2]
-    arr[index2] = temp
-
-
 def bubble_sort(array):
     iteration_count = len(array) - 1
     while iteration_count > 0:
         swaps = 0
         for index in range(iteration_count):
             if array[index] > array[index + 1]:
-                swap(array, index, index+1)
+                array[index], array[index+1] = array[index+1], array[index]
                 swaps += 1
         if swaps == 0:
             return
@@ -28,13 +22,13 @@ def quick_sort(array):
     def divide_array(left, right):
         pivot_index = left + (right - left) // 2
         pivot_value = array[pivot_index]
-        swap(array, pivot_index, right)
+        array[pivot_index], array[right] = array[right], array[pivot_index]
         current_position = left
         for index in range(left, right):
             if array[index] < pivot_value:
-                swap(array, index, current_position)
+                array[index], array[current_position] = array[current_position], array[index]
                 current_position += 1
-        swap(array, current_position, right)
+        array[current_position], array[right] = array[right], array[current_position]
         return current_position
 
     helper(0, len(array)-1)
