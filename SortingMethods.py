@@ -44,11 +44,28 @@ def __swap(arr, left, right):
     if left != right:
         arr[left], arr[right] = arr[right], arr[left]
 
-def run():
-    arr=[9, 12, 53, 2, 1, 15, 6, 52, 15, 24, 75, 3, 82, 45, 14, 75, 4]
-    quick_sort(arr)
-    print(arr)
+def test():
+    i_arr1=[9, 12, 53, 2, 1, 15, 6, 52, 15, 24, 75, 3, 82, 45, 14, 75, 4]
+    i_arr2=[]
+    i_arr3=[1,2,3,4,5,6,7]
+    i_arr4=['a', 't', 's', 'b', 'g']
+    i_arr5=["cat", "mouse", "dog", "hamster", "fish"]
+    i_arr6=[5.8, 47.2, 0, 65.57, 14.40, 14.4]
+    i_arr=[i_arr1, i_arr2, i_arr3, i_arr4, i_arr5, i_arr6]
+    q_arr=[]
+    for i in range(len(i_arr)):
+        q_arr.append(i_arr[i][:])
+    print("~~~~~~Insersort~~~~~~")
+    for i in range(len(i_arr)):
+        print("before:", i_arr[i])
+        insert_sort(i_arr[i])
+        print("after:", i_arr[i])
+    print("\n\n~~~~~~Quicksort~~~~~~")
+    for i in range(len(q_arr)):
+        print("before:", q_arr[i])
+        quick_sort(q_arr[i])
+        print("after:", q_arr[i])
 
 if __name__ == "__main__":
-    run()
+    test()
 
