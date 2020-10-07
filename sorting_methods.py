@@ -46,3 +46,4 @@ def quicksort(my_list, start_index=0, end_index=-1):
         partition_variable = partition(my_list, start_index, end_index)
         quicksort(my_list, start_index, partition_variable)
         quicksort(my_list, partition_variable + 1, end_index)
+    return my_list
