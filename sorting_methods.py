@@ -66,3 +66,10 @@ if __name__ == '__main__':
 
     merge_sort_result = merge_sort(numbers_to_sort)
     print(f"Merge sort result: {merge_sort_result}")
+
+    print("\n\nEmpty list test:")
+    comb_sort_empty_list_result = comb_sort([])
+    print(f"Comb sort empty list result: {comb_sort_empty_list_result}")
+
+    merge_sort_empty_list_result = merge_sort([])
+    print(f"Merge sort empty list result: {merge_sort_empty_list_result}")
