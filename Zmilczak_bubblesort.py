@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 
-unsorted = []
-n = int(input("Wpisz ilość elementów: "))
-print("Wpisz elementy: ")
-for i in range(0, n):
-    unsorted.append(int(input()))
+unsorted = [8, 21, 3, -8, 0, -13, 2, 21, -9]
 
 changed = True
 while changed:
