@@ -1,5 +1,5 @@
 .DS_Store
-.sln
-.pyproj
+*.sln
+*.pyproj
 __pycache__/
 .vs/
