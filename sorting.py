@@ -1,10 +1,10 @@
 def mergesort(array):
     if len(array) < 2:
-        return array
+        return
 
-    middle = len(array) // 2
-    left = array[:middle]
-    right = array[middle:]
+    middle_idx = len(array) // 2
+    left = array[:middle_idx]
+    right = array[middle_idx:]
     left_idx = right_idx = array_idx = 0
     left_len = len(left)
     right_len = len(right)
