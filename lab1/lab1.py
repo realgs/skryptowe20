@@ -1,7 +1,3 @@
-testArray = [4, 6, 2, 7, 9, 3, 1, 0, 3, 2, 5]
-testArray2 = [1, 0, 8, 7, 5, 4, 0]
-
-
 def mergeSort(array):
     if len(array) > 1:
         midIndex = len(array) // 2
