@@ -25,10 +25,5 @@ def mergesort(lst):
 
 
 if __name__ == '__main__':
-    unsorted = []
-    n = int(input("Wpisz ilość elementów: "))
-    print("Wpisz elementy: ")
-    for i in range(0, n):
-        unsorted.append(int(input()))
-
+    unsorted = [9, 21, -2, 0, -2, 22, 31, 13, 8, -71]
     print(mergesort(unsorted))
