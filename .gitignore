@@ -1,1 +1,3 @@
 .DS_Store
+sorting_methods/algorithms/__pycache__/*
+sorting_methods/algorithms/__init__.pyc
