@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 
 unsorted = []
-
 n = int(input("Wpisz ilość elementów: "))
-
 print("Wpisz elementy: ")
 for i in range(0, n):
     unsorted.append(int(input()))
