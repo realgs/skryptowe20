@@ -6,24 +6,24 @@ def merge(left_list, right_list):
         return left_list
 
     result = []
-    index_left = 0
-    index_right = 0
+    left_index = 0
+    right_index = 0
 
     while len(result) < len(left_list) + len(right_list):
-        if index_left < len(left_list) and index_right < len(right_list):
-            if left_list[index_left] <= right_list[index_right]:
-                result.append(left_list[index_left])
-                index_left += 1
+        if left_index < len(left_list) and right_index < len(right_list):
+            if left_list[left_index] <= right_list[right_index]:
+                result.append(left_list[left_index])
+                left_index += 1
             else:
-                result.append(right_list[index_right])
-                index_right += 1
+                result.append(right_list[right_index])
+                right_index += 1
 
-        elif index_left == len(left_list):
-            result.append(right_list[index_right])
-            index_right += 1
-        elif index_right == len(right_list):
-            result.append(left_list[index_left])
-            index_left += 1
+        elif left_index == len(left_list):
+            result.append(right_list[right_index])
+            right_index += 1
+        elif right_index == len(right_list):
+            result.append(left_list[left_index])
+            left_index += 1
 
     return result
 
@@ -36,8 +36,3 @@ def merge_sort(array):
 
     return merge(left_list=merge_sort(array[:midpoint]),
                  right_list=merge_sort(array[midpoint:]))
-
-
-array = [12, 5, 1, -10, 65, 5, 3, 9, 10, 2, -60, 1432, 13, 7, 5, 2, 34]
-array = merge_sort(array)
-print(array)
