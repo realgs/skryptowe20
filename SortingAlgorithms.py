@@ -8,12 +8,12 @@ def pancakeSort(array, n):
         current_size -= 1
 
 
-def bubbleSort(arr):
-    n = len(arr)
+def bubbleSort(array):
+    n = len(array)
     for i in range(n):
         for j in range(0, n - i - 1):
-            if arr[j] > arr[j + 1]:
-                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+            if array[j] > array[j + 1]:
+                array[j], array[j + 1] = array[j + 1], array[j]
 
 
 def flip(array, i):
@@ -45,6 +45,7 @@ array2 = [9, 2, 0, -1, -5, 9, 10, 12]
 
 n1 = len(array1)
 n2 = len(array2)
+
 print("Array1 before sorting")
 printArray(array1, n1)
 print("Array1 after pancake sort")
