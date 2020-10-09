@@ -8,6 +8,11 @@ class SortingMethodsTestCase(unittest.TestCase):
         bubbleSort(testList)
         self.assertEqual(testList, [-464, -65, -20, -4, 0, 3, 6, 66, 235, 526])
 
+    def testBubbleEmpty(self):
+        testList = []
+        self.assertTrue(bubbleSort(testList))
+        self.assertEqual(testList, [])
+
 
 if __name__ == '__main__':
     unittest.main()
