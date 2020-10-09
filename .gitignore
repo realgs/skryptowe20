@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .gitignore
 .idea/
 L3_Doskey_potoki/SelKol
@@ -6,3 +7,8 @@ L3_Doskey_potoki/SumaNum
 .DS_Store
 L4_API/
 sales.db
+=======
+.DS_Store
+.idea/
+__pycache__/
+>>>>>>> 0d64c4d... Add merge sort
