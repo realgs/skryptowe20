@@ -26,6 +26,18 @@ def myQuickSort(arr):
 
     return arr
 
+# insertion sort (move elements)
+def insertion_sort(arr):
+    for i in range(1, len(arr)):
+        el_to_insert = arr[i]
+        j = i - 1
+        while j >= 0 and el_to_insert < arr[j]:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = el_to_insert
+
+    return arr
+
 
 array_to_sort = [-3, 11, 0, 4,  1000, 4, 0, -1, -1, -1, 23, 11]
 sorted_array_asc = [-3, -1, -1, -1, 0, 0, 4, 4, 11, 11, 23, 1000]
@@ -34,3 +46,8 @@ print("Quicksort: ")
 print("Test 1 with random array: ", myQuickSort(array_to_sort))
 print("Test 2 with sorted asc array: ", myQuickSort(sorted_array_asc))
 print("Test 3 with sorted desc array: ", myQuickSort(sorted_array_desc))
+
+print("\nInsertion sort: ")
+print("Test 1 with random array: ", insertion_sort(array_to_sort))
+print("Test 2 with sorted asc array: ", insertion_sort(sorted_array_asc))
+print("Test 3 with sorted desc array: ", insertion_sort(sorted_array_desc))
