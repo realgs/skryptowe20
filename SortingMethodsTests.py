@@ -2,11 +2,11 @@ import unittest
 from SortingMethods import bubbleSort, quickSort
 
 
-class SortingMethodsTestCase(unittest.TestCase):
+class BubbleSortTestCase(unittest.TestCase):
     def testBubbleCorrect(self):
-        testList = [0, -20, 3, 526, -464, -65, 235, 6, 66, -4]
+        testList = [0, -20.52, 3, 526, -464.5, -65, 235, 6, 66.947, -4]
         self.assertTrue(bubbleSort(testList))
-        self.assertEqual(testList, [-464, -65, -20, -4, 0, 3, 6, 66, 235, 526])
+        self.assertEqual(testList, [-464.5, -65, -20.52, -4, 0, 3, 6, 66.947, 235, 526])
 
     def testBubbleEmpty(self):
         testList = []
@@ -18,6 +18,16 @@ class SortingMethodsTestCase(unittest.TestCase):
         self.assertTrue(bubbleSort(testList))
         self.assertEqual(testList, [1])
 
-    
+    def testBubbleNotNumericElementsInList(self):
+        testList = [1, "adfa", 523, False, [2, 4, 5], 3]
+        self.assertFalse(bubbleSort(testList))
+
+        testList = [True, [12], 2]
+        self.assertFalse(bubbleSort(testList))
+
+        testList = [[52], 2, "sadf"]
+        self.assertFalse(bubbleSort(testList))
+
+
 if __name__ == '__main__':
     unittest.main()
