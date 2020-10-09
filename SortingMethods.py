@@ -45,4 +45,11 @@ def quickSort(listOfNumbers):
 
 
 if __name__ == '__main__':
-    pass
+    bubbleExList = [5, 5, 12.3, -324, 521623, 0.423]
+    quickExList = [4231, 35.2, -3255, 2345, -325.533, 35.23]
+
+    bubbleSort(bubbleExList)
+    quickSort(quickExList)
+
+    print(bubbleExList)
+    print(quickExList)
