@@ -27,3 +27,6 @@ def mergesort(lst):
 if __name__ == '__main__':
     unsorted = [9, 21, -2, 0, -2, 22, 31, 13, 8, -71]
     print(mergesort(unsorted))
+
+    unsorted = [9.1, 2119182, -23.092, 0, 3562.87, 0, 938294732894.381, -423.34, 1, -43.1]
+    print(mergesort(unsorted))
