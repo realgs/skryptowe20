@@ -30,7 +30,8 @@ def merge_sort(list_to_sort):
             _merge_sort(mid + 1, right)
             _merge(left, mid, right)
 
-    _merge_sort(0, len(list_to_sort)-1)
+    _merge_sort(0, len(list_to_sort) - 1)
+
 
 def quick_sort(list_to_sort):
     def _partition(left, right):
@@ -42,18 +43,19 @@ def quick_sort(list_to_sort):
                 i = i + 1
                 list_to_sort[i], list_to_sort[j] = list_to_sort[j], list_to_sort[i]
 
-        list_to_sort[i+1], list_to_sort[right] = list_to_sort[right], list_to_sort[i+1]
-        return i+1
+        list_to_sort[i + 1], list_to_sort[right] = list_to_sort[right], list_to_sort[i + 1]
+        return i + 1
 
     def _quick_sort(left, right):
         if len(list_to_sort) == 1:
             return list_to_sort
         if left < right:
             pi = _partition(left, right)
-            _quick_sort(left, pi-1)
-            _quick_sort(pi+1, right)
+            _quick_sort(left, pi - 1)
+            _quick_sort(pi + 1, right)
 
-    _quick_sort(0, len(list_to_sort)-1)
+    _quick_sort(0, len(list_to_sort) - 1)
+
 
 def do_tests(test_lists):
     sort_algorithms = {'MergeSort': merge_sort, 'QuickSort': quick_sort}
@@ -64,8 +66,8 @@ def do_tests(test_lists):
             print(f'{test_list} po posortowaniu algorytmem {name}: ', test_list_copy)
         print()
 
-if __name__ == '__main__':
-    test_lists = [[9,8,7,6,5,4,3,2,1], [4,7,0,2,8,6,3,9,5], [1,2,3,4,5,6,7,8,9],
-                  [-2,6,7.5,3,0,-2,-18], [1,1,1], [], [1.3,2.6,0.1,0,-2.3]]
-    do_tests(test_lists)
 
+if __name__ == '__main__':
+    lists = [[9, 8, 7, 6, 5, 4, 3, 2, 1], [4, 7, 0, 2, 8, 6, 3, 9, 5], [1, 2, 3, 4, 5, 6, 7, 8, 9],
+             [-2, 6, 7.5, 3, 0, -2, -18], [1, 1, 1], [], [1.3, 2.6, 0.1, 0, -2.3]]
+    do_tests(lists)
