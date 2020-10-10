@@ -1,3 +1,5 @@
+# Daniel Wojciechowski 2020-10-10
+
 def stoogesort(arr, l, h): 
     
     if l >= h: 
@@ -22,8 +24,8 @@ if __name__ == "__main__":
     arr = input('Enter the list:\t')
     arr = arr.split(',')
     n = len(arr)
-    stoogesort(arr, 0, n-1) 
     
+    stoogesort(arr, 0, n-1) 
     for i in range(0, n): 
         print(arr[i], end = ' ')
 
