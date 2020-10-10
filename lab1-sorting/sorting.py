@@ -17,9 +17,17 @@ def merge(a_lst: list, b_lst: list) -> list:
                 b_index += 1
         return merged
 
+def split(lst: list) -> tuple:
+        return lst[:len(lst) // 2], lst[len(lst) // 2:]
+
+def subsort(lst: list) -> list:
+    if len(lst) <= 1:
+        return lst
+    a, b = split(lst)
+    return merge(subsort(a), subsort(b))
 
 if __name__ == "__main__":
-    xs = [3,6,8,9]
-    ys = [1,2,5,7]
+    xs = [1,7,4,9,0,5,8,3,6,2]
+    ys = []
 
-    print(merge(xs, ys))
+    print(subsort(xs), subsort(ys))
