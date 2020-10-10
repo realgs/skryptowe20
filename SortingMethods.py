@@ -1,59 +1,59 @@
-def merge(list, start_1, end_1, end_2):
-    start_2 = end_1 + 1
+def merge_sort(list_to_sort):
+    def _merge(start_1, end_1, end_2):
+        start_2 = end_1 + 1
 
-    if list[end_1] <= list[start_2]:
-        return
+        if list_to_sort[end_1] <= list_to_sort[start_2]:
+            return
 
-    while start_1 <= end_1 and start_2 <= end_2:
-        if list[start_1] <= list[start_2]:
-            start_1 += 1
-        else:
-            val = list[start_2]
-            index = start_2
+        while start_1 <= end_1 and start_2 <= end_2:
+            if list_to_sort[start_1] <= list_to_sort[start_2]:
+                start_1 += 1
+            else:
+                val = list_to_sort[start_2]
+                index = start_2
 
-            while index != start_1:
-                list[index] = list[index-1]
-                index -= 1
+                while index != start_1:
+                    list_to_sort[index] = list_to_sort[index - 1]
+                    index -= 1
 
-            list[start_1] = val
+                list_to_sort[start_1] = val
 
-            start_1 += 1
-            end_1 += 1
-            start_2 += 1
+                start_1 += 1
+                end_1 += 1
+                start_2 += 1
 
-def merge_sort_reccurence(list, left, right):
-    if left < right:
-        mid = (left + right) // 2
+    def _merge_sort(left, right):
+        if left < right:
+            mid = (left + right) // 2
 
-        merge_sort_reccurence(list, left, mid)
-        merge_sort_reccurence(list, mid + 1, right)
-        merge(list, left, mid, right)
+            _merge_sort(left, mid)
+            _merge_sort(mid + 1, right)
+            _merge(left, mid, right)
 
-def merge_sort(list):
-    merge_sort_reccurence(list, 0, len(list)-1)
+    _merge_sort(0, len(list_to_sort)-1)
 
-def quick_sort(list):
-    def partition(list, left, right):
+def quick_sort(list_to_sort):
+    def _partition(left, right):
         i = left - 1
-        pivot = list[right]
+        pivot = list_to_sort[right]
 
         for j in range(left, right):
-            if list[j] <= pivot:
+            if list_to_sort[j] <= pivot:
                 i = i + 1
-                list[i], list[j] = list[j], list[i]
+                list_to_sort[i], list_to_sort[j] = list_to_sort[j], list_to_sort[i]
 
-        list[i+1], list[right] = list[right], list[i+1]
+        list_to_sort[i+1], list_to_sort[right] = list_to_sort[right], list_to_sort[i+1]
         return i+1
 
-    def _quick_sort(list, left, right):
-        if len(list) == 1:
-            return list
+    def _quick_sort(left, right):
+        if len(list_to_sort) == 1:
+            return list_to_sort
         if left < right:
-            pi = partition(list, left, right)
-            _quick_sort(list, left, pi-1)
-            _quick_sort(list, pi+1, right)
+            pi = _partition(left, right)
+            _quick_sort(left, pi-1)
+            _quick_sort(pi+1, right)
 
-    _quick_sort(list, 0, len(list)-1)
+    _quick_sort(0, len(list_to_sort)-1)
 
 def do_tests(test_lists):
     sort_algorithms = {'MergeSort': merge_sort, 'QuickSort': quick_sort}
@@ -63,9 +63,7 @@ def do_tests(test_lists):
             sort_algorithm(test_list_copy)
             print(f'Test listy nr {nr}, algorytmem {name}: ', test_list_copy)
 
-
 if __name__ == '__main__':
-    print(':)')
     test_lists = [[9,8,7,6,5,4,3,2,1], [4,7,1,2,8,6,3,9,5], [1,2,3,6,5,4,7,9,8]]
     do_tests(test_lists)
 
