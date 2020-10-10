@@ -34,3 +34,24 @@ class SortingMethods():
             else:
                 self.quick_sort(list_to_sort, low, pi - 1)
                 self.quick_sort(list_to_sort, pi + 1, high)
+
+    def merge_sort(self, arr):
+        if len(arr) > 1:
+            middle = len(arr) // 2
+            left_arr = self.merge_sort(arr[:middle])
+            right_arr = self.merge_sort(arr[middle:])
+
+            arr = []
+            while len(left_arr) > 0 and len(right_arr) > 0:
+                if left_arr[0] < right_arr[0]:
+                    arr.append(left_arr[0])
+                    left_arr.pop(0)
+                else:
+                    arr.append(right_arr[0])
+                    right_arr.pop(0)
+
+            for val in left_arr:
+                arr.append(val)
+            for val in right_arr:
+                arr.append(val)
+        return arr
