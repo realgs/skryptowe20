@@ -33,7 +33,27 @@ def merge_sort(list):
     merge_sort_reccurence(list, 0, len(list)-1)
 
 def quick_sort(list):
-    pass
+    def partition(list, left, right):
+        i = left - 1
+        pivot = list[right]
+
+        for j in range(left, right):
+            if list[j] <= pivot:
+                i = i + 1
+                list[i], list[j] = list[j], list[i]
+
+        list[i+1], list[right] = list[right], list[i+1]
+        return i+1
+
+    def _quick_sort(list, left, right):
+        if len(list) == 1:
+            return list
+        if left < right:
+            pi = partition(list, left, right)
+            _quick_sort(list, left, pi-1)
+            _quick_sort(list, pi+1, right)
+
+    _quick_sort(list, 0, len(list)-1)
 
 def do_tests(test_lists):
     sort_algorithms = {'MergeSort': merge_sort, 'QuickSort': quick_sort}
