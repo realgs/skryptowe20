@@ -29,8 +29,22 @@ def merge_sorted(lst: list) -> list:
 
     return subsort(lst)
 
-if __name__ == "__main__":
-    xs = [1,7,4,9,0,5,8,3,6,2]
-    ys = []
-
-    print(merge_sorted(xs), merge_sorted(ys))
+def cocktail_sorted(lst: list) -> list:
+    lst = lst[:]
+    if len(lst) <= 1:
+        return lst
+    bottom, top = 0, len(lst) - 1
+    swapped = True
+    while swapped:
+        swapped = False
+        for i in range(bottom, top):
+            if lst[i] > lst[i+1]:
+                lst[i], lst[i+1] = lst[i+1], lst[i]
+                swapped = True
+        top -= 1
+        for i in range(top, bottom, -1):
+            if lst[i] < lst[i-1]:
+                lst[i], lst[i-1] = lst[i-1], lst[i]
+                swapped = True
+        bottom += 1
+    return lst
