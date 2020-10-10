@@ -3,9 +3,13 @@
 using namespace std;
 
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv[], char **envp)
 {
-    cout<<getenv("PATH")<<endl;
+    for (char **env = envp; *env != 0; env++)
+    {
+    char *thisEnv = *env;
+    cout<<thisEnv<<endl;
+    }
     for(int i = 1; i < argc; i++)
     {
         cout<<argv[i]<<endl;
