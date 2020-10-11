@@ -23,9 +23,9 @@ void PrintCode(int code, bool isSilent)
     }
 }
 
-int main(int argc, char** argv, char** env)
+int main(int argc, char** argv)
 {
-    bool is_silent = strcmp(argv[1], "/S") == 0 || strcmp(argv[1], "/s") == 0;
+    bool is_silent = argv[1] != NULL && (strcmp(argv[1], "/S") == 0 || strcmp(argv[1], "/s") == 0);
 
     if (is_silent)
     {
