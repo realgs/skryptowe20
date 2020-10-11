@@ -1,8 +1,10 @@
 @ECHO OFF
 Echo Podaj parametr
 set /p arg= Wprowadz parametry:
-cmd /c "ReturnCode.cpp" /s %arg%
-
+IF NOT EXIST "ReturnCode.exe" (
+    cl "ReturnCode.cpp"
+)
+cmd /c "ReturnCode.exe" /s %arg%
 IF NOT ERRORLEVEL 10 (
     Echo Przekazano: prawidlowa wartosc
 )
