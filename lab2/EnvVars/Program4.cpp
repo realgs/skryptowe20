@@ -26,6 +26,7 @@ void PrintReturnCodeMessage(int code, const char* param)
 void TransformParamsToString(char** argv, string& out)
 {
     argv++; // Skip filename
+    out += "/S ";
     while (*argv != NULL)
     {
         out += string(*argv++) + " ";
@@ -49,12 +50,12 @@ int main(int argc, char** argv)
 
     if (custom_path.length() == 0)
     {
-        string exec_path = current_path + "\\..\\Debug\\KodPowrotu.exe";
+        string exec_path = current_path + "\\KodPowrotu.exe";
         return_code = system((exec_path + params).c_str());
     }
     else
     {
-        return_code = system((current_path + params).c_str());
+        return_code = system((custom_path + params).c_str());
     }
 
     PrintReturnCodeMessage(return_code, *++argv);

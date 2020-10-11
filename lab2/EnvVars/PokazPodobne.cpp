@@ -3,20 +3,21 @@
 #include <vector>
 using namespace std;
 
-void Split(const string& input, const char delimiter, vector<string>& result)
+void Split(const string& input, const char delimiter, vector<string>& out)
 {
     size_t last_offset = 0;
     size_t new_offset = input.find(delimiter, last_offset);
 
     while (new_offset != string::npos)
     {
-        string sub = input.substr(last_offset, new_offset);
-        result.push_back(sub);
+        string sub = input.substr(last_offset, new_offset - last_offset);
+
+        out.push_back(sub);
         last_offset = new_offset + 1;
 
         new_offset = input.find(delimiter, last_offset);
     }
-    result.push_back(input.substr(last_offset, result.size() - 1 - last_offset));
+    out.push_back(input.substr(last_offset, out.size() - 1 - last_offset));
 }
 
 void PrintVar(const string& var)

@@ -30,9 +30,8 @@ int main(int argc, char** argv)
     if (is_silent)
     {
         --argc;
+        ++argv;
     }
-
-    int number;
 
     if (argc == 1)
     {
@@ -46,6 +45,8 @@ int main(int argc, char** argv)
     }
     else
     {
+        int number;
+
         if (TryParseInt(argv[1], number))
         {
             PrintCode(number, is_silent);
