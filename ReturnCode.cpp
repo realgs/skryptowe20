@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 
-
 bool isSilent(char* ctab[])
 {
 	std::string arg;
