@@ -29,7 +29,7 @@ bool tabContains(char* ctab[], char* substring)
 
 int main(int argc, char* argv[], char* env[])
 {
-    puts("Zmienne srodowiska");
+    puts("Environment variables");
     if (!isSilent(argv))
     {
         for (int i = 1; i < argc; i++)
