@@ -1,3 +1,6 @@
 .DS_Store
 .idea/
 __pycache__/
+.gitignore
+l1
+warunki zaliczenia
