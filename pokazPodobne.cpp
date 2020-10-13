@@ -1,6 +1,6 @@
 #include <iostream>
 
-bool checkIfSilent(char* args[], int length) {
+bool checkIfSilent(char *args[], int length) {
     std::string str;
     for (int i = 0; i < length; i++) {
         str = args[i];
@@ -37,8 +37,9 @@ int main(int argc, char **argv, char **envp) {
     for (int i = pos; i < argc; i++) {
         isFound = false;
         std::string arg(argv[i]);
-        while (*envp) {
-            std::string val(*envp++);
+        char **envp_copy = envp;
+        while (*envp_copy) {
+            std::string val(*envp_copy++);
             size_t index = val.find(delimiter);
             std::string varName = val.substr(0, index);
             val.erase(0, index + 1);
