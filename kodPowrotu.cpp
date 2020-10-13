@@ -11,7 +11,7 @@ bool checkIfSilent(char *args[], int length) {
     return false;
 }
 
-bool isDigit(char* value) {
+bool isDigit(char *value) {
     try {
         int val = std::stoi(value);
         return (val >= 0 && val <= 9);
@@ -20,7 +20,7 @@ bool isDigit(char* value) {
     }
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
     int pos = 1;
     int returnCode;
     bool isSilent = checkIfSilent(argv, argc);
@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
     } else {
         returnCode = 13;
     }
-    
+
     if (!isSilent) {
         std::cout << returnCode << std::endl;
     }
