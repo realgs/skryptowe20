@@ -12,7 +12,16 @@ bool checkIfSilent(char* args[], int length) {
 }
 
 void printVariable(std::string &variableName, std::string &variableData, char del = ':') {
-
+    std::cout << "i. " + variableName << std::endl;
+    std::cout << "ii. =" << std::endl;
+    if (variableData.find(del) != std::string::npos) {
+        size_t index;
+        while ((index = variableData.find(del)) != std::string::npos) {
+            std::cout << "iii. " + variableData.substr(0, index) << std::endl;
+            variableData.erase(0, index + 1);
+        }
+    }
+    std::cout << "iii. " + variableData << std::endl;
 }
 
 int main(int argc, char **argv, char **envp) {
