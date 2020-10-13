@@ -5,9 +5,8 @@
 #define NOT_DIGIT 12
 #define NO_ARGUMENTS 11
 #define TOO_MANY_ARGUMENTS 13
-
-const char SILENT_MODE_ARG_UPPER[] = "/S";
-const char SILENT_MODE_ARG_LOWER[] = "/s";
+#define SILENT_MODE_ARG_UPPER  "/S"
+#define SILENT_MODE_ARG_LOWER  "/s"
 
 int main(int argc, char *argv[]) {
     bool silent_mode = false;

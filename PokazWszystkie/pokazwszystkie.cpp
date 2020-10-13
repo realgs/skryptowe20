@@ -6,7 +6,7 @@ int main(int argc, char* argv[], char* env[]) {
         std::cout << argv[i] << std::endl;
 
     std::cout << "\nEnvironment:" << std::endl;
-    while (*env != NULL)
+    while (*env != nullptr)
         std::cout << *env++ << std::endl;
     return 0;
 }
