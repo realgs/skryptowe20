@@ -4,7 +4,7 @@
 using namespace std;
 
 const int NO_PARAMETER = 11;
-const int NOT_A_NUMBER = 12;
+const int NOT_A_DIGIT = 12;
 const int MORE_THAN_TWO_ARGS = 13;
 
 bool isDigit(char c) {
@@ -32,13 +32,13 @@ int main(int argc, char *argv[]) {
     }
     int i = 0;
     if (!isDigit(argv[1][0]) || (isDigit(argv[1][0]) && argv[1][1] != NULL)) {
-        if (!silent_mode) cout << NOT_A_NUMBER;
-        return NOT_A_NUMBER;
+        if (!silent_mode) cout << NOT_A_DIGIT;
+        return NOT_A_DIGIT;
     }
     while (argv[1][i] != NULL) {
         if (!isDigit(argv[1][i])) {
-            if (!silent_mode) cout << NOT_A_NUMBER;
-            return NOT_A_NUMBER;
+            if (!silent_mode) cout << NOT_A_DIGIT;
+            return NOT_A_DIGIT;
         }
         i++;
     }
