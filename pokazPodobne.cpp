@@ -1,5 +1,8 @@
 #include <iostream>
 
+const char varSeparator = '=';
+const char delimiter = ':';
+
 bool checkIfSilent(char *args[], int length) {
     std::string str;
     for (int i = 0; i < length; i++) {
@@ -11,12 +14,12 @@ bool checkIfSilent(char *args[], int length) {
     return false;
 }
 
-void printVariable(std::string &variableName, std::string &variableData, char del = ':') {
+void printVariable(std::string &variableName, std::string &variableData) {
     std::cout << "i. " + variableName << std::endl;
     std::cout << "ii. =" << std::endl;
-    if (variableData.find(del) != std::string::npos) {
+    if (variableData.find(delimiter) != std::string::npos) {
         size_t index;
-        while ((index = variableData.find(del)) != std::string::npos) {
+        while ((index = variableData.find(delimiter)) != std::string::npos) {
             std::cout << "iii. " + variableData.substr(0, index) << std::endl;
             variableData.erase(0, index + 1);
         }
@@ -26,7 +29,6 @@ void printVariable(std::string &variableName, std::string &variableData, char de
 
 int main(int argc, char **argv, char **envp) {
     int pos = 1;
-    char delimiter = '=';
     bool isSilent = checkIfSilent(argv, argc);
     bool isFound;
 
@@ -40,7 +42,7 @@ int main(int argc, char **argv, char **envp) {
         char **envp_copy = envp;
         while (*envp_copy) {
             std::string val(*envp_copy++);
-            size_t index = val.find(delimiter);
+            size_t index = val.find(varSeparator);
             std::string varName = val.substr(0, index);
             val.erase(0, index + 1);
             if (varName.find(arg) != std::string::npos) {
