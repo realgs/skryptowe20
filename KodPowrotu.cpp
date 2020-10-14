@@ -3,9 +3,9 @@
 
 using namespace std;
 
-const NO_PARAMETER = 11;
-const NOT_A_NUMBER = 12;
-const MORE_THAN_TWO_ARGS = 13;
+const int NO_PARAMETER = 11;
+const int NOT_A_NUMBER = 12;
+const int MORE_THAN_TWO_ARGS = 13;
 
 bool isDigit(char c) {
     int num = (int) c;
