@@ -7,7 +7,7 @@ bool isSilent(char* argtab[])
     while (*argtab != nullptr)
     {
         arg = *argtab++;
-        if (arg == "/s" || arg == "/S")
+        if (arg == "-s" || arg == "-S")
         {
             return true;
         }
