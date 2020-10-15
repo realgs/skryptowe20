@@ -54,7 +54,7 @@ int main(int argc, char* argv[], char* envp[]){
               }
           }
           if(!silent && !varFound)
-            std::cout<< "parameter = NONE"<<std::endl;
+            std::cout<< argument << "= NONE"<<std::endl;
 
   }
   return 0;
