@@ -18,9 +18,7 @@ int getDigitReturnCode(char* param) {
 	if (isdigit(*param) && strlen(param) == 1) {
 		return atoi(param);
 	}
-	else {
-		return PARAM_NOT_A_DIGIT_RETURN_CODE;
-	}
+	return PARAM_NOT_A_DIGIT_RETURN_CODE;
 }
 
 int main(int argc, char* argv[])
