@@ -6,18 +6,18 @@ returnCode=$?
 case $returnCode in
 
     11)
-        echo "No arguments"
+        echo "Brak parametrów"
         ;;
 
     12)
-        echo "Argument $@ is  not a digit"
+        echo "Parametr $@ nie jest cyfrą"
         ;;
 
     13)
-        echo "Invalid argument $@"
+        echo "Niewłaściwa wartość parametru $@"
         ;;
 
     *)
-        echo "Passed: $@, right value"
+        echo "Przekazano: $@, właściwa wartość"
         ;;
 esac
