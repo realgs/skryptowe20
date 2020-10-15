@@ -29,7 +29,7 @@ int main(int argc, char* argv[], char* env[])
 			if (!silentMode) { std::cout << atoi(argv[1]); }
 			return atoi(argv[1]);
 		}
-		else if (isdigit(*argv[2])) {
+		else if (argc == 3 && isdigit(*argv[2])) {
 			if (!silentMode) { std::cout << atoi(argv[2]); }
 			return atoi(argv[2]);
 		}
