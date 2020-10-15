@@ -5,7 +5,7 @@ def sort(array):
     return array
 
 def sorting_procedure(low, high, array):
-    pivot = array[int((low + high) / 2)]
+    pivot = array[(low + high) // 2]
     i = low
     j = high
 
