@@ -17,7 +17,6 @@ bool isSilent(char* argtab[])
 
 int main(int argc, char* argv[])
 {
-
     bool silent = isSilent(argv);
     int i = 1;
     if (silent)

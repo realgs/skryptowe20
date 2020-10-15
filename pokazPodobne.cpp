@@ -3,7 +3,6 @@
 const char separator = '=';
 const char delimeter = ':';
 
-
 bool isSilent(char* argtab[])
 {
     std::string arg;
@@ -17,6 +16,7 @@ bool isSilent(char* argtab[])
     }
     return false;
 }
+
 void printVar(std::string &variableName, std::string &variableData){
     std::cout << "\ni. " + variableName << std::endl;
     std::cout << "ii. =" << std::endl;
@@ -28,7 +28,6 @@ void printVar(std::string &variableName, std::string &variableData){
         printf("%s\n", token);
 }
 
-
 int main(int argc, char* argv[], char* envp[]){
     int pos = 1;
     bool silent = isSilent(argv);
@@ -37,7 +36,6 @@ int main(int argc, char* argv[], char* envp[]){
     if (silent) {
         pos++;
     }
-
 
   for (int i = pos; i < argc; i++) {
           varFound = false;
@@ -58,5 +56,4 @@ int main(int argc, char* argv[], char* envp[]){
 
   }
   return 0;
-
 }
