@@ -37,32 +37,30 @@ int main(int argc, char* argv[], char* env[])
         {
             if (!tabContains(env, argv[i]))
             {
-                string message = string(argv[i]) + "=NONE";
-                puts(message.c_str());
+                string msgnot = string(argv[i]) + "=NONE";
+                puts(msgnot.c_str());
             }
         }
-    }
 
-    while (*env != NULL)
-    {
-        bool written = false;
-        for (int i = 1; i < argc; i++)
+
+        while (*env != NULL)
         {
-            if (strstr(*env, argv[i]) && !written)
+            bool put = false;
+            for (int i = 1; i < argc; i++)
             {
-                written = true;
-                char* token;
-                char* rest = *env;
-
-                while ((token = strtok_s(rest, ";", &rest)))
+                if (!put && strstr(*env, argv[i]))
                 {
-                    puts(token);
+                    put = true;
+                    char* text;
+                    char* part = *env;
+
+                    while ((text = strtok_s(part, ";", &part))) puts(text);
                 }
             }
+            (*env++);
         }
-        (*env++);
     }
 
-    return 0;
+    return 10;
 }
 
