@@ -2,24 +2,16 @@
 #include <string>
 #include <cstring>
 
-#define SILENT_MODE_SWITCH "/S"
+#define SILENT_MODE_SWITCH_UPPER "/S"
+#define SILENT_MODE_SWITCH_LOWER "/s"
 #define NO_PARAM_RETURN_CODE 11
 #define PARAM_NOT_A_DIGIT_RETURN_CODE 12
 #define MORE_THAN_ONE_PARAM_RETURN_CODE 13
 #define DEFAULT_DESIRED_ARGC_VAL 2
 
-std::string getUppercase(char sequence[]) {
-	std::string uppercase_sequence = "";
-
-	for (int i = 0; i < strlen(sequence); i++)
-		uppercase_sequence += toupper(sequence[i]);
-
-	return uppercase_sequence;
-}
-
-bool isSilentModeSwitch(char param[]) 
+bool isSilentModeSwitch(char* param)
 {
-	return strcmp(getUppercase(param).c_str(), SILENT_MODE_SWITCH) == 0;
+	return strcmp(param, SILENT_MODE_SWITCH_UPPER) == 0 || strcmp(param, SILENT_MODE_SWITCH_LOWER) == 0;
 }
 
 int getDigitReturnCode(char* param) {
@@ -31,7 +23,6 @@ int getDigitReturnCode(char* param) {
 	}
 }
 
-
 int main(int argc, char* argv[])
 {
 	if (argc == 1) {
@@ -41,8 +32,6 @@ int main(int argc, char* argv[])
 
 	bool is_in_silent_mode = false;
 	int desired_argc_val = DEFAULT_DESIRED_ARGC_VAL;
-	int return_code = NO_PARAM_RETURN_CODE;
-
 	int param_index = argc - 1;
 	for (int i = 1; i < argc; i++) {
 		if (isSilentModeSwitch(argv[i])) {
@@ -55,6 +44,7 @@ int main(int argc, char* argv[])
 		}
 	}
 
+	int return_code = NO_PARAM_RETURN_CODE;
 	if (argc > desired_argc_val) {
 		return_code = MORE_THAN_ONE_PARAM_RETURN_CODE;
 	}
