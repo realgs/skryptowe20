@@ -6,7 +6,7 @@ using namespace std;
 int main(int argc, char* argv[]) {
     int ret;
     bool silent = false;
-    if (argc == 1) 
+    if (argc == 1)
     {
         ret = 11;
     }
@@ -16,8 +16,8 @@ int main(int argc, char* argv[]) {
         else {
             if ((argc > 2 && !silent) || (argc > 3 && silent)) ret = 13;
             else {
-                if (string(argv[argc - 1]).length()==1 && "0"<=string(argv[argc - 1]) 
-                                                    && string(argv[argc - 1]) <= "9") ret = atoi(argv[argc - 1]);
+                if (string(argv[argc - 1]).length() == 1 && "0" <= string(argv[argc - 1])
+                    && string(argv[argc - 1]) <= "9") ret = atoi(argv[argc - 1]);
                 else ret = 12;
             }
         }
@@ -25,3 +25,4 @@ int main(int argc, char* argv[]) {
     if (!silent) cout << ret;
     return ret;
 }
+

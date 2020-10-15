@@ -37,5 +37,5 @@ int main(int argc, char* argv[], char* envp[])
 		}
 		if (!silent && none) cout << endl << str << "=NONE\n";
 	}
-	
 }
+
