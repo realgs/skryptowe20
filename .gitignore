@@ -1,7 +1,0 @@
-.DS_Store
-.vs/
-__pycache__/
-*.sln
-*.pyproj
-*.obj
-.gitignore
