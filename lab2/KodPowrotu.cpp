@@ -7,6 +7,7 @@ const std::string SILENT_SWITCH_UPPER = "/S";
 constexpr int NOT_ENOUGH_ARGUMENTS = 11;
 constexpr int NOT_A_DIGIT = 12;
 constexpr int TOO_MANY_ARGUMENTS = 13;
+constexpr int MAX_SIZE = 1;
 
 
 // Z tego co rozumiem z tresci zadania, to przelaczniki nie wliczaja sie do liczby
@@ -35,7 +36,7 @@ int main(int argc, char* argv[]) {
 
     if(params.empty())
         return_code = NOT_ENOUGH_ARGUMENTS;
-    else if(params.size() > 1)
+    else if(params.size() > MAX_SIZE)
         return_code = TOO_MANY_ARGUMENTS;
     else
         return_code = get_digit(params[0]);
