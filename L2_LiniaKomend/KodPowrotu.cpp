@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
 
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "/s") == 0 || strcmp(argv[i], "/S") == 0) {
-            b_is_silent = false;
+            b_is_silent = true;
             argc--;
             if (i == 1) {
                 i_param = 2;
