@@ -10,10 +10,9 @@ int main(int argc, char* argv[])
     if (argc >= 2)
     {
         for (int i = 1; i < argc; i++) {
-            if ((argv[i][0] == '/' && argv[i][1] == 's') ||
-                (argv[i][0] == '/' && argv[i][1] == 'S')) {
-                isSilent = true;
-            }
+            std::string arg = argv[i];
+            if (((argv[i][0] == '/' && argv[i][1] == 'S') || 
+                (argv[i][0] == '/' && argv[i][1] == 's')) && arg.length() == 2) isSilent = true;
         }
     }
     int x;
