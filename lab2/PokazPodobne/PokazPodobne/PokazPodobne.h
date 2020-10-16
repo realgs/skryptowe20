@@ -1,0 +1,3 @@
+#pragma once
+#define VARIABLE_DEFINITION_SEPARATOR "="
+#define VARIABLE_COMPLEX_SEPARATOR ";"
