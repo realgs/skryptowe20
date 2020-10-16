@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cctype>
 
+#define DELIMETER ";"
 
 int main(int argc, char** argv, char** envp) {
     bool b_found = false;
@@ -21,14 +22,13 @@ int main(int argc, char** argv, char** envp) {
                     s_message += s_name;
                     s_message += "\n=\n";
 
-                    std::string s_delim = " ";
                     std::string s_value = s.substr(s.find('='));
                     s_value.erase(0, 1);
                     int i_pos;
-                    while ((i_pos = s_value.find(s_delim)) != std::string::npos) {
+                    while ((i_pos = s_value.find(DELIMETER)) != std::string::npos) {
                         s_message += s_value.substr(0, i_pos);
                         s_message += "\n";
-                        s_value.erase(0, i_pos + s_delim.length());
+                        s_value.erase(0, i_pos + std::string(DELIMETER).length());
                     }
                     s_message += s_value.substr(0, i_pos);
                     s_message += "\n\n";
