@@ -1,1 +1,7 @@
 .DS_Store
+l1
+"warunki zaliczenia"
+.gitignore
+.idea/
+.vs/
+debug.log
