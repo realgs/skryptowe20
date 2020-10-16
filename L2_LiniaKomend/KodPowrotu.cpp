@@ -15,7 +15,9 @@ int main(int argc, char** argv) {
         if (strcmp(argv[i], "/s") == 0 || strcmp(argv[i], "/S") == 0) {
             b_is_silent = false;
             argc--;
-            i_param++;
+            if (i == 1) {
+                i_param = 2;
+            }
         }
     }
 
