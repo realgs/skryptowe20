@@ -1,19 +1,18 @@
 @ECHO OFF
-SET /p param=Podaj parametr:
 
-kodPowrotu.exe /s %param%
+SET script_params=%*
+
+kodPowrotu.exe /s %script_params%
 
 IF %ERRORLEVEL%  LEQ 10 (
-  ECHO Przekazano: prawidlowa wartosc %ERRORLEVEL%
-)
-IF %ERRORLEVEL% EQU 11 (
+  ECHO Przekazano: prawidlowa wartosc
+
+) ELSE IF %ERRORLEVEL% EQU 11 (
   ECHO Brak parametrow
-)
 
-IF %ERRORLEVEL% EQU 12 (
-  ECHO Parametr %param% nie jest cyfra
-)
+) ELSE IF %ERRORLEVEL% EQU 12 (
+  ECHO Parametr %script_params% nie jest cyfra
 
-IF %ERRORLEVEL% GEQ 13 (
-  ECHO Niewlasciwa wartosc parametru %param%
-)
+) ELSE IF %ERRORLEVEL% EQU 13 (
+  ECHO Niewlasciwa wartosc parametru %script_params%
+) 
