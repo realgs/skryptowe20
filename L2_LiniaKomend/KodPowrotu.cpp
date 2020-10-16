@@ -6,7 +6,6 @@
 using namespace std;
 
 
-
 int main(int argc, char** argv) {
     int i_param = 1;
     int i_exit_code;
