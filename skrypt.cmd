@@ -5,7 +5,7 @@ set /p arg= Wprowadz parametry:
 IF NOT EXIST "KodPowrotu.exe" (
     cl "KodPowrotu.cpp"
 )
-cmd /c "KodPowrotu.exe" /s %arg%
+cmd /c "KodPowrotu.exe" /S %arg%
 
 IF NOT ERRORLEVEL 10 (
 	Echo Przekazano: prawidlowa wartosc
