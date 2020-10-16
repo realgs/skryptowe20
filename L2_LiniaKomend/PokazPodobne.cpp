@@ -19,8 +19,20 @@ int main(int argc, char** argv, char** envp) {
                 std::string s_name = s.substr(0, s.find('='));
                 if (s_name.find(s_wanted) != std::string::npos) {
                     s_message += s_name;
-                    s_message += s.substr(s.find('='));
-                    s_message += "\n";
+                    s_message += "\n=\n";
+
+                    std::string s_delim = " ";
+                    std::string s_value = s.substr(s.find('='));
+                    s_value.erase(0, 1);
+                    int i_pos;
+                    while ((i_pos = s_value.find(s_delim)) != std::string::npos) {
+                        s_message += s_value.substr(0, i_pos);
+                        s_message += "\n";
+                        s_value.erase(0, i_pos + s_delim.length());
+                    }
+                    s_message += s_value.substr(0, i_pos);
+                    s_message += "\n\n";
+
                     b_found = true;
                 }
             }
