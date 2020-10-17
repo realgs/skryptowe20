@@ -1,6 +1,5 @@
 @ECHO OFF
-cd C:\Users\Admin\source\repos\ConsoleApplication4\Debug
-ConsoleApplication4 /s %*
+KodPowrotu /s %*
 
 IF %ERRORLEVEL% LSS 10 (
 	ECHO Przekazano: %ERRORLEVEL%
@@ -15,4 +14,3 @@ IF %ERRORLEVEL% EQU 12 (
 IF %ERRORLEVEL% EQU 13 (
 	ECHO Przekazano za duzo parametrow
 )
-cd C:\Users\Admin\source\repos\ConsoleApplication7

@@ -1,6 +1,4 @@
-﻿
-#include "pch.h"
-#include <iostream>
+﻿#include <iostream>
 #include <string>
 
 int main(int argc, char* argv[], char* env[])
@@ -72,4 +70,5 @@ int main(int argc, char* argv[], char* env[])
 			}
 		}
 	}
-}
+}
+
