@@ -2,7 +2,7 @@
 
 using namespace std;
 
-int main(int argc, char* argv[], char** envp)
+int cmain(int argc, char* argv[], char** envp)
 {
 	// Environmental variables
 	int index = 0;
@@ -17,4 +17,6 @@ int main(int argc, char* argv[], char** envp)
 	{
 		cout << argv[i] << endl;
 	}
+
+	return 0;
 }
