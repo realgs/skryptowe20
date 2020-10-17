@@ -1,6 +1,4 @@
-﻿// KodPowrotu.cpp : Ten plik zawiera funkcję „main”. W nim rozpoczyna się i kończy wykonywanie programu.
-//
-#include "KodPowrotu.h"
+﻿#include "KodPowrotu.h"
 #include <iostream>
 #include <sstream>
 
