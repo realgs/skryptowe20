@@ -1,9 +1,10 @@
 import os
-from subprocess import Popen, DEVNULL
+from subprocess import Popen, DEVNULL, PIPE
 from unittest import TestCase, skipIf
 
-compiled = os.path.isfile("KodPowrotu.exe")
-msg = "You need to compile KodPowrotu.exe before running the tests."
+FILE_NAME = "KodPowrotu.exe"
+compiled = os.path.isfile(FILE_NAME)
+msg = f"You need to compile {FILE_NAME} before running the tests."
 
 
 @skipIf(not compiled, msg)
@@ -44,5 +45,5 @@ class TestKodPowrotu(TestCase):
         args = ["1 /s", "1 /S", "/s 1", "/S 1", "asd /s", "/S", "1 1 1 /S", "/s /f"]
         for arg in args:
             with self.subTest(arg=arg):
-                output = Popen(f"{self.COMMAND} {arg}", stdout=DEVNULL).communicate()[0]
-                self.assertEqual(None, output)
+                output = Popen(f"{self.COMMAND} {arg}", stdout=PIPE).communicate()[0]
+                self.assertEqual("", output.decode())
