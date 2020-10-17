@@ -76,3 +76,4 @@ bool isDigitArgument(char argument[])
         return false;
     }
 }
+
