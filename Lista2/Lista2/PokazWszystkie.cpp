@@ -2,7 +2,7 @@
 
 using namespace std;
 
-int cmain(int argc, char* argv[], char** envp)
+int main(int argc, char* argv[], char** envp)
 {
 	// Environmental variables
 	int index = 0;
