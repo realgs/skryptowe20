@@ -22,9 +22,16 @@ bool isSilent(int argc, char *argv[])
     return false;
 }
 
-void print_variable_values(char* variable_values)
+void print_variable_values(string env_str, int start_of_string, int end_of_string)
 {
-
+    string variable_value;
+    while (start_of_string != end_of_string && end_of_string != -1)
+    {
+        start_of_string = end_of_string + 1;
+        end_of_string = env_str.find(';', start_of_string);
+        variable_value = env_str.substr(start_of_string, end_of_string - start_of_string);
+        cout << variable_value << endl;
+    }
 }
 
 void print_environmental_variables(char* param, char* env[], bool is_in_silent_mode)
@@ -34,24 +41,15 @@ void print_environmental_variables(char* param, char* env[], bool is_in_silent_m
     while(env[i] != nullptr)
     {
         string env_str (env[i]);
-        int string_start = 0;
-        int string_end = env_str.find('=');
-        string variable_name = env_str.substr(string_start, string_end);
-        string value;
+        int start_of_string = 0;
+        int end_of_string = env_str.find('=');
+        string variable_name = env_str.substr(start_of_string, end_of_string);
         if (variable_name.find(param) != string::npos)
         {
             param_found = true;
             cout << variable_name << endl; 
             cout << "= " << endl;
-
-            while (string_start != string_end && string_end != -1)
-            {
-                string_start = string_end + 1;
-                string_end = env_str.find(';', string_start);
-                value = env_str.substr(string_start, string_end - string_start);
-                cout << value << endl;
-            }
-
+            print_variable_values(env_str, start_of_string, end_of_string);
         }
         
         i++;
