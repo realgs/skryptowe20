@@ -17,7 +17,7 @@ int parseArgv(char str[])
     {
         return -1;
     }
-    // Other parameter
+    // Other parameter => -2
     else
     {
         return -2;
@@ -35,71 +35,56 @@ int returnCode(int val)
 
 int main(int argc, char* argv[])
 {   
-    // Look for "/s"
-    for (int i = 0; i < argc; i++)
+    int* paramsParsed = new int[argc - 1];
+    int arrayLength = argc - 1;
+
+    for (int i = 0; i < arrayLength; i++)
     {
-        if (parseArgv(argv[i]) == -1)
+        // This function assigns 0..9 to digits, -1 to silent switches and -2 to incorrect parameters
+        paramsParsed[i] = parseArgv(argv[i + 1]);
+    }
+
+    for (int i = 0; i < arrayLength; i++)
+    {
+        if (paramsParsed[i] == -1)
         {
             silent = true;
         }
     }
 
-    // First argument is always executable name
-    if (argc == 1)
+    // Check for number of parameters
+    int allParamsCount = 0;
+    for (int i = 0; i < arrayLength; i++)
+    {
+        if (paramsParsed[i] != -1)
+        {
+            allParamsCount++;
+        }
+    }
+
+    if (allParamsCount == 0)
     {
         return returnCode(11);
     }
-
-    if (argc == 2)
+    else if (allParamsCount > 1)
     {
-        // second argument has to be digit
-        int digit = parseArgv(argv[1]);
-
-        // First arg isn't digit
-        if (digit < 0)
-        {
-            return returnCode(12);
-        }
-        // Return digit
-        else
-        {
-            return returnCode(digit);
-        }
+        return returnCode(13);
     }
 
-    if (argc == 3)
+    for (int i = 0; i < arrayLength; i++)
     {
-        int digit1 = parseArgv(argv[1]);
-        int digit2 = parseArgv(argv[2]);
-
-        // Two parameters
-        if ((digit1 >= 0 || digit1 == -2) && (digit2 >= 0 || digit2 == -2))
+        // Only potential digit
+        if (paramsParsed[i] != -1)
         {
-            return returnCode(13);
-        }
-        // Arg 2 is digit
-        else if (digit1 == -1 && digit2 >= 0)
-        {
-            return returnCode(digit2);
-        }
-        // Arg 1 is digit
-        else if (digit2 == -1 && digit1 >= 0)
-        {
-            return returnCode(digit1);
-        }
-        // No parameters
-        else if (digit1 == -2 && digit2 == -2)
-        {
-            return returnCode(11);
-        }
-        // Parameter is not a digit
-        else
-        {
-            return returnCode(12);
+            // Error
+            if (paramsParsed[i] == -2)
+            {
+                return returnCode(12);
+            }
+            else
+            {
+                return returnCode(paramsParsed[i]);
+            }
         }
     }
-
-    // Argc>3 => more than 1 param for sure
-    
-    return returnCode(13);
 }
