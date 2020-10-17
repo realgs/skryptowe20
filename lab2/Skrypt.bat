@@ -1,23 +1,17 @@
-@ECHO OFF
-
+@echo off
 KodPowrotu\KodPowrotu\KodPowrotu.exe %* /s
 
-IF %ERRORLEVEL% LEQ 10 (
-	ECHO PRZEKAZANO: $1
+IF %ERRORLEVEL% LEQ 9 (
+	ECHO Przekazano prawidlowa wartosc
 )
 
-IF %ERRORLEVEL% EQU 11 (
-	ECHO BRAK PARAMETROW
-)
-
-IF %ERRORLEVEL% EQU 12 (
-	ECHO PARAMETR $1 NIE JEST CYFRA
+IF %ERRORLEVEL% == 11 (
+    ECHO Nie podano parametrow
 ) 
-
-IF %ERRORLEVEL% EQU 13 (
-	ECHO NIEWLASCIWA WARTOSC PARAMETRU %1
-) 
-
- IF %ERRORLEVEL% GEQ 14 (
-	ECHO PRZEKAZANO: %ERRORLEVEL%
+IF %ERRORLEVEL% == 12 (
+    ECHO Parametr nie jest liczba
 )
+
+IF %ERRORLEVEL% == 13 (
+   ECHO Niewlasciwa ilosc parametrow
+) 
