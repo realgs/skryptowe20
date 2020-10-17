@@ -1,1 +1,10 @@
 .DS_Store
+.idea
+.vs
+[Bb]in/
+[Oo]bj/
+*.user
+Debug/
+*.sln
+*.vcxproj
+*.filters
