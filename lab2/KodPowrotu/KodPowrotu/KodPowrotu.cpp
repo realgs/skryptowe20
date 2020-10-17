@@ -25,11 +25,11 @@ int main(int argc, char* argv[], char* env[])
 	else if (argc > 3 || argc == 3 && !isSilent(argv, argc)) { return TOO_MANY_ARGUMENTS; }
 	else {
 		bool silentMode = isSilent(argv, argc);
-		if (isdigit(*argv[1])) {
+		if (isdigit(*argv[1]) && strlen(argv[1]) == 1) {
 			if (!silentMode) { std::cout << atoi(argv[1]); }
 			return atoi(argv[1]);
 		}
-		else if (argc == 3 && isdigit(*argv[2])) {
+		else if (argc == 3 && isdigit(*argv[2]) && strlen(argv[2]) == 1) {
 			if (!silentMode) { std::cout << atoi(argv[2]); }
 			return atoi(argv[2]);
 		}
