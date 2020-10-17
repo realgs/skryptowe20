@@ -3,7 +3,7 @@
 KodPowrotu\KodPowrotu\KodPowrotu.exe %* /s
 
 IF %ERRORLEVEL% LEQ 10 (
-	ECHO PRZEKAZANO: $1
+	ECHO PRZEKAZANO: %ERRORLEVEL%
 )
 
 IF %ERRORLEVEL% EQU 11 (
