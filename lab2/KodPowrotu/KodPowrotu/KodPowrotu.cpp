@@ -8,7 +8,8 @@
 
 bool isSilent(char* argv[], int argc) {
 	for (int i = 1; i < argc; i++) {
-		if (argv[i] == "/s" || argv[i] == "/S") {
+		std::string arg(argv[i]);
+		if (arg == "/s" || arg == "/S") {
 			return true;
 		}
 	}
@@ -22,7 +23,7 @@ int main(int argc, char* argv[], char* env[])
 
 
 	if (argc == 1) {return NO_PARAMETER_GIVEN; }
-	else if (argc > 3 || argc == 3 && !isSilent(argv, argc)) { return TOO_MANY_ARGUMENTS; }
+	else if (argc > 3 || (argc == 3 && !isSilent(argv, argc))) { return TOO_MANY_ARGUMENTS; }
 	else {
 		bool silentMode = isSilent(argv, argc);
 		if (isdigit(*argv[1]) && strlen(argv[1]) == 1) {
