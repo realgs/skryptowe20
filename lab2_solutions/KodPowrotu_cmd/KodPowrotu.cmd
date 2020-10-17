@@ -15,4 +15,4 @@ IF %ERRORLEVEL% GEQ 0 IF %ERRORLEVEL% LSS 10 (
 
 ) ELSE IF %ERRORLEVEL% EQU 13 (
   ECHO Niewlasciwa wartosc parametru %parameters%
-) 
+)
