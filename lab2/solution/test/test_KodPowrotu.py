@@ -14,7 +14,7 @@ class TestKodPowrotu(TestCase):
         cls.COMMAND = "KodPowrotu.exe"
 
     def test_return_correct_digit(self):
-        args = [x for x in range(9)]
+        args = [x for x in range(10)]
         for arg in args:
             with self.subTest(arg=arg):
                 return_value = Popen(f"{self.COMMAND} {arg}", stdout=DEVNULL).wait()
