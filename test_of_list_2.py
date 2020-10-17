@@ -65,7 +65,7 @@ TEST_CASES_EXIT_CODES = [
     [
         ["b", "a"], 13
     ],
-    # more than two args with /S
+    # more than one args with /S
     [
         ["1", "2", "/S"], 13
     ],
@@ -169,7 +169,7 @@ TEST_CASES_SHOW_SIMILIAR = [
     # many outputs: OS, Path, ProgramData
     ["OS", "Path", "ProgramData"],
     ["OS", "Path", "XD", "Path", "ProgramData"],
-    ["OS", "Path", "ProgramData"],
+    ["OS", "Path", "Path", "ProgramData"],
     ["OS",  "Path", "Path", "XD", "ProgramData"],
     ["Path", "OS", "Path", "ProgramData"],
     ["OS", "Path", "ProgramData" "Path", "XD"],
