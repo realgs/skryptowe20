@@ -1,5 +1,6 @@
-#pragma once
+/*#pragma once
 #include<iostream>
+#include<vector>
 using namespace std;
 
 #define MAX_TEXT_LENGTH 500
@@ -19,28 +20,32 @@ void printLine(int paramNumber, char** paramsList, string line)
 {
     bool isPrinted = false;
 
+    std::size_t prev = 0, pos;
+    vector<string> paramsReadVector;
+    while ((pos = line.find_first_of("\t", prev)) != std::string::npos)
+    {
+        if (pos > prev)
+            paramsReadVector.push_back(line.substr(prev, pos - prev));
+        prev = pos + 1;
+    }
+    if (prev < line.length())
+        paramsReadVector.push_back(line.substr(prev, std::string::npos));
+    
     for (int i = 1; i < paramNumber && !isPrinted; i++)
     {
         string paramToPrint(paramsList[i]);
 
-        int pos = 0;
-        string param;
-        string line_copy(line);
-        string delimiter = "\t";
-        
-        while ((pos = line_copy.find(delimiter)) >= 0)
-        {
-            param = line_copy.substr(0, pos);
+        for (string param : paramsReadVector) {
             if (!param.compare(paramToPrint))
             {
                 cout << endl << line << endl;
                 isPrinted = true;
             }
-            line_copy.erase(0, pos + delimiter.length());
         }
+
     }
 }
-int main(int argc, char** argv, char** env)
+int main(int argc, char** argv)
 {
     char* text = new char[MAX_TEXT_LENGTH];
     int text_size = readStdInToCharArray(&text);
@@ -55,5 +60,6 @@ int main(int argc, char** argv, char** env)
         line = text_s.substr(0, pos);
         printLine(argc, argv, string(line));
         text_s.erase(0, pos+delimiter.length());
+
     }
-}
+}*/

@@ -1,7 +1,6 @@
-#pragma once
+/*#define _CRT_SECURE_NO_WARNINGS
 #include<iostream>
 using namespace std;
-
 #define MAX_INPUT_LENGTH 500
 
 int readStdInToCharArray(char** text)
@@ -15,7 +14,7 @@ int readStdInToCharArray(char** text)
     return textSize;
 }
 
-int main(int argc, char** argv, char** env)
+int main(int argc, char** argv)
 {
 	char* text = new char[MAX_INPUT_LENGTH];
     int text_size = readStdInToCharArray(&text);
@@ -30,4 +29,4 @@ int main(int argc, char** argv, char** env)
         input_string = strtok(NULL, " \n\t");
     }
     cout << "\nSum: " << sum;
-}
+}*/

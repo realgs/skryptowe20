@@ -1,4 +1,4 @@
-#pragma once
+#define _CRT_SECURE_NO_WARNINGS
 #include<iostream>
 using namespace std;
 
@@ -34,7 +34,7 @@ void printSelectedColumns(int columnsNumber, char** columnsIDs, char* line)
     cout << endl;
     
 }
-int main(int argc, char** argv, char** env)
+int main(int argc, char** argv)
 {
     char* text = new char[MAX_TEXT_LENGTH];
     int text_size = readStdInToCharArray(&text);
