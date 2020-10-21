@@ -1,4 +1,4 @@
-/*#pragma once
+#define _CRT_SECURE_NO_WARNINGS
 #include<iostream>
 #include<vector>
 using namespace std;
@@ -62,4 +62,4 @@ int main(int argc, char** argv)
         text_s.erase(0, pos+delimiter.length());
 
     }
-}*/
+}

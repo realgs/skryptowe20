@@ -1,4 +1,4 @@
-/*#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 #include<iostream>
 using namespace std;
 #define MAX_INPUT_LENGTH 500
@@ -29,4 +29,4 @@ int main(int argc, char** argv)
         input_string = strtok(NULL, " \n\t");
     }
     cout << "\nSum: " << sum;
-}*/
+}
