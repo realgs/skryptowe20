@@ -1,1 +1,24 @@
 .DS_Store
+*.obj
+*.tlog
+*.log
+*.filters
+*.user
+*.vcxproj
+*.pdb
+*.idb
+Debug/skryptowe_lab_2.vcxproj.FileListAbsolute.txt
+.vs/skrypt_lab3/v16/.suo
+*.opendb
+*.db
+*.ipch
+warunki zaliczenia
+l1
+*.pdf
+lab2/lc (1).exe
+lab2/Line2Words (1).exe
+lab2/Nostromo.txt
+lab2/termin oddania l2
+lab3/l3 termin oddania
+*.ilk
+*.sln
