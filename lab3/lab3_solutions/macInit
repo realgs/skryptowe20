@@ -1,0 +1,4 @@
+sum1=StarczyJeden.exe $1 $L Zakup.txt $B SelKol.exe 2 $B SumaNum.exe
+sum2=StarczyJeden.exe $1 $2 $L Zakup.txt $B SelKol.exe 2 $B SumaNum.exe
+showday=StarczyJeden.exe $1 $L Zakup.txt $B sort
+sumday=StarczyJeden.exe $1 $L Zakup.txt $B SelKol.exe 3 $B SumaNum.exe
