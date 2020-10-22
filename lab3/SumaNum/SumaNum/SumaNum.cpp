@@ -43,6 +43,7 @@ int main(int argc, char* argv[], char* env[])
 				}
 				else {
 					number = argument;
+					argument = argument.substr(number.size(), argument.size());
 				}
 				numbersToSum.push_back(number);
 			}
