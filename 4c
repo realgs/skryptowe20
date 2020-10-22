@@ -1,3 +1,2 @@
 #!/bin/bash
 ./StarczyJeden $1 < Zakup.txt | ./SelKol 2 | sort
- 
