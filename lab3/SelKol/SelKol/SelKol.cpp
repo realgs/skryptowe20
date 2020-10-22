@@ -11,9 +11,9 @@ int getNumberOfLines(std::string text) {
 	int numberOfLines = 1;
 	size_t separatorIndex = text.find('\n');
 	while (text != "" && separatorIndex != std::string::npos) {
-		numberOfLines += 1;
-		text = text.substr(separatorIndex + 1, text.size());
-		separatorIndex = text.find('\n');
+			numberOfLines += 1;
+			text = text.substr(separatorIndex + 1, text.size());
+			separatorIndex = text.find('\n');
 	}
 	return numberOfLines;
 }
@@ -29,7 +29,7 @@ int main(int argc, char* argv[], char* env[])
 	int numberOfLines = 1;
 
 	while (userInput != "" && userInput.find(DELIMITER_OF_COLUMNS) != std::string::npos) {
-		if (numberOfLines == 1) {
+		if (numberOfLines == 1) { 
 			numberOfLines = getNumberOfLines(userInput);
 		}
 		if (userInput.find('\n') != std::string::npos) {
@@ -56,14 +56,11 @@ int main(int argc, char* argv[], char* env[])
 			return WRONG_COLUMN_INDEX;
 		}
 	}
-
 	for (int i = 0; i < textToBeDisplayed.size(); i++) {
-		//std::cout << textToBeDisplayed.at(i);
 		if (textToBeDisplayed.at(i) != "") {
-			output += textToBeDisplayed.at(i);
+		output += textToBeDisplayed.at(i);
 		}
 		if (i != textToBeDisplayed.size() - 1) {
-			//std::cout << DELIMITER_OF_COLUMNS;
 			output += DELIMITER_OF_COLUMNS;
 		}
 	}
