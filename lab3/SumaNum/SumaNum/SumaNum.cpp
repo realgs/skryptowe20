@@ -22,8 +22,6 @@ bool isNumber(std::string number)
 	return true;
 }
 
-
-
 int main(int argc, char* argv[], char* env[])
 {
 	double sum = 0.0;
@@ -33,7 +31,7 @@ int main(int argc, char* argv[], char* env[])
 	{	
 		numbersToSum.clear();
 		std::string argument(argv[i]);
-		if (argument.find(" ") != std::string::npos && argument.find('\t') != std::string::npos) {
+		if (argument.find(" ") != std::string::npos || argument.find('\t') != std::string::npos) {
 			while (argument != "") {
 				if (argument.find(" ") != std::string::npos) {
 					number = argument.substr(0, argument.find(" "));
@@ -47,9 +45,6 @@ int main(int argc, char* argv[], char* env[])
 					number = argument;
 				}
 				numbersToSum.push_back(number);
-				/*if (isNumber(number)) {
-					sum += std::stod(argument.c_str());
-				}*/
 			}
 		}
 		else {
