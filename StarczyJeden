@@ -4,7 +4,7 @@ while read line
 do 
     for var in "$@"
     do
-        if [[ "$line" == *[[:space:]]"$var"[[:space:]]* ]]; then
+        if [[ "$line" == *"$var"* ]]; then
             echo "$line"
         fi
     done
