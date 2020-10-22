@@ -1,5 +1,6 @@
 #!/bin/bash
 args=''
+
 for var in $@
 do
     args+="\$${var},"
