@@ -11,4 +11,4 @@ done
 
 out="${out:1}"
 
-awk -v awkvar=$out -F'\t' '{print '"$out"'}' Zakup.txt
+awk -v awkvar=$out -F'\t' '{print '"$out"'}' 
