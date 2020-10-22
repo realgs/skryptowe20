@@ -1,0 +1,5 @@
+# Run file as 'source ./z5' to avoid creating a subshell
+alias 4a='./4a Banany'
+alias 4b='./4b Banany Sofa'
+alias 4c='./4c 24.07.2019'
+alias 4d='./4d 24.07.2019'
