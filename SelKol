@@ -1,0 +1,9 @@
+#!/bin/bash
+args=''
+for var in $@
+do
+    args+="\$${var},"
+done
+args=${args%*,*}
+
+awk -v OFS="\t" "{print $args}"

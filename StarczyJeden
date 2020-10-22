@@ -1,0 +1,11 @@
+#!/bin/bash
+pattern=''
+
+for var in $@
+do
+    pattern+="${var}\|"
+done
+
+pattern=${pattern%*\\*}
+
+grep $pattern
