@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if [ "$#" -gt 4 ]; then
+    echo "Illegal number of parameters"
+fi
+
+for var in "$@"
+do
+    out=$out",$"$var
+done
+
+out="${out:1}"
+
+awk -v awkvar=$out -F'\t' '{print '"$out"'}' Zakup.txt
