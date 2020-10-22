@@ -12,12 +12,10 @@ int main(int argc, char *argv[]) {
             return 2;
     }
 
-    std::ifstream infile(
-            "/Users/piotrrasinski/OneDrive - Politechnika Wroclawska/Semestr5/Skryptowe_L/skryptowe20/zakupy.txt");
     std::string line;
     std::vector<std::string> output;
 
-    while (std::getline(infile, line)) {
+    while (std::getline(std::cin, line)) {
         std::istringstream iss(line);
         std::string word;
         while (iss >> word)
@@ -27,6 +25,7 @@ int main(int argc, char *argv[]) {
             std::cout << output[atoi(argv[i]) - 1] << '\t';
 
         std::cout << std::endl;
+        output.clear();
     }
     return 0;
 }
