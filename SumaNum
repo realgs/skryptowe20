@@ -1,3 +1,2 @@
 #!/bin/bash
 awk '{n+=$1}END {printf "%.3f\n", n}'
-
