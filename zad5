@@ -1,0 +1,5 @@
+#!odpowiednik doskey w linuxie będzie aliasem
+alias Zad4a='./SumaWag1 Jablka'
+alias Zad4b='./SumaWag2 Jablka Kurczak'
+alias Zad4c='./ListSortInDay 13.07.2020'
+alias Zad4d='./SumByDay 13.07.2020'
