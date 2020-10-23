@@ -4,7 +4,7 @@
 
 std::vector<std::string> parse_args(char** args, int count) {
     std::vector<std::string> parsed_args;
-    for(int i = 0; i < count; ++i) {
+    for(int i = 1; i < count; ++i) {
         parsed_args.push_back(std::string(args[i]));
     }
     return parsed_args;
