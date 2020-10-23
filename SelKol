@@ -1,0 +1,13 @@
+#!/bin/bash
+if [ "$#" -gt 4 ]; then
+    echo "Illegal number of parameters"
+    exit
+fi
+
+for var in $@
+do
+    tab+=",$"$var
+done
+tab=${tab:1}
+
+awk -F "\t" "{print $tab}"

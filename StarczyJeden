@@ -1,0 +1,7 @@
+#!/bin/bash
+for var in $@
+do
+    pattern+="\|"$var
+done
+pattern=${pattern:2}
+grep $pattern
