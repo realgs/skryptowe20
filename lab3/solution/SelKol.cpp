@@ -50,9 +50,12 @@ int print_columns(const std::vector<int>& selected_columns) {
         if(max_column >= split_line.size())
             return i;
 
+        std::string to_print;
         for(const auto& column : selected_columns)
-            std::cout << split_line[column] << '\t';
-        std::cout << std::endl;
+            to_print += split_line[column] + '\t';
+
+        to_print.pop_back(); // remove last '\t'
+        std::cout << to_print << std::endl;
     }
     return ERROR_NPOS;
 }
