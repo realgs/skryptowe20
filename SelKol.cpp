@@ -20,8 +20,10 @@ int main(int argc, char* argv[])
         selCol.push_back(atoi(argv[i]));
     }
 
+    string filename;
+    cin >> filename;
     ifstream source;
-    source.open("Zakup.txt");
+    source.open(filename);
     vector<string> lines;
     string line;
     while (getline(source, line))
