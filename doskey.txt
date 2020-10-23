@@ -1,0 +1,11 @@
+doskey cztery_a=4a.cmd $1
+doskey cztery_b=4b.cmd $1 $2
+doskey cztery_c=4c.cmd $1
+doskey cztery_d=4d.cmd $1
+
+lub też
+
+doskey cztery_a=4a.cmd Banan
+doskey cztery_b=4b.cmd Banan Kasza
+doskey cztery_c=4c.cmd 08.10.2020
+doskey cztery_d=4d.cmd 04.10.2020
