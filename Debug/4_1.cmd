@@ -1,6 +1,4 @@
 @ECHO OFF
 
-set /p product= Insert product name:
-
 echo.
-cmd /c "StarczyJeden.exe" %product% < Zakup.txt | "SelKol.exe" 3 | "SumaNum.exe"
+cmd /c "StarczyJeden.exe" %1% < Zakup.txt | "SelKol.exe" 3 | "SumaNum.exe"

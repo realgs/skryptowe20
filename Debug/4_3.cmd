@@ -1,6 +1,4 @@
 @ECHO OFF
 
-set /p day= Insert day:
-
 echo.
-cmd /c "StarczyJeden.exe" %day% < Zakup.txt | sort
+cmd /c "StarczyJeden.exe" %1% < Zakup.txt | sort
