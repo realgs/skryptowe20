@@ -51,8 +51,10 @@ int print_columns(const std::vector<int>& selected_columns) {
             return i;
 
         std::string to_print;
-        for(const auto& column : selected_columns)
-            to_print += split_line[column] + '\t';
+        for(const auto& column : selected_columns) {
+            to_print += split_line[column];
+            to_print += '\t';
+        }
 
         to_print.pop_back(); // remove last '\t'
         std::cout << to_print << std::endl;
