@@ -22,3 +22,9 @@ lab2/termin oddania l2
 lab3/l3 termin oddania
 *.ilk
 *.sln
+*.json
+*.sqlite
+.vs/skryptowe_lab3/v16/.suo
+skrypt_lab3/SelKol.cpp
+skrypt_lab3/StarczyJeden.cpp
+skrypt_lab3/SumaNum.cpp

@@ -5,35 +5,29 @@ using namespace::std;
 
 int main(int argc, char* argv[]) {
 	
-	fstream MyFile("Zakup.txt");
-	
-	for (std::string line; getline(MyFile, line); )
+	for (std::string line; getline(cin, line); )
 	{
-		string a, b;
-		double c, d;
+		string date, product;
+		double weight, price;
 		
 		std::istringstream iss(line);
-		if (iss >> a >> b >> c >> d) {
+		if (iss >> date >> product >> weight >> price) {
 			for (int i = 1; i < argc; i++) {
 
 				if (atoi(argv[i]) == 1) {
-					cout << a << '\t';
+					cout << date << '\t';
 				}
 				else if (atoi(argv[i]) == 2) {
-					cout << b << '\t';
+					cout << product << '\t';
 				}
 				else if (atoi(argv[i]) == 3) {
-					cout << c << '\t';
+					cout << weight << '\t';
 				}
 				else if (atoi(argv[i]) == 4) {
-					cout << d << '\t';
+					cout << price << '\t';
 				}
-				
 			}
-			cout << '\n';
+			cout << endl;
 		}
 	}
-
-	MyFile.close();
-
 }
