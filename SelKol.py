@@ -7,7 +7,7 @@ def select_columns(argv):
     columns = [int(x) for x in argv[1:]]
     for x in columns:
       if x < 1 or x > 4:
-        print("Wrong argument", x)
+        print("Wrong argument")
         exit(1)
     return columns
   except Exception:
