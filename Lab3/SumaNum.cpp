@@ -52,7 +52,6 @@ float sum_of_vector(std::vector<float> args)
 	for (const auto& arg : args)
 	{
 		sum += arg;
-		std::cout << "sum: " << sum << "\n";
 	}
 
 	return sum;
