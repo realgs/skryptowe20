@@ -1,0 +1,6 @@
+@ECHO OFF
+
+DOSKEY Z41=%CD%\4.1.bat Czekoladka
+DOSKEY Z42=%CD%\4.2.bat Laptop Klopsik
+DOSKEY Z43=%CD%\4.3.bat 12.02.2020
+DOSKEY Z44=%CD%\4.4.bat 12.02.2020
