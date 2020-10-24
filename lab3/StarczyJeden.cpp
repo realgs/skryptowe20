@@ -6,14 +6,14 @@ using namespace std;
 int main(int argc, char* argv[])
 {
     string textLine;
-    while (cin >> textLine)
+    while (getline(cin, textLine))
     {
         for (int i = 1; i < argc; i++)
         {
             size_t found = textLine.find(argv[i]);
             if (found != string::npos)
             {
-                cout << textLine;
+                cout << textLine << endl;
                 break;
             }
         }
