@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -29,9 +28,9 @@ int main(int argc, char* argv[], char* env[]) {
 	std::string line;
 	std::vector<int> indexesOfColumns;
 	for (int i = 1; i < argc; i++) {
-		indexesOfColumns.push_back(atoi(argv[i])-1);
+		indexesOfColumns.push_back(atoi(argv[i]) - 1);
 	}
-	while(std::getline(std::cin, line)) {
+	while (std::getline(std::cin, line)) {
 		std::vector<std::string> columns = divideIntoColumns(line);
 		printSelectedColumns(indexesOfColumns, columns);
 	}
