@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
             sum += value;
 
         }
-        catch (const std::exception& e)
+        catch (const exception& e)
         {
 
         }
