@@ -1,0 +1,6 @@
+Data	Nazwa	Waga	Cena
+21.10.2020	papryka	5.23	23.20
+21.10.2020	banany	2.82	12.5
+19.10.2020	cukier	3	6.23
+15.10.2020	kiwi	0.3	1.55
+10.10.2020	pomidory	0.6	3.4
