@@ -3,8 +3,6 @@
 #include <sstream>
 using namespace std;
 
-
-
 int main(int argc, char* argv[]) {
 
 	fstream inputFile("Zakup.txt");
@@ -13,8 +11,7 @@ int main(int argc, char* argv[]) {
 
 	while (getline(inputFile, line)) {
 		istringstream iss(line);
-
-		if (iss >> date >> name >> quantity >> prize) {
+				if (iss >> date >> name >> quantity >> prize) {
 			for (int i = 1; i < argc; i++) {
 				int argument = atoi(argv[i]);
 				switch (argument) {
@@ -30,14 +27,10 @@ int main(int argc, char* argv[]) {
 				case 4:
 					cout << prize << '\t';
 					break;
-
 				}
 			}
 			cout << endl;
 		}
-
-
-
 	}
 	inputFile.close();
 }

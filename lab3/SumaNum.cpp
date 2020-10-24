@@ -3,8 +3,6 @@
 #include <sstream>
 using namespace std;
 
-
-
 int main(int argc, char* argv[]) {
 
 	fstream inputFile("Zakup.txt");
@@ -13,7 +11,6 @@ int main(int argc, char* argv[]) {
 
 	while (getline(inputFile, line)) {
 		istringstream iss(line);
-
 		if (iss >> date >> name >> quantity >> prize)
 			sum += (quantity + prize);
 	}

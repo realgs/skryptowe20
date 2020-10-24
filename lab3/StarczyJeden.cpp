@@ -3,8 +3,6 @@
 #include <sstream>
 using namespace std;
 
-
-
 int main(int argc, char* argv[]) {
 
 	fstream inputFile("Zakup.txt");
@@ -13,18 +11,14 @@ int main(int argc, char* argv[]) {
 
 	while (getline(inputFile, line)) {
 		istringstream iss(line);
-
 		if (iss >> date >> name >> quantity >> prize) {
-
 			for (int i = 1; i < argc;i++) {
 				if (argv[i] == date || argv[i] == name)
 					cout << line << '\n';
 				else if (atof(argv[i]) == quantity || atof(argv[i]) == prize)
 					cout << line << '\n';
-
 			}
 		}
-			
 	}
 	cout << sum;
 	inputFile.close();
