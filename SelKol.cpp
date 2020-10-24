@@ -2,7 +2,6 @@
 #include <fstream>
 #include <vector>
 #include <string>
-#include <set>
 
 std::vector<std::string> getFileData(std::string fileName) {
     std::vector<std::string> fileData;
@@ -59,7 +58,7 @@ bool parameterIsNumber(char* parameter) {
     return isNumber;
 }
 
-int main(int argc, char* argv[], char* envp[])
+int main(int argc, char* argv[])
 {
     std::vector<int> columnsNumbers;
     std::vector<std::string> fileData = getFileData("Zakup.txt");
