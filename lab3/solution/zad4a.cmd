@@ -1,2 +1,2 @@
 @ECHO OFF
-TYPE Zakup.txt | StarczyJeden %1 | SelKol 3 | SumaNum
+StarczyJeden %1 < Zakup.txt | SelKol 3 | SumaNum
