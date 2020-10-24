@@ -8,4 +8,3 @@ if __name__ == "__main__":
         for arg in args:
             if arg in row:
                 print(row)
-                

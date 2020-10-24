@@ -26,4 +26,3 @@ def print_columns(columns_numbers, columns):
 if __name__ == "__main__":
     columns = interpret_stdin([x.strip("\n") for x in sys.stdin])
     print_columns(sys.argv[1:], columns)
-    
