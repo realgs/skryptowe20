@@ -20,13 +20,9 @@ int main(int argc, char* argv[])
         selCol.push_back(atoi(argv[i]));
     }
 
-    string filename;
-    cin >> filename;
-    ifstream source;
-    source.open(filename);
-    vector<string> lines;
+    
     string line;
-    while (getline(source, line))
+    while (getline(cin, line))
     {
         stringstream ss(line);
         string token;
