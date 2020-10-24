@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <string>
 
 using namespace std;
 
@@ -23,24 +24,63 @@ void SelKol(int argc, char* argv[])
         prices.push_back(f);
     }
 
-    for (int i = 0; i < argc; i++)
+    for (int i = 0; i < dates.size(); i++)
     {
-        int index;
-        sscanf(argv[i], "%d", &index);
-
-        if (index >= 0 && index < dates.size())
+        for (int j = 1; j < argc; j++)
         {
-            cout << dates[index] << "\t";
-            cout << names[index] << "\t";
-            cout << weights[index] << "\t";
-            cout << prices[index] << "\n";
+            int column;
+            sscanf(argv[j], "%d", &column);
+
+            switch (column)
+            {
+            case 1:
+                cout << dates[i] << "\t";
+                break;
+            case 2:
+                cout << names[i] << "\t";
+                break;
+            case 3:
+                cout << weights[i] << "\t";
+                break;
+            case 4:
+                cout << prices[i] << "\t";
+                break;
+            default:
+                break;
+            }
+        }
+
+        cout << endl;
+    }
+}
+
+void SumaNum()
+{
+    float sum = 0;
+
+    string curr;
+    while (cin >> curr)
+    {
+        float val;
+        // sscanf returns EOF if cannot parse input
+        if (sscanf(curr.c_str(), "%f", &val) != 0x05)
+        {
+            sum += val;
         }
     }
+
+    cout << sum << endl;
+}
+
+void StarczyJeden()
+{
+
 }
 
 int main(int argc, char* argv[])
 {
     SelKol(argc, argv);
+    //SumaNum();
 }
 
 
