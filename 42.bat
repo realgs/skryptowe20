@@ -1,2 +1,2 @@
 @echo off
-type Zakup.txt | python SelKol.py 1 2 3 | python StarczyJeden.py %1 %2 | python SumaNum.py
+type Zakup.txt | python StarczyJeden.py %1 %2 | python SelKol.py 3  | python SumaNum.py
