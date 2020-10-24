@@ -1,3 +1,3 @@
 @ECHO OFF
 
-StarczyJeden.exe < Zakup.txt %1 %2 | SelKol.exe 2 | SumaNum.exe
+StarczyJeden < Zakup.txt %1 %2 | SelKol 2 | SumaNum

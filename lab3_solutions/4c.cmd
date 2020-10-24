@@ -1,3 +1,3 @@
 @ECHO OFF
 
-StarczyJeden.exe < Zakup.txt %1 | SelKol.exe 1 | sort
+StarczyJeden < Zakup.txt %1 | SelKol 1 | sort
