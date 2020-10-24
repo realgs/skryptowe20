@@ -72,15 +72,30 @@ void SumaNum()
     cout << sum << endl;
 }
 
-void StarczyJeden()
+void StarczyJeden(int argc, char* argv[])
 {
-
+    string line;
+    while (getline(cin, line))
+    {
+        for (int i = 1; i < argc; i++)
+        {
+            int subIndex = line.find(argv[i]);
+            if (subIndex != -1)
+            {
+                cout << line << endl;
+                break;
+            }
+        }
+    }
 }
 
 int main(int argc, char* argv[])
 {
-    SelKol(argc, argv);
+    // Uncomment correct line and build program to get executable
+
+    //SelKol(argc, argv);
     //SumaNum();
+    //StarczyJeden(argc, argv);
 }
 
 
