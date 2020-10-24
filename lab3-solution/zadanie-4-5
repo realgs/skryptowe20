@@ -1,0 +1,27 @@
+#!/bin/bash
+wagaproduktu() {./StarczyJeden "$1" < zakupy.txt | ./SelKol 3 | ./SumaNum; }
+# Przyklad:
+# >>> wagaproduktu produkt11
+# >>> 24.084
+
+wagiproduktow() {./StarczyJeden "$1" "$2" < zakupy.txt | ./SelKol 3 | ./SumaNum; }
+# Przyklad:
+# >>> wagiproduktow produkt12 produkt22
+# >>> 21.148
+
+zdnia() {./StarczyJeden "$1" < zakupy.txt | ./SelKol 2 | sort; }
+# Przyklad:
+# >>> zdnia 07.09.2020
+# >>> produkt0	
+# produkt1	
+# produkt11	
+# produkt12	
+# produkt2	
+# produkt33	
+# produkt39	
+# produkt71
+
+wartoscdnia() { ./StarczyJeden "$1" < zakupy.txt | ./SelKol 4 | ./SumaNum; }
+# Przyklad:
+# >>> wartoscdnia 07.09.2020
+# >>> 108.69
