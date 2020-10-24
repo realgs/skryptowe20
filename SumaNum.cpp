@@ -4,11 +4,11 @@
 int main()
 {
     double sum = 0.;
-    std::string userInput;
-    while (std::cin >> userInput) {
-        std::cout << userInput << "\t";
+    std::string input;
+    while (std::cin >> input) {
+        std::cout << input << "\t";
         try {
-            sum += stod(userInput);
+            sum += stod(input);
             std::cout << sum << "\n";
         }
         catch (const std::exception& ignored) {};
