@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <cmath>
 
 const int NO_OCCURANCES = -1;
 
@@ -53,11 +54,23 @@ void processLine(std::string line, int* columnIndexes, int columnIndexesSize) {
 	delete endIndexes;
 }
 
+int charArrayToInt(char * charArray) {
+	int totalDigits = 0;
+	while (charArray[totalDigits] != NULL) {
+		totalDigits++;
+	}
+	int result = 0;
+	for (int i = 0; i < totalDigits; i++) {
+		result += (charArray[i] - 48) * std::pow(10, totalDigits - i - 1);
+	}
+	return result;
+}
+
 
 int main(int argc, char** argv) {
 	int* columnsIndexes = new int[argc - 1];
 	for (int i = 1; i < argc; i++) {
-		columnsIndexes[i - 1] = argv[i][0] - 48;
+		columnsIndexes[i - 1] = charArrayToInt(argv[i]);
 	}
 	std::string line;
 	int previousIndex = -1;
