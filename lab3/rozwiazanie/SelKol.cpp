@@ -12,30 +12,25 @@ int main(int argc, char *argv[])
     {
         return 1;
     }
-    ifstream in;
-    in.open("Zakup.txt");
     string line;
-    if(in.is_open())
+    while(getline(cin, line))
     {
-        while(getline(in, line))
+        istringstream iss(line);
+        string word;
+
+        vector <string> words;
+        while(getline(iss, word, '\t'))
         {
-            istringstream iss(line);
-            string word;
-
-            vector <string> words;
-            while(getline(iss, word, '\t'))
-            {
-                words.push_back(word);
-            }
-
-            for(int i = 1;i < argc; i++)
-            {
-                string str = argv[i];
-                int index = atoi(str.c_str());
-                cout<<words[index - 1]<<'\t';
-            }
-            cout<< endl;
-
+            words.push_back(word);
         }
+
+        for(int i = 1;i < argc; i++)
+        {
+            string str = argv[i];
+            int index = atoi(str.c_str());
+            cout<<words[index - 1]<<'\t';
+        }
+        cout<< endl;
+
     }
 }
