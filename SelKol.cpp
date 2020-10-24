@@ -20,7 +20,7 @@ void printString(std::string toPrint, int firstIndex, int lastIndex, char endCha
 
 void processIndexes(int* beginIndexes, int* endIndexes, int arrSize, std::string line) {
 	for (int i = 0; i < arrSize; i++) {
-		if (beginIndexes[i] != -0 || endIndexes[i] != -0) {
+		if (beginIndexes[i] != 0 || endIndexes[i] != 0) {
 			printString(line, beginIndexes[i], endIndexes[i], '\t');
 		}
 	}
