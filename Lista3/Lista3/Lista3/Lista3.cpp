@@ -97,5 +97,3 @@ int main(int argc, char* argv[])
     //SumaNum();
     //StarczyJeden(argc, argv);
 }
-
-
