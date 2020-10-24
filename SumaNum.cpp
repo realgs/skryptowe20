@@ -14,14 +14,9 @@ int main(int argc, char* argv[])
         {
             value = stod(foo);
             sum += value;
-
         }
-        catch (const exception& e)
-        {
-
-        }
+        catch (const exception& e){}
     }
-    
     cout << "Sum:" << sum << endl;
     return 0;
 }

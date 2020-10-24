@@ -7,19 +7,12 @@
 using namespace std;
 int main(int argc, char* argv[])
 {
-
-    if (argc > 5) return 11;
     for (int i = 1; i < argc; i++)
-    {
-        if (atoi(argv[i]) > 4) return 12;
-    }
+        if (atoi(argv[i]) > 4) return 11;
 
     vector<int> selCol;
     for (int i = 1; i < argc; i++)
-    {
         selCol.push_back(atoi(argv[i]));
-    }
-
     
     string line;
     while (getline(cin, line))
@@ -37,7 +30,6 @@ int main(int argc, char* argv[])
         }
         cout << endl;
     }
-
     return 0;
 }
 
