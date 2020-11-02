@@ -1,0 +1,4 @@
+zad4a="type Zakup.txt | StarczyJeden.exe $1 | SelKol.exe 3 | SumaNum.exe"
+zad4b="type Zakup.txt | StarczyJeden.exe $1 $2 | SelKol.exe 3 | SumaNum.exe"
+zad4c="type Zakup.txt | StarczyJeden.exe $1 | SelKol.exe 2 | sort"
+zad4d="type Zakup.txt | StarczyJeden.exe $1 | SelKol.exe 4 | SumaNum.exe"
