@@ -15,7 +15,7 @@ class Currency(Enum):
 
 
 def get_previous_days(currency, days):
-    if currency not in Currency._value2member_map_ or not 0 < days < 367:
+    if currency in Currency._value2member_map_ and 0 < days < 367:
         current_date = datetime.now()
         beginning = current_date - timedelta(days=days)
         response = requests.get(
@@ -50,13 +50,10 @@ def parse_response(response):
     return x, y
 
 
-def create_chart(currencies, days):
-    if not currencies or days < 1:
+def create_currency_chart(currencies, days):
+    if not isinstance(currencies, list) or days < 1:
         print('Invalid arguments, please try again')
     else:
-        # current_date = datetime.today()
-        # x = [str((current_date - timedelta(days=x)).date()) for x in range(days, 0, -1)]
-
         fig, ax = plt.subplots()
 
         for currency in currencies:
@@ -91,8 +88,11 @@ def fix_response(response):
     return x, y
 
 
-def to_date(str_date):
-    return datetime.strptime(str_date, '%Y-%m-%d')
+def to_date(date):
+    if isinstance(date, datetime):
+        return date
+    else:
+        return datetime.strptime(date, '%Y-%m-%d')
 
 
 def fill_currency(currency, start_date, end_date):
@@ -115,8 +115,7 @@ def fill_currency(currency, start_date, end_date):
     y = [item for lst in y for item in lst]
     print(x[0])
     for date, value in zip(x, y):
-        print(date, value)
-        safe_data = (datetime.strftime(date, '%Y-%m-%d'), value,)
+        safe_data = (date.timestamp(), value,)
         c.execute('INSERT INTO currency VALUES(?,?)', safe_data)
 
     conn.commit()
@@ -124,17 +123,85 @@ def fill_currency(currency, start_date, end_date):
 
 
 def split_date(start_date, end_date):
-    days_between = (end_date - start_date).days
+    days_between = (to_date(end_date) - to_date(start_date)).days
     print(days_between)
     dates = []
     while days_between != 0:
         if days_between >= LIMIT:
-            dates.append((end_date - timedelta(days=days_between), end_date -
+            dates.append((to_date(end_date) - timedelta(days=days_between), to_date(end_date) -
                           timedelta(days=days_between) + timedelta(days=LIMIT - 1)))
             days_between -= LIMIT
         else:
-            dates.append((end_date - timedelta(days=days_between), end_date))
+            dates.append((to_date(end_date) - timedelta(days=days_between), to_date(end_date)))
             days_between = 0
     return dates
 
-    # create_chart(['USD', 'EUR'], 183)
+
+def get_sales(start_date, end_date):
+    if (to_date(end_date) - to_date(start_date)).days < 0:
+        print('Illegal argument')
+    conn = sqlite3.connect('sales.db')
+    c = conn.cursor()
+    print("Opened database successfully")
+    x = {}
+    previous_sales = 0
+
+    safe_date = (to_date(start_date).timestamp(), to_date(end_date).timestamp(),)
+    for row in c.execute('''SELECT SUM(SALES), ORDERDATE FROM SALES
+                            WHERE ORDERDATE between ? and ?
+                            GROUP BY ORDERDATE
+                            ORDER BY ORDERDATE''', safe_date):
+        x[datetime.fromtimestamp(int(row[1])).date()] = x.get(
+            datetime.fromtimestamp(int(row[1])).date(), 0) + float(row[0])
+
+    for key in x.keys():
+        x[key] += previous_sales
+        previous_sales = x[key]
+
+    conn.close()
+    return x
+
+
+def get_currency(start_date, end_date):
+    if (to_date(end_date) - to_date(start_date)).days < 0:
+        print('Illegal argument')
+    conn = sqlite3.connect('sales.db')
+    c = conn.cursor()
+    print("Opened database successfully")
+    x = {}
+
+    safe_date = (to_date(start_date).timestamp(), to_date(end_date).timestamp(),)
+    for row in c.execute('SELECT value, date from currency where date between ? and ? ORDER BY date', safe_date):
+        x[datetime.fromtimestamp(int(row[1])).date()] = float(row[0])
+
+    conn.close()
+    return x
+
+
+def create_sales_chart(currency, start_date, end_date):
+    if 0 > (to_date(end_date) - to_date(start_date)).days:
+        print('Invalid arguments, please try again')
+    else:
+        fig, ax = plt.subplots()
+
+        sales_dict = get_sales(to_date(start_date), to_date(end_date))
+        currency_dict = get_currency(to_date(start_date), to_date(end_date))
+
+        ax.plot(sales_dict.keys(), sales_dict.values(), label='PLN')
+
+        for key in sales_dict.keys():
+            sales_dict[key] *= currency_dict[key]
+
+        ax.plot(sales_dict.keys(), sales_dict.values(), label='USD')
+
+        ax.xaxis_date()
+        fig.autofmt_xdate()
+        plt.xlabel('Data')
+        plt.ylabel('Wartosc sprzedarzy [PLN]')
+        plt.legend()
+        plt.savefig('sales.eps')
+        plt.show()
+
+
+create_currency_chart(['USD', 'EUR'], 180)
+create_sales_chart('USD', '2005-01-01', '2006-01-01')
