@@ -1,5 +1,6 @@
 import requests
 from datetime import date, timedelta
+import matplotlib.pyplot as plt
 
 TODAY_DATE = date.today()
 HALF_YEAR_DAYS = 20
@@ -43,4 +44,34 @@ def get_dollar_euro_half_year():
     
     return dollars, euros
 
+def plot_dollar_euro(dollar_dict, euro_dict):
+    dollar_dates = []
+    dollar_rates = []
+    euro_dates = []
+    euro_rates = []
+
+    for key, value in dollar_dict.items():
+        dollar_dates.append(key)
+        dollar_rates.append(value)
+
+    for key, value in euro_dict.items():
+        euro_dates.append(key)
+        euro_rates.append(value)
+
+    print(dollar_dates)
+    print(euro_dates)
+    print(dollar_rates)
+    print(euro_rates)
+
+    fig, ax = plt.subplots()
+    dollar_line, = plt.plot(dollar_dates, dollar_rates, 'g', label='Dollar')
+    euro_line, = plt.plot(euro_dates, euro_rates, 'r', label='Euro')
+    plt.xlabel('Dates')
+    ax.xaxis.set_label_coords(1.05, -0.025)
+    plt.xticks(rotation=45)
+    plt.xticks(fontsize=6)
+    plt.ylabel('Rates')
+    plt.title('Dollar and Euro rates')
+    plt.legend(handles=[dollar_line, euro_line])
+    plt.savefig("dol_eur_fig.svg")
     
