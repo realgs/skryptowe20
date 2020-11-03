@@ -1,2 +1,0 @@
-#!/bin/bash
-cat Zakup.txt |./StarczyJeden $1 $2|./SelKol 3|./SumaNum
