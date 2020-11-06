@@ -1,3 +1,5 @@
+#!/bin/python3
+
 import json
 import requests
 from enum import Enum
@@ -87,15 +89,11 @@ def rates_time_range(currency: Currency, start_date: datetime, end_date: datetim
 
 
 def last_rates(currency: Currency, days_back: int = 0) -> List[Tuple[float, str]]:
+    '''
+    1. Stworzyć funkcję pobierającą średnie kursy notowań zadanej parametrem waluty z ostatnich X dni.
+    '''
     if days_back < 0:
         raise ValueError("days count cannot be lower than zero")
 
     now = datetime.now()
     return rates_time_range(currency, now - timedelta(days=days_back), now)
-
-
-if __name__ == "__main__":
-    #res = last_rates(Currency.UNITED_STATES_DOLLAR, 180)
-    #print(res, len(res), sep="\n")
-    from dateutil.relativedelta import relativedelta
-    print(datetime.now() - relativedelta(months=-6))
