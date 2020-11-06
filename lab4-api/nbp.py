@@ -4,7 +4,7 @@ import json
 import requests
 from enum import Enum
 from typing import Any, Tuple, List
-from datetime import datetime, timedelta
+import datetime as dt
 
 API_URL_RATES = "http://api.nbp.pl/api/exchangerates/rates/"
 API_URL_TABLES = "http://api.nbp.pl/api/exchangerates/tables/"
@@ -54,12 +54,12 @@ def request_data(api_url: str) -> Tuple[Any, bool]:
     return json_data, result
 
 
-def rates_time_range(currency: Currency, start_date: datetime, end_date: datetime) -> List[Tuple[float, str]]:
+def rates_time_range(currency: Currency, start_date: dt.datetime, end_date: dt.datetime) -> List[Tuple[float, dt.date]]:
     total_days = (end_date - start_date).days
     if total_days < 0:
         raise ValueError("dates are in wrong order")
 
-    data: List[Tuple[float, str]] = []
+    data: List[Tuple[float, dt.date]] = []
 
     # split ranges into chunks to meet API requirements
     chunks: List[Tuple[str, str]] = []
@@ -70,11 +70,11 @@ def rates_time_range(currency: Currency, start_date: datetime, end_date: datetim
             break
 
         days = min(total_days, API_DAYS_LIMIT)
-        end_date = start_date + timedelta(days=days)
+        end_date = start_date + dt.timedelta(days=days)
         chunks.append((start_date.strftime(DATE_FORMAT),
                        end_date.strftime(DATE_FORMAT)))
         total_days -= days + 1
-        start_date = end_date + timedelta(days=1)
+        start_date = end_date + dt.timedelta(days=1)
 
     for chunk in chunks:
         api_response, request_result = request_data(
@@ -83,17 +83,17 @@ def rates_time_range(currency: Currency, start_date: datetime, end_date: datetim
         if request_result:
             for rate in api_response[ApiFields.RATES]:
                 data.append(
-                    (rate[ApiFields.MID], rate[ApiFields.EFFECTIVE_DATE]))
+                    (rate[ApiFields.MID], dt.datetime.strptime(rate[ApiFields.EFFECTIVE_DATE], DATE_FORMAT).date()))
 
     return data
 
 
-def last_rates(currency: Currency, days_back: int = 0) -> List[Tuple[float, str]]:
+def last_rates(currency: Currency, days_back: int = 0) -> List[Tuple[float, dt.date]]:
     '''
     1. Stworzyć funkcję pobierającą średnie kursy notowań zadanej parametrem waluty z ostatnich X dni.
     '''
     if days_back < 0:
         raise ValueError("days count cannot be lower than zero")
 
-    now = datetime.now()
-    return rates_time_range(currency, now - timedelta(days=days_back), now)
+    now = dt.datetime.now()
+    return rates_time_range(currency, now - dt.timedelta(days=days_back), now)
