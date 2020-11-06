@@ -1,8 +1,8 @@
-import requests
 from datetime import datetime, timedelta
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
 
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
+import requests
 from spyder.utils.external.github import ApiError
 
 MAX_COUNT = 255
@@ -63,7 +63,10 @@ def get_rates_plot(draw_dates: list, dates_counter=20, *draw_rates: (list, str))
 
     plt.legend(handles=patches)
     shown_values = [draw_dates[i] for i in range(0, len(draw_dates), int(len(draw_dates) / dates_counter))]
-    plt.xticks(shown_values, labels=draw_dates, horizontalalignment='center')
+    plt.title("Rates of PLN to USD and EUR")
+    plt.xlabel("Dates of rating")
+    plt.ylabel("Rates of PLN to currency")
+    plt.xticks(shown_values, horizontalalignment='center')
     return plt
 
 
