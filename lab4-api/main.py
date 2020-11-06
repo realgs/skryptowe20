@@ -38,6 +38,8 @@ if __name__ == "__main__":
     plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=10))
     plt.gca().xaxis.set_minor_locator(mdates.DayLocator(interval=1))
     plt.gca().yaxis.set_major_locator(ticker.MultipleLocator(0.05))
+    plt.gca().yaxis.set_minor_locator(ticker.MultipleLocator(0.01))
+
 
     # plot euro
     plt.plot(x_eur, y_eur,
