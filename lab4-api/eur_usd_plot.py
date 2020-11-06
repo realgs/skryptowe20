@@ -35,15 +35,15 @@ if __name__ == "__main__":
         y_eur.append(rate)
 
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter(DATE_FORMAT))
+
     plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=10))
     plt.gca().xaxis.set_minor_locator(mdates.DayLocator(interval=1))
+
     plt.gca().yaxis.set_major_locator(ticker.MultipleLocator(0.05))
     plt.gca().yaxis.set_minor_locator(ticker.MultipleLocator(0.01))
 
-
     # plot euro
-    plt.plot(x_eur, y_eur,
-             label=f"{eur.name.title()} ({eur.code})")
+    plt.plot(x_eur, y_eur, label=f"{eur.name.title()} ({eur.code})")
 
     # plot usd
     plt.plot(x_usd, y_usd, label=f"{usd.name.title()} ({usd.code})")
