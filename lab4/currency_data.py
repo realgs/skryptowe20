@@ -1,29 +1,75 @@
 import requests
-import json
+from datetime import datetime, timedelta
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+
 from spyder.utils.external.github import ApiError
 
+MAX_COUNT = 255
 
-# address = 'http://api.nbp.pl/api/exchangerates/tables/C/'
 
-
-def get_data(address) -> requests.Response:
+def get_data(address: str) -> requests.Response:
     response = requests.get(address)
-
     if response.status_code != 200:
-        raise ApiError(f'GET error, response status: {response.status_code}')
-
+        raise ApiError(address, requests.get, response)
     return response
 
 
+def get_date_days_ago(days: int):
+    return datetime.now() - timedelta(days=days)
+
+
+def get_data_between_dates(symbol: str, from_date: datetime.date, to_date: datetime.date):
+    address = f'http://api.nbp.pl/api/exchangerates/rates/A/{symbol}/{from_date}/{to_date}/'
+    return get_data(address)
+
+
 def get_currency_rates(symbol: str, days: int):
-    address = 'http://api.nbp.pl/api/exchangerates/rates/a/' + symbol + '/last/' + str(days) + '/'
-    data = get_data(address)
+    search_count = int(days / MAX_COUNT)
+    days_remaining = days % MAX_COUNT
+    data = {
+        "table": "",
+        "currency": "",
+        "code": "",
+        "rates": []
+    }
+    from_date = get_date_days_ago(search_count * MAX_COUNT + days_remaining).date()
+    to_date = get_date_days_ago(search_count * MAX_COUNT).date()
+    last_data = get_data_between_dates(symbol, from_date, to_date).json()
+    data["rates"] = last_data["rates"]
+    data["table"] = last_data["table"]
+    data["currency"] = last_data["currency"]
+    data["code"] = last_data["code"]
+    for i in range(search_count, 0, -1):
+        from_date = get_date_days_ago(MAX_COUNT * i).date()
+        to_date = get_date_days_ago(MAX_COUNT * i - MAX_COUNT).date()
+        data["rates"].extend(
+            get_data_between_dates(symbol=symbol, from_date=from_date, to_date=to_date).json()["rates"])
 
-    with open('chfRates.json', 'w') as file:
-        json.dump(data.json(), file)
+    dates = [data["rates"][i]["effectiveDate"] for i in range(0, len(data["rates"]))]
+    currency_rates = [data["rates"][i]["mid"] for i in range(0, len(data["rates"]))]
+    return data["code"], dates, currency_rates
 
-    print(f'{data.json()}')
+
+def get_rates_plot(draw_dates: list, dates_counter=20, *draw_rates: (list, str)):
+    patches = []
+    c = 0
+    for rates, code in draw_rates:
+        print(f'{code} is color: C{c}')
+        plt.plot(draw_dates, rates, label=code, color=f'C{c}')
+        patch = mpatches.Patch(label=f'{code} to PLN', color=f'C{c}')
+        patches.append(patch)
+        c = c + 1
+
+    plt.legend(handles=patches)
+    shown_values = [draw_dates[i] for i in range(0, len(draw_dates), int(len(draw_dates) / dates_counter))]
+    plt.xticks(shown_values, labels=draw_dates, horizontalalignment='center')
+    return plt
 
 
 if __name__ == '__main__':
-    get_currency_rates('CHF', 600)
+    count = 180
+    USDcode, d, rUSD = get_currency_rates('USD', count)
+    EURcode, _, rEUR = get_currency_rates('EUR', count)
+    plot = get_rates_plot(d, 5, (rUSD, USDcode), (rEUR, EURcode))
+    plot.savefig('USD_EUR_TO_PLN.svg')
