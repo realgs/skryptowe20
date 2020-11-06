@@ -55,4 +55,5 @@ if __name__ == "__main__":
     plt.title(f"{eur.code} and {usd.code} rates from last 6 months (in PLN)")
 
     plt.legend()
+    plt.grid(True)
     plt.show()
