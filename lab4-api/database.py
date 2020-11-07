@@ -1,23 +1,22 @@
 #!/bin/python3
 
 import csv
-from datetime import timedelta
-import sqlite3
-from typing import List, Optional, Tuple
-import datetime as dt
-from nbp import DATE_FORMAT, Currency
 import nbp
+import sqlite3
+import datetime as dt
+from datetime import timedelta
+from nbp import DATE_FORMAT, Currency
+from typing import List, Optional, Tuple
 
-DATABASE_FILE = "database.db"
+DATABASE_FILE = "database.sqlite3"
 CSV_FILE = "Superstore.csv"
 
 
-def read_csv(csv_filepath: str) -> List[List[str]]:
+def read_csv(csv_filepath: str, delimiter=';') -> List[List[str]]:
     data: List[List[str]] = []
     with open(csv_filepath, newline='', encoding="utf8") as csvfile:
-        file_reader = csv.reader(csvfile, delimiter=';')
-        for row in file_reader:
-            data.append(row)
+        file_reader = csv.reader(csvfile, delimiter=delimiter)
+        data = list(file_reader)
     return data
 
 
@@ -27,7 +26,6 @@ def create_connection(db_filepath: str) -> Optional[sqlite3.Connection]:
         conn = sqlite3.connect(db_filepath)
     except sqlite3.Error as err:
         print(err)
-
     return conn
 
 
@@ -79,7 +77,7 @@ def create_sales_order(conn: sqlite3.Connection, sales_order: Tuple[int, str,  s
     return False
 
 
-def create_default_database():
+def create_default_database(conn: sqlite3.Connection):
     sql_create_table_customer = '''CREATE TABLE IF NOT EXISTS Customer (
                                         id text PRIMARY KEY,
                                         name text NOT NULL
@@ -108,7 +106,6 @@ def create_default_database():
     sales_orders = [(int(row[0]), row[1], dt.datetime.strptime(row[2], "%d.%m.%Y").date().strftime(
         DATE_FORMAT), row[5], row[13], float(row[17].replace(",", "."))) for row in csv_data]
 
-    conn = create_connection(DATABASE_FILE)
     if conn:
         create_table(conn, sql_create_table_customer)
         create_table(conn, sql_create_table_product)
@@ -123,8 +120,6 @@ def create_default_database():
         for sales_order in sales_orders:
             create_sales_order(conn, sales_order)
 
-        conn.close()
-
 # 3. Rozszerzyć bazę danych o tabelę, w której zawarta będzie informacja o średnich
 # notowaniach tej waluty w stosunku do polskiej złotówki w wybranym przez siebie okresie
 # (zależne od danych dostępnych w Waszej bazie danych) - niech to będą minimum 2 lata.
@@ -133,7 +128,7 @@ def create_default_database():
 
 
 def create_rate(conn: sqlite3.Connection, rate: Tuple[str, float]) -> bool:
-    sql = "INSERT INTO UsdRatesPln(rate_date, rate) VALUES(?, ?)"
+    sql = "INSERT INTO UsdRatePln(rate_date, rate) VALUES(?, ?)"
     try:
         c = conn.cursor()
         c.execute(sql, rate)
@@ -144,17 +139,16 @@ def create_rate(conn: sqlite3.Connection, rate: Tuple[str, float]) -> bool:
     return False
 
 
-def add_rates_table_to_database(conn: sqlite3.Connection):
-    sql_create_table_usd_rates_pln = '''CREATE TABLE IF NOT EXISTS UsdRatesPln (
-                                            rate_date date NOT NULL,
-                                            rate real NOT NULL,
-                                            PRIMARY KEY (rate_date, rate)
+def add_rate_table_to_database(conn: sqlite3.Connection):
+    sql_create_table_usd_rates_pln = '''CREATE TABLE IF NOT EXISTS UsdRatePln (
+                                            rate_date date PRIMARY KEY,
+                                            rate real NOT NULL
                                         );'''
     create_table(conn, sql_create_table_usd_rates_pln)
 
     usd = Currency.UNITED_STATES_DOLLAR
     rates = nbp.rates_time_range(usd, dt.datetime(
-        2014, 1, 1), dt.datetime(2017, 12, 31))
+        2014, 1, 1), dt.datetime(2018, 1, 1))
 
     # fill gaps in rates
     tmp_rates: List[Tuple[float, dt.date]] = []
@@ -162,7 +156,7 @@ def add_rates_table_to_database(conn: sqlite3.Connection):
         days_difference = (rates[index + 1][1] - rate[1]).days
         if days_difference > 1:
             tmp_date = rate[1]
-            for _ in range(days_difference):
+            for _ in range(days_difference - 1):
                 tmp_date = tmp_date + timedelta(days=1)
                 tmp_rates.append((rate[0], tmp_date))
     rates.extend(tmp_rates)
@@ -172,21 +166,7 @@ def add_rates_table_to_database(conn: sqlite3.Connection):
 
 
 if __name__ == "__main__":
-    # create_default_database()
     conn = create_connection(DATABASE_FILE)
-    if conn:
-        c = conn.cursor()
-        c.execute('''   SELECT SUM(SalesOrder.sales), SUM(SalesOrder.sales)*UsdRatesPln.rate, SalesOrder.order_date
-                        FROM SalesOrder
-                        INNER JOIN UsdRatesPln ON SalesOrder.order_date=UsdRatesPln.rate_date
-                        GROUP BY SalesOrder.order_date
-                        ORDER BY SalesOrder.order_date;''')
-
-        conn.commit()
-        rows = c.fetchall()
-
-        with open("output.txt", "w") as f:
-            for row in rows:
-                f.write(f'{";".join(map(lambda x: str(x), row))}\n')
-
-    # add_rates_table_to_database(conn)
+    create_default_database(conn)
+    add_rate_table_to_database(conn)
+    conn.close()

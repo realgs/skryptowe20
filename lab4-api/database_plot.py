@@ -1,13 +1,12 @@
 #!/bin/python3
 
-from datetime import date
 import database as db
-from typing import List, Tuple
-from nbp import DATE_FORMAT, Currency
 import datetime as dt
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import matplotlib.ticker as ticker
+from typing import List, Tuple
+from nbp import DATE_FORMAT, Currency
 
 
 if __name__ == "__main__":
@@ -19,26 +18,27 @@ if __name__ == "__main__":
 
     conn = db.create_connection(db.DATABASE_FILE)
     if conn:
-        c = conn.cursor()
-        c.execute('''   SELECT SUM(SalesOrder.sales), 
-                               SUM(SalesOrder.sales)*UsdRatesPln.rate, 
+        cur = conn.cursor()
+        cur.execute(''' SELECT SUM(SalesOrder.sales), 
+                               SUM(SalesOrder.sales)*UsdRatePln.rate, 
                                SalesOrder.order_date
                         FROM SalesOrder
-                        INNER JOIN UsdRatesPln 
-                        ON SalesOrder.order_date=UsdRatesPln.rate_date
+                        INNER JOIN UsdRatePln 
+                        ON SalesOrder.order_date=UsdRatePln.rate_date
                         GROUP BY SalesOrder.order_date
                         ORDER BY SalesOrder.order_date;''')
 
         conn.commit()
         query: List[Tuple[float, float, dt.date]] = [(row[0], row[1], dt.datetime.strptime(
-            row[2], DATE_FORMAT).date()) for row in c.fetchall()]
+            row[2], DATE_FORMAT).date()) for row in cur.fetchall()]
+        conn.close()
 
         x_dates: List[dt.date] = []
         y_usd: List[float] = []
         y_pln: List[float] = []
 
-        sum_usd = 0
-        sum_pln = 0
+        sum_usd = 0.0
+        sum_pln = 0.0
         for sales_usd, sales_pln, sales_date in query:
             x_dates.append(sales_date)
             sum_usd += sales_usd
@@ -52,16 +52,17 @@ if __name__ == "__main__":
         plt.gca().xaxis.set_minor_locator(mdates.DayLocator(interval=5))
 
         plt.gca().yaxis.set_major_formatter(
-            ticker.FuncFormatter(lambda x, pos: '%1.1fM' % (x * 1e-6)))
-        plt.gca().yaxis.set_major_locator(ticker.MultipleLocator(0.5E6))
-        plt.gca().yaxis.set_minor_locator(ticker.MultipleLocator(1E5))
+            ticker.FuncFormatter(lambda x, _: '%1.1fM' % (x * 1e-6)))
+        plt.gca().yaxis.set_major_locator(ticker.MultipleLocator(5e5))
+        plt.gca().yaxis.set_minor_locator(ticker.MultipleLocator(1e5))
+
+        usd = Currency.UNITED_STATES_DOLLAR
+        pln = Currency.POLISH_ZLOTY
 
         # plot usd
-        usd = Currency.UNITED_STATES_DOLLAR
-        plt.plot(x_dates, y_usd, label=f"{usd.name.title()} ({usd.code})")
-
+        plt.plot(x_dates, y_usd, label=f"{usd.title} ({usd.code})")
         # plot pln
-        plt.plot(x_dates, y_pln, label=f"Polish_Zloty (PLN)")
+        plt.plot(x_dates, y_pln,  label=f"{pln.title} ({pln.code})")
 
         plt.gcf().autofmt_xdate()
         plt.gca().set_ylim(ymin=0)
@@ -70,7 +71,7 @@ if __name__ == "__main__":
         plt.xlabel("Date [YYYY-MM-DD]")
         plt.ylabel("Sales [in millions]")
         plt.title(
-            f"Sales in USD and PLN")
+            f"SuperStore - Total sales (in USD and PLN)")
 
         plt.legend()
         plt.grid(True)

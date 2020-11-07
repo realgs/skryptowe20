@@ -2,9 +2,9 @@
 
 import json
 import requests
+import datetime as dt
 from enum import Enum
 from typing import Any, Tuple, List
-import datetime as dt
 
 API_URL_RATES = "http://api.nbp.pl/api/exchangerates/rates/"
 API_URL_TABLES = "http://api.nbp.pl/api/exchangerates/tables/"
@@ -30,10 +30,15 @@ class Currency(Enum):
     CANADIAN_DOLLAR = ("CAD", "A")
     NEW_ZEALAND_DOLLAR = ("NZD", "A")
     EUROPEAN_EURO = ("EUR", "A")
+    POLISH_ZLOTY = ("PLN", "")
 
     def __init__(self, code: str, table: str) -> None:
         self.code = code
         self.table = table
+
+    @property
+    def title(self) -> str:
+        return self.name.title().replace('_', ' ')
 
 
 def request_data(api_url: str) -> Tuple[Any, bool]:
@@ -88,12 +93,16 @@ def rates_time_range(currency: Currency, start_date: dt.datetime, end_date: dt.d
     return data
 
 
-def last_rates(currency: Currency, days_back: int = 0) -> List[Tuple[float, dt.date]]:
+def last_rates(currency: Currency, days: int = 1) -> List[Tuple[float, dt.date]]:
     '''
     1. Stworzyć funkcję pobierającą średnie kursy notowań zadanej parametrem waluty z ostatnich X dni.
     '''
-    if days_back < 0:
-        raise ValueError("days count cannot be lower than zero")
+    if days < 1:
+        raise ValueError("day count cannot be lower than one")
 
     now = dt.datetime.now()
-    return rates_time_range(currency, now - dt.timedelta(days=days_back), now)
+    return rates_time_range(currency, now - dt.timedelta(days=days - 1), now)
+
+
+if __name__ == "__main__":
+    print(last_rates(Currency.EUROPEAN_EURO, 5))

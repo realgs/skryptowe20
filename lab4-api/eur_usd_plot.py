@@ -1,12 +1,13 @@
 #!/bin/python3
-from typing import List
+
 import nbp
-from nbp import Currency, DATE_FORMAT
 import datetime as dt
-from dateutil.relativedelta import relativedelta
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import matplotlib.ticker as ticker
+from typing import List
+from nbp import Currency, DATE_FORMAT
+from dateutil.relativedelta import relativedelta
 
 if __name__ == "__main__":
     # 2. Wywołać funkcję pobierającą średnie kursy dolara amerykańskiego oraz euro z ostatniej połowy roku
@@ -15,6 +16,7 @@ if __name__ == "__main__":
 
     usd = Currency.UNITED_STATES_DOLLAR
     eur = Currency.EUROPEAN_EURO
+    pln = Currency.POLISH_ZLOTY
 
     half_year_rates_eur = nbp.rates_time_range(eur, half_year_from_now, now)
     half_year_rates_usd = nbp.rates_time_range(usd, half_year_from_now, now)
@@ -43,16 +45,19 @@ if __name__ == "__main__":
     plt.gca().yaxis.set_minor_locator(ticker.MultipleLocator(0.01))
 
     # plot euro
-    plt.plot(x_eur, y_eur, label=f"{eur.name.title()} ({eur.code})")
+    plt.plot(x_eur, y_eur, label=f"{eur.title} ({eur.code})")
 
     # plot usd
-    plt.plot(x_usd, y_usd, label=f"{usd.name.title()} ({usd.code})")
+    plt.plot(x_usd, y_usd, label=f"{usd.title} ({usd.code})")
 
     plt.gcf().autofmt_xdate()
 
+    plt.gca().set_xlim(xmin=min(x_eur[0], x_usd[0]))
+
     plt.xlabel("Date [YYYY-MM-DD]")
-    plt.ylabel("Rate [PLN]")
-    plt.title(f"{eur.code} and {usd.code} rates from last 6 months (in PLN)")
+    plt.ylabel(f"Rate [{pln.code}]")
+    plt.title(
+        f"{eur.code} and {usd.code} rates from last 6 months (in {pln.code})")
 
     plt.legend()
     plt.grid(True)
