@@ -174,12 +174,19 @@ def add_rates_table_to_database(conn: sqlite3.Connection):
 if __name__ == "__main__":
     # create_default_database()
     conn = create_connection(DATABASE_FILE)
-    c = conn.cursor()
-    # c.execute("DELETE FROM UsdRatesPln")
-    # conn.commit()
+    if conn:
+        c = conn.cursor()
+        c.execute('''   SELECT SUM(SalesOrder.sales), SUM(SalesOrder.sales)*UsdRatesPln.rate, SalesOrder.order_date
+                        FROM SalesOrder
+                        INNER JOIN UsdRatesPln ON SalesOrder.order_date=UsdRatesPln.rate_date
+                        GROUP BY SalesOrder.order_date
+                        ORDER BY SalesOrder.order_date;''')
 
-    # with open("output.txt", "w") as f:
-    #     for row in rows:
-    #         f.write(f'{" ".join(row)}\n')
+        conn.commit()
+        rows = c.fetchall()
 
-    add_rates_table_to_database(conn)
+        with open("output.txt", "w") as f:
+            for row in rows:
+                f.write(f'{";".join(map(lambda x: str(x), row))}\n')
+
+    # add_rates_table_to_database(conn)
