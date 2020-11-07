@@ -68,7 +68,7 @@ if __name__ == "__main__":
         plt.gca().set_ylim(ymin=0)
         plt.gca().set_xlim(xmin=x_dates[0])
 
-        plt.xlabel("Date [YYYY-MM-DD]")
+        plt.xlabel("Time [YYYY-MM-DD]")
         plt.ylabel("Sales [in millions]")
         plt.title(
             f"SuperStore - Total sales (in {usd.code} and {pln.code})")

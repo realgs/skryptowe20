@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
     plt.gca().set_xlim(xmin=min(x_eur[0], x_usd[0]))
 
-    plt.xlabel("Date [YYYY-MM-DD]")
+    plt.xlabel("Time [YYYY-MM-DD]")
     plt.ylabel(f"Rate [{pln.code}]")
     plt.title(
         f"{eur.code} and {usd.code} rates from last 6 months (in {pln.code})")
