@@ -22,13 +22,13 @@ if __name__ == "__main__":
     # 3. Dla pobranych danych stworzyć jeden wykres prezentujący zależności notowań dolara i euro od czasu.
     # Pamiętaj o legendzie, podpisaniu osi i wykresu. Zapisz wykres w formacie eps lub svg i wrzuć do repo.
 
-    x_usd: List[str] = []
+    x_usd: List[dt.date] = []
     y_usd: List[float] = []
     for rate, rate_date in half_year_rates_usd:
         x_usd.append(rate_date)
         y_usd.append(rate)
 
-    x_eur: List[str] = []
+    x_eur: List[dt.date] = []
     y_eur: List[float] = []
     for rate, rate_date in half_year_rates_eur:
         x_eur.append(rate_date)
