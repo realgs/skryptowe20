@@ -4,7 +4,7 @@ import json
 import requests
 import datetime as dt
 from enum import Enum
-from typing import Any, Tuple, List
+from typing import Any, Optional, Tuple, List
 
 API_URL_RATES = "http://api.nbp.pl/api/exchangerates/rates/"
 API_URL_TABLES = "http://api.nbp.pl/api/exchangerates/tables/"
@@ -41,14 +41,12 @@ class Currency(Enum):
         return self.name.title().replace('_', ' ')
 
 
-def request_data(api_url: str) -> Tuple[Any, bool]:
-    json_data = Any
-    result = False
+def request_data(api_url: str) -> Optional[Any]:
+    json_data = None
     try:
         response = requests.get(api_url, params={"?format": "json"})
         if response:
             json_data = response.json()
-            result = True
     except requests.RequestException as err:
         print(f"Failed to process request ERROR: {err}")
     except json.JSONDecodeError as err:
@@ -56,7 +54,7 @@ def request_data(api_url: str) -> Tuple[Any, bool]:
     except Exception as err:
         print(f"unexpected error ERROR: {err}")
 
-    return json_data, result
+    return json_data
 
 
 def rates_time_range(currency: Currency, start_date: dt.datetime, end_date: dt.datetime) -> List[Tuple[float, dt.date]]:
@@ -82,10 +80,10 @@ def rates_time_range(currency: Currency, start_date: dt.datetime, end_date: dt.d
         start_date = end_date + dt.timedelta(days=1)
 
     for chunk in chunks:
-        api_response, request_result = request_data(
+        api_response = request_data(
             f"{API_URL_RATES}{currency.table}/{currency.code}/{chunk[0]}/{chunk[1]}")
 
-        if request_result:
+        if api_response:
             for rate in api_response[ApiFields.RATES]:
                 data.append(
                     (rate[ApiFields.MID], dt.datetime.strptime(rate[ApiFields.EFFECTIVE_DATE], DATE_FORMAT).date()))

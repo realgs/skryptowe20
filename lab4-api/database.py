@@ -167,6 +167,7 @@ def add_rate_table_to_database(conn: sqlite3.Connection):
 
 if __name__ == "__main__":
     conn = create_connection(DATABASE_FILE)
-    create_default_database(conn)
-    add_rate_table_to_database(conn)
-    conn.close()
+    if conn:
+        create_default_database(conn)
+        add_rate_table_to_database(conn)
+        conn.close()
