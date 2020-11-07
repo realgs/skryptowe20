@@ -71,7 +71,7 @@ if __name__ == "__main__":
         plt.xlabel("Date [YYYY-MM-DD]")
         plt.ylabel("Sales [in millions]")
         plt.title(
-            f"SuperStore - Total sales (in USD and PLN)")
+            f"SuperStore - Total sales (in {usd.code} and {pln.code})")
 
         plt.legend()
         plt.grid(True)
