@@ -1,10 +1,8 @@
 from datetime import date
-
 import psycopg2
 from psycopg2 import OperationalError
 import json
 import time
-
 from app.src.nbpRatesReceiver import get_currency_rates
 
 CONFIG_PATH = 'app/src/dbConfig.json'

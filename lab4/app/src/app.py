@@ -1,8 +1,6 @@
 from datetime import datetime, timedelta
 from decimal import Decimal
-
 from flask import Flask, render_template
-
 from dbManager import DataAccessObject
 from nbpRatesReceiver import get_currency_rates
 

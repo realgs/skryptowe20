@@ -1,6 +1,5 @@
 import unittest
 from datetime import date
-
 from lab4.app.src.nbpRatesReceiver import process_nbp_api_response
 
 

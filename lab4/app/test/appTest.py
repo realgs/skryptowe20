@@ -1,7 +1,6 @@
 import unittest
 from datetime import date
 from decimal import Decimal
-
 from lab4.app.src.app import mix_dollar_euro_rates, calculate_daily_orders
 
 

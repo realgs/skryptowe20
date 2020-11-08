@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta
 import time
 import requests
 import json

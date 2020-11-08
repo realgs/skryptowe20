@@ -1,6 +1,5 @@
 import json
 import time
-
 import psycopg2
 
 USD_RATES_TABLE = 'usd_rates'
