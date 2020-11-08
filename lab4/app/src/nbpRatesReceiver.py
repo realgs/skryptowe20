@@ -47,3 +47,5 @@ def get_currency_rates(currency_code, start_date, end_date):
         return {"error": "There was a problem while parsing exchange rates data"}, 400
     else:
         return {"error": "Currencies exchange rates data not found"}, 404
+
+    
