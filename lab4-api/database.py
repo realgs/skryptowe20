@@ -147,11 +147,28 @@ def add_rate_table_to_database(conn: sqlite3.Connection):
     create_table(conn, sql_create_table_usd_rates_pln)
 
     usd = Currency.UNITED_STATES_DOLLAR
-    rates = nbp.rates_time_range(usd, dt.datetime(
-        2014, 1, 1), dt.datetime(2018, 1, 1))
+    start_date = dt.date(2014, 1, 1)
+    end_date = dt.date(2018, 1, 1)
+    rates = nbp.rates_time_range(usd, start_date, end_date)
 
-    # fill gaps in rates
+    ###### fill gaps in rates ######
     tmp_rates: List[Tuple[float, dt.date]] = []
+
+    # add leading rates if missing
+    if rates[0][1] > start_date:
+        tmp_date = start_date
+        for _ in range((rates[0][1] - start_date).days):
+            tmp_rates.append((rates[0][0], tmp_date))
+            tmp_date = tmp_date + timedelta(days=1)
+
+    # add trailing rates if missing
+    if rates[-1][1] < end_date:
+        tmp_date = rates[-1][1]
+        for _ in range((end_date - rates[-1][1]).days):
+            tmp_date = tmp_date + timedelta(days=1)
+            tmp_rates.append((rates[-1][0], tmp_date))
+
+    # add the rest of missing rates
     for index, rate in enumerate(rates[:-1]):
         days_difference = (rates[index + 1][1] - rate[1]).days
         if days_difference > 1:

@@ -57,7 +57,7 @@ def request_data(api_url: str) -> Optional[Any]:
     return json_data
 
 
-def rates_time_range(currency: Currency, start_date: dt.datetime, end_date: dt.datetime) -> List[Tuple[float, dt.date]]:
+def rates_time_range(currency: Currency, start_date: dt.date, end_date: dt.date) -> List[Tuple[float, dt.date]]:
     total_days = (end_date - start_date).days
     if total_days < 0:
         raise ValueError("dates are in wrong order")
@@ -98,7 +98,7 @@ def last_rates(currency: Currency, days: int = 1) -> List[Tuple[float, dt.date]]
     if days < 1:
         raise ValueError("day count cannot be lower than one")
 
-    now = dt.datetime.now()
+    now = dt.datetime.now().date()
     return rates_time_range(currency, now - dt.timedelta(days=days - 1), now)
 
 
