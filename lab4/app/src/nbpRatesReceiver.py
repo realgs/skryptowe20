@@ -4,9 +4,6 @@ import requests
 import json
 
 API_ADDRESS = "http://api.nbp.pl/api"
-DOLLAR_CODE = 'USD'
-EURO_CODE = 'EUR'
-DB_CONFIG_PATH = 'dbConfig.json'
 
 
 def call_nbp_api_for_rates(currency_code, start_date, end_date):
