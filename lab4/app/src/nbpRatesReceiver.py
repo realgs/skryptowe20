@@ -47,17 +47,3 @@ def get_currency_rates(currency_code, start_date, end_date):
         return {"error": "There was a problem while parsing exchange rates data"}, 400
     else:
         return {"error": "Currencies exchange rates data not found"}, 404
-
-
-a = get_currency_rates('usd', datetime.now().date() - timedelta(days=2), datetime.now().date())
-print(a)
-
-a2 = {
-    'table': 'A',
-    'currency': 'dolar amerykański',
-    'code': 'USD',
-    'rates': [
-        {'no': '217/A/NBP/2020', 'effectiveDate': '2020-11-05', 'mid': 3.8353},
-        {'no': '218/A/NBP/2020', 'effectiveDate': '2020-11-06', 'mid': 3.8194}
-    ]
-}
