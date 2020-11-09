@@ -1,10 +1,9 @@
 #!/bin/python3
 
-from datetime import timedelta
-import json
 import requests
 import datetime as dt
 from enum import Enum
+from datetime import timedelta
 from typing import Any, Optional, Tuple, List
 
 API_URL_RATES = "http://api.nbp.pl/api/exchangerates/rates/"
