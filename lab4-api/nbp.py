@@ -131,7 +131,7 @@ def last_rates(currency: Currency, days: int = 1,
     if days < 1:
         raise ValueError("day count cannot be lower than one")
 
-    now = dt.datetime.now()
+    now = dt.datetime.now().date()
     return rates_time_range(currency, now - dt.timedelta(days=days - 1), now, include_unrated_days)
 
 
