@@ -25,10 +25,8 @@ def get_dollar_euro_half_year():
     dollars = {}
     euros = {}
 
-    #start_date = (TODAY_DATE - timedelta(days=HALF_YEAR_DAYS)).strftime("%Y-%m-%d")
-    #end_date = TODAY_DATE.strftime("%Y-%m-%d")
-    start_date = datetime.strptime('2014-01-01', '%Y-%m-%d').strftime("%Y-%m-%d")
-    end_date = datetime.strptime('2014-12-31', '%Y-%m-%d').strftime("%Y-%m-%d")
+    start_date = (TODAY_DATE - timedelta(days=HALF_YEAR_DAYS)).strftime("%Y-%m-%d")
+    end_date = TODAY_DATE.strftime("%Y-%m-%d")
 
     resp_dollars = requests.get('http://api.nbp.pl/api/exchangerates/rates/A/{}/{}/{}/'.format(DOLLAR, start_date, end_date))
     resp_euros = requests.get('http://api.nbp.pl/api/exchangerates/rates/A/{}/{}/{}/'.format(EURO, start_date, end_date))
