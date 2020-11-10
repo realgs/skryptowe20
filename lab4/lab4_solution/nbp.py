@@ -1,5 +1,5 @@
 import requests
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 import matplotlib.pyplot as plt
 
 TODAY_DATE = date.today()
@@ -58,11 +58,6 @@ def plot_dollar_euro(dollar_dict, euro_dict):
         euro_dates.append(key)
         euro_rates.append(value)
 
-    print(dollar_dates)
-    print(euro_dates)
-    print(dollar_rates)
-    print(euro_rates)
-
     fig, ax = plt.subplots()
     dollar_line, = plt.plot(dollar_dates, dollar_rates, 'g', label='Dollar')
     euro_line, = plt.plot(euro_dates, euro_rates, 'r', label='Euro')
@@ -74,4 +69,4 @@ def plot_dollar_euro(dollar_dict, euro_dict):
     plt.title('Dollar and Euro rates')
     plt.legend(handles=[dollar_line, euro_line])
     plt.savefig("dol_eur_fig.svg")
-    
+
