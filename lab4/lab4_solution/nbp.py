@@ -3,7 +3,7 @@ from datetime import date, datetime, timedelta
 import matplotlib.pyplot as plt
 
 TODAY_DATE = date.today()
-HALF_YEAR_DAYS = 20
+HALF_YEAR_DAYS = 183
 DOLLAR = "USD"
 EURO = "EUR"
 
@@ -24,8 +24,11 @@ def get_avg_ex_rate(currency, days_number):
 def get_dollar_euro_half_year():
     dollars = {}
     euros = {}
-    start_date = (TODAY_DATE - timedelta(days=HALF_YEAR_DAYS)).strftime("%Y-%m-%d")
-    end_date = TODAY_DATE.strftime("%Y-%m-%d")
+
+    #start_date = (TODAY_DATE - timedelta(days=HALF_YEAR_DAYS)).strftime("%Y-%m-%d")
+    #end_date = TODAY_DATE.strftime("%Y-%m-%d")
+    start_date = datetime.strptime('2014-01-01', '%Y-%m-%d').strftime("%Y-%m-%d")
+    end_date = datetime.strptime('2014-12-31', '%Y-%m-%d').strftime("%Y-%m-%d")
 
     resp_dollars = requests.get('http://api.nbp.pl/api/exchangerates/rates/A/{}/{}/{}/'.format(DOLLAR, start_date, end_date))
     resp_euros = requests.get('http://api.nbp.pl/api/exchangerates/rates/A/{}/{}/{}/'.format(EURO, start_date, end_date))
@@ -59,10 +62,14 @@ def plot_dollar_euro(dollar_dict, euro_dict):
         euro_rates.append(value)
 
     fig, ax = plt.subplots()
+    plt.figure(figsize=(16,6))
+
     dollar_line, = plt.plot(dollar_dates, dollar_rates, 'g', label='Dollar')
     euro_line, = plt.plot(euro_dates, euro_rates, 'r', label='Euro')
     plt.xlabel('Dates')
     ax.xaxis.set_label_coords(1.05, -0.025)
+    dollar_dates_short = dollar_dates[::10]
+    plt.xticks(range(0, len(dollar_dates), 10), dollar_dates_short)
     plt.xticks(rotation=45)
     plt.xticks(fontsize=6)
     plt.ylabel('Rates')
