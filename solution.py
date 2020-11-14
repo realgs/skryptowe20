@@ -114,6 +114,7 @@ def fill_missing_exchange_rates(data, partition, last_rate):
     return (new_dates, new_rates)
 
 def fill_exchange_rates_table(data):
+    drop_exchange_rates_table()
     create_exchange_rates_table()
     dates = data[0]
     rates = data[1]
