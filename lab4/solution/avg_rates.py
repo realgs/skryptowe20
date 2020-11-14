@@ -77,29 +77,14 @@ def daily_exchange_rates_for(currency, days_num=1):
     return exchange_rates
 
 
-def avg_exchange_rate_of(currency, days_num):
-    info = daily_exchange_rates_for(currency, days_num)
-    sum_of_rates = 0
-
-    for day in info:
-        sum_of_rates += day["mid"]
-        print(day["effectiveDate"])
-
-    sum_of_rates /= len(info)
-    return sum_of_rates
-
-
 def draw_chart_for_rates_of(currency1, name1, currency2, name2):
     df1 = pd.DataFrame(currency1)
     df2 = pd.DataFrame(currency2)
 
-    interval = len(currency1) // 30
-
     plt.gca().xaxis.set_major_formatter(dt.DateFormatter(DATE_FORMAT))
-    plt.gca().xaxis.set_major_locator(dt.DayLocator(interval))
 
     plt.title(f"{name1} and {name2} average exchange rate over time")
-    plt.xlabel("Date")
+    plt.xlabel("Date [YYYY-MM-DD]")
     plt.ylabel("Exchange rate [PLN]")
 
     plt.plot(df1["date"], df1["rate"], label=name1)
@@ -109,12 +94,11 @@ def draw_chart_for_rates_of(currency1, name1, currency2, name2):
     plt.margins(0, None)
     plt.legend()
 
-    plt.show()
-    #plt.savefig(f"{name1}_{name2}_plot.svg")
+    plt.savefig(f"{name1.replace(' ', '_')}_{name2.replace(' ', '_')}_plot.svg")
 
 
 if __name__ == "__main__":
-    half_year_in_days = 183
+    half_year_in_days = 366 // 2
     usd = daily_exchange_rates_for(Currency.USD, half_year_in_days)
     euro = daily_exchange_rates_for(Currency.EURO, half_year_in_days)
 
