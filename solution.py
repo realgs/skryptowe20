@@ -3,16 +3,18 @@ import matplotlib.pyplot as plt
 from enum import Enum
 import json
 from datetime import datetime, timedelta, date
-from database_operations import populate_exchange_rates_table, create_exchange_rates_table
+from database_operations import *
 
 RATES_URL = 'http://api.nbp.pl/api/exchangerates/rates'
-REQUEST_DAYS_LIMIT = 93
+REQUEST_DAYS_LIMIT = 367
 DATE_FORMAT = "%Y-%m-%d"
+DB_DATE_FORMAT = "%m/%d/%Y"
 class ChartData():
     RATES_PLOT_NAME = 'chart.svg'
+    SALES_PLOT_NAME = 'sales_chart.svg'
     PLOT_FORMAT = 'svg'
     PLOT_DPI = 1800
-
+    MAX_LABELS = 25
 
 class Currencies(Enum):
     EUR = 'eur'
@@ -44,7 +46,7 @@ def get_exchange_rates_range(currency, end_date, start_date):
 
 
 def partition_date_range(end_date, start_date):
-    if (end_date - start_date).days < REQUEST_DAYS_LIMIT +1:
+    if (end_date - start_date).days < REQUEST_DAYS_LIMIT:
         return [(end_date.strftime(DATE_FORMAT), start_date.strftime(DATE_FORMAT))]
     else:
         partitions = []
@@ -53,10 +55,10 @@ def partition_date_range(end_date, start_date):
             delta = timedelta(days=REQUEST_DAYS_LIMIT)
             if temp_end_date - delta >= start_date:
                 partitions.append((temp_end_date.strftime(DATE_FORMAT), (temp_end_date - delta).strftime(DATE_FORMAT)))
-                temp_end_date = temp_end_date - delta
+                temp_end_date = temp_end_date - delta - timedelta(days=1)
             else:
                 partitions.append((temp_end_date.strftime(DATE_FORMAT), start_date.strftime(DATE_FORMAT)))
-                temp_end_date = temp_end_date - delta
+                break
         partitions = partitions[::-1]
         return partitions
 
@@ -149,7 +151,7 @@ def draw_exchange_rates_chart(currencies, days):
         plt.plot(rates_and_dates[i][0], rates_and_dates[i]
                  [1], label="Kurs " + currencies[i].upper())
     plt.title(f"Kursy walut na przestrzeni ostatnich {days} dni")
-    plt.axes().xaxis.set_major_locator(plt.MaxNLocator(25))
+    plt.axes().xaxis.set_major_locator(plt.MaxNLocator(ChartData.MAX_LABELS))
     rotate_plot_labels(plt, 'x', 45, 'right')
     plt.xlabel("Dzień")
     plt.ylabel("Kurs waluty")
@@ -159,7 +161,35 @@ def draw_exchange_rates_chart(currencies, days):
                 format=ChartData.PLOT_FORMAT, dpi=ChartData.PLOT_DPI)
     plt.show()
 
-
+def draw_sales_chart(currency='usd', start_date='2003-12-29', end_date='2005-12-31'):
+    #data = get_rates_for_timeframe(currency, datetime.strptime(start_date, DATE_FORMAT), datetime.strptime(end_date, DATE_FORMAT))
+    #fill_exchange_rates_table(data)
+    sales_data = get_transaction_sums_for_days([2004, 2005])
+    sorted_data = sorted(sales_data, key = lambda el: datetime.strptime(el[1], DB_DATE_FORMAT))
+    dates = []
+    rates = []
+    sales = []
+    sales_in_pln = []
+    for s in sorted_data:
+        sales.append(round(s[0], 4))
+        dates.append(datetime.strptime(s[1], DB_DATE_FORMAT).strftime(DATE_FORMAT))
+    rates = get_exchange_rates_for_days(dates)
+    for i in range(len(sales)):
+        sales_in_pln.append(round((sales[i] * rates[i][0]), 4))
+    fig = plt.figure()
+    fig.set_size_inches(15, 10)
+    plt.plot(dates, sales, label=f"Wartość sprzedaży w {currency.upper()}")
+    plt.plot(dates, sales_in_pln, label=f"Wartość sprzedaży w PLN")
+    plt.title(f"Wartości sprzedaży w PLN i {currency.upper()} od {start_date} do {end_date}")
+    plt.axes().xaxis.set_major_locator(plt.MaxNLocator(ChartData.MAX_LABELS))
+    rotate_plot_labels(plt, 'x', 45, 'right')
+    plt.xlabel("Dzień")
+    plt.ylabel("Kurs waluty")
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(ChartData.SALES_PLOT_NAME,
+                format=ChartData.PLOT_FORMAT, dpi=ChartData.PLOT_DPI)
+    plt.show()
+    
 #draw_exchange_rates_chart(['usd', 'eur'], 180)
-data = get_rates_for_timeframe('eur', datetime.strptime('2005-12-31', DATE_FORMAT), datetime.strptime('2003-12-29', DATE_FORMAT))
-fill_exchange_rates_table(data)
+draw_sales_chart('eur')

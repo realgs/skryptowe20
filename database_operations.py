@@ -22,6 +22,22 @@ def populate_exchange_rates_table(rates_and_dates):
     conn.commit()
     conn.close()
 
+def get_transaction_sums_for_days(years):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    sales_data = cursor.execute(
+        "SELECT SUM(sales), orderdate FROM sales GROUP BY orderdate HAVING year_id IN ({seq}) ORDER BY year_id;".format(seq=','.join(['?']*len(years))), years).fetchall()
+    conn.close()
+    return sales_data
+
+def get_exchange_rates_for_days(days):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    rates = cursor.execute(
+        "SELECT rate FROM rates GROUP BY date HAVING date IN ({seq}) ORDER BY date;".format(seq=','.join(['?']*len(days))), days).fetchall()
+    conn.close()
+    return rates
+
 def drop_exchange_rates_table():
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
@@ -29,3 +45,5 @@ def drop_exchange_rates_table():
         '''DROP TABLE IF EXISTS rates''')
     conn.commit()
     conn.close()
+
+# get_exchange_rates_for_days(['2004-12-04', '2004-12-07', '2004-12-02', '2004-12-01'])
