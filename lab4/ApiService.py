@@ -26,3 +26,5 @@ def getAverageExchangeRatesInDays(currencyCode, days):
     return returnData
 
 
+def getUsdAndEurInHalfOfYear():
+    return [getAverageExchangeRatesInDays("USD", 182), getAverageExchangeRatesInDays("EUR", 182)]
