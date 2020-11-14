@@ -45,5 +45,3 @@ def drop_exchange_rates_table():
         '''DROP TABLE IF EXISTS rates''')
     conn.commit()
     conn.close()
-
-# get_exchange_rates_for_days(['2004-12-04', '2004-12-07', '2004-12-02', '2004-12-01'])

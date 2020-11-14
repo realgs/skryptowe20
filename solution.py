@@ -162,8 +162,8 @@ def draw_exchange_rates_chart(currencies, days):
     plt.show()
 
 def draw_sales_chart(currency='usd', start_date='2003-12-29', end_date='2005-12-31'):
-    #data = get_rates_for_timeframe(currency, datetime.strptime(start_date, DATE_FORMAT), datetime.strptime(end_date, DATE_FORMAT))
-    #fill_exchange_rates_table(data)
+    data = get_rates_for_timeframe(currency, datetime.strptime(end_date, DATE_FORMAT), datetime.strptime(start_date, DATE_FORMAT))
+    fill_exchange_rates_table(data)
     sales_data = get_transaction_sums_for_days([2004, 2005])
     sorted_data = sorted(sales_data, key = lambda el: datetime.strptime(el[1], DB_DATE_FORMAT))
     dates = []
