@@ -8,11 +8,11 @@ Język implementacji python - chyba że indywidualnie uzgodniono inaczej.
 
 1. Stworzyć funkcję pobierającą średnie kursy notowań zadanej parametrem waluty z ostatnich X dni. (5pkt)
 2. Wywołać funkcję pobierającą średnie kursy dolara amerykańskiego oraz euro z ostatniej połowy roku. (1pkt)
-3. Dla pobranych danych stworzyć jeden wykres prezentujący zależności notowań dolara i euro od czasu. Pamiętaj o legendzie, podpisaniu osi i wykresu. Zapisz wykres w formacie eps lub svg i wrzuć do repo. (4pkt)
+3. Dla pobranych danych stworzyć jeden wykres prezentujący zależności notowań dolara i euro od czasu. Pamiętaj o legendzie, podpisaniu osi i wykresu. Zapisz wykres w formacie svg i wrzuć do repo. (4pkt)
 
 Ściągnąć dowolną bazę danych z danymi o transakcjach zakupu (czegokolwiek) w czasie, najlepiej w walucie obcej. Przykładowo może to być ćwiczeniowa baza AdventureWorks LT. Znaleźć informację lub założyć w jakiej walucie wyrażone są kwoty transakcji (default USD).
 Nie załączaj pliku bazy danych do repo, może dużo ważyć.
 
-3. Rozszerzyć bazę danych o tabelę, w której zawarta będzie informacja o średnich notowaniach tej waluty w stosunku do polskiej złotówki w wybranym przez siebie okresie (zależne od danych dostępnych w Waszej bazie danych) - niech to będą minimum 2 lata. Dni dla których nie podano notowań (takie jak weekendy) uzupełnić danymi z pierwszego dnia wstecz, dla którego jest wpisana wartość średniego kursu. Kod modyfikacji bazy zapisz również w repo. (6pkt)
+4. Rozszerzyć bazę danych o tabelę, w której zawarta będzie informacja o średnich notowaniach tej waluty w stosunku do polskiej złotówki w wybranym przez siebie okresie (zależne od danych dostępnych w Waszej bazie danych) - niech to będą minimum 2 lata. Dni dla których nie podano notowań (takie jak weekendy) uzupełnić danymi z pierwszego dnia wstecz, dla którego jest wpisana wartość średniego kursu. Kod modyfikacji bazy zapisz również w repo. (6pkt)
 
-4. Stworzyć wykres przedstawiający łączną sprzedaż (sumę wszystkich zawartch transakcji) wyrażoną w walucie transakcji (np. USD) oraz w walucie PLN (przeliczenie po kursie z danego dnia sprzedaży). Wykres stwórz dla przedziału czasowego wybranego przy realizacji zadania 3. Pamiętaj o legendzie, podpisaniu osi i wykresu. Zapisz wykres w formacie eps lub svg i wrzuć do repo. (4pkt)
+5. Stworzyć wykres przedstawiający łączną sprzedaż (sumę wszystkich zawartch transakcji) wyrażoną w walucie transakcji (np. USD) oraz w walucie PLN (przeliczenie po kursie z danego dnia sprzedaży). Wykres stwórz dla przedziału czasowego wybranego przy realizacji zadania 3. Pamiętaj o legendzie, podpisaniu osi i wykresu. Zapisz wykres w formacie svg i wrzuć do repo. (4pkt)
