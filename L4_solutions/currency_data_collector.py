@@ -1,6 +1,5 @@
 import json
 from datetime import datetime, timedelta
-from typing import List
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -8,51 +7,54 @@ import requests
 
 RESPONSE_CORRECT_CODE = 200
 MAX_DATA_SERIES_SIZE = 255
-CCY_AVG_EXCHANGE_RATE_FROM_DATE_RANGE_ENDPOINT = \
+CCY_DATE_RANGE_ENDPOINT = \
     "http://api.nbp.pl/api/exchangerates/rates/a/{currency}/{start_date}/{end_date}/"
 
 
-class RequestFailed(Exception):
+class RequestFailedException(Exception):
     pass
 
 
-def __get_endpoints(currencies_iso_codes: List[str], num_of_days_to_catch_up: int, ignore_today: bool = False) -> List[
-    str]:
+def __get_endpoints(currencies_iso_codes, num_of_days_to_catch_up, end_date):
     endpoints = []
-    curr_date = datetime.now().date() if not ignore_today else datetime.now().date() - timedelta(days=1)
-    start_date = curr_date - timedelta(days=num_of_days_to_catch_up - 1)
+    chunk_start_date = end_date.date() - timedelta(days=num_of_days_to_catch_up - 1)
 
     days_left = num_of_days_to_catch_up
 
     while days_left:
         num_of_days_to_get = min(days_left, MAX_DATA_SERIES_SIZE)
-        end_date = start_date + timedelta(days=num_of_days_to_get - 1)
+        chunk_end_date = chunk_start_date + timedelta(days=num_of_days_to_get - 1)
         days_left -= num_of_days_to_get
+
         for ccy in currencies_iso_codes:
             endpoints.append(
-                CCY_AVG_EXCHANGE_RATE_FROM_DATE_RANGE_ENDPOINT.format(currency=ccy, start_date=start_date,
-                                                                      end_date=end_date))
-        start_date = end_date + timedelta(days=1)
+                CCY_DATE_RANGE_ENDPOINT.format(currency=ccy, start_date=chunk_start_date, end_date=chunk_end_date))
+
+        chunk_start_date = chunk_end_date + timedelta(days=1)
 
     return endpoints
 
 
-def get_currencies_avg_exchange_rate(currencies_iso_codes: List[str], num_of_days_to_catch_up: int,
-                                     ignore_today: bool = False) -> pd.DataFrame:
+def _get_response_data(endpoint):
+    response = requests.get(endpoint)
+
+    if not response.status_code == RESPONSE_CORRECT_CODE:
+        raise RequestFailedException(
+            f"Request for {endpoint} failed with {response.status_code}: {response.text}.")
+
+    data = json.loads(response.text)
+    return data
+
+
+def get_currencies_data(currencies_iso_codes, num_of_days_to_catch_up, end_date=datetime.today()) -> pd.DataFrame:
     result_df = pd.DataFrame()
 
-    endpoints: List[str] = __get_endpoints(currencies_iso_codes, num_of_days_to_catch_up, ignore_today)
-    print(endpoints)
+    endpoints = __get_endpoints(currencies_iso_codes, num_of_days_to_catch_up, end_date)
+
     for endpoint in endpoints:
-        response = requests.get(endpoint)
+        response_data = _get_response_data(endpoint)
 
-        if not response.status_code == RESPONSE_CORRECT_CODE:
-            raise RequestFailed(
-                f"Request for {endpoint} failed. There is no data for given time period. "
-                f"Try passing ignore_today=True argument if you suspect today's data is not available yet.")
-
-        data = json.loads(response.text)
-        data_df = pd.json_normalize(data, 'rates', ['code'])
+        data_df = pd.json_normalize(response_data, record_path='rates', meta=['code'])
         result_df = pd.concat([result_df, data_df])
 
     result_df.reset_index(inplace=True, drop=True)
@@ -68,6 +70,6 @@ def draw_chart(data: pd.DataFrame):
 
 
 if __name__ == '__main__':
-    my_df = get_currencies_avg_exchange_rate(['USD', 'EUR'], 153)
-    my_df.sort_values('effectiveDate', inplace=True)
-    draw_chart(my_df)
+    currencies_data_df = get_currencies_data(['USD', 'EUR'], 183)
+    currencies_data_df.sort_values('effectiveDate', inplace=True)
+    draw_chart(currencies_data_df)
