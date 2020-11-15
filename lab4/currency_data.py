@@ -1,11 +1,15 @@
-from datetime import datetime, timedelta
+#!/bin/python3
 
+import datetime as dt
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import requests
 from spyder.utils.external.github import ApiError
 
 MAX_COUNT = 255
+RATES = "rates"
+DATETIME_FORMAT = "%Y-%m-%d"
+TODAY_DATE = dt.datetime.date(dt.datetime.today())
 
 
 def get_data(address: str) -> requests.Response:
@@ -15,39 +19,39 @@ def get_data(address: str) -> requests.Response:
     return response
 
 
-def get_date_days_ago(days: int):
-    return datetime.now() - timedelta(days=days)
+def get_date_days_ago(days: int, until_date=TODAY_DATE):
+    return until_date - dt.timedelta(days=days)
 
 
-def get_data_between_dates(symbol: str, from_date: datetime.date, to_date: datetime.date):
+def get_data_between_dates(symbol: str, from_date: dt.datetime.date, to_date: dt.datetime.date):
     address = f'http://api.nbp.pl/api/exchangerates/rates/A/{symbol}/{from_date}/{to_date}/'
     return get_data(address)
 
 
-def get_currency_rates(symbol: str, days: int):
+def get_currency_rates(symbol: str, days: int, until_date=dt.datetime.date(dt.datetime.today())):
     search_count = int(days / MAX_COUNT)
     days_remaining = days % MAX_COUNT
     data = {
         "table": "",
         "currency": "",
         "code": "",
-        "rates": []
+        RATES: []
     }
-    from_date = get_date_days_ago(search_count * MAX_COUNT + days_remaining).date()
-    to_date = get_date_days_ago(search_count * MAX_COUNT).date()
+    from_date = get_date_days_ago(search_count * MAX_COUNT + days_remaining, until_date)
+    to_date = get_date_days_ago(search_count * MAX_COUNT, until_date)
     last_data = get_data_between_dates(symbol, from_date, to_date).json()
-    data["rates"] = last_data["rates"]
+    data[RATES] = last_data[RATES]
     data["table"] = last_data["table"]
     data["currency"] = last_data["currency"]
     data["code"] = last_data["code"]
     for i in range(search_count, 0, -1):
-        from_date = get_date_days_ago(MAX_COUNT * i).date()
-        to_date = get_date_days_ago(MAX_COUNT * i - MAX_COUNT).date()
-        data["rates"].extend(
-            get_data_between_dates(symbol=symbol, from_date=from_date, to_date=to_date).json()["rates"])
+        from_date = get_date_days_ago(MAX_COUNT * i, until_date)
+        to_date = get_date_days_ago(MAX_COUNT * i - MAX_COUNT, until_date)
+        data[RATES].extend(
+            get_data_between_dates(symbol=symbol, from_date=from_date, to_date=to_date).json()[RATES])
 
-    dates = [data["rates"][i]["effectiveDate"] for i in range(0, len(data["rates"]))]
-    currency_rates = [data["rates"][i]["mid"] for i in range(0, len(data["rates"]))]
+    dates = [data[RATES][i]["effectiveDate"] for i in range(0, len(data[RATES]))]
+    currency_rates = [data[RATES][i]["mid"] for i in range(0, len(data[RATES]))]
     return data["code"], dates, currency_rates
 
 
@@ -75,4 +79,5 @@ if __name__ == '__main__':
     USDcode, d, rUSD = get_currency_rates('USD', count)
     EURcode, _, rEUR = get_currency_rates('EUR', count)
     plot = get_rates_plot(d, 5, (rUSD, USDcode), (rEUR, EURcode))
-    plot.savefig('USD_EUR_TO_PLN.svg')
+    plot.show()
+    # plot.savefig('USD_EUR_TO_PLN.svg')
