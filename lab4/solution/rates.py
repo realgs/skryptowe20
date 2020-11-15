@@ -100,13 +100,14 @@ def draw_chart_for_rates_of(currency1, name1, currency2, name2):
 
     plt.gca().xaxis.set_major_formatter(dt.DateFormatter(DATE_FORMAT))
 
-    plt.title(f"{name1} and {name2} average exchange rate over time")
-    plt.xlabel("Date [YYYY-MM-DD]")
-    plt.ylabel("Exchange rate [PLN]")
-
     plt.plot(df1["date"], df1["rate"], label=name1)
     plt.plot(df2["date"], df2["rate"], label=name2)
     plt.gcf().autofmt_xdate()
+
+    plt.title(f"{name1} and {name2} average exchange rate over time")
+    plt.xlabel("Date [YYYY-MM-DD]")
+    plt.ylabel("Exchange rate [PLN]")
+    plt.tight_layout()
 
     plt.margins(0, None)
     plt.legend()
@@ -119,4 +120,4 @@ if __name__ == "__main__":
     usd = daily_exchange_rates_for(Currency.USD, half_year_in_days)
     euro = daily_exchange_rates_for(Currency.EURO, half_year_in_days)
 
-    draw_chart_for_rates_of(usd, "US dollar", euro, "Euro")
+    draw_chart_for_rates_of(usd, Currency.USD.value, euro, Currency.EURO.value)
