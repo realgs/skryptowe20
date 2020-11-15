@@ -66,6 +66,7 @@ def get_currencies_data(currencies_iso_codes, num_of_days_to_catch_up, end_date=
 def draw_chart(data: pd.DataFrame):
     data.plot(title="Currencies average exchange rate", xlabel="Date", ylabel="Average exchange rate")
     plt.legend().set_title("Currency ISO code")
+    plt.locator_params(axis="x", nbins=5)
     plt.show()
 
 
