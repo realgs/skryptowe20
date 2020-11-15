@@ -3,7 +3,7 @@ import datetime as dt
 import sqlite3 as sql
 from currency_data import get_currency_rates
 from typing import List
-from config import DATE_FORMAT, CSV_FILE
+import config
 
 
 def create_default_database(conn: sql.Connection):
@@ -22,6 +22,7 @@ def create_default_database(conn: sql.Connection):
                                         order_date date NOT NULL,
                                         customer_id text NOT NULL REFERENCES Customer (id),
                                         product_id text NOT NULL REFERENCES Item (id),
+                                        quantity integer NOT NULL DEFAULT 1,
                                         sales real NOT NULL
                                     );'''
     if conn:
@@ -31,7 +32,7 @@ def create_default_database(conn: sql.Connection):
 
 
 def insert_default_data(conn: sql.Connection):
-    csv_data = read_csv(CSV_FILE)[1:]
+    csv_data = read_csv(config.CSV_FILE)[1:]
 
     products = set([(row[7], row[8]) for row in csv_data])
 
@@ -39,9 +40,10 @@ def insert_default_data(conn: sql.Connection):
 
     sales_orders = [
         (row[14],
-         dt.datetime.strptime(str(row[9]), "%m/%d/%Y").date().strftime(DATE_FORMAT),
+         dt.datetime.strptime(str(row[9]), config.CSV_DATE_FORMAT).date().strftime(config.DATE_FORMAT),
          row[3],
          row[7],
+         row[19],
          row[23]
          ) for row in csv_data]
 
@@ -64,7 +66,7 @@ def create_table(con: sql.Connection, sql_create_table: str) -> bool:
         con.commit()
         return True
     except sql.Error as e:
-        print(e.with_traceback(None))
+        print(e)
     return False
 
 
@@ -75,7 +77,7 @@ def exec_sql(con: sql.Connection, execute_str: str, values) -> bool:
         con.commit()
         return True
     except sql.Error as e:
-        print(e.with_traceback(None))
+        print(e)
     return False
 
 
@@ -89,9 +91,9 @@ def insert_customer(con: sql.Connection, customer: (str, str)) -> bool:
     return exec_sql(con, sql_exec, customer)
 
 
-def insert_order(con: sql.Connection, sales_order: (int, str, str, str, str, float)) -> bool:
+def insert_order(con: sql.Connection, sales_order: (int, str, str, str, str, int, float)) -> bool:
     sql_exec = '''INSERT INTO SalesOrder(order_id, order_date, customer_id,
-                                    product_id, sales) VALUES(?,?,?,?,?)'''
+                                    product_id, quantity, sales) VALUES(?,?,?,?,?,?)'''
     return exec_sql(con, sql_exec, sales_order)
 
 
@@ -121,7 +123,7 @@ def fill_currency_table(con: sql.Connection):
     end_date = dt.date(2016, 12, 31)
     delta = end_date - starting_date
 
-    full_rates = [((starting_date + dt.timedelta(days=i)).strftime("%Y-%m-%d"), None)
+    full_rates = [((starting_date + dt.timedelta(days=i)).strftime(config.DATE_FORMAT), None)
                   for i in range(delta.days + 1)]
     _, dates, rates = get_currency_rates('USD', delta.days, end_date)
 
@@ -139,7 +141,7 @@ def fill_currency_table(con: sql.Connection):
 
 
 if __name__ == '__main__':
-    c = sql.connect('salesData.db')
+    c = sql.connect(config.DATABASE_FILENAME)
     create_default_database(c)
     insert_default_data(c)
     create_currency_data_table(c)

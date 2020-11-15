@@ -1,14 +1,11 @@
-#!/bin/python3
-
 import datetime as dt
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import requests
 from spyder.utils.external.github import ApiError
+import config
 
-MAX_COUNT = 255
-RATES = "rates"
-DATETIME_FORMAT = "%Y-%m-%d"
+MAX_COUNT = config.NBP_API_REQUEST_MAX_COUNT
 TODAY_DATE = dt.datetime.date(dt.datetime.today())
 
 
@@ -35,23 +32,23 @@ def get_currency_rates(symbol: str, days: int, until_date=dt.datetime.date(dt.da
         "table": "",
         "currency": "",
         "code": "",
-        RATES: []
+        "rates": []
     }
     from_date = get_date_days_ago(search_count * MAX_COUNT + days_remaining, until_date)
     to_date = get_date_days_ago(search_count * MAX_COUNT, until_date)
     last_data = get_data_between_dates(symbol, from_date, to_date).json()
-    data[RATES] = last_data[RATES]
+    data["rates"] = last_data["rates"]
     data["table"] = last_data["table"]
     data["currency"] = last_data["currency"]
     data["code"] = last_data["code"]
     for i in range(search_count, 0, -1):
         from_date = get_date_days_ago(MAX_COUNT * i, until_date)
         to_date = get_date_days_ago(MAX_COUNT * i - MAX_COUNT, until_date)
-        data[RATES].extend(
-            get_data_between_dates(symbol=symbol, from_date=from_date, to_date=to_date).json()[RATES])
+        data["rates"].extend(
+            get_data_between_dates(symbol=symbol, from_date=from_date, to_date=to_date).json()["rates"])
 
-    dates = [data[RATES][i]["effectiveDate"] for i in range(0, len(data[RATES]))]
-    currency_rates = [data[RATES][i]["mid"] for i in range(0, len(data[RATES]))]
+    dates = [data["rates"][i]["effectiveDate"] for i in range(0, len(data["rates"]))]
+    currency_rates = [data["rates"][i]["mid"] for i in range(0, len(data["rates"]))]
     return data["code"], dates, currency_rates
 
 
@@ -80,4 +77,4 @@ if __name__ == '__main__':
     EURcode, _, rEUR = get_currency_rates('EUR', count)
     plot = get_rates_plot(d, 5, (rUSD, USDcode), (rEUR, EURcode))
     plot.show()
-    # plot.savefig('USD_EUR_TO_PLN.svg')
+    plot.savefig('USD_EUR_TO_PLN.svg')
