@@ -17,9 +17,7 @@ class GetAverageExchangeRatesInDaysTests(unittest.TestCase):
     def testFuncFirstValueDateAfterInputDate(self):
         returnData = getAverageExchangeRatesInDays("USD", 100)
         startDate = date.today() - timedelta(days=100)
-        firstDateStr = returnData[0]["effectiveDate"]
-        firstDateSplited = firstDateStr.split("-")
-        firstDate = date(int(firstDateSplited[0]), int(firstDateSplited[1]), int(firstDateSplited[2]))
+        firstDate = returnData[0].effectiveDate
         self.assertGreaterEqual(firstDate, startDate)
 
     def testFuncRisesErrorForIncorrectInputs(self):
