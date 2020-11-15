@@ -53,6 +53,20 @@ def get_date_ranges(days_num):
     return dates
 
 
+def checked_request_json(url):
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        print(
+            f"Status code '{response.status_code}' when connecting to '{url}'",
+            f"Reponse text: '{response.text}'",
+            sep="\n"
+        )
+        return {}
+
+    return response.json()
+
+
 def daily_exchange_rates_for(currency, days_num=1):
     dates = get_date_ranges(days_num)
     dateless_url = f"{API_URL}/exchangerates/rates/{AVG_TABLE_TYPE}/{currency.value}"
@@ -64,10 +78,10 @@ def daily_exchange_rates_for(currency, days_num=1):
         end = date_[1].strftime(DATE_FORMAT)
 
         url = f"{dateless_url}/{start}/{end}"
-        response = requests.get(url)
+        response_json = checked_request_json(url)
 
-        if response:
-            days = response.json()["rates"]
+        if response_json:
+            days = response_json["rates"]
             for day in days:
                 exchange_rates.append({
                     "date": datetime.strptime(day["effectiveDate"], DATE_FORMAT).date(),
@@ -78,6 +92,9 @@ def daily_exchange_rates_for(currency, days_num=1):
 
 
 def draw_chart_for_rates_of(currency1, name1, currency2, name2):
+    if not currency1 or not currency2:
+        raise ValueError("Some of the currency data lists are empty")
+
     df1 = pd.DataFrame(currency1)
     df2 = pd.DataFrame(currency2)
 
