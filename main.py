@@ -1,5 +1,6 @@
 import requests
 from datetime import date, timedelta, datetime
+from matplotlib import ticker, pyplot, dates
 
 
 CURRENCIES_SYMBOLS = [
@@ -12,6 +13,9 @@ CURRENCIES_SYMBOLS = [
 
 REQUEST_ADDRESS = 'http://api.nbp.pl/api/exchangerates/rates/a'
 REQUEST_DAYS_LIMIT = 368
+PLOTS_PATH = 'plots'
+PLOT_FORMAT = 'svg'
+PLOTS_DAYS_RANGE = 182
 
 
 def to_datetime(date_to_parse):
@@ -116,8 +120,31 @@ def get_rates_days(currency, number_of_days):
         print(f'Could not get data for currency: {currency_symbol}. Wrong currency symbol')
 
 
+def draw_two_curr_plot(currencies, days, save=True):
+    fig, ax = pyplot.subplots()
+    for curr in currencies:
+        x, y = get_rates_days(curr, days)
+        ax.plot(x, y, label=curr.upper())
+
+    ax.xaxis.set_major_locator(dates.DayLocator(interval=8))
+    ax.xaxis.set_minor_locator(dates.DayLocator(interval=1))
+
+    ax.yaxis.set_major_locator(ticker.MultipleLocator(0.05))
+
+    fig.autofmt_xdate()
+    fig.set_size_inches(15, 10)
+    pyplot.grid(True)
+    pyplot.title(f'Kurs {currencies[0].upper()} oraz {currencies[1].upper()} w ciągu ostatnich 6 miesięcy')
+    pyplot.xlabel('Data YYYY-MM-DD')
+    pyplot.ylabel('Wartość [zł]')
+    pyplot.legend(loc='upper left')
+    if save:
+        pyplot.savefig(f'{PLOTS_PATH}/{currencies[0]}_{currencies[1]}.{PLOT_FORMAT}')
+    pyplot.show()
+
+
 def main():
-    pass
+    draw_two_curr_plot(['usd', 'gbp'], PLOTS_DAYS_RANGE)
 
 
 if __name__ == '__main__':
