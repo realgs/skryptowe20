@@ -1,4 +1,5 @@
 import json
+from collections import namedtuple
 from datetime import datetime, timedelta
 
 import matplotlib.pyplot as plt
@@ -6,50 +7,17 @@ import pandas as pd
 import requests
 
 RESPONSE_CORRECT_CODE = 200
-MAX_DATA_SERIES_SIZE = 255
-CCY_DATE_RANGE_ENDPOINT = \
-    "http://api.nbp.pl/api/exchangerates/rates/a/{currency}/{start_date}/{end_date}/"
+API_LIMIT = 367
+CCY_DATE_RANGE_ENDPOINT = "http://api.nbp.pl/api/exchangerates/rates/a/{currency}/{start_date}/{end_date}/"
 
 
 class RequestFailedException(Exception):
     pass
 
 
-def __get_endpoints(currencies_iso_codes, num_of_days_to_catch_up, end_date):
-    endpoints = []
-    chunk_start_date = end_date.date() - timedelta(days=num_of_days_to_catch_up - 1)
-
-    days_left = num_of_days_to_catch_up
-
-    while days_left:
-        num_of_days_to_get = min(days_left, MAX_DATA_SERIES_SIZE)
-        chunk_end_date = chunk_start_date + timedelta(days=num_of_days_to_get - 1)
-        days_left -= num_of_days_to_get
-
-        for ccy in currencies_iso_codes:
-            endpoints.append(
-                CCY_DATE_RANGE_ENDPOINT.format(currency=ccy, start_date=chunk_start_date, end_date=chunk_end_date))
-
-        chunk_start_date = chunk_end_date + timedelta(days=1)
-
-    return endpoints
-
-
-def _get_response_data(endpoint):
-    response = requests.get(endpoint)
-
-    if not response.status_code == RESPONSE_CORRECT_CODE:
-        raise RequestFailedException(
-            f"Request for {endpoint} failed with {response.status_code}: {response.text}.")
-
-    data = json.loads(response.text)
-    return data
-
-
-def get_currencies_data(currencies_iso_codes, num_of_days_to_catch_up, end_date=datetime.today()) -> pd.DataFrame:
+def get_currencies_daily_ex_rates(currencies_iso_codes, start_date, end_date=datetime.today()):
     result_df = pd.DataFrame()
-
-    endpoints = __get_endpoints(currencies_iso_codes, num_of_days_to_catch_up, end_date)
+    endpoints = __get_endpoints(currencies_iso_codes, start_date, end_date)
 
     for endpoint in endpoints:
         response_data = _get_response_data(endpoint)
@@ -63,6 +31,53 @@ def get_currencies_data(currencies_iso_codes, num_of_days_to_catch_up, end_date=
     return result_df
 
 
+def __get_endpoints(currencies_iso_codes, start_date, end_date):
+    date_chunks = __get_date_chunks(start_date, end_date)
+    endpoints = [
+        CCY_DATE_RANGE_ENDPOINT.format(currency=ccy, start_date=DateChunk.start_date, end_date=DateChunk.end_date)
+        for ccy in currencies_iso_codes
+        for DateChunk in date_chunks
+    ]
+
+    return endpoints
+
+
+def __get_date_chunks(start_date, end_date):
+    DateChunk = namedtuple('DateChunk', 'start_date end_date')
+    date_chunks = []
+    days_left = (end_date - start_date).days
+    chunk_start_date = start_date
+
+    while days_left > 0:
+        chunk_end_date = (chunk_start_date + timedelta(days=min(days_left, API_LIMIT)))
+        date_chunks.append(DateChunk(chunk_start_date.date(), chunk_end_date.date()))
+
+        days_left -= (min(days_left, API_LIMIT) + 1)
+        chunk_start_date = chunk_end_date + timedelta(days=1)
+
+    return date_chunks
+
+
+def _get_response_data(endpoint):
+    response = requests.get(endpoint)
+
+    if not response.status_code == RESPONSE_CORRECT_CODE:
+        raise RequestFailedException(
+            f"Request for {endpoint} failed with {response.status_code}: {response.text}.")
+
+    data = json.loads(response.text)
+    return data
+
+
+def get_currencies_daily_ex_rates_catchup(currencies_iso_codes, num_of_days_to_catch_up, end_date=datetime.today()):
+    start_date = get_catchup_start_date(num_of_days_to_catch_up, end_date)
+    return get_currencies_daily_ex_rates(currencies_iso_codes, start_date, end_date)
+
+
+def get_catchup_start_date(catchup_num_of_days, end_date=datetime.today()):
+    return end_date - timedelta(days=catchup_num_of_days)
+
+
 def draw_chart(data: pd.DataFrame):
     data.plot(title="Currencies average exchange rate", xlabel="Date", ylabel="Average exchange rate")
     plt.legend().set_title("Currency ISO code")
@@ -71,6 +86,6 @@ def draw_chart(data: pd.DataFrame):
 
 
 if __name__ == '__main__':
-    currencies_data_df = get_currencies_data(['USD', 'EUR'], 183)
+    currencies_data_df = get_currencies_daily_ex_rates_catchup(['USD', 'EUR'], 183)
     currencies_data_df.sort_values('effectiveDate', inplace=True)
     draw_chart(currencies_data_df)
