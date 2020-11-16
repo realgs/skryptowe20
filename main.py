@@ -1,6 +1,7 @@
 import requests
 from datetime import date, timedelta, datetime
 from matplotlib import ticker, pyplot, dates
+from db_handler import *
 
 
 CURRENCIES_SYMBOLS = [
@@ -120,6 +121,18 @@ def get_rates_days(currency, number_of_days):
         print(f'Could not get data for currency: {currency_symbol}. Wrong currency symbol')
 
 
+def get_rates_range(currency, start_date, end_date):
+    currency_symbol = currency.lower()
+    if currency_symbol in CURRENCIES_SYMBOLS:
+        number_of_days = (to_datetime(end_date) - to_datetime(start_date)).days
+        if number_of_days < REQUEST_DAYS_LIMIT:
+            return make_request(currency, start_date, end_date)
+        else:
+            return split_request(currency, number_of_days, start_date)
+    else:
+        print(f'Could not get data for currency: {currency_symbol}. Wrong currency symbol')
+
+
 def draw_two_curr_plot(currencies, days, save=True):
     fig, ax = pyplot.subplots()
     for curr in currencies:
@@ -143,8 +156,16 @@ def draw_two_curr_plot(currencies, days, save=True):
     pyplot.show()
 
 
+def modify_database(values):
+    create_rates_table()
+    insert_csv_data()
+    insert_values_to_rates_table(values)
+
+
 def main():
     draw_two_curr_plot(['usd', 'gbp'], PLOTS_DAYS_RANGE)
+    dates_to_db, rates_to_db = get_rates_range('usd', '2003-01-01', '2004-12-31')
+    modify_database(zip(dates_to_db, rates_to_db))
 
 
 if __name__ == '__main__':
