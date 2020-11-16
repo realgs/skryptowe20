@@ -4,30 +4,47 @@ from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from currency_data import get_currencies_data
+from currency_data import get_currencies_daily_ex_rates
 
-USD_PRICES_TABLE_NAME = 'USDPrices'
+USD_ISO_CODE = 'USD'
+USD_EX_RATES_TABLE_NAME = 'USDPrices'
+PATH_TO_DB = 'database_files/Northwind_small.db'
+ORDERS_VALUE_DAILY_SQL_QUERY = """
+   select 
+        strftime('{date_format}',  date(OrderDate)) "DATE", 
+        UnitPrice * Quantity  "USD", 
+        UnitPrice * Quantity * USD "PLN"
+   from 
+        [Order] 
+            join OrderDetail on [Order].Id=OrderDetail.OrderId 
+            join USDPrices on strftime('%Y-%m-%d',  date(OrderDate)) = effectiveDate
+   where 
+        OrderDate between '{start_date}' and '{end_date}' 
+   """
 DATE_FORMAT = "%Y-%m-%d"
 
 
-def get_complete_usd_to_pln_data(start_date, end_date):
-    catchup = (end_date - start_date).days + 1
-    usd_to_pln_daily = get_currencies_data(['USD'], catchup, end_date)
+def complete_usd_daily_ex_rates(usd_daily_ex_rates, start_date, end_date):
+    ref_price = usd_daily_ex_rates.loc[usd_daily_ex_rates.index[0]][USD_ISO_CODE]
+    for date in ((start_date + timedelta(days=i)) for i in range((end_date - start_date).days)):
+        date = date.strftime(DATE_FORMAT)
 
-    ref_price = usd_to_pln_daily.loc[usd_to_pln_daily.index[0]]['USD']
-
-    for single_date in ((start_date + timedelta(days=i)).strftime(DATE_FORMAT) for i in range(catchup)):
-        if single_date not in usd_to_pln_daily.index:
-            usd_to_pln_daily.loc[single_date] = ref_price
+        if date not in usd_daily_ex_rates.index:
+            usd_daily_ex_rates.loc[date] = ref_price
         else:
-            ref_price = usd_to_pln_daily.loc[single_date]['USD']
-    usd_to_pln_daily.sort_index(inplace=True)
+            ref_price = usd_daily_ex_rates.loc[date][USD_ISO_CODE]
+    usd_daily_ex_rates.sort_index(inplace=True)
 
-    return usd_to_pln_daily
+    return usd_daily_ex_rates
 
 
-def add_usd_to_pln_table(conn, usd_to_pln_daily: pd.DataFrame):
-    usd_to_pln_daily.to_sql(USD_PRICES_TABLE_NAME, conn, if_exists='replace')
+def get_complete_usd_daily_ex_rates(start_date, end_date):
+    usd_daily_ex_rates = get_currencies_daily_ex_rates([USD_ISO_CODE], start_date, end_date)
+    return complete_usd_daily_ex_rates(usd_daily_ex_rates, start_date, end_date)
+
+
+def add_table(conn, usd_to_pln_daily: pd.DataFrame):
+    usd_to_pln_daily.to_sql(USD_EX_RATES_TABLE_NAME, conn, if_exists='replace')
 
 
 def get_db_connection(database_name):
@@ -37,17 +54,14 @@ def get_db_connection(database_name):
 def draw_chart(data: pd.DataFrame):
     data.plot(title="Orders value daily", xlabel="Date", ylabel="Value")
     plt.legend().set_title("Currency")
-    locs, labels = plt.xticks()
-    plt.setp(labels, rotation=90)
-    plt.show()
+    _, labels = plt.xticks()
+    plt.setp(labels, rotation=30)
+    plt.gcf().subplots_adjust(bottom=0.2)
+    plt.savefig("orders_value_daily.svg")
 
 
-def get_orders_value_daily_data(start_date, end_date):
-    statement = f"""
-       select strftime('%Y-%m-%d',  date(OrderDate)) "DATE", UnitPrice * Quantity  "USD", UnitPrice * Quantity * USD "PLN"
-       from [Order] join OrderDetail on [Order].Id=OrderDetail.OrderId join USDPrices on strftime('%Y-%m-%d',  date(OrderDate)) = effectiveDate
-       where OrderDate between '{start_date.strftime(DATE_FORMAT)}' and '{end_date.strftime("%Y-%m-%d")}' 
-       """
+def get_orders_value_daily(start_date, end_date):
+    statement = ORDERS_VALUE_DAILY_SQL_QUERY.format(date_format=DATE_FORMAT, start_date=start_date, end_date=end_date)
 
     query = pd.read_sql_query(statement, db_conn)
     orders_value_data = pd.DataFrame(query).set_index('DATE')
@@ -56,14 +70,14 @@ def get_orders_value_daily_data(start_date, end_date):
 
 
 if __name__ == '__main__':
-    strt = datetime(2013, 12, 1)
+    strt = datetime(2012, 1, 1)
     end = datetime(2014, 1, 1)
 
-    add_df = get_complete_usd_to_pln_data(strt, end)
+    usd_daily_ex_rates_df = get_complete_usd_daily_ex_rates(strt, end)
 
-    db_conn = get_db_connection('database_files/Northwind_small.db')
+    db_conn = get_db_connection(PATH_TO_DB)
 
-    add_usd_to_pln_table(db_conn, add_df)
+    add_table(db_conn, usd_daily_ex_rates_df)
 
-    orders_value_daily_data = get_orders_value_daily_data(strt, end)
+    orders_value_daily_data = get_orders_value_daily(strt, end)
     draw_chart(orders_value_daily_data)

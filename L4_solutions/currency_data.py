@@ -15,12 +15,17 @@ class RequestFailedException(Exception):
     pass
 
 
+def get_currencies_daily_ex_rates_catchup(currencies_iso_codes, num_of_days_to_catch_up, end_date=datetime.today()):
+    start_date = __get_catchup_start_date(num_of_days_to_catch_up, end_date)
+    return get_currencies_daily_ex_rates(currencies_iso_codes, start_date, end_date)
+
+
 def get_currencies_daily_ex_rates(currencies_iso_codes, start_date, end_date=datetime.today()):
     result_df = pd.DataFrame()
     endpoints = __get_endpoints(currencies_iso_codes, start_date, end_date)
 
     for endpoint in endpoints:
-        response_data = _get_response_data(endpoint)
+        response_data = __get_response_data(endpoint)
 
         data_df = pd.json_normalize(response_data, record_path='rates', meta=['code'])
         result_df = pd.concat([result_df, data_df])
@@ -29,6 +34,20 @@ def get_currencies_daily_ex_rates(currencies_iso_codes, start_date, end_date=dat
     result_df = result_df.pivot(index='effectiveDate', columns='code', values='mid')
 
     return result_df
+
+
+def draw_chart(data: pd.DataFrame):
+    data.plot(title="Currencies exchange rate daily", xlabel="Date", ylabel="Exchange rate")
+
+    plt.legend().set_title("Currency ISO code")
+    _, labels = plt.xticks()
+    plt.setp(labels, rotation=30)
+    plt.gcf().subplots_adjust(bottom=0.2)
+    plt.savefig("eur_and_usd_daily_ex_rates.svg")
+
+
+def __get_catchup_start_date(catchup_num_of_days, end_date=datetime.today()):
+    return end_date - timedelta(days=catchup_num_of_days)
 
 
 def __get_endpoints(currencies_iso_codes, start_date, end_date):
@@ -58,7 +77,7 @@ def __get_date_chunks(start_date, end_date):
     return date_chunks
 
 
-def _get_response_data(endpoint):
+def __get_response_data(endpoint):
     response = requests.get(endpoint)
 
     if not response.status_code == RESPONSE_CORRECT_CODE:
@@ -67,22 +86,6 @@ def _get_response_data(endpoint):
 
     data = json.loads(response.text)
     return data
-
-
-def get_currencies_daily_ex_rates_catchup(currencies_iso_codes, num_of_days_to_catch_up, end_date=datetime.today()):
-    start_date = get_catchup_start_date(num_of_days_to_catch_up, end_date)
-    return get_currencies_daily_ex_rates(currencies_iso_codes, start_date, end_date)
-
-
-def get_catchup_start_date(catchup_num_of_days, end_date=datetime.today()):
-    return end_date - timedelta(days=catchup_num_of_days)
-
-
-def draw_chart(data: pd.DataFrame):
-    data.plot(title="Currencies average exchange rate", xlabel="Date", ylabel="Average exchange rate")
-    plt.legend().set_title("Currency ISO code")
-    plt.locator_params(axis="x", nbins=5)
-    plt.show()
 
 
 if __name__ == '__main__':
