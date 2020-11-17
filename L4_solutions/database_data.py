@@ -58,6 +58,7 @@ def draw_chart(data: pd.DataFrame):
     data.plot(title="Orders value daily", xlabel="Date", ylabel="Value", figsize=(25, 6), rot=30)
     plt.legend().set_title("Currency")
     plt.gcf().subplots_adjust(bottom=0.2)
+    plt.gca().yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: '%1.1f MLN' % (x * 1e-6)))
 
     plt.savefig("orders_value_daily.svg")
 
