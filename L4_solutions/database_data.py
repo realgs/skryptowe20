@@ -12,14 +12,16 @@ PATH_TO_DB = 'database_files/Northwind_small.db'
 ORDERS_VALUE_DAILY_SQL_QUERY = """
    select 
         strftime('{date_format}',  date(OrderDate)) "DATE", 
-        UnitPrice * Quantity  "USD", 
-        UnitPrice * Quantity * USD "PLN"
+        sum(UnitPrice * Quantity)  "USD", 
+        sum(UnitPrice * Quantity * USD) "PLN"
    from 
         [Order] 
             join OrderDetail on [Order].Id=OrderDetail.OrderId 
             join USDPrices on strftime('%Y-%m-%d',  date(OrderDate)) = effectiveDate
    where 
         OrderDate between '{start_date}' and '{end_date}' 
+        
+   group by date(OrderDate)
    """
 DATE_FORMAT = "%Y-%m-%d"
 
