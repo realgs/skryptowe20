@@ -8,7 +8,7 @@ class Url:
         self.start_date = start_date
         self.end_date = end_date
 
-    def get_url(self):
+    def __str__(self):
         return self.api_url + (f"/{self.table}/"
                               f"/{self.currency}/"
                               f"/{self.start_date}/"
@@ -21,6 +21,12 @@ class Response_A:
             self.effective_date = rate['effectiveDate']
             self.mid = rate['mid']
 
+        def __str__(self):
+            return ("Rate[\n"
+                    f"\ttable_number: {self.table_number},\n"
+                    f"\teffective_date: {self.effective_date},\n"
+                    f"\tmid: {self.mid}]\n")
+
     def __init__(self, request_response):
         res = request_response.json()
         self.table_type = res['table']
@@ -29,3 +35,10 @@ class Response_A:
         self.rates = []
         for rate in res['rates']:
             self.rates.append(self.Rate(rate))
+
+    def __str__(self):
+        return ("Response_A[\n"
+                f"\ttable_type: {self.table_type},\n"
+                f"\tcurrency: {self.currency},\n"
+                f"\tcurrency_code: {self.currency_code},\n"
+                f"\trates: {self.rates}]\n")
