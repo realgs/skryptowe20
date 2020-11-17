@@ -3,12 +3,13 @@ from datetime import datetime, timedelta
 
 import matplotlib.pyplot as plt
 import pandas as pd
+from matplotlib import ticker
 
 from currency_data import get_currencies_daily_ex_rates
 
 USD_ISO_CODE = 'USD'
 USD_EX_RATES_TABLE_NAME = 'USDPrices'
-PATH_TO_DB = 'database_files/Northwind_small.db'
+PATH_TO_DB = 'database_files/Northwind.db'
 ORDERS_VALUE_DAILY_SQL_QUERY = """
    select 
         strftime('{date_format}',  date(OrderDate)) "DATE", 
@@ -54,11 +55,10 @@ def get_db_connection(database_name):
 
 
 def draw_chart(data: pd.DataFrame):
-    data.plot(title="Orders value daily", xlabel="Date", ylabel="Value")
+    data.plot(title="Orders value daily", xlabel="Date", ylabel="Value", figsize=(25, 6), rot=30)
     plt.legend().set_title("Currency")
-    _, labels = plt.xticks()
-    plt.setp(labels, rotation=30)
     plt.gcf().subplots_adjust(bottom=0.2)
+
     plt.savefig("orders_value_daily.svg")
 
 
@@ -72,8 +72,8 @@ def get_orders_value_daily(start_date, end_date):
 
 
 if __name__ == '__main__':
-    strt = datetime(2012, 1, 1)
-    end = datetime(2014, 1, 1)
+    strt = datetime(2013, 1, 1)
+    end = datetime(2015, 1, 1)
 
     usd_daily_ex_rates_df = get_complete_usd_daily_ex_rates(strt, end)
 

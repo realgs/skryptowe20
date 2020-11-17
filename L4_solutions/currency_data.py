@@ -37,12 +37,10 @@ def get_currencies_daily_ex_rates(currencies_iso_codes, start_date, end_date=dat
 
 
 def draw_chart(data: pd.DataFrame):
-    data.plot(title="Currencies exchange rate daily", xlabel="Date", ylabel="Exchange rate")
-
+    data.plot(title="Currencies exchange rate daily", xlabel="Date", ylabel="Exchange rate", rot=30)
     plt.legend().set_title("Currency ISO code")
-    _, labels = plt.xticks()
-    plt.setp(labels, rotation=30)
     plt.gcf().subplots_adjust(bottom=0.2)
+
     plt.savefig("eur_and_usd_daily_ex_rates.svg")
 
 
