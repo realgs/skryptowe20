@@ -19,10 +19,9 @@ def draw_plot(x_ax, usd, pln, dates_counter):
     plt.gca().yaxis.set_major_formatter(
         ticker.FuncFormatter(lambda x, _: '%1.fK' % (x * 1e-3)))
     plt.ylim(0)
-    plt.xlim(x_ax[0], x_ax[len(x_ax)-1])
+    plt.xlim(x_ax[0], x_ax[-1])
     plt.grid(True)
-    plt.savefig('Sum_of_sales.svg')
-    plt.show()
+    return plt
 
 
 def fetch_sql_data():
@@ -56,4 +55,6 @@ if __name__ == '__main__':
         sum_pln = sum_pln + pln_price
         pln_sum.append(sum_pln)
 
-    draw_plot(dates, usd_sum, pln_sum, 5)
+    plot = draw_plot(dates, usd_sum, pln_sum, 5)
+    plot.savefig("Sum_of_sales.svg")
+    plot.show()
