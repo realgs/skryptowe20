@@ -10,7 +10,7 @@ def send_req(currency, dates):
     url = Url(currency, dates[0], dates[1])
     response = req.get(url)
     if(response.status_code != 200):
-        raise Exception(MSG_ERROR_FAILED_TO_FETCH)
+        raise Exception(f"{MSG_ERROR_FAILED_TO_FETCH}\nStatus: {response.status_code}")
     else:
         return Response_A(response)
 

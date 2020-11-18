@@ -15,12 +15,15 @@ def is_days_valid(days):
 def date_sec_to_string(date):
     return datetime.fromtimestamp(date).strftime(DATE_FORMAT)
 
+def date_string_to_datetime(date):
+    return datetime.strptime(date, DATE_FORMAT)
+
 #TODO: REFACTOR!!!
 def correct_inside_weekends(rates):
     output = [rates[0]]
     for i in range(1, len(rates)):
-        day_before = datetime.strptime(rates[i - 1].effective_date, DATE_FORMAT)
-        current_day = datetime.strptime(rates[i].effective_date, DATE_FORMAT)
+        day_before = date_string_to_datetime(rates[i - 1].effective_date)
+        current_day = date_string_to_datetime(rates[i].effective_date)
         difference = (current_day - day_before).total_seconds() / DAY_IN_SEC
         for j in range(0, int(difference)):
             correct_date = current_day.timestamp() - DAY_IN_SEC * (difference - j)
