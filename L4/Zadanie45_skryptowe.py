@@ -60,6 +60,7 @@ def CreateChartUSDPLN(salU,salP):
     plt.xticks(range(0,len(xUSD),30),xUSDShort)
     plt.xlabel('Dates')
     plt.ylabel('Sales values')
+    plt.gcf().autofmt_xdate(rotation=25) 
     plt.title('Comparision of sales in USD and PLN')
     plt.legend(['Sales in USD','Sales in PLN'])
     plt.grid(True)

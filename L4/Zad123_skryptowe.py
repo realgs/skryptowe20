@@ -48,6 +48,7 @@ def drawChart(respUSD,respEUR, days):
     plt.legend(['USD Rates','EUR Rates'])
     plt.title('Chart of average USD and EUR rates from last {days} days'.format(days=days))
     plt.grid(True)
+    plt.gcf().autofmt_xdate(rotation=25)
     plt.savefig("USD-EUR_Chart.svg")
     plt.show()
     
