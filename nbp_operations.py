@@ -97,6 +97,8 @@ def draw_usd_eur_chart(currency_list):
     fig, ax = plt.subplots()
     for currency in currency_list:
         data = last_rates(currency, HALF_YEAR_TIME)
+        if len(data) < 1:
+            return "Error no data from request"
         x = []
         y = []
         for rate_date, rate in data:
@@ -128,7 +130,7 @@ def draw_sales_chart(start_date, end_date):
     pln_sale_value = []
     fig, ax = plt.subplots(figsize=(20, 10))
 
-    query = get_transaction_sums_for_days(start_date, end_date)
+    query = get_sales_sum_for_dates(start_date, end_date)
     if len(query) < 1:
         return " Error, no data from query"
 
@@ -164,4 +166,3 @@ def draw_sales_chart(start_date, end_date):
 # insert_rates(vals)
 draw_sales_chart("2003-05-05", "2005-05-05")
 draw_usd_eur_chart(("USD", "EUR"))
-
