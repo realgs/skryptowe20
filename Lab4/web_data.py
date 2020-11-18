@@ -17,19 +17,16 @@ class Url:
 class Response_A:
     class Rate:
         def __init__(self, rate):
-            self.table_number = rate['no']
             self.effective_date = rate['effectiveDate']
             self.mid = rate['mid']
 
         def __str__(self):
             return ("Rate[\n"
-                    f"\ttable_number: {self.table_number},\n"
                     f"\teffective_date: {self.effective_date},\n"
                     f"\tmid: {self.mid}]\n")
 
     def __init__(self, request_response):
         res = request_response.json()
-        self.table_type = res['table']
         self.currency = res['currency']
         self.currency_code = res['code']
         self.rates = []
@@ -38,7 +35,6 @@ class Response_A:
 
     def __str__(self):
         return ("Response_A[\n"
-                f"\ttable_type: {self.table_type},\n"
                 f"\tcurrency: {self.currency},\n"
                 f"\tcurrency_code: {self.currency_code},\n"
                 f"\trates: {self.rates}]\n")

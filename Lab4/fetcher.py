@@ -10,17 +10,15 @@ def send_req(currency, dates):
     url = Url(currency, dates[0], dates[1])
     response = req.get(url)
     if(response.status_code != 200):
-        raise Exception(f"{MSG_ERROR_FAILED_TO_FETCH}\nStatus: {response.status_code}")
+        raise Exception(f"{MSG_ERROR_FAILED_TO_FETCH}\n"
+                         f"Status: {response.status_code}")
     else:
         return Response_A(response)
 
 def is_currency_valid(currency):
     return currency in AVAIL_CURRENCIES
 
-def get_avg_rates(currency, days):
-    if not is_currency_valid(currency):
-        raise Exception(MSG_ERROR_INVALID_CURRENCY)
-
+def get_avg_rates_for_currency(currency, days):
     pairs_of_dates = convert_days_to_dates(days)
     output = []
     for pair in pairs_of_dates:
@@ -29,4 +27,14 @@ def get_avg_rates(currency, days):
             output.append(r)
 
     output.sort(key=lambda x: x.effective_date)
-    return correct_weekends(output, "", "")
+    return (currency, correct_weekends(output, "", ""))
+
+def get_avg_rates(currencies, days):
+    output = []
+    for currency in currencies:
+        if not is_currency_valid(currency):
+            raise Exception(MSG_ERROR_INVALID_CURRENCY)
+
+        output.append(get_avg_rates_for_currency(currency, days))
+
+    return output

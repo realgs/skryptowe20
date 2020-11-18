@@ -24,4 +24,8 @@ AVAIL_CURRENCIES = {
 
 MSG_ERROR_INVALID_CURRENCY = f"Currency must be one of available values: \n{AVAIL_CURRENCIES}"
 MSG_ERROR_INVALID_DAYS = f"Days have to be greater than {MIN_DAYS} and less than 18 years ({MAX_DAYS} days)!"
-MSG_ERROR_FAILED_TO_FETCH = "Can't fetch data! Check your internet connection."
+MSG_ERROR_FAILED_TO_FETCH = "Error fetching data!"
+
+PLOT_XAXIS_LABEL = "Data"
+PLOT_YAXIS_LABEL = "Notowania waluty"
+PLOT_TITLE = "Wykres notowań walut"
