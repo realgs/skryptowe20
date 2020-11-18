@@ -1,0 +1,6 @@
+mysql_config = {
+    'user': '',
+    'password': '',
+    'host': '192.168.88.73',
+    'database': 'store_lab4'
+}

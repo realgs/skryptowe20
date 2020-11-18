@@ -1,5 +1,6 @@
 #!/bin/python3
 
+import config
 import database as db
 import datetime as dt
 import matplotlib.pyplot as plt
@@ -16,21 +17,19 @@ if __name__ == "__main__":
     # Wykres stwórz dla przedziału czasowego wybranego przy realizacji zadania 3. Pamiętaj o legendzie,
     # podpisaniu osi i wykresu. Zapisz wykres w formacie eps lub svg i wrzuć do repo. (4pkt)
 
-    conn = db.create_connection(db.DATABASE_FILE)
+    conn = db.create_connection(config.mysql_config)
     if conn:
-        cur = conn.cursor()
-        cur.execute(''' SELECT SUM(SalesOrder.sales), 
-                               SUM(SalesOrder.sales)*UsdRatePln.rate, 
-                               SalesOrder.order_date
-                        FROM SalesOrder
-                        INNER JOIN UsdRatePln 
-                        ON SalesOrder.order_date=UsdRatePln.rate_date
-                        GROUP BY SalesOrder.order_date
-                        ORDER BY SalesOrder.order_date;''')
-
-        conn.commit()
-        query: List[Tuple[float, float, dt.date]] = [(row[0], row[1], dt.datetime.strptime(
-            row[2], DATE_FORMAT).date()) for row in cur.fetchall()]
+        with conn.cursor() as cur:
+            cur.execute(''' SELECT SUM(SO.sales), 
+                                   SUM(SO.sales*R.rate), 
+                                   SO.order_date
+                            FROM SalesOrder SO
+                            INNER JOIN UsdRatePln R 
+                            ON SO.order_date=R.rate_date
+                            GROUP BY SO.order_date
+                            ORDER BY SO.order_date;''')
+            query: List[Tuple[float, float, dt.date]] = [
+                (float(row[0]), float(row[1]), row[2]) for row in cur]
         conn.close()
 
         x_dates: List[dt.date] = []

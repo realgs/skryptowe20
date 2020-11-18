@@ -2,13 +2,13 @@
 
 import csv
 import nbp
-import sqlite3
+import config
 import datetime as dt
+import mysql.connector
 from datetime import timedelta
 from nbp import DATE_FORMAT, Currency
 from typing import List, Optional, Tuple
 
-DATABASE_FILE = "database.sqlite3"
 CSV_FILE = "Superstore.csv"
 
 
@@ -20,81 +20,81 @@ def read_csv(csv_filepath: str, delimiter=';') -> List[List[str]]:
     return data
 
 
-def create_connection(db_filepath: str) -> Optional[sqlite3.Connection]:
+def create_connection(config: dict) -> Optional[mysql.connector.MySQLConnection]:
     conn = None
     try:
-        conn = sqlite3.connect(db_filepath)
-    except sqlite3.Error as err:
+        conn = mysql.connector.connect(**config)
+    except mysql.connector.Error as err:
         print(err)
     return conn
 
 
-def create_table(conn: sqlite3.Connection, sql_create_table: str) -> bool:
+def create_table(conn: mysql.connector.MySQLConnection, sql_create_table: str) -> bool:
     try:
-        c = conn.cursor()
-        c.execute(sql_create_table)
-        conn.commit()
+        with conn.cursor() as c:
+            c.execute(sql_create_table)
+            conn.commit()
         return True
-    except sqlite3.Error as err:
+    except mysql.connector.Error as err:
         print(err)
     return False
 
 
-def create_product(conn: sqlite3.Connection, product: Tuple[str, str]) -> bool:
-    sql = "INSERT INTO Product(id, name) VALUES(?, ?)"
+def create_product(conn:  mysql.connector.MySQLConnection, product: Tuple[str, str]) -> bool:
+    sql = "INSERT INTO Product(id, name) VALUES(%s, %s)"
     try:
-        c = conn.cursor()
-        c.execute(sql, product)
-        conn.commit()
+        with conn.cursor() as c:
+            c.execute(sql, product)
+            conn.commit()
         return True
-    except sqlite3.Error as err:
+    except mysql.connector.Error as err:
         print(err)
     return False
 
 
-def create_customer(conn: sqlite3.Connection, customer: Tuple[str, str]) -> bool:
-    sql = "INSERT INTO Customer(id, name) VALUES(?, ?)"
+def create_customer(conn:  mysql.connector.MySQLConnection, customer: Tuple[str, str]) -> bool:
+    sql = "INSERT INTO Customer(id, name) VALUES(%s, %s)"
     try:
         c = conn.cursor()
         c.execute(sql, customer)
         conn.commit()
         return True
-    except sqlite3.Error as err:
+    except mysql.connector.Error as err:
         print(err)
     return False
 
 
-def create_sales_order(conn: sqlite3.Connection, sales_order: Tuple[int, str,  str, str, str, float]) -> bool:
+def create_sales_order(conn:  mysql.connector.MySQLConnection, sales_order: Tuple[int, str,  str, str, str, float]) -> bool:
     sql = '''INSERT INTO SalesOrder(row_id, order_id, order_date, customer_id,
-                                    product_id, sales) VALUES(?,?,?,?,?,?)'''
+                                    product_id, sales) VALUES(%s,%s,%s,%s,%s,%s)'''
     try:
-        c = conn.cursor()
-        c.execute(sql, sales_order)
-        conn.commit()
+        with conn.cursor() as c:
+            c.execute(sql, sales_order)
+            conn.commit()
         return True
-    except sqlite3.Error as err:
+    except mysql.connector.Error as err:
         print(err)
     return False
 
 
-def create_default_database(conn: sqlite3.Connection):
+def create_default_database(conn:  mysql.connector.MySQLConnection):
     sql_create_table_customer = '''CREATE TABLE IF NOT EXISTS Customer (
-                                        id text PRIMARY KEY,
-                                        name text NOT NULL
+                                        `id` varchar(15) PRIMARY KEY,
+                                        `name` varchar(100) NOT NULL
                                     );'''
 
     sql_create_table_product = '''CREATE TABLE IF NOT EXISTS Product (
-                                        id text PRIMARY KEY,
-                                        name text NOT NULL
+                                        `id` varchar(15) PRIMARY KEY,
+                                        `name` varchar(300) NOT NULL
                                     );'''
 
     sql_create_table_order = '''CREATE TABLE IF NOT EXISTS SalesOrder (
-                                        row_id integer PRIMARY KEY,
-                                        order_id text NOT NULL,
-                                        order_date date NOT NULL,
-                                        customer_id text NOT NULL REFERENCES Customer (id),
-                                        product_id text NOT NULL REFERENCES Product (id),
-                                        sales real NOT NULL
+                                        `row_id` int(11) PRIMARY KEY,
+                                        `order_id` varchar(15) NOT NULL,
+                                        `order_date` date NOT NULL,
+                                        `customer_id` varchar(15) NOT NULL REFERENCES Customer (id),
+                                        `product_id` varchar(15) NOT NULL REFERENCES Product (id),
+                                        `sales` decimal(13,2) NOT NULL
                                     );'''
 
     csv_data = read_csv(CSV_FILE)[1:]
@@ -127,22 +127,22 @@ def create_default_database(conn: sqlite3.Connection):
 # dla którego jest wpisana wartość średniego kursu. Kod modyfikacji bazy zapisz również w repo.
 
 
-def create_rate(conn: sqlite3.Connection, rate: Tuple[str, float]) -> bool:
-    sql = "INSERT INTO UsdRatePln(rate_date, rate) VALUES(?, ?)"
+def create_rate(conn:  mysql.connector.MySQLConnection, rate: Tuple[str, float]) -> bool:
+    sql = "INSERT INTO UsdRatePln(rate_date, rate) VALUES(%s, %s)"
     try:
-        c = conn.cursor()
-        c.execute(sql, rate)
-        conn.commit()
+        with conn.cursor() as c:
+            c.execute(sql, rate)
+            conn.commit()
         return True
-    except sqlite3.Error as err:
+    except mysql.connector.Error as err:
         print(err)
     return False
 
 
-def add_rate_table_to_database(conn: sqlite3.Connection):
+def add_rate_table_to_database(conn:  mysql.connector.MySQLConnection):
     sql_create_table_usd_rates_pln = '''CREATE TABLE IF NOT EXISTS UsdRatePln (
-                                            rate_date date PRIMARY KEY,
-                                            rate real NOT NULL
+                                            `rate_date` date PRIMARY KEY,
+                                            `rate` decimal(13,4) NOT NULL
                                         );'''
     create_table(conn, sql_create_table_usd_rates_pln)
 
@@ -156,7 +156,7 @@ def add_rate_table_to_database(conn: sqlite3.Connection):
 
 
 if __name__ == "__main__":
-    conn = create_connection(DATABASE_FILE)
+    conn = create_connection(config.mysql_config)
     if conn:
         create_default_database(conn)
         add_rate_table_to_database(conn)
