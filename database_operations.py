@@ -31,7 +31,7 @@ def insert_rates(rate_vals):
     conn.close()
 
 
-def get_transaction_sums_for_days(start_date, end_date):
+def get_sales_sum_for_dates(start_date, end_date):
     conn = create_connection()
     cursor = conn.cursor()
     interval=(start_date, end_date)

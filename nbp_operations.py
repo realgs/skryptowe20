@@ -7,6 +7,7 @@ import datetime as dt
 import matplotlib.pyplot as plt
 import matplotlib.dates as pltdates
 import matplotlib.ticker as ticker
+from database_operations import *
 
 API_URL_RATES = "http://api.nbp.pl/api/exchangerates/rates/a"
 API_DAYS_PER_REQUEST_LIMIT = 367
@@ -119,5 +120,41 @@ def draw_usd_eur_chart(currency_list):
     plt.grid(True)
     plt.savefig("USD_EUR_rate.svg")
     plt.show()
+
+
+def draw_sales_chart(start_date, end_date):
+    sale_dates = []
+    usd_sale_value = []
+    pln_sale_value = []
+    fig, ax = plt.subplots(figsize=(20, 10))
+
+    query = get_transaction_sums_for_days(start_date, end_date)
+    if len(query) < 1:
+        return " Error, no data from query"
+
+    for sale_sum, date, usd_rate in query:
+        sale_dates.append(dt.datetime.strptime(date, DATE_FORMAT))
+        usd_sale_value.append(sale_sum)
+        pln_sale_value.append(usd_rate * sale_sum)
+
+    ax.plot(sale_dates, usd_sale_value, label=Currency.UNITED_STATES_DOLLAR.value)
+    ax.plot(sale_dates, pln_sale_value, label=Currency.POLISH_ZLOTY.value)
+
+    plt.gca().xaxis.set_major_formatter(pltdates.DateFormatter(DATE_FORMAT))
+    plt.gca().xaxis.set_major_locator(pltdates.DayLocator(interval=15))
+    plt.gca().yaxis.set_major_locator(ticker.MultipleLocator(20000))
+    plt.gca().yaxis.set_major_formatter(ticker.FuncFormatter(lambda x, _: x / 1000))
+
+    plt.gca().set_ylim(ymin=0)
+    plt.gca().set_xlim(xmin=sale_dates[0], xmax=sale_dates[-1])
+
+    plt.title(f'Sale values in USD and PLN beetween {start_date} and {end_date}')
+    plt.xlabel('Date')
+    plt.ylabel('Value of sales in thousands')
+    plt.legend(loc='upper left')
+    fig.autofmt_xdate()
+    plt.savefig("sales_chart.svg")
+    plt.show()
+
 
 
