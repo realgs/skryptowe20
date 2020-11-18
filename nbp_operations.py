@@ -154,7 +154,14 @@ def draw_sales_chart(start_date, end_date):
     plt.legend(loc='upper left')
     fig.autofmt_xdate()
     plt.savefig("sales_chart.svg")
+    plt.grid(True)
     plt.show()
 
 
+# create_rates_table()
+# vals = request_between_dates('usd', dt.datetime.strptime('2003-05-05', DATE_FORMAT).date(),
+# dt.datetime.strptime('2005-05-05', DATE_FORMAT).date())
+# insert_rates(vals)
+draw_sales_chart("2003-05-05", "2005-05-05")
+draw_usd_eur_chart(("USD", "EUR"))
 
