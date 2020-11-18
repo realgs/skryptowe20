@@ -116,7 +116,7 @@ def draw_usd_eur_chart(currency_list):
     ax.xaxis_date()
     fig.autofmt_xdate()
     plt.xlabel('Date')
-    plt.ylabel('Value of currency in PLN')
+    plt.ylabel('Value of currency')
     plt.title("USD and EUR rates from last 6 months")
     plt.legend()
     plt.grid(True)
