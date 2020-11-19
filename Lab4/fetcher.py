@@ -34,7 +34,6 @@ def get_avg_rates(currencies, days):
     for currency in currencies:
         if not is_currency_valid(currency):
             raise Exception(MSG_ERROR_INVALID_CURRENCY)
-
         output.append(get_avg_rates_for_currency(currency, days))
 
     return output

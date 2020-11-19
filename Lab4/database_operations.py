@@ -24,7 +24,7 @@ def populate_table(cursor, currency, rates):
         """
         cursor.execute(querry)
 
-def print_table(cursor, currency):
+def print_rates_table(cursor, currency):
     querry = f"""
     SELECT *
     FROM {currency}Rates;
@@ -40,3 +40,33 @@ def add_table_currency_mids(result_pair):
     populate_table(c, currency, rates)
     conn.commit()
     conn.close()
+
+def summarise_transactions(currency):
+    c, conn = connect_to_database()
+    querry_currency = f"""
+    SELECT SUBSTR(OrderDate, 0, 11) DATE,
+           ROUND(SUM(Quantity * UnitPrice  * (1 - Discount)), 2) TOTAL{currency}
+    FROM [Order] JOIN [OrderDetail] ON [Order].id = [OrderDetail].OrderId
+                 JOIN [{currency}Rates] ON DATE = [{currency}Rates].EffectiveDate
+    WHERE DATE BETWEEN '2017-01-01' AND '2020-01-01'
+    GROUP BY DATE
+    ORDER BY DATE;
+    """
+    c.execute(querry_currency)
+    result_currency = c.fetchall()
+
+    querry_pln = f"""
+    SELECT SUBSTR(OrderDate, 0, 11) DATE,
+           ROUND(SUM(Quantity * UnitPrice  * (1 - Discount) * Mid), 2) TOTALPLN
+    FROM [Order] JOIN [OrderDetail] ON [Order].id = [OrderDetail].OrderId
+                 JOIN [{currency}Rates] ON DATE = [{currency}Rates].EffectiveDate
+    WHERE DATE BETWEEN '2017-01-01' AND '2020-01-01'
+    GROUP BY DATE
+    ORDER BY DATE;
+    """
+
+    c.execute(querry_pln)
+    result_pln = c.fetchall()
+
+    conn.close()
+    return [('PLN', result_pln), (currency, result_currency)]
