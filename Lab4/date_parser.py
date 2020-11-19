@@ -26,7 +26,7 @@ def correct_inside_weekends(rates_wrapper):
         current_day = date_string_to_datetime(rates[i].date)
         difference = (current_day - day_before).total_seconds() / DAY_IN_SEC
         for j in range(0, int(difference)):
-            correct_date = current_day.timestamp() - DAY_IN_SEC * (difference - j)
+            correct_date = current_day.timestamp() - DAY_IN_SEC * (difference - (j + 1))
             rate = deepcopy(rates[i])
             rate.date = date_sec_to_string(correct_date)
             output.append(rate)
