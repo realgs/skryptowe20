@@ -1,4 +1,4 @@
-import task1, task3
+import task1, task3, task4, task5
 
 
 
@@ -11,3 +11,6 @@ if __name__ == '__main__':
     print(f"Exchange rates for currency {eurData[1].json()['currency']} for the last {days} days are following:")
     print(eurData[0])
     task3.drawChart(usdData, eurData, days)
+    task4.createTableCurrencyQuotes()
+    task4.fillTableWithData()
+    task5.drawSalesChart()
