@@ -15,6 +15,8 @@ def draw_plot(x_ax, usd, pln, dates_counter):
     plt.title("Earnings in USD and PLN")
     plt.xlabel("Dates")
     plt.ylabel("Earnings")
+    fig = plt.gcf()
+    fig.set_size_inches(18.5, 10.5)
     plt.xticks(shown_values, horizontalalignment='center')
     plt.gca().yaxis.set_major_formatter(
         ticker.FuncFormatter(lambda x, _: '%1.fK' % (x * 1e-3)))
@@ -30,8 +32,7 @@ def fetch_sql_data():
        rate, 
        Sum(DISTINCT sales*quantity)/ rate "PLN rate"
        FROM SalesOrder
-            JOIN CurrencyData
-       WHERE order_date = rating_date
+            JOIN CurrencyData ON rating_date=order_date
        GROUP BY order_date;'''
 
     c = sql.connect(config.DATABASE_FILENAME)
@@ -50,11 +51,9 @@ if __name__ == '__main__':
     pln_sum = []
     for order_date, usd_price, _, pln_price in rows:
         dates.append(order_date)
-        sum_usd = sum_usd + usd_price
-        usd_sum.append(sum_usd)
-        sum_pln = sum_pln + pln_price
-        pln_sum.append(sum_pln)
+        usd_sum.append(usd_price)
+        pln_sum.append(pln_price)
 
-    plot = draw_plot(dates, usd_sum, pln_sum, 5)
+    plot = draw_plot(dates, usd_sum, pln_sum, 12)
     plot.savefig("Sum_of_sales.svg")
     plot.show()
