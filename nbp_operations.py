@@ -30,8 +30,7 @@ def partition_days_for_request(start_date, end_date):
     while total_days >= 0:
         days = min(total_days, API_DAYS_PER_REQUEST_LIMIT)
         end_date = start_date + dt.timedelta(days=days)
-        intervals.append((start_date.strftime(DATE_FORMAT),
-                          end_date.strftime(DATE_FORMAT)))
+        intervals.append((start_date, end_date))
         total_days -= days + 1
         start_date = end_date + dt.timedelta(days=1)
 
@@ -164,5 +163,5 @@ def draw_sales_chart(start_date, end_date):
 # vals = request_between_dates('usd', dt.datetime.strptime('2003-05-05', DATE_FORMAT).date(),
 # dt.datetime.strptime('2005-05-05', DATE_FORMAT).date())
 # insert_rates(vals)
-draw_sales_chart("2003-05-05", "2005-05-05")
+#draw_sales_chart("2003-05-05", "2005-05-05")
 draw_usd_eur_chart(("USD", "EUR"))
