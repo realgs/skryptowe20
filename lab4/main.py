@@ -1,17 +1,16 @@
 import requests
 
-
-def zad1(currency_code: str, last_days: int) -> float:
-    request_url = "http://api.nbp.pl/api/exchangerates/rates/a/{0}/last/{1}/?format=json"\
-        .replace("{0}", currency_code)\
-        .replace("{1}", str(last_days))
+def zad1(currency_code: str, last_days: int) -> (float, (list, list)):
+    request_url = f"http://api.nbp.pl/api/exchangerates/rates/a/{currency_code}/last/{last_days}/?format=json"
 
     response = requests.get(request_url)
 
     if (response.status_code == 200):
         response_json = response.json()
         currency_rates = response_json["rates"]
+
         result_map = list(map(lambda c: c["mid"], currency_rates))
+
         return sum(result_map)/len(result_map)
 
     else:
