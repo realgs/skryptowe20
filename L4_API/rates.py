@@ -44,7 +44,7 @@ def _check_table(currency, table):
     url = _url("api/exchangerates/tables/{}/last/1/".format(table))
     response = requests.get(url).text
 
-    if currency in response:
+    if currency != '' and currency in response:
         found = True
 
     return found
@@ -113,6 +113,7 @@ def plot(currency_codes, days):
 
 
 if __name__ == '__main__':
-    print(currency_rates_dates('USD', YEAR // 2)[0])
-    print(currency_rates_dates('EUR', YEAR // 2)[0])
-    plot(CURRENCIES, YEAR // 2)
+    print(currency_rates_dates('', 1))
+    # print(currency_rates_dates('USD', YEAR // 2)[0])
+    # print(currency_rates_dates('EUR', YEAR // 2)[0])
+    # plot(CURRENCIES, YEAR // 2)
