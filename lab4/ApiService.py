@@ -12,28 +12,32 @@ class AverageExchangeRate:
         self.effectiveDate = date(int(dateStrSplited[0]), int(dateStrSplited[1]), int(dateStrSplited[2]))
 
 
-def getAverageExchangeRatesInDays(currencyCode, days):
-    resp = __getCurrencyFromOneTableInDays__("a", currencyCode, days)
+def getAverageExchangeRatesInDays(currencyCode, days, endDate=date.today()):
+    days -= 1
+    returnData = []
+    if days > 366:
+        returnData += getAverageExchangeRatesInDays(currencyCode, days - 366, endDate - timedelta(days=367))
+        days = 366
+
+    resp = __getCurrencyFromOneTableInDays__("a", currencyCode, days, endDate)
 
     if resp.status_code != 200:
-        if resp.status_code == 400:
-            raise ApiError("Invalid days param")
 
-        resp = __getCurrencyFromOneTableInDays__("b", currencyCode, days)
+        resp = __getCurrencyFromOneTableInDays__("b", currencyCode, days, endDate)
         if resp.status_code != 200:
             raise ApiError("No data found")
 
-    returnData = []
     for item in resp.json()["rates"]:
         returnData.append(AverageExchangeRate(currencyCode, item["mid"], item["effectiveDate"]))
     return returnData
 
 
-def __getCurrencyFromOneTableInDays__(tableCode, currencyCode, days):
-    startDate = date.today() - timedelta(days=days)
-
+def __getCurrencyFromOneTableInDays__(tableCode, currencyCode, days, endDate):
     url = "http://api.nbp.pl/api/exchangerates/rates/"
-    paramsUrl = "/{}/{}/{}".format(currencyCode, startDate, date.today())
+
+    startDate = endDate - timedelta(days=days)
+
+    paramsUrl = "/{}/{}/{}".format(currencyCode, startDate, endDate)
     return requests.get(url + tableCode + paramsUrl)
 
 

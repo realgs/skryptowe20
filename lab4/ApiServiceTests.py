@@ -20,10 +20,15 @@ class GetAverageExchangeRatesInDaysTests(unittest.TestCase):
         firstDate = returnData[0].effectiveDate
         self.assertGreaterEqual(firstDate, startDate)
 
+    def testFuncFirstValueDateAfterInputDateForDaysMoreThan367(self):
+        returnData = getAverageExchangeRatesInDays("USD", 600)
+        startDate = date.today() - timedelta(days=600)
+        firstDate = returnData[0].effectiveDate
+        self.assertGreaterEqual(firstDate, startDate)
+
     def testFuncRisesErrorForIncorrectInputs(self):
         self.assertRaises(ApiError, getAverageExchangeRatesInDays, "12345", 10)
         self.assertRaises(ApiError, getAverageExchangeRatesInDays, "USD", -4)
-        self.assertRaises(ApiError, getAverageExchangeRatesInDays, "AFN", 600)
 
 
 if __name__ == '__main__':
