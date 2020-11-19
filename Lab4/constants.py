@@ -29,3 +29,5 @@ MSG_ERROR_FAILED_TO_FETCH = "Error fetching data!"
 PLOT_XAXIS_LABEL = "Data"
 PLOT_YAXIS_LABEL = "Notowania waluty"
 PLOT_TITLE = "Wykres notowań walut"
+
+DATABASE_PATH = "Northwind2.sqlite"
