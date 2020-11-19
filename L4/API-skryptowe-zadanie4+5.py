@@ -64,7 +64,7 @@ def SalesChart(usdSale, plnSale):
     usd_rates = []
     pln_dates = []
     pln_rates = []
-
+    
     for key, value in usdSale.items():
         usd_dates.append(key)
         usd_rates.append(value)
@@ -73,14 +73,17 @@ def SalesChart(usdSale, plnSale):
         pln_dates.append(key)
         pln_rates.append(value)
 
-    plt.plot(usd_dates, usd_rates)
-    plt.plot(pln_dates, pln_rates)
+    plt.plot(usd_dates[::-1], usd_rates[::-1])
+    plt.plot(pln_dates[::-1], pln_rates[::-1])
+    shorter = usd_dates[::-30]
+    plt.xticks(range(0, len(usd_dates), 30), shorter)
     plt.title('Wykres sprzedaży')
     plt.xlabel('Daty sprzedaży')
     plt.ylabel('Wartości sprzedaży')
     plt.legend(['Wartości w dolarach', 'Wartości w złotych'])
     plt.grid(True)
-    plt.savefig("USD_PLN_SALES_Chart")
+    plt.gcf().autofmt_xdate(rotation =25)
+    plt.savefig("USD_PLN_SALES_Chart.svg")
     plt.show()
     
 if __name__=='__main__':

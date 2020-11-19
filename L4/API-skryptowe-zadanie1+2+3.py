@@ -68,7 +68,7 @@ def chart(resp, resp2):
     plt.ylabel('Średnie kursy')
     plt.legend(['Notowanie dolara', 'Notowania euro'])
     
-
+    plt.gcf().autofmt_xdate(rotation =25)
     plt.grid(True)
     plt.savefig("Chart-USD-EUR.svg")
     plt.show()
