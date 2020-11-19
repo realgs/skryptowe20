@@ -20,7 +20,7 @@ class Currency(Enum):
 
 def get_date_ranges(days_num):
     if days_num <= 0:
-        raise ValueError("Number of days cannot be <= 0")
+        raise ValueError(f"Number of days '{days_num}' cannot be <= 0")
 
     today = date.today()
     dates = []
@@ -58,6 +58,7 @@ def checked_request_json(url):
 
     if response.status_code != 200:
         print(
+            "WARNING:"
             f"Status code '{response.status_code}' when connecting to '{url}'",
             f"Reponse text: '{response.text}'",
             sep="\n"
