@@ -93,9 +93,6 @@ def daily_exchange_rates_for(currency, days_num=1):
 
 
 def draw_chart_for_rates_of(currency1, name1, currency2, name2):
-    if not currency1 or not currency2:
-        raise ValueError("Some of the currency data lists are empty")
-
     df1 = pd.DataFrame(currency1)
     df2 = pd.DataFrame(currency2)
 
