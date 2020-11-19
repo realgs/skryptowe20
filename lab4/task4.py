@@ -43,6 +43,3 @@ def fillTableWithData():
    cursor.executemany('INSERT INTO CurrencyQuotes VALUES (?,?)', USDPrices)
    connection.commit()
    connection.close()
-
-#createTableCurrencyQuotes()
-fillTableWithData()
