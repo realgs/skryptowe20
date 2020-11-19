@@ -7,36 +7,35 @@ import matplotlib.pyplot as plt
 def currency_rates(currency_code, days):
     rates = []
     dates = []
-    table = get_table(currency_code)
 
-    url = "http://api.nbp.pl/api/exchangerates/rates/" + table + "/" + currency_code \
-          + "/" + (datetime.today() - timedelta(days=days-1)).strftime('%Y-%m-%d') \
-          + "/" + datetime.today().strftime('%Y-%m-%d') + "/"
+    url = _url("api/exchangerates/rates/{}/{}/{}/{}/".format(
+        _get_table(currency_code),
+        currency_code,
+        (datetime.today() - timedelta(days=days - 1)).strftime('%Y-%m-%d'),
+        datetime.today().strftime('%Y-%m-%d')))
+
     request = requests.get(url)
-
     if request.status_code == 200:
-        request = request.json()['rates']
-        n = len(request)
-    else:
-        return rates, dates
+        data = request.json()['rates']
+        n = len(data)
 
-    for i in range(n):
-        rates.append(float(request[i]['mid']))
-        dates.append(request[i]['effectiveDate'])
+        for i in range(n):
+            rates.append(float(data[i]['mid']))
+            dates.append(data[i]['effectiveDate'])
 
     return rates, dates
 
 
-def get_table(currency):
+def _get_table(currency):
     for table in ['A', 'B']:
-        if check_table(currency, table):
+        if _check_table(currency, table):
             return table
     return ''
 
 
-def check_table(currency, table):
+def _check_table(currency, table):
     found = False
-    url = "http://api.nbp.pl/api/exchangerates/tables/" + table + "/last/1/"
+    url = _url("api/exchangerates/tables/{}/last/1/".format(table))
     response = requests.get(url).text
 
     if currency in response:
@@ -45,10 +44,21 @@ def check_table(currency, table):
     return found
 
 
+def _url(path):
+    return 'http://api.nbp.pl/' + path
+
+
+def plot():
+
+    pass
+
+
 if __name__ == '__main__':
     days = 182
     rates_usd, dates_usd = currency_rates('USD', days)
     rates_eur, dates_eur = currency_rates('EUR', days)
+
+    print(rates_usd)
 
     f = plt.figure(figsize=(10, 5))
 
@@ -66,19 +76,9 @@ if __name__ == '__main__':
     plt.legend(frameon=False, loc='lower left')
     plt.xlim(x_min, x_max)
     plt.grid(axis='y', lw=0.25)
-
-    #
-    # plt.locator_params(axis='x', nbins=10)
-
     plt.yticks(np.arange(round(y_min, 1), round(y_max, 1), 0.1))
-    nth = 10
-    _, ticks = plt.xticks()
-    for i, tick in enumerate(ticks, start=2):
-        tick.set_fontsize(9)
-        tick.set_rotation('vertical')
-        tick.set_visible(False)
-        if i % nth == 0:
-            tick.set_visible(True)
+
+    plt.xticks(range(1, len(dates_usd), 10), dates_usd[::10])
+    plt.xticks(rotation=90)
 
     plt.show()
-    plt.savefig('zad3.svg')
