@@ -1,10 +1,16 @@
 import requests
 from datetime import datetime, timedelta
-import numpy as np
+from matplotlib import cycler
 import matplotlib.pyplot as plt
 
+CURRENCIES = ['USD', 'EUR']
+YEAR = 365
+TICKS = 10
+PLOT_SIZE_X = 10
+PLOT_SIZE_Y = 5
 
-def currency_rates(currency_code, days):
+
+def currency_rates_dates(currency_code, days):
     rates = []
     dates = []
 
@@ -48,37 +54,65 @@ def _url(path):
     return 'http://api.nbp.pl/' + path
 
 
-def plot():
+def _plot(currencies_data):
+    colors = cycler('color', ['goldenrod', 'lightsteelblue', 'olive', 'cadetblue'])
+    plt.rc('axes', prop_cycle=colors)
 
-    pass
+    plt.figure(figsize=(PLOT_SIZE_X, PLOT_SIZE_Y))
+    plt.subplots_adjust(left=0.1, bottom=0.2)
+
+    x_min = '9999-99-99'
+    x_max = '0000-00-00'
+
+    currency_codes = []
+    for currency in currencies_data:
+        dates = currency['dates']
+        rates = currency['rates']
+        code = currency['code']
+
+        plt.plot(dates, rates, label=code)
+
+        currency_codes.append(code)
+        if dates[0] < x_min:
+            x_min = dates[0]
+        if dates[-1] > x_max:
+            x_max = dates[-1]
+
+    plt.title("Kursy średnie walut {} w dniach od {} do {}".format(
+        ', '.join([str(code) for code in currency_codes]),
+        x_min,
+        x_max))
+    plt.xlabel("data")
+    plt.ylabel("kurs średni")
+
+    plt.legend(frameon=False, loc='best')
+    plt.grid(axis='y', lw=0.25)
+
+    plt.xlim(x_min, x_max)
+    _, ticks = plt.xticks()
+    for i, tick in enumerate(ticks, start=2):
+        tick.set_fontsize(8)
+        tick.set_rotation(45)
+        if i % TICKS != 0:
+            tick.set_visible(False)
+
+    plt.show()
+
+
+def plot(currency_codes, days):
+    currencies_data = []
+
+    for currency in currency_codes:
+        rates, dates = currency_rates_dates(currency, days)
+        entry = {'code': currency,
+                 'rates': rates,
+                 'dates': dates}
+        currencies_data.append(entry)
+
+    _plot(currencies_data)
 
 
 if __name__ == '__main__':
-    days = 182
-    rates_usd, dates_usd = currency_rates('USD', days)
-    rates_eur, dates_eur = currency_rates('EUR', days)
-
-    print(rates_usd)
-
-    f = plt.figure(figsize=(10, 5))
-
-    x_min = dates_usd[0]
-    x_max = dates_usd[len(dates_usd) - 1]
-    y_min = min(rates_eur + rates_usd) - 0.1
-    y_max = max(rates_eur + rates_usd) + 0.1
-
-    plt.plot(dates_usd, rates_usd, color='goldenrod', label='USD')
-    plt.plot(dates_eur, rates_eur, color='lightsteelblue', label='EUR')
-
-    plt.title("Kursy średnie walut EUR i USD w dniach od " + x_min + " do " + x_max)
-    plt.xlabel("data")
-    plt.ylabel("kurs średni")
-    plt.legend(frameon=False, loc='lower left')
-    plt.xlim(x_min, x_max)
-    plt.grid(axis='y', lw=0.25)
-    plt.yticks(np.arange(round(y_min, 1), round(y_max, 1), 0.1))
-
-    plt.xticks(range(1, len(dates_usd), 10), dates_usd[::10])
-    plt.xticks(rotation=90)
-
-    plt.show()
+    print(currency_rates_dates('USD', YEAR // 2)[0])
+    print(currency_rates_dates('EUR', YEAR // 2)[0])
+    plot(CURRENCIES, YEAR // 2)
