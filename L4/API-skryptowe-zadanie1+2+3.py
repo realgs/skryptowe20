@@ -61,10 +61,14 @@ def chart(resp, resp2):
         j+=1
     plt.plot(x,y)
     plt.plot(x2, y2)
+    shorter=x[::15]
+    plt.xticks(range(0, len (x), 15), shorter)
     plt.title('Wykres notowań USD przez ostatnie dni')
     plt.xlabel('Daty notowań')
     plt.ylabel('Średnie kursy')
     plt.legend(['Notowanie dolara', 'Notowania euro'])
+    
+
     plt.grid(True)
     plt.savefig("Chart-USD-EUR.svg")
     plt.show()
@@ -74,4 +78,4 @@ if __name__=='__main__':
     exchangeRates("usd", 183)
     exchangeRates("eur", 183)
     exchangeRates("usd", 370)
-    chart(exchangeRates("usd", 10), exchangeRates("eur", 10))
+    chart(exchangeRates("usd", 183), exchangeRates("eur", 183))
