@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from avg_rates import get_date_ranges, MAX_DAYS
+from rates import get_date_ranges, MAX_DAYS
 
 
 class TestGetAvgRates(TestCase):
