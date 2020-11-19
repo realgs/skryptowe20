@@ -31,7 +31,7 @@ def drawSalesChart():
     plt.ylabel('Sales Value', fontsize=14)
     plt.legend()
     plt.title("PLN and USD total sales values during years 2013-2016")
-    plt.show()
     plt.savefig('task5.svg')
+    plt.show()
     connection.close()
 
