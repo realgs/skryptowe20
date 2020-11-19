@@ -1,7 +1,6 @@
-from constants import DEFAULT_TABLE
-class Url:
-    api_url = "http://api.nbp.pl/api/exchangerates/rates"
+from constants import DEFAULT_TABLE, API_URL
 
+class Url:
     def __init__(self, currency, start_date, end_date, table=DEFAULT_TABLE):
         self.table = table
         self.currency = currency
@@ -9,32 +8,42 @@ class Url:
         self.end_date = end_date
 
     def __str__(self):
-        return self.api_url + (f"/{self.table}/"
-                              f"/{self.currency}/"
-                              f"/{self.start_date}/"
-                              f"/{self.end_date}/")
+        return API_URL + (f"/{self.table}/"
+                          f"/{self.currency}/"
+                          f"/{self.start_date}/"
+                          f"/{self.end_date}/")
 
-class Response_A:
+class RatesWrapper:
     class Rate:
-        def __init__(self, rate):
-            self.effective_date = rate['effectiveDate']
-            self.mid = rate['mid']
+        def __init__(self, date, value):
+            self.date = date
+            self.value = value
 
         def __str__(self):
-            return ("Rate[\n"
-                    f"\teffective_date: {self.effective_date},\n"
-                    f"\tmid: {self.mid}]\n")
+            return (f"Rate [date: {self.date},"
+                    f" value: {self.value}]")
 
-    def __init__(self, request_response):
-        res = request_response.json()
-        self.currency = res['currency']
-        self.currency_code = res['code']
+    def __init__(self, currency, start_date="", end_date=""):
+        self.start_date = start_date
+        self.end_date = end_date
+        self.currency = currency
         self.rates = []
+
+    def append_from_response(self, response):
+        res = response.json()
         for rate in res['rates']:
-            self.rates.append(self.Rate(rate))
+            self.rates.append(self.Rate(rate['effectiveDate'], rate['mid']))
+
+        self.rates.sort(key=lambda x: x.date)
+
+    def append_from_db(self, db_rates):
+        for date, value in db_rates:
+            self.rates.append(self.Rate(date, value))
+
+        self.rates.sort(key=lambda x: x.date)
 
     def __str__(self):
-        return ("Response_A[\n"
-                f"\tcurrency: {self.currency},\n"
-                f"\tcurrency_code: {self.currency_code},\n"
-                f"\trates: {self.rates}]\n")
+        out = f"RatesWrapper:\ncurrency: {self.currency},\nrates:\n"
+        for r in self.rates:
+            out += f"{r}\n"
+        return out

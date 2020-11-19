@@ -1,55 +1,33 @@
 import matplotlib.pyplot as plt
 from date_parser import date_string_to_datetime
 from constants import \
-    PLOT_TITLE, \
+    PLOT_TITLE_RATES, \
     PLOT_XAXIS_LABEL, \
-    PLOT_YAXIS_LABEL
+    PLOT_YAXIS_LABEL_RATES
 
 def convert_rates(rates):
     dates = []
     values = []
     for r in rates:
-        dates.append(date_string_to_datetime(r.effective_date))
-        values.append(r.mid)
+        dates.append(date_string_to_datetime(r.date))
+        values.append(r.value)
 
     return dates, values
 
-def draw_rates_subplot(currency, rates):
-    dates, values = convert_rates(rates)
-    plt.plot(dates, values, label=f"{currency}")
+def draw_wrapper(wrapper):
+    dates, values = convert_rates(wrapper.rates)
+    plt.plot(dates, values, label=f"{wrapper.currency}")
 
-def draw_rates(pairs):
+def draw_list_of_wrappers(list_of_wrappers,
+                          title=PLOT_TITLE_RATES,
+                          xaxis=PLOT_XAXIS_LABEL,
+                          yaxis=PLOT_YAXIS_LABEL_RATES):
     plt.figure()
     plt.subplot()
-    for pair in pairs:
-        draw_rates_subplot(pair[0], pair[1])
-    plt.title(PLOT_TITLE)
-    plt.xlabel(PLOT_XAXIS_LABEL)
-    plt.ylabel(PLOT_YAXIS_LABEL)
-    plt.legend()
-    plt.show()
-
-def convert_database_rates(rates):
-    dates = []
-    values = []
-    for r in rates:
-        dates.append(date_string_to_datetime(r[0]))
-        values.append(r[1])
-
-    return dates, values
-
-
-def draw_database_subplot(currency, rates):
-    dates, values = convert_database_rates(rates)
-    plt.plot(dates, values, label=f"{currency}")
-
-def draw_database(pairs):
-    plt.figure()
-    plt.subplot()
-    for pair in pairs:
-        draw_database_subplot(pair[0], pair[1])
-    plt.title(PLOT_TITLE)
-    plt.xlabel(PLOT_XAXIS_LABEL)
-    plt.ylabel(PLOT_YAXIS_LABEL)
+    for wrapper in list_of_wrappers:
+        draw_wrapper(wrapper)
+    plt.title(title)
+    plt.xlabel(xaxis)
+    plt.ylabel(yaxis)
     plt.legend()
     plt.show()

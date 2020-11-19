@@ -1,39 +1,41 @@
 import requests as req
-from web_data import Response_A, Url
+from web_data import RatesWrapper, Url
 from date_parser import convert_days_to_dates, correct_weekends
 from constants import \
     AVAIL_CURRENCIES, \
     MSG_ERROR_FAILED_TO_FETCH, \
     MSG_ERROR_INVALID_CURRENCY
 
-def send_req(currency, dates):
-    url = Url(currency, dates[0], dates[1])
-    response = req.get(url)
+def validate_response(response):
     if(response.status_code != 200):
         raise Exception(f"{MSG_ERROR_FAILED_TO_FETCH}\n"
-                         f"Status: {response.status_code}")
-    else:
-        return Response_A(response)
+                        f"Status: {response.status_code}")
 
-def is_currency_valid(currency):
-    return currency in AVAIL_CURRENCIES
+def send_req(currency, start_date, end_date):
+    url = Url(currency, start_date, end_date)
+    response = req.get(url)
+    validate_response(response)
+    return response
+
+def validate_currency(currency):
+    if not currency in AVAIL_CURRENCIES:
+        raise Exception(MSG_ERROR_INVALID_CURRENCY)
 
 def get_avg_rates_for_currency(currency, days):
-    pairs_of_dates = convert_days_to_dates(days)
-    output = []
-    for pair in pairs_of_dates:
-        rates = send_req(currency, pair).rates
-        for r in rates:
-            output.append(r)
+    periods_to_fetch = convert_days_to_dates(days)
+    wrapper = RatesWrapper(currency, periods_to_fetch[0][0],
+                           periods_to_fetch[len(periods_to_fetch)-1][1])
 
-    output.sort(key=lambda x: x.effective_date)
-    return (currency, correct_weekends(output, "", ""))
+    for start_date, end_date in periods_to_fetch:
+        response = send_req(currency, start_date, end_date)
+        wrapper.append_from_response(response)
+
+    return correct_weekends(wrapper)
 
 def get_avg_rates(currencies, days):
     output = []
     for currency in currencies:
-        if not is_currency_valid(currency):
-            raise Exception(MSG_ERROR_INVALID_CURRENCY)
+        validate_currency(currency)
         output.append(get_avg_rates_for_currency(currency, days))
 
     return output

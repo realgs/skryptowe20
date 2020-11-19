@@ -18,27 +18,28 @@ def date_sec_to_string(date):
 def date_string_to_datetime(date):
     return datetime.strptime(date, DATE_FORMAT)
 
-#TODO: REFACTOR!!!
-def correct_inside_weekends(rates):
+def correct_inside_weekends(rates_wrapper):
+    rates = rates_wrapper.rates
     output = [rates[0]]
     for i in range(1, len(rates)):
-        day_before = date_string_to_datetime(rates[i - 1].effective_date)
-        current_day = date_string_to_datetime(rates[i].effective_date)
+        day_before = date_string_to_datetime(rates[i - 1].date)
+        current_day = date_string_to_datetime(rates[i].date)
         difference = (current_day - day_before).total_seconds() / DAY_IN_SEC
         for j in range(0, int(difference)):
             correct_date = current_day.timestamp() - DAY_IN_SEC * (difference - j)
             rate = deepcopy(rates[i])
-            rate.effective_date = date_sec_to_string(correct_date)
+            rate.date = date_sec_to_string(correct_date)
             output.append(rate)
 
-    return output
+    rates_wrapper.rates = output
+    return rates_wrapper
 
 #TODO: IMPLEMENT!!!
 def correct_edge_weekends(rates, start_date, end_date):
     pass
 
-def correct_weekends(rates, start_date, end_date):
-    output = correct_inside_weekends(rates)
+def correct_weekends(rates_wrapper):
+    output = correct_inside_weekends(rates_wrapper)
     #output = correct_edge_weekends(output, start_date, end_date)
     return output
 

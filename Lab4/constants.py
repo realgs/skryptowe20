@@ -1,3 +1,5 @@
+API_URL = "http://api.nbp.pl/api/exchangerates/rates"
+
 DAY_IN_SEC = 86400
 MAX_DAYS = 6588
 MIN_DAYS = 0
@@ -7,6 +9,7 @@ DATE_FORMAT = "%Y-%m-%d"
 
 DEFAULT_TABLE = "A"
 
+# nbp.pl API is lying and not all of them work...
 AVAIL_CURRENCIES = {
     "AFN", "EUR", "ALL", "DZD", "USD", "AOA", "XCD", "ARS", "AMD", "AWG", "AUD", "AZN", "BSD", "BHD",
     "BDT", "BBD", "BYN", "BZD", "XOF", "BMD", "INR", "BTN", "BOB", "BOV", "BAM", "BWP", "NOK", "BRL",
@@ -26,8 +29,11 @@ MSG_ERROR_INVALID_CURRENCY = f"Currency must be one of available values: \n{AVAI
 MSG_ERROR_INVALID_DAYS = f"Days have to be greater than {MIN_DAYS} and less than 18 years ({MAX_DAYS} days)!"
 MSG_ERROR_FAILED_TO_FETCH = "Error fetching data!"
 
-PLOT_XAXIS_LABEL = "Data"
-PLOT_YAXIS_LABEL = "Notowania waluty"
-PLOT_TITLE = "Wykres notowań walut"
+PLOT_XAXIS_LABEL = "Date"
+PLOT_YAXIS_LABEL_RATES = "Exchange rates"
+PLOT_TITLE_RATES = "Exchange rates chart"
 
-DATABASE_PATH = "Northwind2.sqlite"
+PLOT_YAXIS_LABEL_TRANSACTIONS = "Daily sum"
+PLOT_TITLE_TRANSACTIONS = "Daily sum of transactions chart"
+
+DATABASE_PATH = "Lab4/Northwind2.sqlite"
