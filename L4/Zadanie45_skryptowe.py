@@ -54,16 +54,16 @@ def CreateChartUSDPLN(salU,salP):
     yPLN=[]
     (xUSD,yUSD)=FromDictToTabs(salU,xUSD,yUSD)
     (xPLN,yPLN)=FromDictToTabs(salP,xPLN,yPLN)
-    plt.plot(xUSD,yUSD)
-    plt.plot(xPLN,yPLN)
-    xUSDShort=xUSD[::30]
+    plt.plot(xUSD[::-1],yUSD[::-1])
+    plt.plot(xPLN[::-1],yPLN[::-1])
+    xUSDShort=xUSD[::-30]
     plt.xticks(range(0,len(xUSD),30),xUSDShort)
     plt.xlabel('Dates')
     plt.ylabel('Sales values')
-    plt.gcf().autofmt_xdate(rotation=25) 
     plt.title('Comparision of sales in USD and PLN')
     plt.legend(['Sales in USD','Sales in PLN'])
     plt.grid(True)
+    plt.gcf().autofmt_xdate(rotation=25)
     plt.savefig("Sales.svg")
     plt.show()
 
