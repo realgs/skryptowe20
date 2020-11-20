@@ -18,12 +18,12 @@ if __name__ == "__main__":
     cursor = connection.cursor()
     # cursor.execute(CREATE_TABLE_QUERY)
 
-    rows = get_rows_from_api("usd", datetime.date(2013, 1, 1), datetime.date(2015, 12, 31))
-
-    for row in rows:
-        cursor.execute(INSERT_QUERY, row)
-
-    connection.commit()
+    # rows = get_rows_from_api("usd", datetime.date(2013, 1, 1), datetime.date(2015, 12, 31))
+    #
+    # for row in rows:
+    #     cursor.execute(INSERT_QUERY, row)
+    #
+    # connection.commit()
 
     cursor.close()
     connection.close()
