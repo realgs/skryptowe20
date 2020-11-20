@@ -29,6 +29,7 @@ def create_plot_from_exchange_rates(rates_currency_1, code_currency_1, rates_cur
     y_val_usd = [rate[1] for rate in rates_currency_1]
     y_val_eur = [rate[1] for rate in rates_currency_2]
 
+    plt.figure(figsize=(10, 5))
     plt.plot(x_val, y_val_usd)
     plt.plot(x_val, y_val_eur)
     plt.xticks(rotation=50)
