@@ -1,7 +1,8 @@
 import requests
 import psycopg2
-from datetime import date, timedelta
-
+from datetime import date, timedelta, datetime
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 def get_currency_for_period(currency_code: str, start_date: date, end_date: date) -> [(str, float)]:
     request_url = f"http://api.nbp.pl/api/exchangerates/rates/a/{currency_code}/{start_date}/{end_date}/"
@@ -113,6 +114,61 @@ def zad4(currencies: [(date, float)]):
             print("PostgreSQL connection is closed")
 
 
+def zad5():
+    try:
+        file = open("ConnectionString.txt")
+        connection_params = list(map(lambda x: x[x.index("=") + 1:], file.read().split(',')))
+    except (Exception, FileNotFoundError):
+        print("Could not find ConnectionString.txt")
+
+    connection = None
+    cursor = None
+    try:
+        connection = psycopg2.connect(user=connection_params[0],
+                                      password=connection_params[1],
+                                      host=connection_params[2],
+                                      port=connection_params[3],
+                                      database=connection_params[4])
+
+        cursor = connection.cursor()
+
+        select_query = """
+            SELECT d.duedate, SUM(d.unitprice) "USD", SUM(d.unitprice * c.currency_value) "PLN"
+            FROM purchasing.purchaseorderdetail d 
+            INNER JOIN purchasing.pln_currencies c ON d.duedate = c.currency_date 
+            GROUP BY d.duedate
+            """
+
+        cursor.execute(select_query)
+        result = cursor.fetchall()
+
+        dates = [datetime.strptime(x[0].date().strftime("%Y/%m/%d"), "%Y/%m/%d") for x in result]
+        dates = sorted(dates)
+
+        usd_sums = [x[1] for x in result]
+        pln_sums = [x[2] for x in result]
+
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%Y/%m/%d"))
+        plt.gca().xaxis.set_major_locator(mdates.MonthLocator())
+
+        plt.plot(dates, usd_sums, label="USD")
+        plt.plot(dates, pln_sums, label="PLN")
+
+        plt.xlabel('Month')
+        plt.ylabel('Sum')
+
+        plt.legend()
+        plt.show()
+
+    except (Exception, psycopg2.Error) as ex:
+        print("Error while connecting to PostgreSQL", ex)
+
+    finally:
+        if connection:
+            cursor.close()
+            connection.close()
+            print("PostgreSQL connection is closed")
+
 if __name__ == "__main__":
     # last_days = 12
     # currency_code = "USD"
@@ -124,10 +180,11 @@ if __name__ == "__main__":
 
     # zad4()
 
-    start_date = date(2003, 10, 26)
-    end_date = date(2004, 8, 24)
-
-    currencies_for_period = get_currency_for_period("USD", start_date, end_date)
-    fixed_currencies = zad4_fill_empty_records(currencies_for_period, start_date, end_date)
-
-    zad4(fixed_currencies)
+    # start_date = date(2003, 10, 26)
+    # end_date = date(2004, 8, 24)
+    #
+    # currencies_for_period = get_currency_for_period("USD", start_date, end_date)
+    # fixed_currencies = zad4_fill_empty_records(currencies_for_period, start_date, end_date)
+    #
+    # zad4(fixed_currencies)
+    zad5()
