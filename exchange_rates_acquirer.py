@@ -2,7 +2,7 @@ import requests
 import datetime
 import plot_drawer
 
-MIN_AVAILABLE_DATE = "2002-01-02"
+MIN_AVAILABLE_DATE = datetime.date(2002, 1, 2)
 MAX_DAYS = 93
 DELTA_ONE_DAY = datetime.timedelta(days=1)
 
@@ -43,7 +43,7 @@ def get_previous_available_day_date(currency_code, day_data):
     day_data -= DELTA_ONE_DAY
     single_day_data = make_get_request_for_single_day(currency_code, day_data)
 
-    while not single_day_data:
+    while not single_day_data and MIN_AVAILABLE_DATE <= day_data:
         day_data -= DELTA_ONE_DAY
         single_day_data = make_get_request_for_single_day(currency_code, day_data)
 
@@ -91,6 +91,8 @@ def expand_exchange_rates_to_range(api_exchange_rates, currency_code, start_date
     if len(api_exchange_rates) == 0 or api_exchange_rates[0][0] != format_datetime_to_string(start_date):
         previous_available_day_data = get_previous_available_day_date(currency_code, start_date)
         # marks start_date with the value from previous available day
+        if not previous_available_day_data:
+            return []
         all_days_exchange_rates.append((format_datetime_to_string(start_date), previous_available_day_data[1]))
         start_date += DELTA_ONE_DAY
 
@@ -120,10 +122,14 @@ def get_exchange_rates_from_last_x_days(currency_code, number_of_days):
 
 
 if __name__ == "__main__":
-    start = datetime.date(2020, 1, 1)
-    end = datetime.date(2020, 10, 12)
+    start = datetime.date(2000, 1, 1)
+    end = datetime.date(2000, 10, 12)
     currency_usd = "usd"
     currency_eur = "eur"
+
+    api_values = get_exchange_rates_from_api(currency_usd, start, end)
+    expanded_values = expand_exchange_rates_to_range(api_values, currency_usd, start, end)
+    print(len(expanded_values))
 
     last_half_year_usd = get_exchange_rates_from_last_x_days(currency_usd, 366 / 2)
     last_half_year_eur = get_exchange_rates_from_last_x_days(currency_eur, 366 / 2)
