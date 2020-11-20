@@ -48,7 +48,7 @@ def currency_rates_and_dates_time_frame(currency_code, date_from, date_to):
 
 
 def split_time_frame(date_from, date_to):
-    dates = []
+    date_frames = []
 
     date_from_obj = datetime.strptime(date_from, '%Y-%m-%d')
     date_to_obj = datetime.strptime(date_to, '%Y-%m-%d')
@@ -66,10 +66,10 @@ def split_time_frame(date_from, date_to):
         if new_to > date_to_obj:
             new_to = date_to_obj
 
-        dates.append((new_from.strftime('%Y-%m-%d'), new_to.strftime('%Y-%m-%d')))
+        date_frames.append((new_from.strftime('%Y-%m-%d'), new_to.strftime('%Y-%m-%d')))
         temp_date_obj = new_to + timedelta(days=1)
 
-    return dates
+    return date_frames
 
 
 def fill_in_missing_rates(rates, dates):
