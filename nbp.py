@@ -16,7 +16,7 @@ def fetch_avg_currency(table='a', prev_date='2012-01-01', curr_date='2012-01-31'
         req = requests.get(f"http://api.nbp.pl/api/exchangerates/rates/{table}/{currency}/{pair[0]}/{pair[1]}")
         if req.status_code == 200:
             res = from_json_to_list(req.json())
-            result += (res)
+            result += res
 
     return result
 
