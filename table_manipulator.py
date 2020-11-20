@@ -1,5 +1,6 @@
 import sqlite3
 import exchange_rates_acquirer as rates_acquirer
+import plot_drawer
 import datetime
 
 CREATE_TABLE_QUERY = "CREATE TABLE ExchangeRate (date text, rate real)"
@@ -25,6 +26,7 @@ def get_rows_from_api(currency_code, start_date, end_date):
 if __name__ == "__main__":
     connection = sqlite3.connect("Northwind_large.sqlite")
     cursor = connection.cursor()
+
     # cursor.execute(CREATE_TABLE_QUERY)
 
     # rows = get_rows_from_api("usd", datetime.date(2013, 1, 1), datetime.date(2015, 12, 31))
@@ -34,7 +36,9 @@ if __name__ == "__main__":
     #
     # connection.commit()
 
-    table_rows = cursor.execute(SELECT_QUERY)
+    cursor.execute(SELECT_QUERY)
+    table_rows = cursor.fetchall()
+    plot_drawer.create_plot_from_database(table_rows, "USD", "PLN")
 
     cursor.close()
     connection.close()
