@@ -125,11 +125,11 @@ if __name__ == "__main__":
     currency_usd = "usd"
     currency_eur = "eur"
 
-    last_ten_days_rates_usd = get_exchange_rates_from_last_x_days(currency_usd, 1)
-    last_ten_days_rates_eur = get_exchange_rates_from_last_x_days(currency_eur, 10)
+    last_half_year_usd = get_exchange_rates_from_last_x_days(currency_usd, 366/2)
+    last_half_year_eur = get_exchange_rates_from_last_x_days(currency_eur, 366/2)
 
-    for usd_rates in last_ten_days_rates_usd:
+    for usd_rates in last_half_year_usd:
         print(usd_rates)
 
-    for eur_rates in last_ten_days_rates_eur:
+    for eur_rates in last_half_year_eur:
         print(eur_rates)
