@@ -1,10 +1,12 @@
 import matplotlib.pyplot as plt
+from datetime import date
 from ApiService import getUsdAndEurOverHalfOfYear
+from DatabaseService import getPricesUsdPlnInHalfYear
 
 
 def generateUsdAndEurOverHalfOfYearPlot():
-    (usd, eur) = getUsdAndEurOverHalfOfYear()
-    (usdMid, usdDates, eurMid, eurDates) = getDataLists(usd, eur)
+    (usd, eur) = getUsdAndEurOverHalfOfYear(date(2018, 5, 6))
+    (usdMid, usdDates, eurMid, eurDates) = getUsdAndEurDataLists(usd, eur)
 
     plt.scatter(
         usdDates, usdMid, c="blue", edgecolor="black", linewidths=1, label="USD"
@@ -21,8 +23,40 @@ def generateUsdAndEurOverHalfOfYearPlot():
     plt.savefig("UsdAndEurOverHalfOfYear.svg")
     plt.show()
 
+def generateUsdAndPlnPricesOverHalfOfYearPlot():
+    data = getPricesUsdPlnInHalfYear()
+    (usdPrices, plnPrices, dates) = getUsdAndPlnPricesDataLists(data)
 
-def getDataLists(usd, eur):
+    plt.scatter(
+        dates, usdPrices, c="blue", edgecolor="black", linewidths=1, label="USD"
+    )
+
+    plt.scatter(
+        dates, plnPrices, c="red", edgecolor="black", linewidths=1, label="PLN"
+    )
+
+    plt.title("Plot of total sales in EUR and USD over six months")
+    plt.xlabel("Date")
+    plt.ylabel("Price")
+    plt.legend()
+    plt.savefig("UsdAndPlnInHalfYear.svg")
+    plt.show()
+
+
+
+def getUsdAndPlnPricesDataLists(data):
+    usdPrices = []
+    plnPrices = []
+    dates = []
+    for item in data:
+        usdPrices.append(item[1])
+        plnPrices.append(item[4])
+        dates.append(date(*[int(item) for item in item[0].split('-')]))
+
+    return usdPrices, plnPrices, dates
+
+
+def getUsdAndEurDataLists(usd, eur):
     usdMid = []
     usdDates = []
     eurMid = []
@@ -38,3 +72,4 @@ def getDataLists(usd, eur):
 
 if __name__ == '__main__':
     generateUsdAndEurOverHalfOfYearPlot()
+    generateUsdAndPlnPricesOverHalfOfYearPlot()

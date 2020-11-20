@@ -41,5 +41,5 @@ def __getCurrencyFromOneTableInDays__(tableCode, currencyCode, days, endDate):
     return requests.get(url + tableCode + paramsUrl)
 
 
-def getUsdAndEurOverHalfOfYear():
-    return getAverageExchangeRatesInDays("USD", 182), getAverageExchangeRatesInDays("EUR", 182)
+def getUsdAndEurOverHalfOfYear(endDate=date.today()):
+    return getAverageExchangeRatesInDays("USD", 182, endDate), getAverageExchangeRatesInDays("EUR", 182, endDate)
