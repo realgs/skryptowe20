@@ -87,7 +87,7 @@ def day_is_in_api(api_exchange_rates, date, api_rates_index):
 def expand_exchange_rates_to_range(api_exchange_rates, currency_code, start_date, end_date):
     all_days_exchange_rates = []
 
-    if api_exchange_rates[0][0] != format_datetime_to_string(start_date):
+    if len(api_exchange_rates) == 0 or api_exchange_rates[0][0] != format_datetime_to_string(start_date):
         previous_available_day_data = get_previous_available_day_date(currency_code, start_date)
         # marks start_date with the value from previous available day
         all_days_exchange_rates.append((format_datetime_to_string(start_date), previous_available_day_data[1]))
@@ -125,11 +125,11 @@ if __name__ == "__main__":
     currency_usd = "usd"
     currency_eur = "eur"
 
-    last_ten_days_rates_usd = get_exchange_rates_from_last_x_days(currency_usd, 10)
+    last_ten_days_rates_usd = get_exchange_rates_from_last_x_days(currency_usd, 1)
     last_ten_days_rates_eur = get_exchange_rates_from_last_x_days(currency_eur, 10)
 
     for usd_rates in last_ten_days_rates_usd:
         print(usd_rates)
 
-    for eur_rates in last_ten_days_rates_usd:
+    for eur_rates in last_ten_days_rates_eur:
         print(eur_rates)
