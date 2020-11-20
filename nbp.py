@@ -4,7 +4,7 @@ import numpy as np
 import requests
 import json
 
-def fetch_avg_currency(currency="usd", days=10):
+def fetch_avg_currency(currency='usd', days=10):
        req = requests.get(f"http://api.nbp.pl/api/exchangerates/rates/a/{currency}/last/{days}/?format=json")
        res = req.json()
        return res
@@ -14,13 +14,14 @@ def print_json(json_file):
        print(json.dumps(json_file, indent=4, sort_keys=True))
 
 
-def plot(x1, y1, x2, y2, xlabel='', ylabel='', title=''):
+def plot(x1, y1, x2, y2, label1, label2, xlabel='', ylabel='', title=''):
        fig, ax = plt.subplots()
-       ax.plot(x1,y1)
-       ax.plot(x2, y2)
+       ax.plot(x1,y1, label=label1)
+       ax.plot(x2, y2, label=label2)
        ax.set(xlabel=xlabel, ylabel=ylabel,
               title=title)
        ax.set_xticks(x1[::10])
+       ax.legend()
        plt.xticks(rotation=40)
        fig.savefig(f'plots/{title}.svg')
        plt.show()
@@ -42,7 +43,9 @@ plot(
        usd_mids,
        euro_dates,
        euro_mids,
+       'USD',
+       'EUR',
        xlabel='days',
        ylabel='avg currency',
        title='Average currency values (EUR, USD) in 182 days'
-       )
+)
