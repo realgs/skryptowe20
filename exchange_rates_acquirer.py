@@ -1,5 +1,7 @@
 import requests
 import datetime
+import matplotlib.pyplot as plt
+import numpy as np
 
 MIN_AVAILABLE_DATE = "2002-01-02"
 MAX_DAYS = 93
@@ -119,17 +121,32 @@ def get_exchange_rates_from_last_x_days(currency_code, number_of_days):
     return expanded_rates
 
 
+def create_plot(rates_currency_1, code_currency_1, rates_currency_2, code_currency_2):
+    x_val_usd = [rate[0] for rate in rates_currency_1]
+    y_val_usd = [rate[1] for rate in rates_currency_1]
+    x_val_eur = [rate[0] for rate in rates_currency_2]
+    y_val_eur = [rate[1] for rate in rates_currency_2]
+
+    plt.plot(x_val_usd, y_val_usd)
+    plt.plot(x_val_eur, y_val_eur)
+    plt.xticks(rotation=50)
+    plt.xticks(ticks=np.arange(0, len(x_val_usd), step=len(x_val_usd) / 9))
+
+    plt.xlabel("Date")
+    plt.ylabel("Exchange rate")
+
+    plt.legend([code_currency_1, code_currency_2])
+
+    plt.show()
+
+
 if __name__ == "__main__":
     start = datetime.date(2020, 1, 1)
     end = datetime.date(2020, 10, 12)
     currency_usd = "usd"
     currency_eur = "eur"
 
-    last_half_year_usd = get_exchange_rates_from_last_x_days(currency_usd, 366/2)
-    last_half_year_eur = get_exchange_rates_from_last_x_days(currency_eur, 366/2)
+    last_half_year_usd = get_exchange_rates_from_last_x_days(currency_usd, 366 / 2)
+    last_half_year_eur = get_exchange_rates_from_last_x_days(currency_eur, 366 / 2)
 
-    for usd_rates in last_half_year_usd:
-        print(usd_rates)
-
-    for eur_rates in last_half_year_eur:
-        print(eur_rates)
+    create_plot(last_half_year_usd, currency_usd, last_half_year_eur, currency_eur)
