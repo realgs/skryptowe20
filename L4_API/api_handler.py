@@ -111,32 +111,28 @@ def __url(path):
     return 'http://api.nbp.pl/' + path
 
 
-def plot(currencies_data):
+def plot(currencies, days):
     colors = cycler('color', ['goldenrod', 'lightsteelblue', 'olive', 'cadetblue'])
     plt.rc('axes', prop_cycle=colors)
-
     plt.figure(figsize=(PLOT_SIZE_X, PLOT_SIZE_Y))
     plt.subplots_adjust(left=0.1, bottom=0.2)
 
     x_min = '9999-99-99'
     x_max = '0000-00-00'
 
-    currency_codes = []
-    for currency in currencies_data:
-        dates = currency['dates']
-        rates = currency['rates']
-        code = currency['code']
+    for currency in currencies:
+        rates, dates = currency_rates_and_dates(currency, days)
+        code = currency
 
         plt.plot(dates, rates, label=code)
 
-        currency_codes.append(code)
         if dates[0] < x_min:
             x_min = dates[0]
         if dates[-1] > x_max:
             x_max = dates[-1]
 
     plt.title("Kursy średnie walut {} w dniach od {} do {}".format(
-        ', '.join([str(code) for code in currency_codes]),
+        ', '.join([str(code) for code in currencies]),
         x_min,
         x_max))
     plt.xlabel("data")

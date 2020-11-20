@@ -6,16 +6,7 @@ YEAR = 365
 
 
 def plot_rates(currency_codes, days):
-    currencies_data = []
-
-    for currency in currency_codes:
-        rates, dates = api_hdl.currency_rates_and_dates(currency, days)
-        entry = {'code': currency,
-                 'rates': rates,
-                 'dates': dates}
-        currencies_data.append(entry)
-
-    api_hdl.plot(currencies_data)
+    api_hdl.plot(currency_codes, days)
 
 
 def plot_sales(currency_code, date_from, date_to):
