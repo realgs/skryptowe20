@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta
 import sqlite3
 import json
-from nbp import fetch_currency_from_two_tables, print_json, from_json_to_list
+from nbp import fetch_currency_from_two_tables, from_json_to_list
 
-DB_NAME = "Source/AdventureWorksLT.db"
+
+DB_NAME = "Source/bazunia.db"
 DATEFORMAT = "%Y-%m-%d"
 TIME_DELTA = 182
 
@@ -45,6 +46,16 @@ def add_missing_dates(rates):
     return rates
 
 
+def update_dates(conn, years):
+    c = conn.cursor()
+    c.execute(
+        f'''
+        UPDATE Orders
+        SET OrderDate = DATETIME(OrderDate, '+{years} YEARS')
+        '''
+    )
+
+
 def get_sales_usd_pln(conn):
     c = conn.cursor()
     c.execute(
@@ -64,8 +75,9 @@ if __name__ == "__main__":
     create_avg_currency_rates_table(conn)
     # insert_usd_rates(conn, rates)
 
+    update_dates(conn, 15)
     c = conn.cursor()
-    c.execute(''' SELECT DISTINCT OrderDate, ShipDate, ModifiedDate FROM SalesOrderHeader''')
+    c.execute(''' SELECT MAX(OrderDate) FROM Orders''')
     print(c.fetchall(), sep='\n')
 
     conn.close()
