@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as pltd
 import matplotlib.ticker as plttk
 import matplotlib.dates as mdates
+import sqlite3
 DAYS_IN_YEAR = 365
 DAYS_LIMIT = 92
 
@@ -61,7 +62,7 @@ def midCurrFromXDays(currency, xDays):
     else:
         return results
 #zad3
-def draw(days):
+def drawUSDEUR(days):
     usd = midCurrFromXDays('usd', days)
     eur = midCurrFromXDays('eur', days)
 
@@ -90,11 +91,51 @@ def draw(days):
     plt.grid(True)
     plt.savefig("RateOfUSD_EUR.svg")
     plt.show()
-
-
+#Zad4
+#database from https://www.sqlitetutorial.net/sqlite-sample-database/
+def createExchangeTale():
+    conn = sqlite3.connect('chinook.db')
+    c = conn.cursor()
+    c.execute('CREATE TABLE ExchangeRate(Id, date, price)')
+    conn.commit()
+    conn.close()
+#insert from  2011-03-18 to 2013-07-11
+def db():
+    conn = sqlite3.connect('chinook.db')
+    cursor = conn.cursor()
+    fromDate = datetime.datetime.strptime('2011-03-18', '%Y-%m-%d')
+    toDate = datetime.datetime.strptime('2013-07-11', '%Y-%m-%d')
+    dateToTable = {}
+    while(toDate>fromDate):
+        resp = requests.get('http://api.nbp.pl/api/exchangerates/rates/a/usd/{}/'.format(toDate.strftime("%Y-%m-%d")))
+        if resp.status_code != 200:
+            dateToTable[toDate.strftime("%Y-%m-%d")] = prev_resp.json()['rates'][0]['mid']
+        else:
+            prev_resp = resp
+            dateToTable[toDate.strftime("%Y-%m-%d")] = resp.json()['rates'][0]['mid']
+        toDate = toDate - datetime.timedelta(days=1)
+    pos = 0
+    for k, v in dateToTable.items():
+        pos += 1
+        todayDate = datetime.datetime.strptime(k, '%Y-%m-%d')
+        conn.execute("INSERT INTO ExchangeRate(Id, date, price) VALUES (?,?,?)",
+                     (pos, todayDate.strftime("%Y-%m-%d"), v))
+    conn.commit()
+    conn.close()
+#Zad5
+def drawSalesChart():
+    conn = sqlite3.connect('chinook.db')
+    c = conn.cursor()
+    c.execute("SELECT InvoiceDate, Total FROM invoices WHERE InvoiceDate BETWEEN '2009-01-01' AND '2010-12-31'")
+    tr = c.fetchall()
+    c.execute('SELECT date, price FROM ExchangeRate')
+    ex = c.fetchall()
+    conn.commit()
+    conn.close()
 if __name__ == '__main__':
     #print(daysRange(180))
     #Zad2
     #print(json.dumps(midCurrFromXDays('eur', DAYS_IN_YEAR // 2), indent=3))
     #print(json.dumps(midCurrFromXDays('usd', DAYS_IN_YEAR // 2), indent=3))
-    draw(DAYS_IN_YEAR//2)
+    #drawUSDEUR(DAYS_IN_YEAR//2)
+    db()
