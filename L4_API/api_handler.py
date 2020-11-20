@@ -1,12 +1,18 @@
 import requests
 from datetime import datetime, timedelta
-from matplotlib import cycler
+from matplotlib import cycler, ticker
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
-PLOT_TICKS = 10
 PLOT_SIZE_X = 10
 PLOT_SIZE_Y = 5
-
+PLOT_LEFT_POS = 0.1
+PLOT_BOTTOM_POS = 0.2
+PLOT_MARGIN = 0.01
+PLOT_TICKS_DAY_INTERVAL = 14
+PLOT_TICKS_Y_INTERVAL = 0.1
+PLOT_TICKS_MINOR_Y_INTERVAL = 0.01
+PLOT_GRID_LW = 0.25
 PLOT_SAVE = False
 
 
@@ -114,22 +120,25 @@ def __url(path):
 def plot(currencies, days):
     colors = cycler('color', ['goldenrod', 'lightsteelblue', 'olive', 'cadetblue'])
     plt.rc('axes', prop_cycle=colors)
-    plt.figure(figsize=(PLOT_SIZE_X, PLOT_SIZE_Y))
-    plt.subplots_adjust(left=0.1, bottom=0.2)
+
+    fig, ax = plt.subplots(figsize=(PLOT_SIZE_X, PLOT_SIZE_Y))
+    plt.subplots_adjust(left=PLOT_LEFT_POS, bottom=PLOT_BOTTOM_POS)
+    plt.margins(x=PLOT_MARGIN)
 
     x_min = '9999-99-99'
     x_max = '0000-00-00'
 
     for currency in currencies:
-        rates, dates = currency_rates_and_dates(currency, days)
+        rates, rate_dates = currency_rates_and_dates(currency, days)
+        dates = [datetime.strptime(d, "%Y-%m-%d").date() for d in rate_dates]
         code = currency
 
         plt.plot(dates, rates, label=code)
 
-        if dates[0] < x_min:
-            x_min = dates[0]
-        if dates[-1] > x_max:
-            x_max = dates[-1]
+        if rate_dates[0] < x_min:
+            x_min = rate_dates[0]
+        if rate_dates[-1] > x_max:
+            x_max = rate_dates[-1]
 
     plt.title("Kursy średnie walut {} w dniach od {} do {}".format(
         ', '.join([str(code) for code in currencies]),
@@ -138,16 +147,16 @@ def plot(currencies, days):
     plt.xlabel("data")
     plt.ylabel("kurs średni")
 
-    plt.legend(frameon=False, loc='best')
-    plt.grid(axis='y', lw=0.25)
-
-    plt.xlim(x_min, x_max)
-    _, ticks = plt.xticks()
-    for i, tick in enumerate(ticks, start=2):
-        tick.set_fontsize(8)
-        tick.set_rotation(45)
-        if i % PLOT_TICKS != 0:
-            tick.set_visible(False)
+    legend = plt.legend(loc='best')
+    legend.get_frame().set_facecolor('white')
+    legend.get_frame().set_edgecolor('white')
+    plt.grid(axis='y', lw=PLOT_GRID_LW)
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
+    ax.xaxis.set_major_locator(mdates.DayLocator(interval=PLOT_TICKS_DAY_INTERVAL))
+    ax.xaxis.set_minor_locator(mdates.DayLocator())
+    ax.yaxis.set_major_locator(ticker.MultipleLocator(PLOT_TICKS_Y_INTERVAL))
+    ax.yaxis.set_minor_locator(ticker.MultipleLocator(PLOT_TICKS_MINOR_Y_INTERVAL))
+    fig.autofmt_xdate()
 
     plt.show()
     if PLOT_SAVE:
