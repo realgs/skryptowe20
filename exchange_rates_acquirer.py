@@ -116,9 +116,8 @@ def get_exchange_rates_from_last_x_days(currency_code, number_of_days):
     end_date = datetime.datetime.now()
     start_date = end_date - datetime.timedelta(days=(number_of_days - 1))
     api_rates = get_exchange_rates_from_api(currency_code, start_date, end_date)
-    expanded_rates = expand_exchange_rates_to_range(api_rates, currency_code, start_date, end_date)
 
-    return expanded_rates
+    return api_rates
 
 
 def create_plot(rates_currency_1, code_currency_1, rates_currency_2, code_currency_2):
