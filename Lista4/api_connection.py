@@ -47,7 +47,7 @@ def draw_currency_diagram(dollar_data, euro_data):
     plt.title('Kursy dolara (USD) i euro (EUR) z ostatnich 183 dni')
     plt.xlabel('Data')
     plt.ylabel('Kurs względem PLN')
-    plt.xticks(range(len(data_time))[::10], rotation=35)
+    plt.xticks(range(len(data_time))[::20], rotation=20)
     plt.plot(data_time, data_dollar, label='USD')
     plt.plot(data_time, data_euro, label='EUR')
     plt.legend()

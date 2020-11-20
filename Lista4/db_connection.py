@@ -49,10 +49,10 @@ def draw_profit_diagram():
         data_dollar.append(row[1])
         data_pln.append(row[2])
 
-    plt.title('Łączna sprzedaż sklepów rowerowych w PLN i USD z okresu 2017-01-01 - 2017-06-30')
+    plt.title('Przychód sklepów rowerowych w PLN i USD; 2017-01-01 - 2017-06-30')
     plt.xlabel('Data')
     plt.ylabel('Łączna sprzedaż')
-    plt.xticks(range(len(data_time))[::10], rotation=35)
+    plt.xticks(range(len(data_time))[::20], rotation=20)
     plt.plot(data_time, data_dollar, label='USD')
     plt.plot(data_time, data_pln, label='PLN')
     plt.legend()
