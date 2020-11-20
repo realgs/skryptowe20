@@ -9,7 +9,7 @@ def format_datetime_to_string(date):
     return date.strftime("%Y-%m-%d")
 
 
-def make_get_request(currency_code, start_date, end_date):
+def make_get_request_for_range(currency_code, start_date, end_date):
     start_date_string = format_datetime_to_string(start_date)
     end_date_string = format_datetime_to_string(end_date)
     response = requests.get(
@@ -44,14 +44,16 @@ def get_exchange_rates_from_api(currency_code, start_date, end_date):
 
     exchange_rates = []
     for single_date_range in split_dates:
-        single_range_exchange = (make_get_request(currency_code, single_date_range[0], single_date_range[1]))
+        single_range_exchange = (make_get_request_for_range(currency_code, single_date_range[0], single_date_range[1]))
         exchange_rates.extend(single_range_exchange)
 
     return exchange_rates
 
 
 if __name__ == "__main__":
-    exchange_rates_from_api = get_exchange_rates_from_api("usd", datetime.date(2020, 1, 1), datetime.date(2020, 10, 10))
+    start = datetime.date(2020, 1, 1)
+    end = datetime.date(2020, 10, 10)
+    exchange_rates_from_api = get_exchange_rates_from_api("usd", start, end)
 
     for rate in exchange_rates_from_api:
         print(rate)
