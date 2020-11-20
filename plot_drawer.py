@@ -22,7 +22,7 @@ def create_plot_from_database(database_data, code_currency_original, code_curren
     plt.show()
 
 
-def create_plot(rates_currency_1, code_currency_1, rates_currency_2, code_currency_2):
+def create_plot_from_exchange_rates(rates_currency_1, code_currency_1, rates_currency_2, code_currency_2):
     x_val_usd = [rate[0] for rate in rates_currency_1]
     y_val_usd = [rate[1] for rate in rates_currency_1]
     x_val_eur = [rate[0] for rate in rates_currency_2]

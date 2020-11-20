@@ -134,4 +134,4 @@ if __name__ == "__main__":
     last_half_year_usd = get_exchange_rates_from_last_x_days(currency_usd, 366 / 2)
     last_half_year_eur = get_exchange_rates_from_last_x_days(currency_eur, 366 / 2)
 
-    plot_drawer.create_plot(last_half_year_usd, currency_usd, last_half_year_eur, currency_eur)
+    plot_drawer.create_plot_from_exchange_rates(last_half_year_usd, currency_usd, last_half_year_eur, currency_eur)
