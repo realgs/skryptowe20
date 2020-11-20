@@ -1,5 +1,5 @@
 import unittest
-from .rates import currency_rates_dates, _get_table
+from .api_handler import currency_rates_dates, _get_table
 
 
 class TestSortingMethods(unittest.TestCase):
