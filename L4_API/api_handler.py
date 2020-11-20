@@ -23,38 +23,53 @@ def currency_rates_and_dates_time_frame(currency_code, date_from, date_to):
     rates = []
     dates = []
 
-    date_from, date_to = check_time_frame_less_than_year(date_from, date_to)
+    time_frames = split_time_frame(date_from, date_to)
 
-    url = __url("api/exchangerates/rates/{}/{}/{}/{}/".format(
-        get_table(currency_code),
-        currency_code,
-        date_from,
-        date_to))
+    for frame in time_frames:
+        date_from, date_to = frame
+        url = __url("api/exchangerates/rates/{}/{}/{}/{}/".format(
+            get_table(currency_code),
+            currency_code,
+            date_from,
+            date_to))
 
-    request = requests.get(url)
-    if request.status_code == 200:
-        data = request.json()['rates']
-        n = len(data)
+        request = requests.get(url)
+        if request.status_code == 200:
+            data = request.json()['rates']
+            n = len(data)
 
-        for i in range(n):
-            rates.append(float(data[i]['mid']))
-            dates.append(data[i]['effectiveDate'])
+            for i in range(n):
+                rates.append(float(data[i]['mid']))
+                dates.append(data[i]['effectiveDate'])
 
     fill_in_missing_rates(rates, dates)
 
     return rates, dates
 
 
-def check_time_frame_less_than_year(date_from, date_to):
+def split_time_frame(date_from, date_to):
+    dates = []
+
     date_from_obj = datetime.strptime(date_from, '%Y-%m-%d')
     date_to_obj = datetime.strptime(date_to, '%Y-%m-%d')
+    temp_date_obj = date_from_obj
 
-    delta = (date_to_obj - date_from_obj).days
+    while temp_date_obj < date_to_obj:
+        if temp_date_obj.weekday() == 5:
+            temp_date_obj = temp_date_obj - timedelta(days=1)
+        elif temp_date_obj.weekday() == 6:
+            temp_date_obj = temp_date_obj - timedelta(days=2)
 
-    if delta > 365:
-        date_from_obj = date_to_obj - timedelta(days=365)
+        new_from = temp_date_obj
+        new_to = new_from + timedelta(days=366)
 
-    return date_from_obj.strftime('%Y-%m-%d'), date_to_obj.strftime('%Y-%m-%d')
+        if new_to > date_to_obj:
+            new_to = date_to_obj
+
+        dates.append((new_from.strftime('%Y-%m-%d'), new_to.strftime('%Y-%m-%d')))
+        temp_date_obj = new_to + timedelta(days=1)
+
+    return dates
 
 
 def fill_in_missing_rates(rates, dates):

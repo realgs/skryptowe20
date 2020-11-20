@@ -40,9 +40,6 @@ if __name__ == '__main__':
 
     plot_rates(CURRENCIES, YEAR // 2)
 
-    # add_rates_to_db('USD', '2009-01-01', '2009-12-31')
-    # add_rates_to_db('USD', '2010-01-01', '2010-12-31')
-    # add_rates_to_db('USD', '2011-01-01', '2011-12-31')
-    # add_rates_to_db('USD', '2012-01-01', '2012-12-31')
-    # add_rates_to_db('USD', '2013-01-01', '2013-12-31')
+    # add_rates_to_db('USD', '2009-01-02', '2014-12-31')
+
     plot_sales('USD', '2010-01-01', '2010-12-31')
