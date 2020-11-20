@@ -1,4 +1,4 @@
-from data import get_currency_from_period
+import data
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -7,7 +7,8 @@ def plot_2_currencies(curr1_data, curr2_data):
     fig, ax = plt.subplots(figsize=(20, 10))
     curr1_data = pd.DataFrame(curr1_data)
     curr2_data = pd.DataFrame(curr2_data)
-    ax.xaxis.set_major_locator(plt.MaxNLocator(15))
+    ax.xaxis.set_major_locator(plt.MaxNLocator(51))
+    plt.xticks(rotation=90)
     ax.plot(curr1_data['effectiveDate'], curr1_data['mid'], color='blue', label='USD [$]')
     ax.plot(curr2_data['effectiveDate'], curr2_data['mid'], color='green', label='EURO [€]')
     plt.legend()
@@ -22,9 +23,10 @@ def plot():
     curr1 = 'usd'
     curr2 = 'eur'
     days = 180
-    usd_data = get_currency_from_period(currency=curr1, days=days)
-    eur_data = get_currency_from_period(currency=curr2, days=days)
+    usd_data = data.get_currency_last_x_days(currency=curr1, days=days)
+    eur_data = data.get_currency_last_x_days(currency=curr2, days=days)
 
     plot_2_currencies(usd_data, eur_data)
+
 
 plot()

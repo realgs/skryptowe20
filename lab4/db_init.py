@@ -1,22 +1,21 @@
 import psycopg2
 import transaction_logs as tl
+import currency_rate as cr
 from numpy import genfromtxt
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 
 csv_file_name = 'C:/Users/mielcare/Downloads/sales_data_sample.csv'
+engine = create_engine('postgresql+psycopg2://postgres:admin@localhost/transaction_log')
 
 
 def load_data(file_name):
-    data = genfromtxt(file_name,dtype=str, delimiter=',', skip_header=1, invalid_raise=False)
+    data = genfromtxt(file_name, dtype=str, delimiter=',', skip_header=1, invalid_raise=False)
     return data.tolist()
 
 
 def init_db():
-
-    engine = create_engine('postgresql+psycopg2://postgres:admin@localhost/transaction_log')
     tl.Base.metadata.create_all(engine)
-
     session = sessionmaker()
     session.configure(bind=engine)
     s = session()
@@ -49,7 +48,7 @@ def init_db():
                 'last_name': i[22],
                 'first_name': i[23],
                 'deal_size': i[24]
-             })
+            })
             s.add(record)
         s.commit()
     except:
@@ -58,4 +57,20 @@ def init_db():
         s.close()
 
 
-init_db()
+def add_curr_rate_table(currency_data):
+    cr.Base.metadata.create_all(engine)
+    session = sessionmaker()
+    session.configure(bind=engine)
+    s = session()
+    try:
+        for i in currency_data:
+            record = cr.CurrencyRateTable(**{
+                'date': i['effectiveDate'],
+                'rate': float(i['mid'])
+            })
+            s.add(record)
+        s.commit()
+    except:
+        s.rollback()
+    finally:
+        s.close()

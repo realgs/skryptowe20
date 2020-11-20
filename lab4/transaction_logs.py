@@ -5,7 +5,6 @@ Base = declarative_base()
 
 
 class TransactionLogs(Base):
-
     __tablename__ = 'transactions'
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     order_num = Column(Integer)
