@@ -22,6 +22,20 @@ def connect_db():
     return conn
 
 
+def create_rates_table():
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""CREATE TABLE rates (
+                        RateDate data_type BLOB,
+                        Rate data_type REAL,
+                        Code data_type TEXT
+                   );""")
+
+    conn.commit()
+    conn.close()
+
+
 def get_sales(date):
     conn = connect_db()
     cursor = conn.cursor()
@@ -48,13 +62,13 @@ def get_total_sale(date):
 def get_rate(date, currency_code):
     conn = connect_db()
     cursor = conn.cursor()
-    rate = ''
+    rate = 0.0
 
-    cursor.execute("""SELECT Rate FROM rates
-                    WHERE RateDate = '{}'
-                    AND Code = '{}';""".format(date, currency_code))
     try:
-        rate = str(cursor.fetchone()[0])
+        cursor.execute("""SELECT Rate FROM rates
+                            WHERE RateDate = '{}'
+                            AND Code = '{}';""".format(date, currency_code))
+        rate = float(cursor.fetchone()[0])
     except TypeError as e:
         print('db_handler: get_rate(' + date + ', ' + currency_code + ') ' + str(e))
 
@@ -69,10 +83,10 @@ def get_rates_and_dates(currency_code, date_from, date_to):
     rates = []
     dates = []
 
-    cursor.execute("""SELECT Rate, RateDate FROM rates
-                    WHERE RateDate BETWEEN '{}' AND '{}'
-                    AND Code = '{}';""".format(date_from, date_to, currency_code))
     try:
+        cursor.execute("""SELECT Rate, RateDate FROM rates
+                            WHERE RateDate BETWEEN '{}' AND '{}'
+                            AND Code = '{}';""".format(date_from, date_to, currency_code))
         for rate, date in cursor.fetchall():
             rates.append(float(rate))
             dates.append(date)
@@ -91,13 +105,11 @@ def get_sales_and_dates(date_from, date_to):
     sales = []
     dates = []
 
-    date_from += ' 00:00:00'
-    date_to += ' 00:00:00'
-
-    cursor.execute("""SELECT SUM(Total), InvoiceDate FROM invoices
-                             WHERE InvoiceDate BETWEEN '{}' AND '{}'
-                             GROUP BY InvoiceDate""".format(date_from, date_to))
     try:
+        cursor.execute("""SELECT SUM(Total), InvoiceDate FROM invoices
+                                WHERE InvoiceDate BETWEEN '{}' AND '{}'
+                                GROUP BY InvoiceDate""".format('{} 00:00:00'.format(date_from),
+                                                               '{} 00:00:00'.format(date_to)))
         for sale, date in cursor.fetchall():
             sales.append(float(sale))
             dates.append(date[:10])
@@ -107,20 +119,6 @@ def get_sales_and_dates(date_from, date_to):
     conn.close()
 
     return sales, dates
-
-
-def create_rates_table():
-    conn = connect_db()
-    cursor = conn.cursor()
-
-    cursor.execute("""CREATE TABLE rates (
-                        RateDate data_type BLOB,
-                        Rate data_type REAL,
-                        Code data_type TEXT
-                   );""")
-
-    conn.commit()
-    conn.close()
 
 
 def add_rate_entry(date, rate, currency_code):
