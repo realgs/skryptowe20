@@ -20,6 +20,7 @@ def get_average_currency_rates(currency, days):
     return result
 
 
+#Zadanie 3 - Rysowanie wykresu
 def draw_currency_diagram(dollar_data, euro_data):
     data_time = []
     data_dollar = []
@@ -33,10 +34,12 @@ def draw_currency_diagram(dollar_data, euro_data):
     plt.title('Kursy dolara (USD) i euro (EUR) z ostatnich 183 dni')
     plt.xlabel('Data')
     plt.ylabel('Kurs względem PLN')
+    plt.xticks(range(len(data_time))[::10], rotation=35)
 
     plt.plot(data_time, data_dollar, label='USD')
     plt.plot(data_time, data_euro, label='EUR')
     plt.legend()
+    plt.savefig('currency_rates.svg', format='svg')
     plt.show()
 
 
