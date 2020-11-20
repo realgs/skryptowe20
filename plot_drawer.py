@@ -19,6 +19,7 @@ def create_plot_from_database(database_data, code_currency_original, code_curren
 
     plt.legend([code_currency_original, code_currency_from_exchange])
 
+    plt.savefig("prices.svg")
     plt.show()
 
 
@@ -38,4 +39,5 @@ def create_plot_from_exchange_rates(rates_currency_1, code_currency_1, rates_cur
 
     plt.legend([code_currency_1, code_currency_2])
 
+    plt.savefig("exchange_rates.svg")
     plt.show()
