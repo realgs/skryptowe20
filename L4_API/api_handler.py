@@ -160,4 +160,4 @@ def plot(currencies, days):
 
     plt.show()
     if PLOT_SAVE:
-        plt.savefig('zad3.svg')
+        plt.savefig('rates.svg')
