@@ -7,6 +7,8 @@ PLOT_TICKS = 10
 PLOT_SIZE_X = 10
 PLOT_SIZE_Y = 5
 
+PLOT_SAVE = False
+
 
 def currency_rates_and_dates(currency_code, days):
     date_from = (datetime.today() - timedelta(days=days - 1)).strftime('%Y-%m-%d')
@@ -137,11 +139,5 @@ def plot(currencies_data):
             tick.set_visible(False)
 
     plt.show()
-    # plt.savefig('zad3.svg')
-
-
-if __name__ == '__main__':
-    rates = []
-    dates = []
-
-    print(fill_in_missing_rates(rates, dates))
+    if PLOT_SAVE:
+        plt.savefig('zad3.svg')
