@@ -8,6 +8,7 @@ PLOT_TICKS = 30
 PLOT_SIZE_X = 10
 PLOT_SIZE_Y = 5
 PLOT_LINE_WIDTH = 0.8
+PLOT_BAR_WIDTH = 0.9
 PLOT_SAVE = False
 
 
@@ -160,15 +161,19 @@ def plot_sale_time_frame(currency_code, date_from, date_to):
     fig, ax = plt.subplots(figsize=(PLOT_SIZE_X, PLOT_SIZE_Y))
 
     dates = [datetime.strptime(d, "%Y-%m-%d").date() for d in sale_dates]
-    plt.plot(dates, sales_pln, linewidth=PLOT_LINE_WIDTH, label='PLN')
-    plt.plot(dates, sales_usd, linewidth=PLOT_LINE_WIDTH, label='USD')
+    # plt.plot(dates, sales_pln, linewidth=PLOT_LINE_WIDTH, label='PLN')
+    # plt.plot(dates, sales_usd, linewidth=PLOT_LINE_WIDTH, label='USD')
+    plt.bar(dates, sales_pln, width=PLOT_BAR_WIDTH, label='PLN')
+    plt.bar(dates, sales_usd, width=PLOT_BAR_WIDTH, label='USD')
     plt.margins(x=0.01)
 
     plt.title("Sales in USD and PLN from {} to {}".format(date_from, date_to))
     plt.xlabel("date")
-    plt.ylabel("sales")
+    plt.ylabel("sale")
 
-    plt.legend(frameon=False, loc='best')
+    legend = plt.legend(frameon=1, loc='best')
+    legend.get_frame().set_facecolor('white')
+    legend.get_frame().set_edgecolor('white')
     plt.grid(axis='y', lw=0.25)
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %Y"))
     ax.xaxis.set_major_locator(mdates.MonthLocator())
