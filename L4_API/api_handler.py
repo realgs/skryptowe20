@@ -3,22 +3,47 @@ from datetime import datetime, timedelta
 from matplotlib import cycler
 import matplotlib.pyplot as plt
 
-CURRENCIES = ['USD', 'EUR']
-YEAR = 365
-TICKS = 10
+PLOT_TICKS = 10
 PLOT_SIZE_X = 10
 PLOT_SIZE_Y = 5
 
 
-def currency_rates_dates(currency_code, days):
+def currency_rates_and_dates(currency_code, days):
+    date_from = (datetime.today() - timedelta(days=days - 1)).strftime('%Y-%m-%d')
+    date_to = datetime.today().strftime('%Y-%m-%d')
+
+    rates, dates = currency_rates_and_dates_time_frame(currency_code, date_from, date_to)
+
+    return rates, dates
+
+
+def fill_in_missing_rates(rates, dates):
+    first_day = datetime.strptime(dates[0], '%Y-%m-%d')
+    last_day = datetime.strptime(dates[len(dates) - 1], '%Y-%m-%d')
+
+    delta = (last_day - first_day).days
+
+    for i in range(delta):
+        date = (first_day + timedelta(days=i)).strftime('%Y-%m-%d')
+
+        if dates[i] != date:
+            dates.insert(i, date)
+            rates.insert(i, rates[i - 1])
+
+    return rates, dates
+
+
+def currency_rates_and_dates_time_frame(currency_code, date_from, date_to):
     rates = []
     dates = []
 
-    url = _url("api/exchangerates/rates/{}/{}/{}/{}/".format(
-        _get_table(currency_code),
+    date_from, date_to = check_time_frame_less_than_year(date_from, date_to)
+
+    url = __url("api/exchangerates/rates/{}/{}/{}/{}/".format(
+        get_table(currency_code),
         currency_code,
-        (datetime.today() - timedelta(days=days - 1)).strftime('%Y-%m-%d'),
-        datetime.today().strftime('%Y-%m-%d')))
+        date_from,
+        date_to))
 
     request = requests.get(url)
     if request.status_code == 200:
@@ -29,19 +54,33 @@ def currency_rates_dates(currency_code, days):
             rates.append(float(data[i]['mid']))
             dates.append(data[i]['effectiveDate'])
 
+    fill_in_missing_rates(rates, dates)
+
     return rates, dates
 
 
-def _get_table(currency):
+def check_time_frame_less_than_year(date_from, date_to):
+    date_from_obj = datetime.strptime(date_from, '%Y-%m-%d')
+    date_to_obj = datetime.strptime(date_to, '%Y-%m-%d')
+
+    delta = (date_to_obj - date_from_obj).days
+
+    if delta > 365:
+        date_from_obj = date_to_obj - timedelta(days=365)
+
+    return date_from_obj.strftime('%Y-%m-%d'), date_to_obj.strftime('%Y-%m-%d')
+
+
+def get_table(currency):
     for table in ['A', 'B']:
-        if _check_table(currency, table):
+        if check_table(currency, table):
             return table
     return ''
 
 
-def _check_table(currency, table):
+def check_table(currency, table):
     found = False
-    url = _url("api/exchangerates/tables/{}/last/1/".format(table))
+    url = __url("api/exchangerates/tables/{}/last/1/".format(table))
     response = requests.get(url).text
 
     if currency != '' and currency in response:
@@ -50,11 +89,11 @@ def _check_table(currency, table):
     return found
 
 
-def _url(path):
+def __url(path):
     return 'http://api.nbp.pl/' + path
 
 
-def _plot(currencies_data):
+def plot(currencies_data):
     colors = cycler('color', ['goldenrod', 'lightsteelblue', 'olive', 'cadetblue'])
     plt.rc('axes', prop_cycle=colors)
 
@@ -93,27 +132,8 @@ def _plot(currencies_data):
     for i, tick in enumerate(ticks, start=2):
         tick.set_fontsize(8)
         tick.set_rotation(45)
-        if i % TICKS != 0:
+        if i % PLOT_TICKS != 0:
             tick.set_visible(False)
 
     plt.show()
-
-
-def plot(currency_codes, days):
-    currencies_data = []
-
-    for currency in currency_codes:
-        rates, dates = currency_rates_dates(currency, days)
-        entry = {'code': currency,
-                 'rates': rates,
-                 'dates': dates}
-        currencies_data.append(entry)
-
-    _plot(currencies_data)
-
-
-if __name__ == '__main__':
-    print(currency_rates_dates('', 1))
-    # print(currency_rates_dates('USD', YEAR // 2)[0])
-    # print(currency_rates_dates('EUR', YEAR // 2)[0])
-    # plot(CURRENCIES, YEAR // 2)
+    # plt.savefig('zad3.svg')
