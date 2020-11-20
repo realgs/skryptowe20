@@ -14,6 +14,7 @@ def create_plot_from_database(database_data, code_currency_original, code_curren
     plt.xticks(rotation=50)
     plt.xticks(ticks=np.arange(0, len(x_val), step=len(x_val) / 9))
 
+    plt.title("Total price each day")
     plt.xlabel("Date")
     plt.ylabel("Price")
 
@@ -34,6 +35,7 @@ def create_plot_from_exchange_rates(rates_currency_1, code_currency_1, rates_cur
     plt.xticks(rotation=50)
     plt.xticks(ticks=np.arange(0, len(x_val_usd), step=len(x_val_usd) / 9))
 
+    plt.title("Exchange rate for each available day")
     plt.xlabel("Date")
     plt.ylabel("Exchange rate")
 
