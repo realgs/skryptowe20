@@ -8,7 +8,6 @@ def get_average_currency_rates(currency, days):
     url = 'http://api.nbp.pl/api/exchangerates/rates/A/' + currency + '/'
     result = []
     end_date = datetime.date.today()
-
     while days > 0:
         begin_date = end_date - datetime.timedelta(days=min(days, 92))
         response = requests.get(url + begin_date.strftime('%Y-%m-%d') + '/' + end_date.strftime('%Y-%m-%d'))
@@ -16,7 +15,6 @@ def get_average_currency_rates(currency, days):
             result = response.json()['rates'] + result
         days -= 93
         end_date = end_date - datetime.timedelta(days=93)
-
     return result
 
 
@@ -26,7 +24,6 @@ def get_average_currency_rates_between(currency, first_day, last_day):
     result = []
     end_date = last_day
     days = (last_day - first_day).days
-
     while days > 0:
         begin_date = end_date - datetime.timedelta(days=min(days, 92))
         response = requests.get(url + begin_date.strftime('%Y-%m-%d') + '/' + end_date.strftime('%Y-%m-%d'))
@@ -34,7 +31,6 @@ def get_average_currency_rates_between(currency, first_day, last_day):
             result = response.json()['rates'] + result
         days -= 93
         end_date = end_date - datetime.timedelta(days=93)
-
     return result
 
 
@@ -43,7 +39,6 @@ def draw_currency_diagram(dollar_data, euro_data):
     data_time = []
     data_dollar = []
     data_euro = []
-
     for i in range(len(dollar_data)):
         data_time.append(dollar_data[i]['effectiveDate'])
         data_dollar.append(dollar_data[i]['mid'])
@@ -53,7 +48,6 @@ def draw_currency_diagram(dollar_data, euro_data):
     plt.xlabel('Data')
     plt.ylabel('Kurs względem PLN')
     plt.xticks(range(len(data_time))[::10], rotation=35)
-
     plt.plot(data_time, data_dollar, label='USD')
     plt.plot(data_time, data_euro, label='EUR')
     plt.legend()
@@ -67,5 +61,3 @@ if __name__ == '__main__':
     half_year_euro_averages = get_average_currency_rates('EUR', 183)
 
     draw_currency_diagram(half_year_dollar_averages, half_year_euro_averages)
-
-    print(get_average_currency_rates_between('USD', datetime.date(2019, 3, 12), datetime.date(2020, 3, 12)))
