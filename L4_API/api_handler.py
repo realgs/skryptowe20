@@ -17,22 +17,6 @@ def currency_rates_and_dates(currency_code, days):
     return rates, dates
 
 
-def fill_in_missing_rates(rates, dates):
-    first_day = datetime.strptime(dates[0], '%Y-%m-%d')
-    last_day = datetime.strptime(dates[len(dates) - 1], '%Y-%m-%d')
-
-    delta = (last_day - first_day).days
-
-    for i in range(delta):
-        date = (first_day + timedelta(days=i)).strftime('%Y-%m-%d')
-
-        if dates[i] != date:
-            dates.insert(i, date)
-            rates.insert(i, rates[i - 1])
-
-    return rates, dates
-
-
 def currency_rates_and_dates_time_frame(currency_code, date_from, date_to):
     rates = []
     dates = []
@@ -69,6 +53,23 @@ def check_time_frame_less_than_year(date_from, date_to):
         date_from_obj = date_to_obj - timedelta(days=365)
 
     return date_from_obj.strftime('%Y-%m-%d'), date_to_obj.strftime('%Y-%m-%d')
+
+
+def fill_in_missing_rates(rates, dates):
+    if len(rates) > 1:
+        first_day = datetime.strptime(dates[0], '%Y-%m-%d')
+        last_day = datetime.strptime(dates[len(dates) - 1], '%Y-%m-%d')
+
+        delta = (last_day - first_day).days
+
+        for i in range(delta):
+            date = (first_day + timedelta(days=i)).strftime('%Y-%m-%d')
+
+            if dates[i] != date:
+                dates.insert(i, date)
+                rates.insert(i, rates[i - 1])
+
+    return rates, dates
 
 
 def get_table(currency):
@@ -137,3 +138,10 @@ def plot(currencies_data):
 
     plt.show()
     # plt.savefig('zad3.svg')
+
+
+if __name__ == '__main__':
+    rates = []
+    dates = []
+
+    print(fill_in_missing_rates(rates, dates))
