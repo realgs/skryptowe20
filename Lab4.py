@@ -1,7 +1,10 @@
 import datetime
 import requests
 import json
-
+import matplotlib.pyplot as plt
+import matplotlib.dates as pltd
+import matplotlib.ticker as plttk
+import matplotlib.dates as mdates
 DAYS_IN_YEAR = 365
 DAYS_LIMIT = 92
 
@@ -57,10 +60,41 @@ def midCurrFromXDays(currency, xDays):
         return results[0]
     else:
         return results
+#zad3
+def draw(days):
+    usd = midCurrFromXDays('usd', days)
+    eur = midCurrFromXDays('eur', days)
+
+    usd_time = [usdTime['effectiveDate'] for usdTime in usd['rates']]
+    usd_value = [usdVal['mid'] for usdVal in usd['rates']]
+
+    euro_time = [eurTime['effectiveDate'] for eurTime in eur['rates']]
+    euro_value = [eurVal['mid'] for eurVal in eur['rates']]
+
+    fig, ax = plt.subplots()
+    usdx = [datetime.datetime.strptime(d, "%Y-%m-%d").date() for d in usd_time]
+    ax.plot(usdx, usd_value, label='usd')
+    eurx = [datetime.datetime.strptime(d, "%Y-%m-%d").date() for d in euro_time]
+    ax.plot(eurx, euro_value, label='euro')
+    plt.gca().xaxis.set_major_formatter(pltd.DateFormatter("%Y-%m-%d"))
+    plt.gca().xaxis.set_major_locator(mdates.DayLocator())
+    plt.gca().xaxis.set_major_locator(pltd.DayLocator(interval=15))
+
+    plt.gca().yaxis.set_major_locator(plttk.MultipleLocator(0.1))
+    ax.xaxis_date()
+    fig.autofmt_xdate()
+    plt.xlabel('Time', fontsize=14)
+    plt.ylabel('Value in PLN', fontsize=14)
+    plt.title("USD and EUR rates from half a year")
+    plt.legend(loc='lower center')
+    plt.grid(True)
+    plt.savefig("RateOfUSD_EUR.svg")
+    plt.show()
 
 
 if __name__ == '__main__':
-    print(daysRange(180))
+    #print(daysRange(180))
     #Zad2
-    print(json.dumps(midCurrFromXDays('eur', DAYS_IN_YEAR // 2), indent=3))
-    print(json.dumps(midCurrFromXDays('usd', DAYS_IN_YEAR // 2), indent=3))
+    #print(json.dumps(midCurrFromXDays('eur', DAYS_IN_YEAR // 2), indent=3))
+    #print(json.dumps(midCurrFromXDays('usd', DAYS_IN_YEAR // 2), indent=3))
+    draw(DAYS_IN_YEAR//2)
