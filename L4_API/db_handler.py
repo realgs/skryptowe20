@@ -1,10 +1,13 @@
+from datetime import datetime
 import sqlite3
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
 
 DB_FILE = 'sales.db'
 PLOT_TICKS = 30
 PLOT_SIZE_X = 10
 PLOT_SIZE_Y = 5
+PLOT_LINE_WIDTH = 0.8
 PLOT_SAVE = False
 
 
@@ -153,28 +156,23 @@ def data_to_plot(currency_code, date_from, date_to):
 
 def plot_sale_time_frame(currency_code, date_from, date_to):
     sale_dates, sales_usd, sales_pln = data_to_plot(currency_code, date_from, date_to)
-    x_min = date_from
-    x_max = date_to
 
-    plt.figure(figsize=(PLOT_SIZE_X, PLOT_SIZE_Y))
-    plt.subplots_adjust(left=0.1, bottom=0.2)
+    fig, ax = plt.subplots(figsize=(PLOT_SIZE_X, PLOT_SIZE_Y))
 
-    plt.plot(sale_dates, sales_pln, linewidth=0.8, label='PLN')
-    plt.plot(sale_dates, sales_usd, linewidth=0.8, label='USD')
+    dates = [datetime.strptime(d, "%Y-%m-%d").date() for d in sale_dates]
+    plt.plot(dates, sales_pln, linewidth=PLOT_LINE_WIDTH, label='PLN')
+    plt.plot(dates, sales_usd, linewidth=PLOT_LINE_WIDTH, label='USD')
+    plt.margins(x=0.01)
 
-    plt.title("Sprzedaż w dniach od {} do {}".format(x_min, x_max))
-    plt.xlabel("data")
-    plt.ylabel("sprzedaż")
+    plt.title("Sales in USD and PLN from {} to {}".format(date_from, date_to))
+    plt.xlabel("date")
+    plt.ylabel("sales")
 
     plt.legend(frameon=False, loc='best')
     plt.grid(axis='y', lw=0.25)
-    plt.xlim(x_min, x_max)
-    _, ticks = plt.xticks()
-    for i, tick in enumerate(ticks):
-        tick.set_fontsize(8)
-        tick.set_rotation(45)
-        if i % PLOT_TICKS != 0:
-            tick.set_visible(False)
+    ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %Y"))
+    ax.xaxis.set_major_locator(mdates.MonthLocator())
+    fig.autofmt_xdate(rotation=30)
 
     plt.show()
     if PLOT_SAVE:
