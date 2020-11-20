@@ -42,8 +42,15 @@ class RatesWrapper:
 
         self.rates.sort(key=lambda x: x.date)
 
+    def append_single_rate(self, date, value):
+        self.rates.append(self.Rate(date, value))
+        self.rates.sort(key=lambda x: x.date)
+
     def __str__(self):
-        out = f"RatesWrapper:\ncurrency: {self.currency},\nrates:\n"
+        out = (f"RatesWrapper:\ncurrency: {self.currency},"
+               f"\nstart_date: {self.start_date},"
+               f"\nend_date: {self.end_date},"
+               "\nrates:\n")
         for r in self.rates:
             out += f"{r}\n"
         return out

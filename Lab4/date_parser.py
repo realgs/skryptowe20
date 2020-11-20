@@ -1,5 +1,5 @@
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 from copy import deepcopy
 from constants import \
     MAX_DAYS, \
@@ -15,10 +15,13 @@ def is_days_valid(days):
 def date_sec_to_string(date):
     return datetime.fromtimestamp(date).strftime(DATE_FORMAT)
 
+def datetime_to_string(date):
+    return date.strftime(DATE_FORMAT)
+
 def date_string_to_datetime(date):
     return datetime.strptime(date, DATE_FORMAT)
 
-def correct_inside_weekends(rates_wrapper):
+def correct_inner_weekends(rates_wrapper):
     rates = rates_wrapper.rates
     output = [rates[0]]
     for i in range(1, len(rates)):
@@ -34,13 +37,33 @@ def correct_inside_weekends(rates_wrapper):
     rates_wrapper.rates = output
     return rates_wrapper
 
-#TODO: IMPLEMENT!!!
-def correct_edge_weekends(rates, start_date, end_date):
-    pass
+def correct_start_edge_weekend(rates_wrapper):
+    start_rate = rates_wrapper.rates[0]
+    if rates_wrapper.start_date < start_rate.date:
+        date = date_string_to_datetime(deepcopy(rates_wrapper.start_date))
+        start_rate = date_string_to_datetime(deepcopy(start_rate.date))
+        for i in range(7 - date.weekday()):
+            rates_wrapper.append_single_rate(datetime_to_string(date), start_rate.value)
+            date += timedelta(days=1)
+
+    return rates_wrapper
+
+def correct_end_edge_weekend(rates_wrapper):
+    end_rate = rates_wrapper.rates[len(rates_wrapper.rates) - 1]
+    if rates_wrapper.end_date > end_rate.date:
+        date = date_string_to_datetime(deepcopy(rates_wrapper.end_date))
+        end_date = date_string_to_datetime(deepcopy(end_rate.date))
+        for i in range(date.weekday() - end_date.weekday()):
+            end_date += timedelta(days=1)
+            rates_wrapper.append_single_rate(datetime_to_string(end_date), end_rate.value)
+
+    return rates_wrapper
 
 def correct_weekends(rates_wrapper):
-    output = correct_inside_weekends(rates_wrapper)
-    #output = correct_edge_weekends(output, start_date, end_date)
+    output = correct_inner_weekends(rates_wrapper)
+    output = correct_start_edge_weekend(rates_wrapper)
+    output = correct_end_edge_weekend(rates_wrapper)
+
     return output
 
 def convert_days_to_dates(days):
