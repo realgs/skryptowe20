@@ -37,6 +37,8 @@ def apiUrl(table, currency, fromDate, toDate):
                                                                               datetime.date) or not isinstance(toDate,
                                                                                                                datetime.date):
         raise TypeError('Wrong instance of one of the parameters (apiUrl)')
+    if toDate < fromDate:
+        raise ValueError('toDate < fromDate')
 
     return f'http://api.nbp.pl/api/exchangerates/rates/{table}/{currency}/{fromDate}/{toDate}'
 
@@ -179,9 +181,20 @@ def dataHandler(transactions, exchange_rates):
 
 if __name__ == '__main__':
     # print(daysRange(180))
+    # print(daysRange(0))
+    # print(daysRange(-123241))
+    # print(daysRange("234324"))
+    # print(daysRange(1000))
+    print(apiUrl("a", "usd", datetime.date(2020, 5, 24), datetime.date(2020, 6, 24)))
+    # print(apiUrl("a", 513, datetime.date(2020, 5, 24), datetime.date(2020, 6, 24)))
+    # print(apiUrl("b", "usd", "wefewfew", datetime.date(2020, 5, 24)))
+    # print(apiUrl("a", "usd", datetime.date(2020, 5, 24), 4324234))
+    # print(apiUrl(4, "usd", datetime.date(2020, 5, 24), datetime.date(2020, 8, 24)))
+    # print(apiUrl("a", "usd", datetime.date(2020, 5, 24), datetime.date(2020, 5, 21)))
+
     # Zad2
     # print(json.dumps(midCurrFromXDays('eur', DAYS_IN_YEAR // 2), indent=3))
     # print(json.dumps(midCurrFromXDays('usd', DAYS_IN_YEAR // 2), indent=3))
     # drawUSDEUR(DAYS_IN_YEAR//2)
     # insertToExRate()
-    drawSalesChart()
+    # drawSalesChart()
