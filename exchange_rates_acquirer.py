@@ -100,20 +100,36 @@ def expand_exchange_rates_to_range(api_exchange_rates, currency_code, start_date
             api_rates_index += 1
         else:
             all_days_exchange_rates.append(
-                (format_datetime_to_string(start_date), exchange_rates_from_api[api_rates_index - 1][1]))
+                (format_datetime_to_string(start_date), api_exchange_rates[api_rates_index - 1][1]))
 
         start_date += DELTA_ONE_DAY
 
     return all_days_exchange_rates
 
 
+def get_exchange_rates_from_last_x_days(currency_code, number_of_days):
+    if number_of_days < 1:
+        return []
+
+    end_date = datetime.datetime.now()
+    start_date = end_date - datetime.timedelta(days=(number_of_days - 1))
+    api_rates = get_exchange_rates_from_api(currency_code, start_date, end_date)
+    expanded_rates = expand_exchange_rates_to_range(api_rates, currency_code, start_date, end_date)
+
+    return expanded_rates
+
+
 if __name__ == "__main__":
     start = datetime.date(2020, 1, 1)
     end = datetime.date(2020, 10, 12)
     currency_usd = "usd"
-    exchange_rates_from_api = get_exchange_rates_from_api(currency_usd, start, end)
+    currency_eur = "eur"
 
-    all_days_rates = expand_exchange_rates_to_range(exchange_rates_from_api, currency_usd, start, end)
+    last_ten_days_rates_usd = get_exchange_rates_from_last_x_days(currency_usd, 10)
+    last_ten_days_rates_eur = get_exchange_rates_from_last_x_days(currency_eur, 10)
 
-    for rate in all_days_rates:
-        print(rate)
+    for usd_rates in last_ten_days_rates_usd:
+        print(usd_rates)
+
+    for eur_rates in last_ten_days_rates_usd:
+        print(eur_rates)
