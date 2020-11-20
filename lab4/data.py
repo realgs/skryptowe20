@@ -17,4 +17,5 @@ def get_currency_from_period(currency, date_from, date_to):
 def get_currency_last_x_days(currency, days):
     date_to = datetime.today().strftime('%Y-%m-%d')
     date_from = (datetime.today() - timedelta(days)).strftime('%Y-%m-%d')
-    get_currency_from_period(currency, date_from, date_to)
+    output = get_currency_from_period(currency, date_from, date_to)
+    return output

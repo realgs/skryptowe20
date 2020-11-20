@@ -1,4 +1,3 @@
-import psycopg2
 import transaction_logs as tl
 import currency_rate as cr
 from numpy import genfromtxt
