@@ -34,3 +34,12 @@ def fill_col_usd_rate(cursor, date_from_string, date_to_string, currency_date_li
         cursor.execute('UPDATE ' + SALES_DATABASE + ' SET CurrencyRate = ' + str(currency_mid_list[currency_index]) +
                        ', CurrencyType = \'' + str(currency_type) + '\' WHERE SalesOrderID = ' + str(row[0]))
         cursor.commit()
+
+
+def get_total_sales_to_chart(cursor, date_from_string, date_to_string):
+    cursor.execute('SELECT OrderDate, SUM(TotalDue), MAX(CurrencyRate) FROM ' + SALES_DATABASE + ' WHERE OrderDate BETWEEN \'' + date_from_string + '\' AND \'' +
+                   date_to_string + '\' GROUP BY OrderDate ORDER BY OrderDate')
+    total_sales_list = []
+    for row in cursor:
+        total_sales_list.append(row)
+    return total_sales_list

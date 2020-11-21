@@ -11,6 +11,6 @@ def create_chart_of_two_currency(currency1_name, currency1_date_list, currency1_
     ax.set_ylabel('Value in PLN', fontweight='bold')
     ax.set_xlabel('Date', fontweight='bold')
     plt.legend()
-    plt.savefig("chart.svg")
+    plt.savefig("Time_dependence_of_USD_and_EUR_echange_rates_chart.svg")
     plt.show()
 
