@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import numpy as np
 
 
 def draw_plot(currency1, currency1_date_list, currency1_rates_list,
@@ -10,14 +9,6 @@ def draw_plot(currency1, currency1_date_list, currency1_rates_list,
 
     fig.set_xlabel('Date')
     fig.set_ylabel('Value in PLN')
-
-    frequency = 5.0
-    if (len(currency1_date_list) > 100):
-        frequency = 10.0
-    if (len(currency1_date_list) > 300):
-        frequency = 20.0
-
-    plt.xticks(np.arange(0, len(currency1_date_list), frequency))
 
     plt.title('Dependence of dollar and euro exchange rates')
 
