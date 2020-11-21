@@ -3,6 +3,7 @@ import requests
 from datetime import date
 
 API_URL = "http://api.nbp.pl/api/exchangerates/rates/"
+API_DAY_LIMIT = 365
 
 
 def get_listing_coursers_between_date(currency, date_from_string, date_to_string):
@@ -12,12 +13,12 @@ def get_listing_coursers_between_date(currency, date_from_string, date_to_string
     nb_days_remaining_to_download = number_of_days
     add_content = []
     while nb_days_remaining_to_download != 0:
-        if nb_days_remaining_to_download > 365:
+        if nb_days_remaining_to_download > API_DAY_LIMIT:
             date_from_object = date_from + dt.timedelta(days=(number_of_days - nb_days_remaining_to_download))
-            date_to_object = date_from_object + dt.timedelta(days=365)
+            date_to_object = date_from_object + dt.timedelta(days=API_DAY_LIMIT)
             api_json_result_add = get_listing_coursers_less_than_year(currency, str(date_from_object)[:10],
                                                                       str(date_to_object)[:10])
-            nb_days_remaining_to_download -= 365
+            nb_days_remaining_to_download -= API_DAY_LIMIT
         else:
             date_from_object = date_from + dt.timedelta(days=(number_of_days - nb_days_remaining_to_download) + 1)
             api_json_result_add = get_listing_coursers_less_than_year(currency, str(date_from_object)[:10],
@@ -30,8 +31,7 @@ def get_listing_coursers_between_date(currency, date_from_string, date_to_string
 
 
 def get_listing_coursers_less_than_year(currency, date_from_string, date_to_string):
-    api_json_result = requests.get(API_URL + "a/" + str(currency) + "/" + str(date_from_string) + "/" + str(date_to_string)
-                                   + "/?format=json").json()
+    api_json_result = requests.get(f"{API_URL}a/{str(currency)}/{str(date_from_string)}/{str(date_to_string)}/?format=json").json()
     return api_json_result
 
 
@@ -48,7 +48,6 @@ def get_rate_list(json):
         if len(date_list) != 0:
             next_date_object = date_list[len(date_list)-1] + dt.timedelta(days=1)
             while (next_date_object != actual_date) & (not number_of_next_date == json["number_of_days"] - 1):
-                print(str(number_of_next_date) + " " + str(next_date_object))
                 date_list.append(next_date_object)
                 mid_rate_list.append(mid_rate_list[len(mid_rate_list) - 1])
                 next_date_object += dt.timedelta(days=1)

@@ -13,4 +13,3 @@ def create_chart_of_two_currency(currency1_name, currency1_date_list, currency1_
     plt.legend()
     plt.savefig("Time_dependence_of_USD_and_EUR_echange_rates_chart.svg")
     plt.show()
-

@@ -33,4 +33,3 @@ def __change_currency(total_due_list, currency_rate_list):
     for i in range(len(total_due_list)):
         new_list.append(float(total_due_list[i]) * float(currency_rate_list[i]))
     return new_list
-
