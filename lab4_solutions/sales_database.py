@@ -3,10 +3,11 @@ from sqlite3 import Error, connect
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import pandas
+import logging
 
 from currency import Currency
 from exceptions import ArgumentException
-from task1 import *
+from nbp_api import *
 
 DATABASE_PATH = '.\database.db'
 TABLE_NAME = 'exchange_rates'
@@ -15,7 +16,7 @@ CREATE_TABLE_QUERY = '''CREATE TABLE IF NOT EXISTS exchange_rates (
                                                rate REAL NOT NULL
                                            ); '''
 
-INSERT_DATA_QUERY = 'INSERT INTO exchange_rates(date,rate) VALUES({},{})'
+INSERT_DATA_QUERY = ' INSERT INTO exchange_rates VALUES (?,?) ON CONFLICT(date) DO NOTHING'
 DROP_TABLE_QUERY = 'DROP TABLE {}'
 DATE_FORMAT = "%Y-%m-%d"
 
@@ -37,8 +38,9 @@ def create_table(connection):
         print(e)
 
 
-def fill_table_period(connection, start_date, end_date, currency: Currency):
-    rates = average_quotation_rates(currency.value, start_date, end_date)
+def fill_table_period(connection, start_date, end_date, currency):
+    rates = get_avg_rates_from_period(currency, start_date, end_date)
+
     missed_dates = pandas.date_range(start_date, end_date)
     rates_df = pandas.DataFrame(rates)
     rates_df.set_index('date', inplace=True)
@@ -46,37 +48,38 @@ def fill_table_period(connection, start_date, end_date, currency: Currency):
     rates_df = rates_df.reindex(index=missed_dates, method='ffill')
     rates_df.fillna(inplace=True, method='bfill')
     rates_df.index = rates_df.index.strftime(DATE_FORMAT)
+
     cur = connection.cursor()
     for day in rates_df.to_records():
         cur.execute(
-            '''
-                   INSERT INTO exchange_rates VALUES (?,?)
-                ON CONFLICT(date) DO NOTHING
-                ''', day)
+            INSERT_DATA_QUERY, day)
 
     connection.commit()
 
 
-def fill_table_last_x_rates(connection, number_of_last_days, currency: Currency):
+def fill_table_last_x_days(connection, number_of_last_days, currency):
     if number_of_last_days < 0:
         raise ArgumentException('Cannot take negative number of days: {}'.format(number_of_last_days))
 
     start_day = date.today() - timedelta(number_of_last_days - 1)
     end_day = date.today()
+
+    if number_of_last_days == 0:
+        start_day = date.today()
+
     fill_table_period(connection, start_day, end_day, currency)
 
 
-def _drop_table(connection, table_name):
+def drop_table(connection, table_name):
     cursor = connection.cursor()
-    dropTableStatement = DROP_TABLE_QUERY.format(table_name)
-    cursor.execute(dropTableStatement)
+    cursor.execute(DROP_TABLE_QUERY.format(table_name))
 
 
 def close_connection(connection):
     connection.close()
 
 
-def create_sales(connection, start_date, end_date):
+def __get_sale_in_USD_PLN(connection, start_date, end_date):
     cursor = connection.cursor()
     cursor.execute(
         """
@@ -97,26 +100,39 @@ def create_sales(connection, start_date, end_date):
         usd.append(res[1])
         pln.append(res[2])
 
+    if dates == []:
+        logging.warning('Sales data is empty.')
+
+    return dates, usd, pln
+
+
+def print_chart_for_sale_USD_PLN(connection, start_date, end_date):
+    dates, usd, pln = __get_sale_in_USD_PLN(connection, start_date, end_date)
+
     fig, axs = plt.subplots(figsize=(12, 4))
 
     axs.plot(dates, usd, 'b-', label='USD')
     axs.plot(dates, pln, 'g-', label='PLN')
 
     axs.xaxis.set_major_locator(ticker.MaxNLocator(25))
-
     plt.gcf().autofmt_xdate(rotation=30)
+    plt.title('Sales in period: {} - {}'.format(start_date, end_date))
+    plt.xlabel('Date')
+    plt.ylabel('Sales (in terms to PLN)')
+    plt.margins(0, None)
     fig.tight_layout()
-    plt.title('My first graph!')
-    plt.legend()
-    plt.show()
+    plt.legend().set_title('Currency')
+    plt.savefig("sales.svg")
+
 
 
 if __name__ == '__main__':
     conn = connect(DATABASE_PATH)
-    _drop_table(conn, TABLE_NAME)
     create_table(conn)
+
     end_date = date(2016, 12, 28)
     start_date = end_date - timedelta(days=365 * 2 + 1)
+
     fill_table_period(conn, start_date, end_date, Currency.USD)
-    create_sales(conn, start_date, end_date)
+    print_chart_for_sale_USD_PLN(conn, start_date, end_date)
     close_connection(conn)
