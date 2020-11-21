@@ -203,4 +203,5 @@ def plot_sale_time_frame(currency_code, date_from, date_to):
 
 if __name__ == '__main__':
     # create_rates_table()
+    print(get_rate('2009-01-04', 'USD'))
     pass

@@ -17,7 +17,7 @@ PLOT_SAVE = False
 
 
 def currency_rates_and_dates(currency_code, days):
-    date_from = (datetime.today() - timedelta(days=days - 1)).strftime('%Y-%m-%d')
+    date_from = (datetime.today() - timedelta(days=days)).strftime('%Y-%m-%d')
     date_to = datetime.today().strftime('%Y-%m-%d')
 
     rates, dates = currency_rates_and_dates_time_frame(currency_code, date_from, date_to)
@@ -56,24 +56,27 @@ def currency_rates_and_dates_time_frame(currency_code, date_from, date_to):
 def split_time_frame(date_from, date_to):
     date_frames = []
 
-    date_from_obj = datetime.strptime(date_from, '%Y-%m-%d')
-    date_to_obj = datetime.strptime(date_to, '%Y-%m-%d')
-    temp_date_obj = date_from_obj
+    try:
+        date_from_obj = datetime.strptime(date_from, '%Y-%m-%d')
+        date_to_obj = datetime.strptime(date_to, '%Y-%m-%d')
+        temp_date_obj = date_from_obj
 
-    while temp_date_obj < date_to_obj:
-        if temp_date_obj.weekday() == 5:
-            temp_date_obj = temp_date_obj - timedelta(days=1)
-        elif temp_date_obj.weekday() == 6:
-            temp_date_obj = temp_date_obj - timedelta(days=2)
+        while temp_date_obj < date_to_obj:
+            if temp_date_obj.weekday() == 5:
+                temp_date_obj = temp_date_obj - timedelta(days=1)
+            elif temp_date_obj.weekday() == 6:
+                temp_date_obj = temp_date_obj - timedelta(days=2)
 
-        new_from = temp_date_obj
-        new_to = new_from + timedelta(days=366)
+            new_from = temp_date_obj
+            new_to = new_from + timedelta(days=366)
 
-        if new_to > date_to_obj:
-            new_to = date_to_obj
+            if new_to > date_to_obj:
+                new_to = date_to_obj
 
-        date_frames.append((new_from.strftime('%Y-%m-%d'), new_to.strftime('%Y-%m-%d')))
-        temp_date_obj = new_to + timedelta(days=1)
+            date_frames.append((new_from.strftime('%Y-%m-%d'), new_to.strftime('%Y-%m-%d')))
+            temp_date_obj = new_to + timedelta(days=1)
+    except ValueError as e:
+        print('api_handler: split_time_frame: ' + str(e))
 
     return date_frames
 

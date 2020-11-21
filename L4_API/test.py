@@ -1,8 +1,11 @@
 import unittest
-from .api_handler import currency_rates_and_dates, get_table
+from datetime import datetime
+
+from .db_handler import get_sales, get_total_sale, get_rate, get_sales_and_dates, get_rates_and_dates
+from .api_handler import currency_rates_and_dates, get_table, currency_rates_and_dates_time_frame
 
 
-class TestSortingMethods(unittest.TestCase):
+class TestApiMethods(unittest.TestCase):
 
     def test_table_getter(self):
         table = get_table('USD')
@@ -21,14 +24,14 @@ class TestSortingMethods(unittest.TestCase):
         rates, _ = currency_rates_and_dates('USD', 1)
         self.assertEqual(rates, [3.7677])
 
-        rates, _ = currency_rates_and_dates('JOD', 7)
-        self.assertEqual(len(rates), 7)
+        rates, _ = currency_rates_and_dates('USD', 5)
+        self.assertEqual(len(rates), 5)
 
         rates, dates = currency_rates_and_dates('USD', 7)
         self.assertEqual(len(rates), len(dates))
 
         rates, dates = currency_rates_and_dates('USD', 400)
-        self.assertLess(len(rates), 366)
+        self.assertEqual(len(rates), 400)
 
     def test_currency_rates_invalid_values(self):
         rates, _ = currency_rates_and_dates('USD', 0)
@@ -41,6 +44,60 @@ class TestSortingMethods(unittest.TestCase):
         self.assertEqual(rates, [])
 
         rates, _ = currency_rates_and_dates('', 1)
+        self.assertEqual(rates, [])
+
+        rates, _ = currency_rates_and_dates_time_frame('USD', '2020-12-30', '2020-12-31')
+        self.assertEqual(rates, [])
+
+        rates, _ = currency_rates_and_dates_time_frame('USD', '2020-01-31', '2020-01-01')
+        self.assertEqual(rates, [])
+
+        rates, _ = currency_rates_and_dates_time_frame('USD', 'fgj', 'fgh')
+        self.assertEqual(rates, [])
+
+
+class TestDbMethods(unittest.TestCase):
+
+    def test_get_sales(self):
+        sales = get_sales('2009-01-01')
+        self.assertEqual(sales, [1.98])
+
+        sales = get_sales('2009-01-04')
+        self.assertEqual(sales, [])
+
+        sale_sum = get_total_sale('2009-01-01')
+        self.assertEqual(sale_sum, 1.98)
+
+        sale_sum = get_total_sale('2009-01-04')
+        self.assertEqual(sale_sum, 0)
+
+        sales, dates = get_sales_and_dates('2010-01-01', '2010-01-31')
+        self.assertEqual(len(sales), len(dates))
+
+    def test_get_rates(self):
+        rate = get_rate('2009-01-02', 'USD')
+        self.assertEqual(rate, 2.991)
+
+        sale_sum = get_total_sale('2009-01-01')
+        self.assertEqual(sale_sum, 1.98)
+
+        sale_sum = get_total_sale('2009-01-04')
+        self.assertEqual(sale_sum, 0)
+
+        date_from = '2010-01-01'
+        date_to = '2010-01-31'
+        rates, dates = get_rates_and_dates(date_from, date_to)
+        delta = (datetime.strptime(date_to, '%Y-%m-%d') - datetime.strptime(date_from, '%Y-%m-%d')).days
+        self.assertEqual(dates[0], date_from)
+        self.assertEqual(dates[-1], date_to)
+        self.assertEqual(len(rates), len(dates))
+        self.assertEqual(len(rates), delta)
+
+    def test_get_rates_invalid_values(self):
+        date_from = '2010-01-01'
+        date_to = '2010-01-31'
+        rates, dates = get_rates_and_dates(date_to, date_from)
+        self.assertEqual(dates, [])
         self.assertEqual(rates, [])
 
 
