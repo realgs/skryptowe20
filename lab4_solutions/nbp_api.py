@@ -1,15 +1,11 @@
 import json
 from datetime import date, timedelta
-
 import requests
 import matplotlib.pyplot as plt
-from exceptions import RequestException
+from exceptions import RequestException, ArgumentException
 import matplotlib.ticker as ticker
-
 from currency import Currency
-from exceptions import ArgumentException
-from task1 import *
-import pandas
+import pandas as pd
 
 NBP_EXCHANGE_RATES_URL = 'http://api.nbp.pl/api/exchangerates/rates/{table_type}/{currency}/{start_date}/{end_date}/'
 
@@ -39,18 +35,21 @@ def response_handler(response):
     return exchange_rates_period
 
 
-def _exchange_rates_url(table_type, currency, start_date, end_date):
-    return NBP_EXCHANGE_RATES_URL.format(table_type=table_type, currency=currency, start_date=start_date,
+def __exchange_rates_url(table_type, currency, start_date, end_date):
+    return NBP_EXCHANGE_RATES_URL.format(table_type=table_type, currency=currency.value, start_date=start_date,
                                          end_date=end_date)
 
 
-def get_avg_correct_dates(currency, start, end):
-    response = requests.get(_exchange_rates_url(TABLE_TYPE, currency, start, end))
+def __send_get_request(currency, start, end):
+    response = requests.get(__exchange_rates_url(TABLE_TYPE, currency, start, end))
     return response
 
 
-def average_quotation_rates(currency, starting_day, ending_day):
+def get_avg_rates_from_period(currency, starting_day, ending_day):
     date_diff = (ending_day - starting_day).days
+    if date_diff < 0:
+        raise ArgumentException(
+            'Error. Start date cannot be after the end date.')
     dates = []
     dates.append(ending_day)
     last_ending_day = ending_day
@@ -67,13 +66,13 @@ def average_quotation_rates(currency, starting_day, ending_day):
 
     for x in range(len(dates)):
         if (x + 1) != len(dates):
-            response = get_avg_correct_dates(currency, dates[x], dates[x + 1])
+            response = __send_get_request(currency, dates[x], dates[x + 1])
             result += response_handler(response)
 
-    return _remove_duplicates(result)
+    return __remove_duplicates(result)
 
 
-def _remove_duplicates(result):
+def __remove_duplicates(result):
     copy_result = []
     duplicates_indexes = []
 
@@ -93,34 +92,42 @@ def _remove_duplicates(result):
     return distinct_result
 
 
-def get_avg_quotation_rates_from_x_days(currency, number_of_last_days):
+def get_avg_rates_from_last_x_days(currency, number_of_last_days):
+    if number_of_last_days < 0:
+        raise ArgumentException(
+            'Error. Number of last days cannot be negative.')
+
     current_date = date.today()
+    if number_of_last_days == 0:
+        return get_avg_rates_from_period(currency, current_date, current_date)
+
     starting_date = current_date - timedelta(number_of_last_days - 1)
-    return average_quotation_rates(currency, starting_date, current_date)
+    return get_avg_rates_from_period(currency, starting_date, current_date)
 
 
-def print_chart_for_two_currencies(first_data, second_data):
-    first_df = pandas.DataFrame(data=first_data)
-    second_df = pandas.DataFrame(data=second_data)
+def print_chart_for_two_currencies(first_currency_data, second_currency_data, first_currency, second_currency):
+    first_df = pd.DataFrame(data=first_currency_data)
+    second_df = pd.DataFrame(data=second_currency_data)
 
     fig, axs = plt.subplots(figsize=(12, 4))
 
-    axs.plot(first_df['date'], first_df['exchange_rate'], 'b-', label='USD')
-    axs.plot(second_df['date'], second_df['exchange_rate'], 'g-', label='PLN')
+    axs.plot(first_df['date'], first_df['exchange_rate'], 'b-', label=first_currency.value)
+    axs.plot(second_df['date'], second_df['exchange_rate'], 'g-', label=second_currency.value)
 
     axs.xaxis.set_major_locator(ticker.MaxNLocator(25))
-
     plt.gcf().autofmt_xdate(rotation=30)
+    plt.title('Average exchange rates for {} and {}'.format(first_currency.value, second_currency.value))
+    plt.xlabel("Date")
+    plt.ylabel("Exchange rate (in terms to PLN)")
+    plt.margins(0, None)
     fig.tight_layout()
-    plt.title('My first graph!')
-    plt.legend()
-    plt.show()
+    plt.legend(loc='right').set_title('Currency')
+    plt.savefig("avg_exchange_rates.svg")
 
 
 if __name__ == '__main__':
     number_of_days_half_year = 365 // 2
 
-    result_eur = average_quotation_rates('EUR', date.today() - timedelta(number_of_days_half_year), date.today())
-    result_usd = average_quotation_rates('USD', date.today() - timedelta(number_of_days_half_year), date.today())
-    print_chart_for_two_currencies(result_eur, result_usd)
-
+    result_eur = get_avg_rates_from_last_x_days(Currency.EUR, number_of_days_half_year)
+    result_usd = get_avg_rates_from_last_x_days(Currency.USD, number_of_days_half_year)
+    print_chart_for_two_currencies(result_eur, result_usd, Currency.EUR, Currency.USD)
