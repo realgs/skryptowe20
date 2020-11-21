@@ -1,10 +1,8 @@
 import json
+from datetime import date, timedelta
 
 import dateutil.parser
 import requests
-
-from datetime import date, timedelta
-from chart_drawer import draw_currencies_chart
 
 
 def get_url_data(url):
@@ -59,11 +57,3 @@ class CurrencyDataDownloader:
         date_six_months_ago = date.today() - dateutil.relativedelta.relativedelta(months=6)
         delta = date.today() - date_six_months_ago
         return self.get_currency_prices_for_last_days(currency, delta.days)
-
-
-if __name__ == '__main__':
-    downloader = CurrencyDataDownloader()
-    usd_data = downloader.get_currency_prices_for_last_days('usd', 180)
-    eur_data = downloader.get_currency_prices_for_last_days('eur', 180)
-    currencies_chart_data = [usd_data, eur_data]
-    draw_currencies_chart(currencies_chart_data)
