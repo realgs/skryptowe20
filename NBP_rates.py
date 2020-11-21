@@ -61,5 +61,5 @@ def plot_dollar_euro(dollar_data, euro_data):
     plt.savefig("exercise3_label.svg")
 
 
-dolars, euro = get_dollar_euro_half_year()
-plot_dollar_euro(dolars, euro)
+dollars, euro = get_dollar_euro_half_year()
+plot_dollar_euro(dollars, euro)
