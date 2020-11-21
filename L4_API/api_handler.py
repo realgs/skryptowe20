@@ -136,12 +136,15 @@ def plot(currencies, days):
         dates = [datetime.strptime(d, "%Y-%m-%d").date() for d in rate_dates]
         code = currency
 
-        plt.plot(dates, rates, label=code)
+        if dates and rates:
+            plt.plot(dates, rates, label=code)
 
-        if rate_dates[0] < x_min:
-            x_min = rate_dates[0]
-        if rate_dates[-1] > x_max:
-            x_max = rate_dates[-1]
+            if rate_dates[0] < x_min:
+                x_min = rate_dates[0]
+            if rate_dates[-1] > x_max:
+                x_max = rate_dates[-1]
+        else:
+            currencies.remove(currency)
 
     plt.title("Kursy średnie walut {} w dniach od {} do {}".format(
         ', '.join([str(code) for code in currencies]),
