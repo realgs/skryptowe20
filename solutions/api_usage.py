@@ -51,6 +51,7 @@ def plot_usd_eur_currency_quotes(days):
     plt.xlabel('Data')
     plt.ylabel('Kurs waluty względem PLN')
     plt.legend()
+    plt.gcf().subplots_adjust(bottom=0.15)
     plt.xticks(list(euro_rates.keys())[::10], rotation=25)
     plt.savefig('eur_usd_currency_rates.svg', format='svg')
     plt.show()

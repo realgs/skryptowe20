@@ -84,6 +84,7 @@ def create_usd_pln_plot(days, start_date):
     plt.ylabel('Łączna wartość transakcji')
     plt.legend()
     plt.xticks(dates[::20], rotation=25)
+    plt.gcf().subplots_adjust(bottom=0.15)
     plt.savefig('transactions_sum.svg', format='svg')
     plt.show()
 
