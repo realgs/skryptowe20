@@ -22,23 +22,23 @@ def drawChartFromDatabase(start, end):
             JOIN USDRates ON date(OrderDate) = RateDate
    WHERE 
         OrderDate BETWEEN '{start}' AND '{end}' 
-   group by date(OrderDate)
+   GROUP BY date(OrderDate)
    """)
     data = cursor.fetchall()
     days = []
-    PlnEarnings = []
-    UsdEarnings = []
+    pln_earnings = []
+    usd_earnings = []
     for sale in data:
         days.append(sale[0])
-        UsdEarnings.append(sale[1])
-        PlnEarnings.append(sale[2] * sale[1])
-    drawChart(days, PlnEarnings, UsdEarnings)
+        usd_earnings.append(sale[1])
+        pln_earnings.append(sale[2] * sale[1])
+    drawChart(days, pln_earnings, usd_earnings)
 
 
-def drawChart(days, PlnEarnings, UsdEarnings):
+def drawChart(days, pln_earnings, usd_earnings):
     plt.figure(figsize=(25, 7))
-    dollar_line, = plt.plot(days, UsdEarnings, 'g', label='USD')
-    pln_line, = plt.plot(days, PlnEarnings, 'r', label='PLN')
+    dollar_line, = plt.plot(days, usd_earnings, 'g', label='USD')
+    pln_line, = plt.plot(days, pln_earnings, 'r', label='PLN')
     plt.xticks(range(0, len(days), 30), days[::30], rotation=45, fontsize=10)
     plt.xlabel('Dates')
     plt.ylabel('Earnings in Mln $')
@@ -59,13 +59,13 @@ def createTableUSD():
 
 
 def fillUsdTable(dates, rates):
-    USDPrices = []
+    usd_prices = []
     for i in range(0, len(dates)):
         queryData = (dates[i], rates[i])
-        USDPrices.append(queryData)
+        usd_prices.append(queryData)
     connection = sqlite3.connect(DATABASE)
     cursor = connection.cursor()
-    cursor.executemany('INSERT INTO USDRates VALUES (?,?)', USDPrices)
+    cursor.executemany('INSERT INTO USDRates VALUES (?,?)', usd_prices)
     connection.commit()
     connection.close()
 
