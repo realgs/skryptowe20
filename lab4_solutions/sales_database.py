@@ -125,7 +125,6 @@ def print_chart_for_sale_USD_PLN(connection, start_date, end_date):
     plt.savefig("sales.svg")
 
 
-
 if __name__ == '__main__':
     conn = connect(DATABASE_PATH)
     create_table(conn)
