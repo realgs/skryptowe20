@@ -132,7 +132,7 @@ def test_create_svg_rates_plot(currency_1, currency_2, case):
 
 
 @pytest.mark.parametrize("case", REAL_ESTATE_CASES)
-def test_create_svg_real_estate_plot(case, extra_args):
+def test_create_svg_real_estate_plot(case):
     if os.path.isfile(utilities.SVG_REAL_ESTATE):
         os.remove(utilities.SVG_REAL_ESTATE)
     utilities.create_database(case[0], case[1])
