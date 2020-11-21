@@ -3,7 +3,7 @@ import sqlite3
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-DB_FILE = 'sales.db'
+DB_FILE = '/Users/limi/Desktop/INF/5 JS/L/skryptowe20/L4_API/sales.db'
 PLOT_SIZE_X = 14
 PLOT_SIZE_Y = 7
 PLOT_LEFT_POS = 0.07
@@ -138,6 +138,21 @@ def add_rate_entry(date, rate, currency_code):
     conn.close()
 
 
+def delete_rate_entry(date, currency_code):
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""DELETE FROM rates 
+                            WHERE RateDate = '{}'
+                            AND Code = '{}'""".format(date, currency_code))
+        conn.commit()
+    except sqlite3.Error as e:
+        print('db_handler: delete_rate_entry ' + str(e))
+
+    conn.close()
+
+
 def add_rate_entries(dates, rates, currency_code):
     conn = connect_db()
     cursor = conn.cursor()
@@ -203,5 +218,5 @@ def plot_sale_time_frame(currency_code, date_from, date_to):
 
 if __name__ == '__main__':
     # create_rates_table()
-    print(get_rate('2009-01-04', 'USD'))
+    get_rates_and_dates('USD', '2010-01-01', '2010-01-31')
     pass

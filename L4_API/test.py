@@ -1,7 +1,8 @@
 import unittest
 from datetime import datetime
 
-from .db_handler import get_sales, get_total_sale, get_rate, get_sales_and_dates, get_rates_and_dates
+from .db_handler import get_sales, get_total_sale, get_rate, get_sales_and_dates, get_rates_and_dates, data_to_plot, \
+    add_rate_entry, delete_rate_entry
 from .api_handler import currency_rates_and_dates, get_table, currency_rates_and_dates_time_frame
 
 
@@ -86,19 +87,93 @@ class TestDbMethods(unittest.TestCase):
 
         date_from = '2010-01-01'
         date_to = '2010-01-31'
-        rates, dates = get_rates_and_dates(date_from, date_to)
-        delta = (datetime.strptime(date_to, '%Y-%m-%d') - datetime.strptime(date_from, '%Y-%m-%d')).days
+        rates, dates = get_rates_and_dates('USD', date_from, date_to)
+        delta = (datetime.strptime(date_to, '%Y-%m-%d') - datetime.strptime(date_from, '%Y-%m-%d')).days + 1
         self.assertEqual(dates[0], date_from)
         self.assertEqual(dates[-1], date_to)
         self.assertEqual(len(rates), len(dates))
         self.assertEqual(len(rates), delta)
 
     def test_get_rates_invalid_values(self):
+        code = 'USD'
         date_from = '2010-01-01'
         date_to = '2010-01-31'
-        rates, dates = get_rates_and_dates(date_to, date_from)
+
+        rate = get_rate('', code)
+        self.assertEqual(rate, 0.0)
+
+        rate = get_rate(date_from, '')
+        self.assertEqual(rate, 0.0)
+
+        rate = get_rate('sdfs', code)
+        self.assertEqual(rate, 0.0)
+
+        rate = get_rate(date_from, 'sdfsd')
+        self.assertEqual(rate, 0.0)
+
+        rates, dates = get_rates_and_dates(code, date_to, date_from)
         self.assertEqual(dates, [])
         self.assertEqual(rates, [])
+
+        rates, dates = get_rates_and_dates('', date_from, date_to)
+        self.assertEqual(dates, [])
+        self.assertEqual(rates, [])
+
+        rates, dates = get_rates_and_dates('sersk', date_from, date_to)
+        self.assertEqual(dates, [])
+        self.assertEqual(rates, [])
+
+        rates, dates = get_rates_and_dates(code, '', '')
+        self.assertEqual(dates, [])
+        self.assertEqual(rates, [])
+
+        rates, dates = get_rates_and_dates(code, 'hgjhg', 'jhjh')
+        self.assertEqual(dates, [])
+        self.assertEqual(rates, [])
+
+    def test_get_sales_invalid_values(self):
+        date_from = '2010-01-01'
+        date_to = '2010-01-31'
+
+        sales = get_sales('')
+        self.assertEqual(sales, [])
+
+        sales = get_sales('3sfsr')
+        self.assertEqual(sales, [])
+
+        sale = get_total_sale('')
+        self.assertEqual(sale, 0.0)
+
+        sale = get_total_sale('34freg')
+        self.assertEqual(sale, 0.0)
+
+        sale = get_total_sale('2020-12-31')
+        self.assertEqual(sale, 0.0)
+
+        sales, dates = get_sales_and_dates(date_to, date_from)
+        self.assertEqual(dates, [])
+        self.assertEqual(sales, [])
+
+    def test_data_to_plot(self):
+        code = 'USD'
+        date_from = '2010-01-01'
+        date_to = '2010-01-31'
+
+        dates, sales_usd, sales_pln = data_to_plot(code, date_from, date_to)
+        self.assertEqual(dates[0], date_from)
+        self.assertEqual(dates[-1], date_to)
+        self.assertEqual(len(sales_usd), len(sales_pln))
+        self.assertEqual(len(sales_usd), len(dates))
+
+    def test_add_to_db(self):
+        code = 'USD'
+        date = '2020-01-01'
+        rate = 5.1203
+
+        add_rate_entry(date, rate, code)
+        db_rate = get_rate(date, code)
+        self.assertEqual(db_rate, rate)
+        delete_rate_entry(date, code)
 
 
 if __name__ == '__main__':
