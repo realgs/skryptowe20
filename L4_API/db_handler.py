@@ -6,8 +6,12 @@ import matplotlib.dates as mdates
 DB_FILE = 'sales.db'
 PLOT_SIZE_X = 14
 PLOT_SIZE_Y = 7
+PLOT_LEFT_POS = 0.07
+PLOT_RIGHT_POS = 0.93
 PLOT_X_MARGINS = 0.01
 PLOT_BAR_WIDTH = 0.9
+PLOT_GRID_LW = 0.25
+
 PLOT_SAVE = False
 
 
@@ -17,7 +21,7 @@ def connect_db():
     try:
         conn = sqlite3.connect(DB_FILE)
     except sqlite3.Error as e:
-        print('db_handler: connect_db ' + e)
+        print('db_handler: connect_db ' + str(e))
 
     return conn
 
@@ -41,14 +45,13 @@ def get_sales(date):
     cursor = conn.cursor()
 
     sales = []
-    date += ' 00:00:00'
 
     try:
         cursor.execute("""SELECT Total FROM invoices
-                            WHERE InvoiceDate = '{}'""".format(date))
+                            WHERE InvoiceDate = '{} 00:00:00'""".format(date))
         sales = [float(x[0]) for x in cursor.fetchall()]
     except sqlite3.Error as e:
-        print('db_handler: get_sales ' + e)
+        print('db_handler: get_sales ' + str(e))
 
     conn.close()
 
@@ -125,10 +128,28 @@ def add_rate_entry(date, rate, currency_code):
     conn = connect_db()
     cursor = conn.cursor()
 
-    cursor.execute("""INSERT INTO rates VALUES (:RateDate, :Rate, :Code)""",
-                   {'RateDate': date, 'Rate': rate, 'Code': currency_code})
+    try:
+        cursor.execute("""INSERT INTO rates VALUES (:RateDate, :Rate, :Code)""",
+                       {'RateDate': date, 'Rate': rate, 'Code': currency_code})
+        conn.commit()
+    except sqlite3.Error as e:
+        print('db_handler: add_rate_entry ' + str(e))
 
-    conn.commit()
+    conn.close()
+
+
+def add_rate_entries(dates, rates, currency_code):
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    try:
+        for i in range(len(dates)):
+            cursor.execute("""INSERT INTO rates VALUES (:RateDate, :Rate, :Code)""",
+                           {'RateDate': dates[i], 'Rate': rates[i], 'Code': currency_code})
+        conn.commit()
+    except sqlite3.Error as e:
+        print('db_handler: add_rate_entries ' + str(e))
+
     conn.close()
 
 
@@ -146,8 +167,8 @@ def data_to_plot(currency_code, date_from, date_to):
             sales_pln.append(sales[sale_index] * rates[i])
             sale_index += 1
         else:
-            sales_usd.append(0)
-            sales_pln.append(0)
+            sales_usd.append(0.0)
+            sales_pln.append(0.0)
 
     return dates, sales_usd, sales_pln
 
@@ -156,7 +177,7 @@ def plot_sale_time_frame(currency_code, date_from, date_to):
     sale_dates, sales_usd, sales_pln = data_to_plot(currency_code, date_from, date_to)
 
     fig, ax = plt.subplots(figsize=(PLOT_SIZE_X, PLOT_SIZE_Y))
-    plt.subplots_adjust(left=0.07, right=0.93)
+    plt.subplots_adjust(left=PLOT_LEFT_POS, right=PLOT_RIGHT_POS)
 
     dates = [datetime.strptime(d, "%Y-%m-%d").date() for d in sale_dates]
     plt.bar(dates, sales_pln, width=PLOT_BAR_WIDTH, label='PLN')
@@ -170,7 +191,7 @@ def plot_sale_time_frame(currency_code, date_from, date_to):
     legend = plt.legend(frameon=1, loc='best')
     legend.get_frame().set_facecolor('white')
     legend.get_frame().set_edgecolor('white')
-    plt.grid(axis='y', lw=0.25)
+    plt.grid(axis='y', lw=PLOT_GRID_LW)
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%b %Y"))
     ax.xaxis.set_major_locator(mdates.MonthLocator())
     fig.autofmt_xdate()

@@ -20,9 +20,7 @@ def get_rates(currency_code, days):
 
 def add_rates_to_db(currency_code, date_from, date_to):
     rates, dates = api_hdl.currency_rates_and_dates_time_frame(currency_code, date_from, date_to)
-
-    for i in range(0, len(rates)):
-        db_hdl.add_rate_entry(dates[i], rates[i], currency_code)
+    db_hdl.add_rate_entries(dates, rates, currency_code)
 
 
 if __name__ == '__main__':
@@ -31,6 +29,6 @@ if __name__ == '__main__':
 
     plot_rates(CURRENCIES, YEAR // 2)
 
-    # add_rates_to_db('USD', '2009-01-02', '2014-12-31')
+    # add_rates_to_db(CURRENCIES[0], '2009-01-02', '2014-12-31')
 
-    plot_sales('USD', '2010-01-01', '2010-12-31')
+    plot_sales(CURRENCIES[0], '2010-01-01', '2010-12-31')
