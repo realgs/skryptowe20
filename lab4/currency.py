@@ -5,15 +5,20 @@ from datetime import date
 API_URL = "http://api.nbp.pl/api/exchangerates/rates/"
 
 
-def get_listing_courses(currency, number_of_days):
-    date_from = date.today() - dt.timedelta(number_of_days)
-    date_to = dt.date.today()
-    api_json_result = requests.get(API_URL + "a/" + str(currency) + "/" + str(date_from) + "/" + str(date_to)
+def get_listing_coursers_between_date(currency, date_from_string, date_to_string):
+    date_from = datetime_converter(date_from_string)
+    date_to = datetime_converter(date_to_string)
+    number_of_days = (date_from - date_to).days
+    api_json_result = requests.get(API_URL + "a/" + str(currency) + "/" + str(date_from_string) + "/" + str(date_to_string)
                                    + "/?format=json").json()
-    additional_content = {'number_of_days': number_of_days, 'date_from': datetime_converter(str(date_from)),
-                          'date_to': datetime_converter(str(date_to))}
+    additional_content = {'number_of_days': number_of_days, 'date_from': date_from_string,
+                          'date_to': date_to_string}
     api_json_result.update(additional_content)
     return api_json_result
+
+
+def get_listing_courses(currency, number_of_days):
+    return get_listing_coursers_between_date(currency, str(date.today() - dt.timedelta(number_of_days)), str(date.today()))
 
 
 def get_rate_list(json):
@@ -30,7 +35,7 @@ def get_rate_list(json):
                 next_date_object += dt.timedelta(days=1)
                 number_of_next_date += 1
         else:
-            date_before = json["date_from"]
+            date_before = datetime_converter(json["date_from"])
             while date_before < actual_date:
                 date_list.append(date_before)
                 mid_rate_list.append(data["mid"])
@@ -43,4 +48,4 @@ def get_rate_list(json):
 
 
 def datetime_converter(string_date):
-    return dt.datetime.strptime(string_date, '%Y-%m-%d')
+    return dt.datetime.strptime(str(string_date), '%Y-%m-%d')
