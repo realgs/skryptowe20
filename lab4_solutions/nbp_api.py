@@ -19,7 +19,7 @@ DATE_KEY = 'effectiveDate'
 AVG_RATE_KEY = 'mid'
 
 
-def response_handler(response):
+def __response_handler(response):
     if response.status_code != SUCCESS_CODE:
         raise RequestException(
             'Error. Cannot get data from: {}. \n Status code: {}. \n Description: {}'.format(response.url,
@@ -67,7 +67,7 @@ def get_avg_rates_from_period(currency, starting_day, ending_day):
     for x in range(len(dates)):
         if (x + 1) != len(dates):
             response = __send_get_request(currency, dates[x], dates[x + 1])
-            result += response_handler(response)
+            result += __response_handler(response)
 
     return __remove_duplicates(result)
 
@@ -93,14 +93,11 @@ def __remove_duplicates(result):
 
 
 def get_avg_rates_from_last_x_days(currency, number_of_last_days):
-    if number_of_last_days < 0:
+    if number_of_last_days <= 0:
         raise ArgumentException(
-            'Error. Number of last days cannot be negative.')
+            'Error. Number of last days cannot be negative or 0.')
 
     current_date = date.today()
-    if number_of_last_days == 0:
-        return get_avg_rates_from_period(currency, current_date, current_date)
-
     starting_date = current_date - timedelta(number_of_last_days - 1)
     return get_avg_rates_from_period(currency, starting_date, current_date)
 

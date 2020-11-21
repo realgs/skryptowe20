@@ -58,15 +58,11 @@ def fill_table_period(connection, start_date, end_date, currency):
 
 
 def fill_table_last_x_days(connection, number_of_last_days, currency):
-    if number_of_last_days < 0:
-        raise ArgumentException('Cannot take negative number of days: {}'.format(number_of_last_days))
+    if number_of_last_days <= 0:
+        raise ArgumentException('Error. Cannot take negative or 0 number of days: {}'.format(number_of_last_days))
 
     start_day = date.today() - timedelta(number_of_last_days - 1)
     end_day = date.today()
-
-    if number_of_last_days == 0:
-        start_day = date.today()
-
     fill_table_period(connection, start_day, end_day, currency)
 
 
