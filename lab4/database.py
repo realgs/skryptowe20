@@ -23,8 +23,8 @@ def get_prices_in_year():
                     MAX(RateDate) AS RateDate, 
                     Exchange,
                     SUM(UnitPrice * Quantity*(1-Discount)) * Exchange AS PlnPrice
-                    FROM "Order Details" NATURAL JOIN Orders JOIN UsdPlnExchangeRate ON orderDate >= rateDate
-                    WHERE OrderDate>="2018-05-06"
+                    FROM "Order Details" NATURAL JOIN Orders JOIN UsdPlnExchangeRate ON OrderDate >= rateDate
+                    WHERE OrderDate>="2019-05-06"
                     GROUP BY OrderDate''')
     result = cursor.fetchall()
     conn.commit()
@@ -45,8 +45,8 @@ def create_exchange_table(cursor):
         )''')
 
 
-def fill_table(cursor):
-    usd_exchange_rates = functions.get_currency_between_dates(functions.US_DOLLAR, '2019-05-06', '2020-05-06')
+def fill_table(cursor, start_date, end_date):
+    usd_exchange_rates = functions.get_currency_between_dates(functions.US_DOLLAR, start_date, end_date)
     for rate in usd_exchange_rates:
         cursor.execute('INSERT INTO UsdPlnExchangeRate VALUES(NULL, ?,?)', (rate[0], rate[1]))
 
@@ -56,6 +56,7 @@ if __name__ == '__main__':
     cursor = conn.cursor()
     drop_table(cursor)
     create_exchange_table(cursor)
-    fill_table(cursor)
+    # zad 4
+    fill_table(cursor, '2018-05-06', '2020-05-06')
     conn.commit()
     conn.close()
