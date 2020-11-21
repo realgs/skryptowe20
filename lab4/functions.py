@@ -62,7 +62,7 @@ def repair_data(start_date, end_date, data, currency):
             else:
                 i += 1
 
-    i = 1
+    i = 0
     while len(data) < total_days - 1:
         if data[i][0] + timedelta(1) != data[i + 1][0]:
             data.insert(i + 1, (data[i][0] + timedelta(1), data[i][1]))
@@ -112,13 +112,13 @@ def get_currency_from_last_days(currency, last_days=1):
     return data
 
 
-def draw_chart_for_year(currency_list):
+def draw_chart_between_dates(currency_list, start_date, end_date):
     if not isinstance(currency_list, list):
-        print('Invalid argument')
+        print('Argument currency_list is not a list')
     else:
         fig, ax = plt.subplots()
         for currency in currency_list:
-            data = get_currency_from_last_days(currency, 365)
+            data = get_currency_between_dates(currency, start_date, end_date)
 
             x = []
             y = []
@@ -188,6 +188,6 @@ if __name__ == '__main__':
     get_currency_from_last_days(US_DOLLAR, HALF_YEAR)
     get_currency_from_last_days(EURO, HALF_YEAR)
     # zad 3
-    draw_chart_for_year([US_DOLLAR, EURO])
+    draw_chart_between_dates([US_DOLLAR, EURO], '2019-05-06', '2020-05-06')
     # zad 5
     draw_sales_chart()

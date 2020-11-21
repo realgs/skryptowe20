@@ -20,11 +20,11 @@ def get_prices_in_year():
     cursor.execute('''SELECT 
                     orderDate,
                     SUM(UnitPrice * Quantity*(1-Discount)) AS UsdPrice,
-                    MAX(RateDate) AS RateDate,
+                    MAX(RateDate) AS RateDate, 
                     Exchange,
-                    SUM(UnitPrice * Quantity*(1-Discount)) * exchange AS PlnPrice
-                    FROM "Order Details" NATURAL JOIN Orders JOIN UsdPlnExchangeRate On orderDate>=rateDate
-                    WHERE OrderDate>="2019-05-06"
+                    SUM(UnitPrice * Quantity*(1-Discount)) * Exchange AS PlnPrice
+                    FROM "Order Details" NATURAL JOIN Orders JOIN UsdPlnExchangeRate ON orderDate >= rateDate
+                    WHERE OrderDate>="2018-05-06"
                     GROUP BY OrderDate''')
     result = cursor.fetchall()
     conn.commit()
@@ -41,7 +41,7 @@ def create_exchange_table(cursor):
         CREATE TABLE IF NOT EXISTS UsdPlnExchangeRate(
             RateId INTEGER PRIMARY KEY ASC,
             RateDate DATETIME NOT NULL,
-            exchange REAL NOT NULL
+            Exchange REAL NOT NULL
         )''')
 
 
