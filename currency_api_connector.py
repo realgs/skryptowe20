@@ -27,6 +27,8 @@ class CurrencyDataDownloader:
         max_days_amount = 367
         date_from = date.today() - timedelta(days=how_many_days)
         date_to = date_from + timedelta(days=max_days_amount)
+        if date_to > date.today():
+            date_to = date.today()
         json_multiple_data = []
         last_date = False
         while date_to <= date.today():
@@ -61,7 +63,7 @@ class CurrencyDataDownloader:
 
 if __name__ == '__main__':
     downloader = CurrencyDataDownloader()
-    usd_data = downloader.get_currency_prices_for_last_days('usd', 369)
-    eur_data = downloader.get_currency_prices_for_last_days('eur', 369)
+    usd_data = downloader.get_currency_prices_for_last_days('usd', 180)
+    eur_data = downloader.get_currency_prices_for_last_days('eur', 180)
     currencies_chart_data = [usd_data, eur_data]
     draw_currencies_chart(currencies_chart_data)
