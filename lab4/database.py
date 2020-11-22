@@ -4,12 +4,6 @@ SALES_TABLE = 'Sales.SalesOrderHeader'
 MY_TABLE = 'Currency'
 
 
-def test(cursor):
-    cursor.execute(f'SELECT * FROM {MY_TABLE};')
-    for row in cursor:
-        print(row)
-
-
 def connect():
     conn = pyodbc.connect('Driver={SQL Server};Server=DESKTOP-1A5C2CG;'
                           'Database=AdventureWorks2019;Trusted_Connection=yes;')
@@ -33,3 +27,33 @@ def fill_table(conn, cursor, date_list, rate_list):
         VALUES (?,?)''',
                        date_list[i], rate_list[i])
     conn.commit()
+
+
+def get_data_from_database(cursor, date_from, date_to):
+    sales_list = []
+    rates_list = []
+    merged_list = []
+
+    cursor.execute(f"""
+    SELECT OrderDate, SUM(TotalDue)
+    FROM {SALES_TABLE}
+    WHERE OrderDate BETWEEN \'{date_from}\' AND \'{date_to}\'
+    GROUP BY OrderDate
+    ORDER BY OrderDate
+    """)
+
+    for row in cursor:
+        sales_list.append(row)
+
+    cursor.execute(f"""
+    SELECT CurrencyRate
+    FROM {MY_TABLE}
+    """)
+
+    for row in cursor:
+        rates_list.append(row)
+
+    for i in range(len(sales_list)):
+        merged_list.append((sales_list[i][0], sales_list[i][1], rates_list[i][0]))
+
+    return merged_list

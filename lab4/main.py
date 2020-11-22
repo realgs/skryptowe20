@@ -1,6 +1,7 @@
 import api
 import plot
 import database
+import total_sales_plot
 
 
 def average_exchange_rates(currency, days):
@@ -38,20 +39,20 @@ def __get_lists(currency, days):
 
 def create_table_in_database():
     conn, cursor = database.connect()
-    # database.create_table(cursor) -used once at the beginning
-    date_list, rate_list = api.get_exchange_rates_date_to_date('usd', '2012-01-01', '2014-06-30')
+    database.create_table(cursor)
+    date_list, rate_list = api.get_exchange_rates_date_to_date('usd', '2012-01-01', '2014-06-27')
     database.fill_table(conn, cursor, date_list, rate_list)
 
 
-def test(currency, date_from, date_to):
-    date_list, rate_list = api.get_exchange_rates_date_to_date(currency, date_from, date_to)
-    print(f'{currency.upper()} - PLN:')
-    print_lists(date_list, rate_list)
+def create_total_sales_plot():
+    conn, cursor = database.connect()
+    data_list = database.get_data_from_database(cursor, '2012-01-01', '2014-06-27')
+    total_sales_plot.create_chart_of_total_sales(data_list)
 
 
 if __name__ == '__main__':
-    # draw('USD', 'EUR', 50)
-    # usd_eur_from_last_half_year()
-    # average_exchange_rates('usd', 500)
-    # test('usd', '2018-10-10', '2019-10-10')
-    create_table_in_database()
+    draw('USD', 'EUR', 50)
+    usd_eur_from_last_half_year()
+    average_exchange_rates('usd', 500)
+    # create_table_in_database() -used once at the beginning
+    create_total_sales_plot()

@@ -28,8 +28,8 @@ def get_exchange_rates(currency, days, days_difference=0):
         date_from = date_to + timedelta(days=1)
         date_to = date_from + timedelta(days=MAX_DAYS_AMOUNT)
 
-        if date_to > date.today() > date_from:
-            date_to = date.today()
+        if date_to > date.today() - timedelta(days=days_difference) > date_from:
+            date_to = date.today() - timedelta(days=days_difference)
 
     date_list, rate_list = add_weekends(all_rates_json, main_date_from, days)
 
@@ -71,6 +71,6 @@ def get_exchange_rates_date_to_date(currency, date_from, date_to):
     date_from = dt.datetime.strptime(str(date_from), '%Y-%m-%d')
     date_to = dt.datetime.strptime(str(date_to), '%Y-%m-%d')
     today = dt.datetime.strptime(str(date.today()), '%Y-%m-%d')
-    days = (date_to - date_from).days
-    days_difference = (today - date_to).days
+    days = (date_to - date_from).days + 1
+    days_difference = (today - date_to).days - 1
     return get_exchange_rates(currency, days, days_difference)
