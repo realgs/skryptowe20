@@ -75,3 +75,22 @@ class DatabaseManager:
     def delete_table(self):
         self.__cursor.execute(f"DROP TABLE {self.__new_table_name};")
         self.__conn.commit()
+
+    def get_total_sales(self, date_from, date_to):
+        self.__cursor.execute(
+            f"SELECT OrderDate, SUM(TotalDue) FROM Sales.SalesOrderHeader WHERE OrderDate "
+            f"BETWEEN '{date_from}' AND '{date_to}' GROUP BY OrderDate ORDER BY OrderDate")
+
+        total_sales = []
+        for row in self.__cursor:
+            total_sales.append(row)
+        return total_sales
+
+    def get_currency_rates(self, date_from, date_to):
+        self.__cursor.execute(
+            f"SELECT QuotationDate, CurrencyRate FROM {self.__new_table_name} WHERE QuotationDate "
+            f"BETWEEN \'{date_from}\' AND \'{date_to}\' ORDER BY QuotationDate")
+        rates = []
+        for row in self.__cursor:
+            rates.append(row)
+        return rates
