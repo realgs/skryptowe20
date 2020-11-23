@@ -72,7 +72,7 @@ def get_rate(date, currency_code):
                             WHERE RateDate = '{}'
                             AND Code = '{}';""".format(date, currency_code))
         rate = float(cursor.fetchone()[0])
-    except TypeError as e:
+    except sqlite3.Error as e:
         print('db_handler: get_rate(' + date + ', ' + currency_code + ') ' + str(e))
 
     conn.close()
@@ -93,7 +93,7 @@ def get_rates_and_dates(currency_code, date_from, date_to):
         for rate, date in cursor.fetchall():
             rates.append(float(rate))
             dates.append(date)
-    except TypeError as e:
+    except sqlite3.Error as e:
         print('db_handler: get_rates' + str(e))
 
     conn.close()
@@ -116,7 +116,7 @@ def get_sales_and_dates(date_from, date_to):
         for sale, date in cursor.fetchall():
             sales.append(float(sale))
             dates.append(date[:10])
-    except TypeError as e:
+    except sqlite3.Error as e:
         print('db_handler: get_sales' + str(e))
 
     conn.close()
@@ -218,5 +218,4 @@ def plot_sale_time_frame(currency_code, date_from, date_to):
 
 if __name__ == '__main__':
     # create_rates_table()
-    get_rates_and_dates('USD', '2010-01-01', '2010-01-31')
     pass
