@@ -1,6 +1,7 @@
 from currency import get_listing_courses, get_rate_list, get_listing_coursers_between_date
 from currencyChart import create_chart_of_two_currency
-from connectDB import connect, add_col_to_db, fill_col_usd_rate, get_total_sales_to_chart
+from connectDB import connect, add_table_to_db, fill_table_usd_rate, get_total_sales_to_chart, \
+    get_currency_rate_data_between_date
 from totalSalesChart import create_chart_of_total_sales
 
 
@@ -24,10 +25,10 @@ def generate_sales_information(currency_to_db_name, data_from, data_to):
     cursor = connect()
     listing_between_date = get_listing_coursers_between_date(currency_to_db_name, data_from, data_to)
     currency_to_db_date_list, currency_to_db_rate_list = get_rate_list(listing_between_date)
-    #add_col_to_db(cursor)
-    fill_col_usd_rate(cursor, data_from, data_to, currency_to_db_date_list, currency_to_db_rate_list,
-                      currency_to_db_name)
-    create_chart_of_total_sales(currency_to_db_name, get_total_sales_to_chart(cursor, data_from, data_to))
+    #add_table_to_db(cursor)
+    fill_table_usd_rate(cursor, currency_to_db_date_list, currency_to_db_rate_list)
+    create_chart_of_total_sales(get_total_sales_to_chart(cursor, data_from, data_to),
+                                get_currency_rate_data_between_date(cursor, data_from, data_to))
 
 
 def main():
