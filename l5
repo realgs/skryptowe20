@@ -1,6 +1,8 @@
 Termin oddania listy 13.12.2020. Łączna liczba punktów (20pkt)
 
-API https://www.django-rest-framework.org/#quickstart
+API: 
+django https://www.django-rest-framework.org/#quickstart
+flask https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask
 Możecie użyć dowolnego frameworka / biblioteki, powyższe to tylko przykład.
 
 Bazując na poprzedniej liście będziemy wystawiać własne API z informacjami uzyskanymi z bazy danych oraz API NBP.
