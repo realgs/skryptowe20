@@ -16,15 +16,17 @@ Sposób uruchomienia:
 Endpointy:
 
 1.) /api/rates/<currency_code>
+- Parametry zapytania:
     - <currency_code> - kod waluty dla oczkiwanych rat ( Wspierane waluty: EUR, USD, CHF, GBP, TRY, AUD, RUB )
-- Parametry:
+- Parametry ścieżki:
     - startDate - data początowa rat (np. 2020-11-22)
     - endDate - data końcowa rat (np. 2020-11-28)
 
 
 2.) /api/sales/<currency_code>
+- Parametry zapytania:
     - <currency_code> - kod waluty dla podsumowania sprzedaży ( Wspierane waluty: EUR, USD, CHF, GBP, TRY, AUD, RUB )
-- Parametry:
+- Parametry ścieżki:
     - date - dzień, dla którego podsumowujemy sprzedaż (np. 2020-11-22)
 
 
