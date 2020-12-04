@@ -20,7 +20,7 @@ def createTableCurrencyQuotes():
 def fillTableWithData():
    connection = sqlite3.connect(databaseFile)
    cursor = connection.cursor()
-   cursor.execute('SELECT order_date FROM SalesOrder ORDER BY order_date DESC')
+   cursor.execute('SELECT order_date FROM SalesOrder GROUP BY order_date ORDER BY order_date DESC')
    dates = []
    prices = []
    for date in cursor.fetchall():
