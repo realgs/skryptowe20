@@ -5,8 +5,10 @@ flask, flask_limiter, sqllite3 oraz requests
 Aby uruchomić program wystarczy zaciągnąć pliki na dysk oraz posiadać bazę danych wykorzystywaną
 w zadaniu.
 
-Uruchamiamy api wykonując skrypt main.py. Jeśli robimy to po raz drugi należałoby zakomentować linie
-odpowiadające za generację i wypełnienie bazy danych, a więc pierwsze dwie. 
+Aby uruchomić aplikację, za pierwszym razem uruchamiamy skrypt main.py, aby zainicjować i wypełnić 
+bazę damnych brakującymi tabelami.
+
+Gdy mamy bazę danych należy uruchomić skrypt myAPI.py, który uruchomi serwer oczekujący na zapytania.
 
 Należy udać się na stronę http://127.0.0.1:500/ aby zacząć korzystać z API.
  

@@ -8,7 +8,6 @@ from sales import Sales
 
 
 
-#def startAPI():
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 databaseFile = 'sales_data_base.db'
