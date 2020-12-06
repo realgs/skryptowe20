@@ -93,3 +93,28 @@ def getJsonSaleTwoDates(request, from_date, to_date):
         return JsonResponse(response)
     else:
         return HttpResponse(status=404)
+
+def isBelowTimeLimit(request):
+    if request.user.is_authenticated:
+        key = "requests_num_"+str(request.user.username)
+    else:
+        key = "requests_num_anon"
+
+    try:
+        requests_num = request.session[key]
+    except KeyError:
+        request.session[key] = {"last_request": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "sum": 0}
+        requests_num = request.session[key]
+
+    if requests_num["sum"] >= REQUESTS_PER_MINUTE \
+        and (datetime.now() - datetime.strptime(requests_num["last_request"], "%Y-%m-%d %H:%M:%S")).seconds < 60:
+            request.session.modified=True
+            return False
+    elif requests_num["sum"] >= REQUESTS_PER_MINUTE:
+        requests_num["sum"]=0
+    
+    now_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    requests_num["last_request"]=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    requests_num["sum"]+=1
+    request.session.modified=True
+    return True
