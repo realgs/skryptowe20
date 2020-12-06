@@ -53,3 +53,43 @@ def getJsonRateTwoDates(request, from_date, to_date):
         return JsonResponse(response)
     else:
         return HttpResponse(status=404)
+
+def getJsonSale(request, one_date):
+    if isBelowTimeLimit(request):
+        try:
+            response = DailySales.objects.get(salesdate=one_date)
+        except DailySales.DoesNotExist:
+            return JsonResponse({"unrecognized_url": 1})
+
+        return JsonResponse({"date": one_date,
+                             "pln_sales": response.plnsales,
+                             "usd_sales": response.usdsales})
+    else:
+        return HttpResponse(status=404)
+
+def getJsonSaleTwoDates(request, from_date, to_date):
+    if isBelowTimeLimit(request):
+        response = {}
+        missing_records=0
+
+        try:
+            from_object = DailySales.objects.get(salesdate=from_date)
+            to_object = DailySales.objects.get(salesdate=to_date)
+        except DailySales.DoesNotExist:
+            return JsonResponse({"unrecognized_url": 1})
+
+        if from_object.sales_id > to_object.sales_id:
+            ids_range = range(to_object.sales_id, from_object.sales_id)
+        else:
+            ids_range = range(from_object.sales_id, to_object.sales_id)
+
+        for i in ids_range:
+            try:
+                record = DailySales.objects.get(sales_id=i)
+                response[record.salesdate]={"pln_sales": record.plnsales, "usd_sales": record.usdsales}
+            except CurrencyRecord.DoesNotExist:
+                missing_records+=1
+                response["missing_records"]=missing_records
+        return JsonResponse(response)
+    else:
+        return HttpResponse(status=404)

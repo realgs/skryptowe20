@@ -10,5 +10,7 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
     path('rate/<str:one_date>', views.getJsonRate),
-    path('rate/<str:from_date>/<str:to_date>', views.getJsonRateTwoDates)
+    path('rate/<str:from_date>/<str:to_date>', views.getJsonRateTwoDates),
+    path('sale/<str:one_date>', views.getJsonSale),
+    path('sale/<str:from_date>/<str:to_date>', views.getJsonSaleTwoDates)
 ]
