@@ -1,5 +1,9 @@
 .DS_Store
 *.db
+!sales_data3.db
 *.sqlite3
 __pycache__/
 env/
+.vs/
+*.sln
+.gitignore
