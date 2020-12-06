@@ -62,7 +62,38 @@ def checkDatabase():
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
     print(cursor.fetchall())
 
-#createDailySalesTable()
-#checkDatabase()
-#selectDailySalesTable()
-#insertIntoDailySalesTable()
+def createUsdToPlnTableInterpolated():
+    conn = sqlite3.connect('sales_data.db')
+    cursor = conn.cursor()
+    print("Database connected")
+
+    cursor.execute('''CREATE TABLE UsdToPln (ID, EffectiveDate, CurrencyValue, Interpolated);''')
+    print("Table created")
+    conn.commit()
+    
+    result = {}
+    interpolated = {}
+    current_date = datetime.strptime('2014-12-31', '%Y-%m-%d')
+    end_date = datetime.strptime('2011-01-01', '%Y-%m-%d')
+    
+    while(current_date>end_date):
+        print("Fetching date: "+current_date.strftime("%Y-%m-%d"))
+        resp = requests.get('http://api.nbp.pl/api/exchangerates/rates/A/USD/{}/'.format(current_date.strftime("%Y-%m-%d")))
+        if resp.status_code != 200:
+            result[current_date.strftime("%Y-%m-%d")] = prev_resp.json()['rates'][0]['mid']
+            interpolated[current_date.strftime("%Y-%m-%d")] = 1
+        else:
+            prev_resp = resp
+            result[current_date.strftime("%Y-%m-%d")] = resp.json()['rates'][0]['mid']
+            interpolated[current_date.strftime("%Y-%m-%d")] = 0
+
+        current_date = current_date - timedelta(days=1)
+
+    lp = 0
+    for key, value in result.items():
+        lp+=1
+        current_date = datetime.strptime(key, '%Y-%m-%d')
+        conn.execute("INSERT INTO UsdToPln (ID, EffectiveDate, CurrencyValue, Interpolated) \
+                     VALUES (?, ?, ?, ?)", (lp, current_date.strftime("%d-%m-%Y"), value, interpolated[key]))
+    conn.commit()
+    conn.close()

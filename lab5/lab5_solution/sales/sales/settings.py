@@ -78,11 +78,11 @@ WSGI_APPLICATION = 'sales.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'sales_data.db',
+        'NAME': BASE_DIR / 'sales_data3.db',
     },
     'data': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'sales_data.db',
+        'NAME': BASE_DIR / 'sales_data3.db',
     }
 }
 

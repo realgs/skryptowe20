@@ -5,7 +5,6 @@ from datetime import datetime
 
 from .serializers import *
 from .models import *
-# Create your views here.
 
 REQUESTS_PER_MINUTE = 10
 
@@ -24,7 +23,9 @@ def getJsonRate(request, one_date):
         except CurrencyRecord.DoesNotExist:
             return JsonResponse({"unrecognized_url": 1})
 
-        return JsonResponse({one_date: response.currencyvalue})
+        return JsonResponse({"date": one_date,
+                             "value": response.currencyvalue, 
+                             "isInterpolated": response.interpolated})
     else:
         return HttpResponse(status=404)
 
@@ -46,7 +47,8 @@ def getJsonRateTwoDates(request, from_date, to_date):
         for i in ids_range:
             try:
                 record = CurrencyRecord.objects.get(id=i)
-                response[record.effectivedate]=record.currencyvalue
+                response[record.effectivedate]={"value": record.currencyvalue, 
+                             "isInterpolated": record.interpolated}
             except CurrencyRecord.DoesNotExist:
                 missing_records+=1
                 response["missing_records"]=missing_records
