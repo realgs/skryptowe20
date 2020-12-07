@@ -1,5 +1,6 @@
 import flask
 import sqlite3
+import time
 from flask import request, jsonify
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -13,7 +14,7 @@ app.config["DEBUG"] = True
 databaseFile = 'sales_data_base.db'
 sales = Sales()
 limiter = Limiter(app, key_func=get_remote_address, default_limits=['300 per day'])
-
+timeStart = time.time()
 
 @app.route('/', methods=['GET'])
 def home():
@@ -66,10 +67,11 @@ def getRateForDateSpan():
 @limiter.limit('10 per minute')
 @limiter.limit('90 per hour')
 def getSalesForDay():
-    salesLocal = sales                       # Jako zmienna nielokalna jest ona inicjalizowana tylko na początku
-    if not salesLocal.salesArray:            # odpalenia API. Po skopiowaniu referencji do zmiennej lokalnej salesLocal,
-        salesLocal.calculateSales()          # wartości sprzedaży są zaciągane z klasy sales, która przechowuje je
-    if 'date' in request.args:               # w postaci obiektów salesDataObject,
+    salesLocal = sales                                              # Jako zmienna nielokalna jest ona inicjalizowana tylko na początku
+    timeDiff = time.time() - timeStart                              # odpalenia API. Po skopiowaniu referencji do zmiennej lokalnej salesLocal,
+    if not salesLocal.salesArray or int(timeDiff) / 57600 >= 1:     # wartości sprzedaży są zaciągane z klasy sales, która przechowuje je
+        salesLocal.calculateSales()                                 # w postaci obiektów salesDataObject.
+    if 'date' in request.args:                                      # a zmienna timeDiff odświeża bazę danych co 58 600 sekund czyli 16h
         requestedDate = str(request.args['date'])
     else:
         return 'ERROR: You need to specify date to get the exchange rate', 401

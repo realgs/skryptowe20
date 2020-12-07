@@ -10,7 +10,7 @@ bazę damnych brakującymi tabelami.
 
 Gdy mamy bazę danych należy uruchomić skrypt myAPI.py, który uruchomi serwer oczekujący na zapytania.
 
-Należy udać się na stronę http://127.0.0.1:500/ aby zacząć korzystać z API.
+Należy udać się na stronę http://127.0.0.1:5000/ aby zacząć korzystać z API.
  
  
 # Zaimplementowane endpointy:
