@@ -12,7 +12,7 @@ app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 databaseFile = 'sales_data_base.db'
 sales = Sales()
-limiter = Limiter(app, key_func=get_remote_address(), default_limits=['300 per day'])
+limiter = Limiter(app, key_func=get_remote_address, default_limits=['300 per day'])
 
 
 @app.route('/', methods=['GET'])
