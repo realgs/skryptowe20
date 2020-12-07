@@ -1,8 +1,19 @@
 import sqlite3
+from flask import g
 
 DB_NAME = 'data.db'
 
+def get_db():
+    db = getattr(g, '_database', None)
+    if db is None:
+        db = g._database = sqlite3.connect(DB_NAME)
+    return db
 
+def close_db(e=None):
+    db = g.pop('db', None)
+
+    if db is not None:
+        db.close()
 
 def create_exchange_rates_table():
     conn = sqlite3.connect(DB_NAME)
@@ -14,12 +25,12 @@ def create_exchange_rates_table():
 
 
 def populate_exchange_rates_table(rates_and_dates_interpolated):
-    if len(rates_and_dates) < 1:
+    if len(rates_and_dates_interpolated) < 1:
         print("Incorrect data")
         return
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
-    cursor.executemany("INSERT INTO rates(date, rate) VALUES (?, ?)", rates_and_dates_interpolated)
+    cursor.executemany("INSERT INTO rates VALUES (?, ?, ?)", rates_and_dates_interpolated)
     conn.commit()
     conn.close()
 

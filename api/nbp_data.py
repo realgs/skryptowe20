@@ -1,13 +1,14 @@
 import json
 from datetime import datetime, timedelta, date
-from manage_db import *
+from .manage_db import *
 import requests
+from enum import Enum
 
 RATES_URL = 'http://api.nbp.pl/api/exchangerates/rates'
 REQUEST_DAYS_LIMIT = 367
 DATE_FORMAT = "%Y-%m-%d"
 DB_DATE_FORMAT = "%m/%d/%Y"
-
+YEARS = [2004, 2005]
 class Currencies(Enum):
     EUR = 'eur'
     USD = 'usd'
@@ -45,6 +46,7 @@ def partition_date_range(end_date, start_date):
 def get_rates_for_timeframe(currency, end_date, start_date):
     corrected_rates = []
     corrected_dates = [] 
+    interpolated = []
     partitions = []
     last_rate = 0
     if currency in Currencies._value2member_map_:
@@ -58,7 +60,8 @@ def get_rates_for_timeframe(currency, end_date, start_date):
                 corrected_data = fill_missing_exchange_rates(data, partition, last_rate)
                 corrected_rates.append(corrected_data[1])
                 corrected_dates.append(corrected_data[0])
-    return (corrected_dates, corrected_rates)
+                interpolated.append(corrected_data[2])
+    return (corrected_dates, corrected_rates, interpolated)
 
 def fill_missing_exchange_rates(data, partition, last_rate):
     dates = data[0]
@@ -105,8 +108,9 @@ def fill_exchange_rates_table(data):
     create_exchange_rates_table()
     dates = data[0]
     rates = data[1]
+    interpolated = data[2]
     for i in range(len(dates)):
-        rates_and_dates = list(zip(dates[i], rates[i]))
+        rates_and_dates = list(zip(dates[i], rates[i], interpolated[i]))
         populate_exchange_rates_table(rates_and_dates)
 
 def pull_data_from_response(rates):
@@ -116,3 +120,19 @@ def pull_data_from_response(rates):
         rates_list.append(r['mid'])
         dates.append(r['effectiveDate'])
     return (dates, rates_list)
+
+def manage_db_data(currency='usd', start_date='2003-12-29', end_date='2005-12-31'):
+    data = get_rates_for_timeframe(currency, datetime.strptime(end_date, DATE_FORMAT), datetime.strptime(start_date, DATE_FORMAT))
+    fill_exchange_rates_table(data)
+    sales_data = get_transaction_sums_for_days(YEARS)
+    sorted_data = sorted(sales_data, key = lambda el: datetime.strptime(el[1], DB_DATE_FORMAT))
+    dates = []
+    rates = []
+    sales = []
+    sales_in_pln = []
+    for s in sorted_data:
+        sales.append(round(s[0], 4))
+        dates.append(datetime.strptime(s[1], DB_DATE_FORMAT).strftime(DATE_FORMAT))
+    rates = get_exchange_rates_for_days(dates)
+    for i in range(len(sales)):
+        sales_in_pln.append(round((sales[i] * rates[i][0]), 4))
