@@ -1,7 +1,5 @@
 import task1, task3, task4, task5
 
-
-
 if __name__ == '__main__':
     days = 182
     usdData = task1.averageExchangeRate('usd', days)

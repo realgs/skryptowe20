@@ -42,5 +42,3 @@ def drawSalesChart():
     plt.savefig('task5.svg')
     plt.show()
     connection.close()
-
-
