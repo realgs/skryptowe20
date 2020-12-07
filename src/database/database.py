@@ -86,20 +86,6 @@ def get_sales_usd_pln(conn, start_date, end_date):
     return res
 
 
-def plot_database(x, y1, y2, label1=' ', label2=' ', xlabel=' ', ylabel=' ', title=' '):
-    fig, ax = plt.subplots()
-    plt.gcf().subplots_adjust(bottom=0.15)
-    ax.plot(x, y1, label=label1)
-    ax.plot(x, y2, label=label2)
-    ax.set(xlabel=xlabel, ylabel=ylabel,
-            title=title)
-    ax.set_xticks(ax.get_xticks()[::len(ax.get_xticks()) // 4])
-    ax.legend()
-    plt.xticks(rotation=20)
-    fig.savefig(f'plots/{title}.svg')
-    plt.show()
-
-
 if __name__ == "__main__":
     start_date = '2011-07-04'
     end_date = '2013-05-06'
@@ -117,12 +103,3 @@ if __name__ == "__main__":
     conn.close()
 
     dates, usd, pln = zip(*sales)
-    plot_database(
-        dates,
-        usd,
-        pln,
-        'USD',
-        'PLN',
-        xlabel='days',
-        ylabel='avg currency',
-        title=f'Sales values (EUR, USD) from {start_date} to {end_date}')

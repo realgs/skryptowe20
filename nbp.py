@@ -43,20 +43,6 @@ def fetch_currency_from_two_tables(prev_date='2012-01-01', curr_date='2012-01-31
     return tab_a + tab_b
 
 
-def plot(x1, y1, x2, y2, label1=' ', label2=' ', xlabel=' ', ylabel=' ', title=' '):
-    fig, ax = plt.subplots()
-    plt.gcf().subplots_adjust(bottom=0.15)
-    ax.plot(x1, y1, label=label1)
-    ax.plot(x2, y2, label=label2)
-    ax.set(xlabel=xlabel, ylabel=ylabel,
-            title=title)
-    ax.set_xticks(ax.get_xticks()[::len(ax.get_xticks()) // 4])
-    ax.legend()
-    plt.xticks(rotation=20)
-    fig.savefig(f'plots/{title}.svg')
-    plt.show()
-
-
 def from_json_to_list(json_file):
     if 'rates' in json_file:
         mids = [x['mid'] for x in json_file['rates']]
@@ -75,15 +61,3 @@ if __name__ == "__main__":
 
     avg_euro = fetch_currency_from_two_tables(date1, date2, 'eur')
     euro_mids, euro_dates = zip(*avg_euro)
-
-    plot(
-        usd_dates,
-        usd_mids,
-        euro_dates,
-        euro_mids,
-        'USD',
-        'EUR',
-        xlabel='days',
-        ylabel='avg currency',
-        title=f'Average currency values (EUR, USD) from {date1} to {date2}'
-    )
