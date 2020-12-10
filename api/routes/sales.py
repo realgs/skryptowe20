@@ -36,7 +36,7 @@ def get_sales_for_days_range(start_date, end_date):
     if not validate_date(start_date) or not validate_date(end_date) or not is_date_order_correct(start_date, end_date):
         return jsonify({'message': 'Incorrect date format.'}), 400
     if (int(start_date.split('-')[0]) not in YEARS) or (int(end_date.split('-')[0]) not in YEARS):
-        return jsonify({'message': 'No data found for given date.'}), 404
+        return jsonify({'message': 'No data found for given period.'}), 404
     dates = get_dates_range(start_date, end_date)
     response = []
     for date in dates:

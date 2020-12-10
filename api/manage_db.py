@@ -50,6 +50,14 @@ def get_exchange_rates_for_days(days):
     conn.close()
     return rates
 
+def check_if_table_exists():
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    exists = cursor.execute(
+        '''SELECT name FROM sqlite_master WHERE type='table' AND name='rates';''').fetchone()
+    conn.close()
+    return exists != None
+
 def drop_exchange_rates_table():
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
@@ -57,4 +65,3 @@ def drop_exchange_rates_table():
         '''DROP TABLE IF EXISTS rates''')
     conn.commit()
     conn.close()
-
