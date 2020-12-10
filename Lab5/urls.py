@@ -10,5 +10,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('',TestView.as_view(), name='Kursy waluty'),
     path('<str:currency>',TestView.as_view()),
+    path('sales/from/<str:currency>',TestView.as_view()),
     path('<str:currency>/last/<int:days>',TestView.as_view())
 ]

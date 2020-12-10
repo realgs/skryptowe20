@@ -34,7 +34,9 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_THROTTLE_RATES': {
         'anon': '10/minute',
-        'user': '12/minute'
+        'anon': '100/hour',
+        'user': '12/minute',
+        'user': '100/hour'
     }
 }
 # Application definition

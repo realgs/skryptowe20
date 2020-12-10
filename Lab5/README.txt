@@ -12,10 +12,10 @@ i wpisując komendę: python manage.py runserver. Otrzymujemy wtedy link do nasz
 Żeby pobrać kursy danej waluty z ostatnich kilu dni należy dopisać po / do url naszego api następujące rzeczy:
 -/waluta - pobierzemy ostatnie notowanie waluty wpisanej po /. Należy wpisać skrót 3 literowy, np. USD, PLN, EUR.
 -/waluta/last/dni - pobierzemy notowanie waluty wpisanej po pierwszym / z ostatnich dni(liczba) wpisanych po / po last, np. usd/last/30.
--/waluta/data - pobierzemy łączą sumę sprzedaży z podanej daty (format yyyy-mm-dd) z bazy danych sprzedaży, np./2015-01-01.
+-/sales/from/data - pobierzemy łączą sumę sprzedaży z podanej daty (format yyyy-mm-dd) z bazy danych sprzedaży, np./2015-01-01.
 Gdyby podana waluta była nieobsługiwana, dostaniemy komunikat zła waluta, natomiast jeśli wpiszemy datę spoza zakresu dat w bazie,
 dostaniemy komunikat zła data.
 
 3.Limity
-Limity zostały ustawione w settings.py. Dla użytkownika jest to 12 zapytań na minutę, a dla anon 10.
+Limity zostały ustawione w settings.py. Dla użytkownika jest to 12 zapytań na minutę, 100 na godzinę, a dla anon 10 na minutę i 100 na godzinę.
 
