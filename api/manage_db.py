@@ -46,7 +46,7 @@ def get_exchange_rates_for_days(days):
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
     rates = cursor.execute(
-        "SELECT rate FROM rates GROUP BY date HAVING date IN ({seq}) ORDER BY date;".format(seq=','.join(['?']*len(days))), days).fetchall()
+        "SELECT rate, interpolated FROM rates GROUP BY date HAVING date IN ({seq}) ORDER BY date;".format(seq=','.join(['?']*len(days))), days).fetchall()
     conn.close()
     return rates
 

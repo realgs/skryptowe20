@@ -10,10 +10,10 @@ DATE_FORMAT = "%Y-%m-%d"
 DB_DATE_FORMAT = "%m/%d/%Y"
 YEARS = [2004, 2005]
 class Currencies(Enum):
-    EUR = 'eur'
     USD = 'usd'
-    GBP = 'gbp'
     CHF = 'chf'
+    EUR = 'eur'
+
 
 def get_exchange_rates_range(currency, end_date, start_date):
     if currency in Currencies._value2member_map_:
@@ -130,9 +130,19 @@ def manage_db_data(currency='usd', start_date='2003-12-29', end_date='2005-12-31
     rates = []
     sales = []
     sales_in_pln = []
+    interpolated = []
     for s in sorted_data:
         sales.append(round(s[0], 4))
         dates.append(datetime.strptime(s[1], DB_DATE_FORMAT).strftime(DATE_FORMAT))
     rates = get_exchange_rates_for_days(dates)
     for i in range(len(sales)):
         sales_in_pln.append(round((sales[i] * rates[i][0]), 4))
+        interpolated.append(rates[i][1])
+    
+    sales_dict = {}
+    sales_dict_usd={}
+    for i in range(len(dates)):
+        sales_dict[dates[i]] = [sales_in_pln[i], interpolated[i]]
+        sales_dict_usd[dates[i]] = [sales[i], interpolated[i]]
+
+    return (sales_dict, sales_dict_usd)
