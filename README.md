@@ -1,6 +1,7 @@
 # Sales API
 
-Sales API is an API, which allows users to request rates and sales data from [sales data sample](https://www.kaggle.com/kyanyoga/sample-sales-data) found on Kaggle.
+Sales API is an API, which allows users to request usd exchange rates and sales data from [sales data sample](https://www.kaggle.com/kyanyoga/sample-sales-data) found on Kaggle.
+The data is from years 2004 and 2005.
 
 ## Installation
 
@@ -64,7 +65,7 @@ The API runs under http://127.0.0.1:5000/api address. Available endpoints are li
 * **Success Response:**
 
   * **Code:** 200   
-    **Content:** `{ id : 12, name : "Michael Bloom" }`
+    **Content:** `{"date": "2004-07-03", "interpolated": 1, "rate": 3.7166}`
  
 * **Error Response:**
 
@@ -78,7 +79,7 @@ The API runs under http://127.0.0.1:5000/api address. Available endpoints are li
     
 **Get rates for period**
 ----
-  Returns json data about exchange rates for a given period.
+  Returns json data about exchange rates for a given period. Maximum date span is 366 days.
 * **Requests per user**  
 100 per day, 20 per hour
 
@@ -96,12 +97,17 @@ The API runs under http://127.0.0.1:5000/api address. Available endpoints are li
 * **Success Response:**
 
   * **Code:** 200   
-    **Content:** `{ id : 12, name : "Michael Bloom" }`
+    **Content:** `{"rates": [ {"date": "2004-07-03", "interpolated": 1, "rate": 3.7166}, {"date": "2004-07-04", "interpolated": 1, "rate": 3.7166}]}`
  
 * **Error Response:**
 
   * **Code:** 400  
     **Content:** `{'message': 'Incorrect date format.'}`
+
+  OR
+
+  * **Code:** 400  
+    **Content:** `{'message': 'Maximum date range exceeded. Maximum amount of days - 366.'}`
 
   OR
 
@@ -126,9 +132,77 @@ The API runs under http://127.0.0.1:5000/api address. Available endpoints are li
 * **Success Response:**
 
   * **Code:** 200   
-    **Content:** `{ id : 12, name : "Michael Bloom" }`
+    **Content:** `{"rates": [{"date": "2005-12-31",  "interpolated": 1, "rate": 3.2613}, {"date": "2005-12-30", "interpolated": 0, "rate": 3.2613}]}`
  
 * **Error Response:**
 
   * **Code:** 400  
     **Content:** `{'message': 'Incorrect days amount. Maximum amount is 100.'}`
+
+**Get sales for day**
+----
+  Returns json data about sales (in two currencies) for a given day.
+* **Requests per user**  
+60 per day, 10 per hour
+
+* **URL**
+
+  /api/sales/:date `GET`
+
+  
+*  **URL Params**
+ 
+   `date=[string] (YYYY-mm-dd) format`
+
+
+* **Success Response:**
+
+  * **Code:** 200   
+    **Content:** `{"date": "2004-07-19", "pln": {"sale": 146869.1487}, "usd": {"sale": 41297.14}}`
+ 
+* **Error Response:**
+
+  * **Code:** 400  
+    **Content:** `{'message': 'Incorrect date format.'}`
+
+  OR
+
+  * **Code:** 404  
+    **Content:** `{'message': 'No data found for given date.'}`
+    
+**Get sales for period**
+----
+  Returns json data about sales (in two currencies) for a given period. Maximum date span is 366 days.
+* **Requests per user**  
+100 per day, 20 per hour
+
+* **URL**
+
+  /api/sales/:start_date/:end_date `GET`
+
+  
+*  **URL Params**
+ 
+   `start_date=[string] (YYYY-mm-dd) format`
+   `end_date=[string] (YYYY-mm-dd) format`
+
+
+* **Success Response:**
+
+  * **Code:** 200   
+    **Content:** `{"sales": [{"date": "2004-07-19", "pln": {"sale": 146869.1487}, "usd": {"sale": 41297.14}}, {"date": "2004-07-20", "pln": {"sale": 245126.451}, "usd": {"sale": 68270.84}}]}`
+ 
+* **Error Response:**
+
+  * **Code:** 400  
+    **Content:** `{'message': 'Incorrect date format.'}`
+
+  OR
+
+  * **Code:** 400  
+    **Content:** `{'message': 'Maximum date range exceeded. Maximum amount of days - 366.'}`
+
+  OR
+
+  * **Code:** 404  
+    **Content:** `{'message': 'No data found for given date.'}`
