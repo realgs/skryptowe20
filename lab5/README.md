@@ -60,4 +60,4 @@ http://localhost:8000/rate/31-10-2020
 http://localhost:8000/sale/11-12-2002
 ```
 
-**Ex.4:** Number of requests is limited to 10 per user - exceeding the limit results in "404 Page Not Found"
+**Ex.4:** Number of requests is limited to 10 per minute per user - exceeding the limit results in "404 Page Not Found"
