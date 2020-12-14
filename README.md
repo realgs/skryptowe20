@@ -12,6 +12,7 @@ Należy zainstalować następujące pakiety:
 ```
 pip install flask
 pip install Flask-Limiter
+pip install requests
 ```
 
 Do uruchomienia aplikacji potrzebna będzie też baza danych sqlite,<br/>
