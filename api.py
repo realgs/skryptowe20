@@ -23,10 +23,16 @@ def getSalesRate(saleDatetime):
     result = {}
     if type(sale) == int:
         abort(sale)
+    sumUSD = 0
+    sumPLN = 0
     if date_format in sale.keys() and date_format in rate.keys():
         result[date_format] = {}
         result[date_format]["USD"] = sale[date_format]
         result[date_format]["PLN"] = sale[date_format] * rate[date_format]["rate"]
+        sumUSD += sale[date_format]
+        sumPLN += sale[date_format] * rate[date_format]["rate"]
+    result["sumPLN"] = sumPLN
+    result["sumUSD"] = sumUSD
     return result
 
 
@@ -36,10 +42,16 @@ def getSalesRates(startDatetime, endDatetime):
     if type(sales) == int:
         abort(sales)
     result = {}
+    sumUSD = 0
+    sumPLN = 0
     for data in sales.keys():
         result[data] = {}
         result[data]["USD"] = sales[data]
         result[data]["PLN"] = sales[data] * rates[data]["rate"]
+        sumUSD += sales[data]
+        sumPLN += sales[data] * rates[data]["rate"]
+    result["sumPLN"] = sumPLN
+    result["sumUSD"] = sumUSD
     return result
 
 
@@ -187,11 +199,11 @@ def api_date_from_to(dateFrom, dateTo):
     return jsonify(getCorrectedUsdRates(start_datetime, end_datetime))
 
 
-@app.route('/sales/<ratingDate>', methods=['GET'])
+@app.route('/sales/<salesDate>', methods=['GET'])
 @limiter.limit('60 per minute')
 @app_limit
-def api_sale(ratingDate):
-    date_datetime = datetimeSingleDateCheck(ratingDate)
+def api_sale(salesDate):
+    date_datetime = datetimeSingleDateCheck(salesDate)
     return jsonify(getSalesRate(date_datetime))
 
 
