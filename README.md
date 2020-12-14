@@ -1,7 +1,7 @@
 # API - lista 5
 ## Michał Chrobot 246665
 
-W programie użyłem następujących technologii:
+W programie użyte zostały następujące technologie:
 * Python 3.8.3
 * Flask
 * SQLite3
@@ -29,7 +29,7 @@ Notowania z konkretnego dnia lub zakresu dat wraz z informacją 'interpolated':
 GET http://127.0.0.1:5000/USD/<ratingDate>
 GET http://127.0.0.1:5000/USD/<dateFrom>/<dateTo> 
 ```
-Suma sprzedaży wraz z przeliczeniem po kursie z danego dnia, lub zakresu dat:
+Suma sprzedaży wraz z przeliczeniem po kursie z danego dnia, lub zakresu dat (zwracane dane pokazują sumę sprzedaży w walutach USD i PLN z każdego dnia jak i sumę całego zakresu):
 ```python
 GET http://127.0.0.1:5000/sales/<salesDate>
 GET http://127.0.0.1:5000/sales/<dateFrom>/<dataTo>
