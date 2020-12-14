@@ -18,11 +18,11 @@ endDay='2016-07-11'
 tempDay='2015-01-01'
 usd='usd'
 
-
 def makeDate(date):
     thisDate = date.strftime(formatDay)
     return thisDate
 
+#metoda dodająca tabelę z nową kolumną interpolated i wypełniająca ją, uruchomiona tylko raz
 def addTableWithInterpolated():
     conn = sqlite3.connect(dataBase)
     cursor = conn.cursor()
@@ -51,6 +51,7 @@ def addTableWithInterpolated():
     conn.commit()
     conn.close()
 
+#metoda dodająca tabelę z sumowanymi sprzedażami i wypełniająca ją, uruchomiona tylko raz
 def createNewTableSales():
     conn = sqlite3.connect(dataBase)
     cursor = conn.cursor()
@@ -94,7 +95,6 @@ class TestView(APIView):
                 rateFromDate['Rate of USD']=elem[2]
                 if elem[3] == 1: rateFromDate['Interpolated'] = True
                 else: rateFromDate['Interpolated'] = False
-
         return rateFromDate
 
     def sales(self, date):
