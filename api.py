@@ -125,7 +125,7 @@ def getCorrectRate(rates, rateDatetime):
     if checking_date < datetime.strptime(rates["first_date"], "%Y-%m-%d"):
         correct_rate = getUSDCorrectRate(checking_date)
         result["rate"] = correct_rate[checking_date_format]["rate"]
-        result["interpolated"] = correct_rate[checking_date_format["interpolated"]]
+        result["interpolated"] = correct_rate[checking_date_format]["interpolated"]
         return result
     if checking_date_format in rates.keys():
         result["rate"] = rates[checking_date_format]
