@@ -149,10 +149,12 @@ def isBelowTimeLimit(request):
     if request.user.is_authenticated:
         key = "requests_num_"+str(request.user.username)
     else:
-        key = "requests_num_anon"
+        key = "requests_num_"+get_client_ip(request)
+        print(key)
 
     try:
         requests_num = request.session[key]
+        print(requests_num)
     except KeyError:
         request.session[key] = {"last_request": datetime.now().strftime("%Y-%m-%d %H:%M:%S"), "sum": 0}
         requests_num = request.session[key]
@@ -169,6 +171,14 @@ def isBelowTimeLimit(request):
     requests_num["sum"]+=1
     request.session.modified=True
     return True
+
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
 
 REQUESTS_PER_MINUTE = 50
 MAX_CACHE_LENGTH = 100
