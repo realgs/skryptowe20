@@ -57,5 +57,5 @@ Również jeżeli data początkowa jest większa od daty końcowej lub data koń
 
 ### Struktura projektu
 
-1. **api.py** - główny program odpowiedzialny za funkcjonowanie API, awiera funkcje pozwalające na pobieranie danych z API NBP i zarządzanie danymi zwracanymi przez aplikację
+1. **api.py** - główny program odpowiedzialny za funkcjonowanie API, zawiera funkcje pozwalające na pobieranie danych z API NBP i zarządzanie danymi zwracanymi przez aplikację
 2. **database.py** - plik zawierający funkcje pozwalające na pobranie danych o sprzedaży z bazy
