@@ -73,6 +73,8 @@ def createUsdToPlnTableInterpolated():
     
     result = {}
     interpolated = {}
+    prev_resp = None
+    missing_dates = []
     current_date = datetime.strptime('2014-12-31', '%Y-%m-%d')
     end_date = datetime.strptime('2011-01-01', '%Y-%m-%d')
     
@@ -80,9 +82,16 @@ def createUsdToPlnTableInterpolated():
         print("Fetching date: "+current_date.strftime("%Y-%m-%d"))
         resp = requests.get('http://api.nbp.pl/api/exchangerates/rates/A/USD/{}/'.format(current_date.strftime("%Y-%m-%d")))
         if resp.status_code != 200:
-            result[current_date.strftime("%Y-%m-%d")] = prev_resp.json()['rates'][0]['mid']
-            interpolated[current_date.strftime("%Y-%m-%d")] = 1
+            if prev_resp == None:
+                missing_dates.append(current_date.strftime("%Y-%m-%d"))
+            else:
+                result[current_date.strftime("%Y-%m-%d")] = prev_resp.json()['rates'][0]['mid']
+                interpolated[current_date.strftime("%Y-%m-%d")] = 1
         else:
+            if missing_dates != []:
+                for date in missing_dates:
+                    result[date] = resp.json()['rates'][0]['mid']
+                missing_dates.clear()
             prev_resp = resp
             result[current_date.strftime("%Y-%m-%d")] = resp.json()['rates'][0]['mid']
             interpolated[current_date.strftime("%Y-%m-%d")] = 0
