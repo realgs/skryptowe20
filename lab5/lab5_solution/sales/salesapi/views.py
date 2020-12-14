@@ -6,7 +6,6 @@ from datetime import datetime
 from .serializers import *
 from .models import *
 
-REQUESTS_PER_MINUTE = 10
 
 class CurrencyViewSet(viewsets.ModelViewSet):
     queryset = CurrencyRecord.objects.all().order_by('id')
@@ -15,6 +14,46 @@ class CurrencyViewSet(viewsets.ModelViewSet):
 class DailySalesViewSet(viewsets.ModelViewSet):
     queryset = DailySales.objects.all().order_by('sales_id')
     serializer_class = DailySalesSerializer
+
+class CacheSales:
+    def __init__(self):
+        self.cached_values = {}
+        self.init_date = datetime.now()
+
+    def add(self, one_date, response):
+        if (datetime.now() - self.init_date).seconds >= MAX_CACHE_TIME_SECONDS:
+            self.cached_values = {}
+            self.init_date = datetime.now()
+        if len(self.cached_values.keys()) >= MAX_CACHE_LENGTH:
+            first_key = list(self.cached_values.keys())[0]
+            del self.cached_values[first_key]
+        self.cached_values[one_date] = response
+
+    def getResponse(self, one_date):
+        if one_date in self.cached_values:
+            return self.cached_values[one_date]
+        else: return None
+
+class CacheSalesRange:
+    def __init__(self):
+        self.cached_values = {}
+        self.init_date = datetime.now()
+
+    def add(self, from_date, to_date, response):
+        if (datetime.now() - self.init_date).seconds >= MAX_CACHE_TIME_SECONDS:
+            self.cached_values = {}
+            self.init_date = datetime.now()
+        if len(self.cached_values.keys()) >= MAX_CACHE_LENGTH:
+            first_key = list(self.cached_values.keys())[0]
+            del self.cached_values[first_key]
+        new_key = from_date+"/"+to_date
+        self.cached_values[new_key] = response
+
+    def getResponse(self, from_date, to_date):
+        new_key = from_date+"/"+to_date
+        if new_key in self.cached_values:
+            return self.cached_values[new_key]
+        else: return None
 
 def getJsonRate(request, one_date):
     if isBelowTimeLimit(request):
@@ -58,41 +97,51 @@ def getJsonRateTwoDates(request, from_date, to_date):
 
 def getJsonSale(request, one_date):
     if isBelowTimeLimit(request):
-        try:
-            response = DailySales.objects.get(salesdate=one_date)
-        except DailySales.DoesNotExist:
-            return JsonResponse({"unrecognized_url": 1})
+        cached_response = CACHE_SALES.getResponse(one_date)
+        if cached_response != None: return cached_response
+        else:
+            try:
+                response = DailySales.objects.get(salesdate=one_date)
+            except DailySales.DoesNotExist:
+                return JsonResponse({"unrecognized_url": 1})
 
-        return JsonResponse({"date": one_date,
-                             "pln_sales": response.plnsales,
-                             "usd_sales": response.usdsales})
+            json_response = JsonResponse({"date": one_date,
+                                 "pln_sales": response.plnsales,
+                                 "usd_sales": response.usdsales})
+            CACHE_SALES.add(one_date, json_response)
+            return json_response
     else:
         return HttpResponse(status=404)
 
 def getJsonSaleTwoDates(request, from_date, to_date):
     if isBelowTimeLimit(request):
-        response = {}
-        missing_records=0
-
-        try:
-            from_object = DailySales.objects.get(salesdate=from_date)
-            to_object = DailySales.objects.get(salesdate=to_date)
-        except DailySales.DoesNotExist:
-            return JsonResponse({"unrecognized_url": 1})
-
-        if from_object.sales_id > to_object.sales_id:
-            ids_range = range(to_object.sales_id, from_object.sales_id)
+        cached_response = CACHE_SALES_RANGE.getResponse(from_date, to_date)
+        if cached_response != None: return cached_response
         else:
-            ids_range = range(from_object.sales_id, to_object.sales_id)
+            response = {}
+            missing_records=0
 
-        for i in ids_range:
             try:
-                record = DailySales.objects.get(sales_id=i)
-                response[record.salesdate]={"pln_sales": record.plnsales, "usd_sales": record.usdsales}
-            except CurrencyRecord.DoesNotExist:
-                missing_records+=1
-                response["missing_records"]=missing_records
-        return JsonResponse(response)
+                from_object = DailySales.objects.get(salesdate=from_date)
+                to_object = DailySales.objects.get(salesdate=to_date)
+            except DailySales.DoesNotExist:
+                return JsonResponse({"unrecognized_url": 1})
+
+            if from_object.sales_id > to_object.sales_id:
+                ids_range = range(to_object.sales_id, from_object.sales_id)
+            else:
+                ids_range = range(from_object.sales_id, to_object.sales_id)
+
+            for i in ids_range:
+                try:
+                    record = DailySales.objects.get(sales_id=i)
+                    response[record.salesdate]={"pln_sales": record.plnsales, "usd_sales": record.usdsales}
+                except CurrencyRecord.DoesNotExist:
+                    missing_records+=1
+                    response["missing_records"]=missing_records
+            json_response = JsonResponse(response)
+            CACHE_SALES_RANGE.add(from_date, to_date, json_response)
+            return json_response
     else:
         return HttpResponse(status=404)
 
@@ -120,3 +169,9 @@ def isBelowTimeLimit(request):
     requests_num["sum"]+=1
     request.session.modified=True
     return True
+
+REQUESTS_PER_MINUTE = 50
+MAX_CACHE_LENGTH = 100
+MAX_CACHE_TIME_SECONDS = 10*60
+CACHE_SALES = CacheSales()
+CACHE_SALES_RANGE = CacheSalesRange()
