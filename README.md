@@ -8,6 +8,7 @@ W programie użyte zostały następujące technologie:
 
 ### Uruchomienie programu
 
+Należy zainstalować następujące pakiety:
 ```
 pip install flask
 pip install Flask-Limiter
@@ -35,21 +36,26 @@ Odpowiedzią na przekroczony limit zapytań jest kod błędu **429**
 
 ### Adresowanie
 
-Notowania z konkretnego dnia lub zakresu dat wraz z informacją 'interpolated':
+Notowanie z konkretnego dnia razemz informacją 'interpolated':
 ```
 GET http://127.0.0.1:5000/USD/<ratingDate>
+```
+Notowanie z zakresu dat razem z informacją 'interpolated':
+```
 GET http://127.0.0.1:5000/USD/<dateFrom>/<dateTo> 
 ```
-Suma sprzedaży wraz z przeliczeniem po kursie z danego dnia, lub zakresu dat,<br/>
-zwracane dane pokazują sumę sprzedaży w walutach USD i PLN z każdego dnia jak i sumę całego zakresu:
+Suma sprzedaży z konkretnego dnia w walutach PLN i USD (sumy te są podane w polach "sumPLN" i "sumUSD" zwracanego pliku JSON):
 ```
 GET http://127.0.0.1:5000/sales/<salesDate>
+```
+Suma sprzedaży z zakresu dat w walutach PLN i USD (sumy te są podane w polach "sumPLN" i "sumUSD" zwracanego pliku JSON, zwracane są także wyniki z każdego dnia):
+```
 GET http://127.0.0.1:5000/sales/<dateFrom>/<dataTo>
 ```
-Data powinna być podana w formacie 2020-07-12, w przeciwnym wypadku zostanie zwrócony kod błędu 400.
+Data powinna być podana w formacie 2020-07-12, w przeciwnym wypadku zostanie zwrócony kod błędu 400.<br/>
 Również jeżeli data początkowa jest większa od daty końcowej lub data końcowa jest >= od aktualniej daty to zwrócony zostanie kod błędu 416
 
-## Struktura projektu
+### Struktura projektu
 
-* **api.py** - główny program odpowiedzialny za funkcjonowanie API, awiera funkcje pozwalające na pobieranie danych z API NBP i zarządzanie danymi zwracanymi przez nas
-* **database.py** - plik zawierający funkcje pozwalające na pobranie danych o sprzedaży z bazy
+1. **api.py** - główny program odpowiedzialny za funkcjonowanie API, awiera funkcje pozwalające na pobieranie danych z API NBP i zarządzanie danymi zwracanymi przez nas
+2. **database.py** - plik zawierający funkcje pozwalające na pobranie danych o sprzedaży z bazy
