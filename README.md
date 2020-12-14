@@ -36,11 +36,11 @@ Odpowiedzią na przekroczony limit zapytań jest kod błędu **429**
 
 ### Adresowanie
 
-Notowanie z konkretnego dnia razemz informacją 'interpolated':
+Notowanie waluty USD z konkretnego dnia razemz informacją 'interpolated':
 ```
 GET http://127.0.0.1:5000/USD/<ratingDate>
 ```
-Notowanie z zakresu dat razem z informacją 'interpolated':
+Notowanie waluty USD z zakresu dat razem z informacją 'interpolated':
 ```
 GET http://127.0.0.1:5000/USD/<dateFrom>/<dateTo> 
 ```
