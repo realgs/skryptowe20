@@ -52,10 +52,10 @@ Suma sprzedaży z zakresu dat w walutach PLN i USD (sumy te są podane w polach 
 ```
 GET http://127.0.0.1:5000/sales/<dateFrom>/<dataTo>
 ```
-Data powinna być podana w formacie 2020-07-12, w przeciwnym wypadku zostanie zwrócony kod błędu 400.<br/>
-Również jeżeli data początkowa jest większa od daty końcowej lub data końcowa jest >= od aktualniej daty to zwrócony zostanie kod błędu 416
+Data powinna być podana w formacie 2020-07-12, w przeciwnym wypadku zostanie zwrócony kod błędu **400**.<br/>
+Również jeżeli data początkowa jest większa od daty końcowej lub data końcowa jest >= od aktualniej daty to zwrócony zostanie kod błędu **416**
 
 ### Struktura projektu
 
-1. **api.py** - główny program odpowiedzialny za funkcjonowanie API, awiera funkcje pozwalające na pobieranie danych z API NBP i zarządzanie danymi zwracanymi przez nas
+1. **api.py** - główny program odpowiedzialny za funkcjonowanie API, awiera funkcje pozwalające na pobieranie danych z API NBP i zarządzanie danymi zwracanymi przez aplikację
 2. **database.py** - plik zawierający funkcje pozwalające na pobranie danych o sprzedaży z bazy
