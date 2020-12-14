@@ -1,0 +1,2 @@
+#!/bin/bash
+awk 'BEGIN {total=0;}{total+=$1;}END {print "Total: ",total}'
