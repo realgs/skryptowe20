@@ -2,18 +2,9 @@ import json
 from datetime import datetime, timedelta, date
 from .manage_db import *
 import requests
-from enum import Enum
+from .constants import *
 
 RATES_URL = 'http://api.nbp.pl/api/exchangerates/rates'
-REQUEST_DAYS_LIMIT = 367
-DATE_FORMAT = "%Y-%m-%d"
-DB_DATE_FORMAT = "%m/%d/%Y"
-YEARS = [2004, 2005]
-class Currencies(Enum):
-    USD = 'usd'
-    CHF = 'chf'
-    EUR = 'eur'
-
 
 def get_exchange_rates_range(currency, end_date, start_date):
     if currency in Currencies._value2member_map_:

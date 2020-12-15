@@ -1,16 +1,15 @@
+
 from flask import Blueprint
 from flask import request, jsonify, make_response
 from api.manage_db import get_db, close_db
-from api.nbp_data import YEARS, DATE_FORMAT
+from api.constants import *
 import datetime
 from api.config import limiter
 from api.validators import *
 
 rates = Blueprint('rates', __name__)
-MAX_LAST_REQUEST = 100
 
-
-@limiter.limit('60/day;10/hour')
+@limiter.limit(REQUEST_LIMIT)
 @rates.route('/api/rates/<date>', methods=['GET'])
 def get_rate_for_day(date):
     cursor = get_db().cursor()
@@ -22,7 +21,7 @@ def get_rate_for_day(date):
     close_db()
     return jsonify({'date': date,'rate': item[0], 'interpolated': item[1]}), 200
 
-@limiter.limit('100/day;20/hour')
+@limiter.limit(REQUEST_LIMIT)
 @rates.route('/api/rates/<start_date>/<end_date>', methods=['GET'])
 def get_rates_for_period(start_date, end_date):
     if dates_range_exceeded(start_date, end_date):
@@ -40,8 +39,8 @@ def get_rates_for_period(start_date, end_date):
     close_db()
     return jsonify({'rates': response}), 200
 
-@limiter.limit('100/day;10/hour')
-@rates.route('/api/rates/last/<last>')
+@limiter.limit(REQUEST_LIMIT)
+@rates.route('/api/rates/last/<last>', methods=['GET'])
 def get_last_rates(last):
     if int(last) < 0 or int(last) > MAX_LAST_REQUEST:
         return jsonify({'message': 'Incorrect days amount. Maximum amount is 100.'}), 400

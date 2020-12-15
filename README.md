@@ -44,13 +44,13 @@ python app.py
 ```
 The API runs under http://127.0.0.1:5000/api address. Available endpoints are listed below. 
 * **Global request limit**  
-600 per day, 100 per hour
+1000 per day, 400 per hour
 ## Endpoints
 **Get rates for day**
 ----
   Returns json data about an exchange rate for a given day.
 * **Requests per user**  
-60 per day, 10 per hour
+200 per day, 30 per minute
 
 * **URL**
 
@@ -81,7 +81,7 @@ The API runs under http://127.0.0.1:5000/api address. Available endpoints are li
 ----
   Returns json data about exchange rates for a given period. Maximum date span is 366 days.
 * **Requests per user**  
-100 per day, 20 per hour
+200 per day, 30 per minute
 
 * **URL**
 
@@ -118,7 +118,7 @@ The API runs under http://127.0.0.1:5000/api address. Available endpoints are li
 ----
   Returns json data about last n rates.
 * **Requests per user**  
-100 per day, 10 per hour
+200 per day, 30 per minute
 
 * **URL**
 
@@ -143,7 +143,7 @@ The API runs under http://127.0.0.1:5000/api address. Available endpoints are li
 ----
   Returns json data about sales (in two currencies) for a given day.
 * **Requests per user**  
-60 per day, 10 per hour
+200 per day, 30 per minute
 
 * **URL**
 
@@ -174,7 +174,7 @@ The API runs under http://127.0.0.1:5000/api address. Available endpoints are li
 ----
   Returns json data about sales (in two currencies) for a given period. Maximum date span is 366 days.
 * **Requests per user**  
-100 per day, 20 per hour
+200 per day, 30 per minute
 
 * **URL**
 

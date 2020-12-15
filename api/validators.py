@@ -1,7 +1,5 @@
 import datetime
-
-DATE_FORMAT = "%Y-%m-%d"
-REQUEST_DAYS_LIMIT = 366
+from api.constants import REQUEST_DAYS_LIMIT, DATE_FORMAT
 
 def validate_date(date_text):
     try:
