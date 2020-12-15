@@ -16,3 +16,4 @@ ABORT_END_BEFORE_START_MSG = "End date cannot be earlier than start date."
 ABORT_INCORRECT_DATE_FORMAT = f"Incorrect date format: {{date}}. Required date format: {DATE_FORMAT}"
 
 DEFAULT_LIMIT = "10/s"
+DEFAULT_CACHE_TIMEOUT = 100
