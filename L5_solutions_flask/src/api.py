@@ -20,13 +20,6 @@ def usd_rate_specific_date(date):
         return db.get_usd_rating(date)
 
 
-def check_date_range_correct(start_date_dt, end_date_dt):
-    if end_date_dt < start_date_dt:
-        abort(400, ABORT_END_BEFORE_START_MSG)
-    else:
-        return True
-
-
 @app.route('/rates/usd/<start_date>/<end_date>', methods=['GET'])
 def usd_rate_date_range(start_date, end_date):
     start_date_dt = get_datetime(start_date)
@@ -35,6 +28,23 @@ def usd_rate_date_range(start_date, end_date):
     if check_date_range_correct(start_date_dt, end_date_dt) and check_date_available(
             start_date_dt) and check_date_available(end_date_dt):
         return db.get_usd_rating_date_range(start_date, end_date)
+
+
+@app.route('/sales/<date>', methods=['GET'])
+def sales_specific_date(date):
+    date_dt = get_datetime(date)
+    if check_date_available(date_dt):
+        return db.get_sales(date)
+
+
+@app.route('/sales/<start_date>/<end_date>', methods=['GET'])
+def sales_date_range(start_date, end_date):
+    start_date_dt = get_datetime(start_date)
+    end_date_dt = get_datetime(end_date)
+
+    if check_date_range_correct(start_date_dt, end_date_dt) and check_date_available(
+            start_date_dt) and check_date_available(end_date_dt):
+        return db.get_sales_date_range(start_date, end_date)
 
 
 def get_datetime(date):
@@ -51,6 +61,13 @@ def check_date_available(date):
         return True
     else:
         abort(404, ABORT_OUT_OF_RANGE_MSG)
+
+
+def check_date_range_correct(start_date_dt, end_date_dt):
+    if end_date_dt < start_date_dt:
+        abort(400, ABORT_END_BEFORE_START_MSG)
+    else:
+        return True
 
 
 app.run()
