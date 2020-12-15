@@ -29,4 +29,3 @@ def update_cache_data():
         sales_dict_usd[dates[i]] = [sales[i], interpolated[i]]
     sales_cache, sales_cache_usd = sales_dict, sales_dict_usd
     print("Cache update completed.")
-    
