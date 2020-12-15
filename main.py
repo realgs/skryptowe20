@@ -1,6 +1,5 @@
 import requests
 from datetime import date, timedelta, datetime
-from matplotlib import ticker, pyplot, dates
 from db_handler import *
 
 
@@ -133,61 +132,6 @@ def get_rates_range(currency, start_date, end_date):
         print(f'Could not get data for currency: {currency_symbol}. Wrong currency symbol')
 
 
-def draw_two_curr_plot(currencies, days, save=True):
-    fig, ax = pyplot.subplots()
-    for curr in currencies:
-        x, y = get_rates_days(curr, days)
-        ax.plot(x, y, label=curr.upper())
-
-    ax.xaxis.set_major_locator(dates.DayLocator(interval=8))
-    ax.xaxis.set_minor_locator(dates.DayLocator(interval=1))
-
-    ax.yaxis.set_major_locator(ticker.MultipleLocator(0.05))
-
-    fig.autofmt_xdate()
-    fig.set_size_inches(15, 10)
-    pyplot.grid(True)
-    pyplot.title(f'Kurs {currencies[0].upper()} oraz {currencies[1].upper()} w ciągu ostatnich 6 miesięcy')
-    pyplot.xlabel('Data YYYY-MM-DD')
-    pyplot.ylabel('Wartość [zł]')
-    pyplot.legend(loc='upper left')
-    if save:
-        pyplot.savefig(f'{PLOTS_PATH}/{currencies[0]}_{currencies[1]}.{PLOT_FORMAT}')
-    pyplot.show()
-
-
-def draw_sales_plot(currency, start_date, end_date, save=True):
-    fig, ax = pyplot.subplots()
-
-    rates_days = []
-    usd_values = []
-    pln_values = []
-
-    x1, _ = get_rates_range(currency, start_date, end_date)
-    res = get_sums_and_rates_for_dates(x1)
-    for i in res:
-        rates_days.append(i[0])
-        usd_values.append(i[1])
-        pln_values.append(i[1] * i[2])
-
-    ax.plot(rates_days, usd_values, label='USD')
-    ax.plot(rates_days, pln_values, label='PLN')
-    ax.xaxis.set_major_locator(dates.DayLocator(interval=1))
-
-    ax.yaxis.set_major_locator(ticker.MultipleLocator(10000))
-
-    fig.autofmt_xdate()
-    fig.set_size_inches(15, 10)
-    pyplot.grid(True)
-    pyplot.title('Wartości sprzedaży wyrażone w PLN i USD w półrocznym przedziale')
-    pyplot.xlabel('Data YYYY-MM-DD')
-    pyplot.ylabel('Wartość')
-    pyplot.legend(loc='upper left')
-    if save:
-        pyplot.savefig(f'{PLOTS_PATH}/half_year_sales.{PLOT_FORMAT}')
-    pyplot.show()
-
-
 def modify_database(values):
     create_rates_table()
     insert_csv_data()
@@ -195,14 +139,9 @@ def modify_database(values):
 
 
 def main():
-    draw_two_curr_plot(['usd', 'gbp'], PLOTS_DAYS_RANGE)
     # dates_to_db, rates_to_db = get_rates_range('usd', '2003-01-01', '2004-12-31')
     # modify_database(zip(dates_to_db, rates_to_db))
-
-    sales_starting_date = get_first_sale_date()[0][0]
-    ending_date = to_datetime(sales_starting_date) + timedelta(days=PLOTS_DAYS_RANGE)
-
-    draw_sales_plot('usd', sales_starting_date, str(ending_date))
+    pass
 
 
 if __name__ == '__main__':

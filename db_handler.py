@@ -3,7 +3,6 @@ import pandas as pd
 from sqlite3 import Error
 
 DB_FILE = 'database.db'
-CSV_FILE = 'sales_data_sample.csv'
 
 
 def connect_to_db():
@@ -14,13 +13,6 @@ def connect_to_db():
         print(e)
 
     return conn
-
-
-def insert_csv_data():
-    conn = connect_to_db()
-    df = pd.read_csv(CSV_FILE)
-    df.to_sql('sales_data', conn, if_exists='replace', index=False)
-    conn.close()
 
 
 def create_rates_table():
