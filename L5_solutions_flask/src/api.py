@@ -1,11 +1,15 @@
 import flask
 from flask import abort
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 import db_getters as db
 from constants import *
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
+
+limiter = Limiter(app, key_func=get_remote_address)
 
 
 @app.route('/', methods=['GET'])
@@ -14,6 +18,7 @@ def home():
 
 
 @app.route('/rates/usd/<date>', methods=['GET'])
+@limiter.limit(DEFAULT_LIMIT)
 def usd_rate_specific_date(date):
     date_dt = get_datetime(date)
     if check_date_available(date_dt):
@@ -21,6 +26,7 @@ def usd_rate_specific_date(date):
 
 
 @app.route('/rates/usd/<start_date>/<end_date>', methods=['GET'])
+@limiter.limit(DEFAULT_LIMIT)
 def usd_rate_date_range(start_date, end_date):
     start_date_dt = get_datetime(start_date)
     end_date_dt = get_datetime(end_date)
@@ -31,6 +37,7 @@ def usd_rate_date_range(start_date, end_date):
 
 
 @app.route('/sales/<date>', methods=['GET'])
+@limiter.limit(DEFAULT_LIMIT)
 def sales_specific_date(date):
     date_dt = get_datetime(date)
     if check_date_available(date_dt):
@@ -38,6 +45,7 @@ def sales_specific_date(date):
 
 
 @app.route('/sales/<start_date>/<end_date>', methods=['GET'])
+@limiter.limit(DEFAULT_LIMIT)
 def sales_date_range(start_date, end_date):
     start_date_dt = get_datetime(start_date)
     end_date_dt = get_datetime(end_date)
