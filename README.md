@@ -35,6 +35,14 @@ Nałożone jest również limit na sumę wszystkich zapytań API i wynosi on **2
 
 Odpowiedzią na przekroczony limit zapytań jest kod błędu **429**
 
+### Cache
+
+Mechanizm cache'u zaimplementowany w zadaniu sprawdza czy zapytanie zostało wykonane wcześniej,</br>
+**jeśli tak** to zwraca zapamiętaną wartość,</br>
+**jeśli nie** to zapamiętuje odpowiedź na zapytanie w słowniku.
+
+Cache odświeża się co ok. **12 godzin** aby zapobiec przepełnieniu pamięci
+
 ### Adresowanie
 
 Notowanie waluty USD z konkretnego dnia razemz informacją 'interpolated':
@@ -60,3 +68,4 @@ Również jeżeli data początkowa jest większa od daty końcowej lub data koń
 
 1. **api.py** - główny program odpowiedzialny za funkcjonowanie API, zawiera funkcje pozwalające na pobieranie danych z API NBP i zarządzanie danymi zwracanymi przez aplikację
 2. **database.py** - plik zawierający funkcje pozwalające na pobranie danych o sprzedaży z bazy
+3. **cache.py** - plik obsługujący mechanizm cache'u
