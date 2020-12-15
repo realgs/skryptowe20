@@ -4,6 +4,7 @@ PATH_TO_DB = r'../database_files/Northwind.db'
 DATE_FORMAT = "%Y-%m-%d"
 USD_ISO_CODE = 'USD'
 USD_EX_RATES_TABLE_NAME = 'USDPrices'
+SALES_TABLE_NAME = 'Sales'
 
 DATA_DATE_RANGE_START = datetime(2013, 1, 1)
 DATA_DATE_RANGE_END = datetime(2014, 12, 31)
