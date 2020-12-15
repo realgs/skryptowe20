@@ -15,3 +15,6 @@ Starting the API server:
 
 ## Usage
 Supported API endpoints:
+
+Tutorial:
+https://docs.djangoproject.com/en/3.1/intro/tutorial01/

@@ -4,3 +4,4 @@ lab4.txt
 *.sqlite
 .vscode
 __pycache__/
+env
