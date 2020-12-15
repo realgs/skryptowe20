@@ -2,12 +2,9 @@ import datetime
 from api.constants import REQUEST_DAYS_LIMIT, DATE_FORMAT
 
 def validate_date(date_text):
-    try:
-        if date_text != datetime.datetime.strptime(date_text, "%Y-%m-%d").strftime('%Y-%m-%d'):
-            raise ValueError
-        return True
-    except ValueError:
+    if date_text != datetime.datetime.strptime(date_text, "%Y-%m-%d").strftime('%Y-%m-%d'):
         return False
+    return True
     
 def is_date_order_correct(date_one, date_two):
     if datetime.datetime.strptime(date_one, "%Y-%m-%d") > datetime.datetime.strptime(date_two, "%Y-%m-%d"):
