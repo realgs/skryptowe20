@@ -1,5 +1,4 @@
 import sqlite3
-import pandas as pd
 from sqlite3 import Error
 
 DB_FILE = 'database.db'
@@ -19,9 +18,11 @@ def create_rates_table():
     conn = connect_to_db()
     try:
         c = conn.cursor()
+        c.execute('''DROP TABLE IF EXISTS  avg_rates''')
         c.execute('''CREATE TABLE IF NOT EXISTS avg_rates (
                                                 day date, 
-                                                rate real
+                                                rate real,
+                                                interpolated boolean
                                                 )''')
         conn.close()
     except Error as e:
@@ -31,7 +32,7 @@ def create_rates_table():
 def insert_values_to_rates_table(values):
     conn = connect_to_db()
     c = conn.cursor()
-    c.executemany('''INSERT INTO avg_rates(day, rate) VALUES (?, ?)''', values)
+    c.executemany('''INSERT INTO avg_rates(day, rate, interpolated) VALUES (?, ?, ?)''', values)
     conn.commit()
     conn.close()
 
@@ -59,3 +60,12 @@ def get_first_sale_date():
     values = c.fetchall()
     conn.close()
     return values
+
+
+def print_avg_rates():
+    conn = connect_to_db()
+    c = conn.cursor()
+    c.execute('''SELECT * FROM avg_rates''')
+    rows = c.fetchall()
+    for row in rows:
+        print(row)
