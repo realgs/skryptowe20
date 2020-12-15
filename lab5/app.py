@@ -26,7 +26,7 @@ def __convert_exchange_rate(usd_rate, currency):
     if currency == 'USD':
         return usd_rate
     elif currency == 'PLN':
-        return 1 / usd_rate
+        return round(1 / usd_rate, 4)
     else:
         return 0
 
