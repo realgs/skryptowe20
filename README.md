@@ -18,7 +18,7 @@ pip3 install -r requirements.txt
 The API also requires sales and exchange rates data. The database should exist in the main project directory (directory with app.py) under the name **data.db**. I included an empty database in the repository. To populate it with sales data simply connect with sqlite3 and follow the instructions found [here](https://www.sqlitetutorial.net/sqlite-import-csv/#:~:text=First%2C%20from%20the%20menu%20choose,shown%20in%20the%20picture%20below.). The API will get exchange rates data from [NBP API](http://api.nbp.pl/en.html).
 
 ## Project structure
-The project consists of: **app.py**, serving as a main function, **data.db** (both of those located in the main project directory) and **/api** directory, containing all of the logic. Under **api/** you will find **routes/** directory, containg routes all endpoints, configuration and database management files, date validators and **nbp_data.py** file, responsible for requesting and properly transforming exchange rates data.
+The project consists of: **app.py**, serving as a main function, **data.db** (both of those located in the main project directory) and **/api** directory, containing all of the logic. Under **api/** you will find **routes/** directory, containg routes all endpoints, configuration and database management files, date validators, cache file, constants file and **nbp_data.py** file, responsible for requesting and properly transforming exchange rates data.
 ```
     .
     ├── api 
@@ -26,7 +26,9 @@ The project consists of: **app.py**, serving as a main function, **data.db** (bo
     │   │   ├── rates.py
     │   │   ├── sales.py
     │   ├── __init__.py
+    │    ├── cache.py
     │   ├── config.py
+    │   ├── constants.py
     │   ├── manage_db.py
     │   ├── nbp_data.py
     │   └── validators.py

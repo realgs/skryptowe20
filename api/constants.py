@@ -12,4 +12,3 @@ class Currencies(Enum):
     USD = 'usd'
     CHF = 'chf'
     EUR = 'eur'
-    
