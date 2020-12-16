@@ -1,6 +1,3 @@
-import matplotlib
-import matplotlib.pyplot as plt
-import numpy as np
 import requests
 import json
 from datetime import datetime, timedelta
@@ -47,7 +44,8 @@ def from_json_to_list(json_file):
     if 'rates' in json_file:
         mids = [x['mid'] for x in json_file['rates']]
         dates = [x['effectiveDate'] for x in json_file['rates']]
-        return list(zip(mids, dates))
+        interpolated = [False for x in json_file['rates']]
+        return list(zip(mids, dates, interpolated))
     else:
         return []
 
