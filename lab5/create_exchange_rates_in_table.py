@@ -43,17 +43,17 @@ def __get_exchange_rate(currency, start_date, end_date):
     result = []
 
     if format_date(start_date) != exchange_rate[0][0]:
-        result.append((format_date(start_date), __find_first_previous_rate(currency, start_date)))
+        result.append((format_date(start_date), __find_first_previous_rate(currency, start_date), 1))
         start_date += delta
 
     index = 0
     while start_date <= end_date:
         formatted_date = format_date(start_date)
         if index < len(exchange_rate) and formatted_date == exchange_rate[index][0]:
-            result.append((formatted_date, exchange_rate[index][1]))
+            result.append((formatted_date, exchange_rate[index][1], 0))
             index = index + 1
         else:
-            result.append((formatted_date, exchange_rate[index - 1][1]))
+            result.append((formatted_date, exchange_rate[index - 1][1], 1))
         start_date += delta
     return result
 
@@ -77,10 +77,11 @@ def __get_all_exchange_rates_in_string():
 
 if __name__ == '__main__':
     rates = __get_all_exchange_rates_in_string()
+    print(rates)
 
     conn = sqlite3.connect('chinook.db')
     c = conn.cursor()
-    c.execute('CREATE TABLE exchange_rate(date text, price real)')
+    c.execute('CREATE TABLE exchange_rate(date text, price real, interpolated integer)')
     c.execute('INSERT INTO exchange_rate VALUES {}'.format(rates))
     conn.commit()
     conn.close()
