@@ -48,7 +48,7 @@ def get_exchange_rate_of_day(currency, year, month, day):
 
     rate = __convert_exchange_rate(query_result[1], currency)
 
-    return {'code': currency, 'result': [{'day': query_result[0], 'rate': rate}]}
+    return {'code': currency, 'result': [{'day': query_result[0], 'rate': rate, 'interpolated': True if query_result[2] else False}]}
 
 
 @app.route('/api/<string:currency>/<int:year_from>-<int:month_from>-<int:day_from>/<int:year_to>-<int:month_to>-<int:day_to>', methods=['GET'])
@@ -76,9 +76,9 @@ def get_exchange_rate_of_range(currency, year_from, month_from, day_from, year_t
                                                                                       formatted_date_to)
     query_result = __execute_query(query)
     result = []
-    for (date, price) in query_result:
+    for (date, price, interpolated) in query_result:
         rate = __convert_exchange_rate(price, currency)
-        result.append({'day': date, 'rate': rate})
+        result.append({'day': date, 'rate': rate, 'interpolated': True if interpolated else False})
     return {'code': 'USD', 'result': result}
 
 
