@@ -32,11 +32,13 @@ def correct_inner_weekends(rates_wrapper):
     for i in range(1, len(rates)):
         day_before = date_string_to_datetime(rates[i - 1].date)
         current_day = date_string_to_datetime(rates[i].date)
-        difference = (current_day - day_before).total_seconds() / DAY_IN_SEC
-        for j in range(0, int(difference)):
+        difference = int((current_day - day_before).total_seconds() / DAY_IN_SEC)
+        for j in range(0, difference):
             correct_date = current_day.timestamp() - DAY_IN_SEC * (difference - (j + 1))
             rate = deepcopy(rates[i])
             rate.date = date_sec_to_string(correct_date)
+            if difference - j > 1:
+                rate.interpolated = True
             output.append(rate)
 
     rates_wrapper.rates = output
@@ -46,9 +48,8 @@ def correct_start_edge_weekend(rates_wrapper):
     start_rate = rates_wrapper.rates[0]
     if rates_wrapper.start_date < start_rate.date:
         date = date_string_to_datetime(deepcopy(rates_wrapper.start_date))
-        start_rate = date_string_to_datetime(deepcopy(start_rate.date))
         for i in range(7 - date.weekday()):
-            rates_wrapper.append_single_rate(datetime_to_string(date), start_rate.value)
+            rates_wrapper.append_single_rate(datetime_to_string(date), start_rate.value, True)
             date += timedelta(days=1)
 
     return rates_wrapper
@@ -60,7 +61,7 @@ def correct_end_edge_weekend(rates_wrapper):
         end_date = date_string_to_datetime(deepcopy(end_rate.date))
         for i in range(date.weekday() - end_date.weekday()):
             end_date += timedelta(days=1)
-            rates_wrapper.append_single_rate(datetime_to_string(end_date), end_rate.value)
+            rates_wrapper.append_single_rate(datetime_to_string(end_date), end_rate.value, True)
 
     return rates_wrapper
 

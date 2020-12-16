@@ -15,10 +15,10 @@ class Url:
 
 class RatesWrapper:
     class Rate:
-        def __init__(self, date, value):
+        def __init__(self, date, value, interpolated=False):
             self.date = date
             self.value = value
-            self.interpolated = False
+            self.interpolated = interpolated
 
         def __str__(self):
             return ("{"
@@ -46,17 +46,9 @@ class RatesWrapper:
 
         self.rates.sort(key=lambda x: x.date)
 
-    def append_single_rate(self, date, value):
-        self.rates.append(self.Rate(date, value))
+    def append_single_rate(self, date, value, interpolated):
+        self.rates.append(self.Rate(date, value, interpolated))
         self.rates.sort(key=lambda x: x.date)
-
-    def debug_print(self):
-        out = (f"RatesWrapper:\ncurrency: {self.currency},"
-               f"\nstart_date: {self.start_date},"
-               f"\nend_date: {self.end_date},"
-               "\nrates:\n")
-        for r in self.rates:
-            out += f"{r}\n"
 
     def __str__(self):
         out = ("{"
