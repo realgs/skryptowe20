@@ -18,10 +18,14 @@ class RatesWrapper:
         def __init__(self, date, value):
             self.date = date
             self.value = value
+            self.interpolated = False
 
         def __str__(self):
-            return (f"Rate [date: {self.date},"
-                    f" value: {self.value}]")
+            return ("{"
+                    f"\"date\":\"{self.date}\","
+                    f"\"value\":\"{self.value}\","
+                    f"\"interpolated\":\"{self.interpolated}\""
+                    "}")
 
     def __init__(self, currency, start_date="", end_date=""):
         self.start_date = start_date
@@ -46,11 +50,21 @@ class RatesWrapper:
         self.rates.append(self.Rate(date, value))
         self.rates.sort(key=lambda x: x.date)
 
-    def __str__(self):
+    def debug_print(self):
         out = (f"RatesWrapper:\ncurrency: {self.currency},"
                f"\nstart_date: {self.start_date},"
                f"\nend_date: {self.end_date},"
                "\nrates:\n")
         for r in self.rates:
             out += f"{r}\n"
+
+    def __str__(self):
+        out = ("{"
+               f"\"currency\":\"{self.currency}\","
+               f"\"rates\":[")
+        for r in self.rates:
+            out += f"{r},"
+        out = out.rstrip(",")
+        out += ("]}")
+
         return out

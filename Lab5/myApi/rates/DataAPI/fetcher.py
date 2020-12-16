@@ -49,5 +49,3 @@ def get_avg_rates_for_currencies(currencies, days):
         output.append(get_avg_rates_for_currency_days(currency, days))
 
     return output
-
-print(get_avg_rates_for_currency('USD', '2020-12-01', '2020-12-11'))
