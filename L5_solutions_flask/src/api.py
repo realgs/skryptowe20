@@ -27,7 +27,11 @@ HOME_INFO = f"""<h1>Northwind Sales API</h1>
          example usage ``http://127.0.0.1:5000/sales/2013-01-01/2014-12-31``</br>
 
     <p> Data is available for date range: 
-    {DATA_DATE_RANGE_START.strftime(DATE_FORMAT)} - {DATA_DATE_RANGE_END.strftime(DATE_FORMAT)}</p>"""
+    {DATA_DATE_RANGE_START.strftime(DATE_FORMAT)} - {DATA_DATE_RANGE_END.strftime(DATE_FORMAT)}</p>
+
+    <p>Note, that there is a limit for requests: {conf.DEFAULT_LIMIT} per user. 
+    Cache timeout is set to {conf.DEFAULT_CACHE_TIMEOUT}.</p>
+"""
 
 ABORT_OUT_OF_RANGE_MSG = f"""No data found. Note that data is available only for date range: 
     {DATA_DATE_RANGE_START.strftime(DATE_FORMAT)} - {DATA_DATE_RANGE_END.strftime(DATE_FORMAT)}"""
