@@ -3,7 +3,7 @@ Script to populate database with currency and sales data.
 """
 
 from ccy_data import *
-from etc.conf import PATH_TO_DB
+from conf import PATH_TO_DB
 from sales_data import *
 from utils import DATA_DATE_RANGE_START, DATA_DATE_RANGE_END
 

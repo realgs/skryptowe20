@@ -7,7 +7,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
 import db_getters as db
-import etc.conf as conf
+import conf
 from utils import DATA_DATE_RANGE_START, DATE_FORMAT, DATA_DATE_RANGE_END
 
 HOME_INFO = f"""<h1>Northwind Sales API</h1>

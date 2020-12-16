@@ -1,7 +1,7 @@
 import sqlite3
 from datetime import datetime
 
-from etc.conf import PATH_TO_DB
+from conf import PATH_TO_DB
 
 DATE_FORMAT = "%Y-%m-%d"
 USD_ISO_CODE = 'USD'
