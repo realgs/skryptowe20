@@ -37,16 +37,16 @@ def insert_values_to_rates_table(values):
     conn.close()
 
 
-def get_sums_and_rates_for_dates(dates):
+def get_sums_and_rates_for_period(period):
     conn = connect_to_db()
     c = conn.cursor()
-    c.execute(f'''SELECT ORDERDATE, SUM(SALES), rate
+    c.execute(f'''SELECT ORDERDATE, rate, SUM(SALES)
                   FROM sales_data
                   INNER JOIN avg_rates ON ORDERDATE = day
+                  WHERE ORDERDATE BETWEEN ? AND ?
                   GROUP BY ORDERDATE
-                  HAVING ORDERDATE IN {tuple(dates)}
                   ORDER BY ORDERDATE
-                ''')
+                ''', period)
     rows = c.fetchall()
     conn.close()
     return rows
@@ -62,10 +62,9 @@ def get_first_sale_date():
     return values
 
 
-def print_avg_rates():
+def get_avg_rates_table():
     conn = connect_to_db()
     c = conn.cursor()
     c.execute('''SELECT * FROM avg_rates''')
     rows = c.fetchall()
-    for row in rows:
-        print(row)
+    return rows
