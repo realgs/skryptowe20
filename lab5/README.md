@@ -37,6 +37,6 @@ range.
 - `/api/sales/{date}` returns sales from given day in USD and PLN and currency 
 rate from given day. If no sales occurred on given day 'ERROR: No data found. Sales
  on given day totalled 0' is returned.
-- `/api/sales{startDate}/{endDate}` returns nonzero sales from given time span in USD 
+- `/api/sales/{startDate}/{endDate}` returns nonzero sales from given time span in USD 
 and PLN and currency rate from given time span. If no sales occurred in given time span
  'ERROR: No data found. Sales on given days totalled 0' is returned.
