@@ -44,7 +44,7 @@ def get_all_sales(conn):
     return result
 
 
-def get_sales(conn, date):
+def get_sales_date(conn, date):
     cur = conn.cursor()
     cur.execute("SELECT Rates.rDate, SUM(SalesOrder.sales), Rates.rValue "
                 "FROM SalesOrder LEFT JOIN Rates ON SalesOrder.order_date=Rates.rDate "
