@@ -31,8 +31,8 @@ def __convert_exchange_rate(usd_rate, currency):
         return 0
 
 
-@app.route('/api/<string:currency>/<int:year>-<int:month>-<int:day>', methods=['GET'])
-@app.route('/api/<string:currency>/<int:year>-<int:month>-<int:day>/', methods=['GET'])
+@app.route('/api/exchangerate/<string:currency>/<int:year>-<int:month>-<int:day>', methods=['GET'])
+@app.route('/api/exchangerate/<string:currency>/<int:year>-<int:month>-<int:day>/', methods=['GET'])
 def get_exchange_rate_of_day(currency, year, month, day):
     currency = currency.upper()
     if currency not in available_currencies:
@@ -43,16 +43,16 @@ def get_exchange_rate_of_day(currency, year, month, day):
         return "<h1>400: BadRequest. Date out of range"
 
     formatted_date = date.strftime("%Y-%m-%d")
-    query = "SELECT * FROM exchange_rate WHERE date = \'{}\'".format(formatted_date)
-    query_result = __execute_query(query)[0]
+    query = "SELECT date, price, interpolated FROM exchange_rate WHERE date = \'{}\'".format(formatted_date)
+    (date, rate_usd, interpolated) = __execute_query(query)[0]
 
-    rate = __convert_exchange_rate(query_result[1], currency)
+    rate = __convert_exchange_rate(rate_usd, currency)
 
-    return {'code': currency, 'result': [{'day': query_result[0], 'rate': rate, 'interpolated': True if query_result[2] else False}]}
+    return {'code': currency, 'result': [{'day': date, 'rate': rate, 'interpolated': True if interpolated == 1 else False}]}
 
 
-@app.route('/api/<string:currency>/<int:year_from>-<int:month_from>-<int:day_from>/<int:year_to>-<int:month_to>-<int:day_to>', methods=['GET'])
-@app.route('/api/<string:currency>/<int:year_from>-<int:month_from>-<int:day_from>/<int:year_to>-<int:month_to>-<int:day_to>/', methods=['GET'])
+@app.route('/api/exchangerate/<string:currency>/<int:year_from>-<int:month_from>-<int:day_from>/<int:year_to>-<int:month_to>-<int:day_to>', methods=['GET'])
+@app.route('/api/exchangerate/<string:currency>/<int:year_from>-<int:month_from>-<int:day_from>/<int:year_to>-<int:month_to>-<int:day_to>/', methods=['GET'])
 def get_exchange_rate_of_range(currency, year_from, month_from, day_from, year_to, month_to, day_to):
     currency = currency.upper()
     if currency not in available_currencies:
@@ -72,13 +72,13 @@ def get_exchange_rate_of_range(currency, year_from, month_from, day_from, year_t
     formatted_date_from = date_from.strftime("%Y-%m-%d")
     formatted_date_to = date_to.strftime("%Y-%m-%d")
 
-    query = "SELECT * FROM exchange_rate WHERE date BETWEEN \'{}\' AND \'{}\'".format(formatted_date_from,
+    query = "SELECT date, price, interpolated FROM exchange_rate WHERE date BETWEEN \'{}\' AND \'{}\'".format(formatted_date_from,
                                                                                       formatted_date_to)
     query_result = __execute_query(query)
     result = []
     for (date, price, interpolated) in query_result:
         rate = __convert_exchange_rate(price, currency)
-        result.append({'day': date, 'rate': rate, 'interpolated': True if interpolated else False})
+        result.append({'day': date, 'rate': rate, 'interpolated': True if interpolated == 1 else False})
     return {'code': 'USD', 'result': result}
 
 
