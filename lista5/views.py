@@ -90,21 +90,21 @@ def addinterpolated():
     while (dateNow > lastDate):
         resp = requests.get(
             'http://api.nbp.pl/api/exchangerates/rates/a/usd/{dateNow}/'.format(
-                dateNow=dateNow.strftime("%Y-%m-%d")))
+                dateNow=dateNow.strftime(format)))
         if resp.status_code != 200:
-            resultDays[dateNow.strftime('%Y-%m-%d')] = prevResp.json()['rates'][0]['mid']
+            resultDays[dateNow.strftime(format)] = prevResp.json()['rates'][0]['mid']
             interpolTable.append(True)
         else:
             prevResp = resp
-            resultDays[dateNow.strftime('%Y-%m-%d')] = resp.json()['rates'][0]['mid']
+            resultDays[dateNow.strftime(format)] = resp.json()['rates'][0]['mid']
             interpolTable.append(False)
         dateNow = dateNow - datetime.timedelta(days=1)
     position = 0
     for key, value in resultDays.items():
         position += 1
-        dateNow = datetime.datetime.strptime(key, '%Y-%m-%d')
+        dateNow = datetime.datetime.strptime(key, format)
         conn.execute("INSERT INTO USDPLNAverangeCur (Id, DateValue, AverageCurrency, Interpolated)\
-                VALUES(?,?,?,?)", (position, dateNow.strftime('%Y-%m-%d'), value, interpolTable[position - 1]))
+                VALUES(?,?,?,?)", (position, dateNow.strftime(format), value, interpolTable[position - 1]))
 
     conn.commit()
     conn.close()
