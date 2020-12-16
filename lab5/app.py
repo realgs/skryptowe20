@@ -91,7 +91,9 @@ def get_exchange_rate_of_range(currency, year_from, month_from, day_from, year_t
 @app.route('/api/sales/<int:year>-<int:month>-<int:day>', methods=['GET'])
 @app.route('/api/sales/<int:year>-<int:month>-<int:day>/', methods=['GET'])
 def get_sales_of_day(year, month, day):
-    date = datetime.date(year, month, day)
+    date = datetime.datetime(year, month, day)
+    if date < date_begin or date_end < date:
+        return "<h1>400: BadRequest. Date out of range"
 
     query = "SELECT date, sales_usd, sales_pln, number_of_sales FROM total_sales WHERE date = \'{}\'".format(date.strftime("%Y-%m-%d"))
 
@@ -110,8 +112,15 @@ def get_sales_of_range(year_from, month_from, day_from, year_to, month_to, day_t
     date_from = datetime.datetime(year_from, month_from, day_from)
     date_to = datetime.datetime(year_to, month_to, day_to)
 
+    if date_from < date_begin:
+        date_from = date_begin
+    if date_end < date_to:
+        date_to = date_end
+
+    if date_to < date_from:
+        return "<h1>400: BadRequest. Wrong date range"
+
     query = "SELECT date, sales_usd, sales_pln, number_of_sales FROM total_sales WHERE date BETWEEN \'{}\' AND \'{}\'".format(date_from.strftime("%Y-%m-%d"), date_to.strftime("%Y-%m-%d"))
-    print(query)
     query_results = __execute_query(query)
     result = []
     for(date, sales_usd, sales_pln, number_of_sales) in query_results:
