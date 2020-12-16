@@ -2,15 +2,9 @@
 Stores methods used to calculate orders value daily with data stored in database.
 """
 
-import sqlite3
-
 import pandas as pd
 
 from utils import *
-
-
-def get_db_connection(database_name=PATH_TO_DB):
-    return sqlite3.connect(database_name)
 
 
 def get_orders_value_daily(start_date, end_date):
