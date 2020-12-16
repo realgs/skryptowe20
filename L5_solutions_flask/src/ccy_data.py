@@ -1,6 +1,7 @@
 """
 Stores method used to obtain currency data from http://api.nbp.pl/api.
 """
+
 import json
 from collections import namedtuple
 from datetime import timedelta

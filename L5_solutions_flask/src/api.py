@@ -5,7 +5,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
 import db_getters as db
-from constants import *
+from utils import *
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
