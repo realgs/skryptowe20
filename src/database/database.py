@@ -99,7 +99,7 @@ class Database:
         c = self.conn.cursor()
 
         if date is None:
-            c.execute(f'SELECT * FROM AvGUsdRates')
+            c.execute("""SELECT * FROM AvGUsdRates ORDER BY date""")
             return c.fetchall()
         else:
             c.execute("""SELECT * FROM AvGUsdRates WHERE strftime(?, date) = strftime(?, ?) """, (self.DATEFORMAT, self.DATEFORMAT, date))

@@ -2,9 +2,11 @@ from database.database import Database
 from flask import Flask, jsonify, request
 import sqlite3
 
+
 DB_NAME = "../Source/bazunia.db"
 
 app = Flask(__name__)
+
 
 @app.route('/api/home/<name>')
 def home(name):
@@ -16,18 +18,22 @@ def home(name):
 def return_rates():
   db = Database(DB_NAME)
   rates = db.get_avg_usd_rates()
-  rates = [jsonify(rate=x[0], date=x[1], interpolated=x[2]) for x in rates]
+  rates = [{'rate':x[0], 'date':x[1], 'interpolated':x[2] == 1 if True else False} for x in rates]
   return jsonify(rates=rates)
 
 
 @app.route('/api/rates/<date>')
 def return_rate(date):
   db = Database(DB_NAME)
-  [(rate, date, interpolated)] = db.get_avg_usd_rates(date)
-  return jsonify(rate=rate,
-                date=date,
-                interpolated= interpolated == 1 if True else False
-  )
+  res = db.get_avg_usd_rates(date)
+  if res == []:
+    return jsonify(status=404, info="Data not found"), 404
+  else:
+    [(rate, date, interpolated)] = res
+    return jsonify(rate=rate,
+                  date=date,
+                  interpolated= interpolated == 1 if True else False
+    )
 
 
 if __name__ == '__main__':
