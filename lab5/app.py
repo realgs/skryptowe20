@@ -88,8 +88,8 @@ def get_exchange_rate_of_range(currency, year_from, month_from, day_from, year_t
     return {'code': 'USD', 'result': result}
 
 
-@app.route('/api/sales/<int:year>-<int:month>-<int:day>')
-@app.route('/api/sales/<int:year>-<int:month>-<int:day>/')
+@app.route('/api/sales/<int:year>-<int:month>-<int:day>', methods=['GET'])
+@app.route('/api/sales/<int:year>-<int:month>-<int:day>/', methods=['GET'])
 def get_sales_of_day(year, month, day):
     date = datetime.date(year, month, day)
 
@@ -97,6 +97,26 @@ def get_sales_of_day(year, month, day):
 
     (date, sales_usd, sales_pln, number_of_sales) = __execute_query(query)[0]
     return {'result': [{'day': date, 'sales_usd': sales_usd, 'sales_pln': sales_pln, 'number_of_sales': number_of_sales}]}
+
+
+
+@app.route(
+    '/api/sales/<int:year_from>-<int:month_from>-<int:day_from>/<int:year_to>-<int:month_to>-<int:day_to>',
+    methods=['GET'])
+@app.route(
+    '/api/sales/<int:year_from>-<int:month_from>-<int:day_from>/<int:year_to>-<int:month_to>-<int:day_to>/',
+    methods=['GET'])
+def get_sales_of_range(year_from, month_from, day_from, year_to, month_to, day_to):
+    date_from = datetime.datetime(year_from, month_from, day_from)
+    date_to = datetime.datetime(year_to, month_to, day_to)
+
+    query = "SELECT date, sales_usd, sales_pln, number_of_sales FROM total_sales WHERE date BETWEEN \'{}\' AND \'{}\'".format(date_from.strftime("%Y-%m-%d"), date_to.strftime("%Y-%m-%d"))
+    print(query)
+    query_results = __execute_query(query)
+    result = []
+    for(date, sales_usd, sales_pln, number_of_sales) in query_results:
+        result.append({'day': date, 'sales_usd': sales_usd, 'sales_pln': sales_pln, 'number_of_sales': number_of_sales})
+    return {'result': result}
 
 
 @app.errorhandler(404)
