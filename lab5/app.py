@@ -48,11 +48,16 @@ def get_exchange_rate_of_day(currency, year, month, day):
 
     rate = __convert_exchange_rate(rate_usd, currency)
 
-    return {'code': currency, 'result': [{'day': date, 'rate': rate, 'interpolated': True if interpolated == 1 else False}]}
+    return {'code': currency,
+            'result': [{'day': date, 'rate': rate, 'interpolated': True if interpolated == 1 else False}]}
 
 
-@app.route('/api/exchangerate/<string:currency>/<int:year_from>-<int:month_from>-<int:day_from>/<int:year_to>-<int:month_to>-<int:day_to>', methods=['GET'])
-@app.route('/api/exchangerate/<string:currency>/<int:year_from>-<int:month_from>-<int:day_from>/<int:year_to>-<int:month_to>-<int:day_to>/', methods=['GET'])
+@app.route(
+    '/api/exchangerate/<string:currency>/<int:year_from>-<int:month_from>-<int:day_from>/<int:year_to>-<int:month_to>-<int:day_to>',
+    methods=['GET'])
+@app.route(
+    '/api/exchangerate/<string:currency>/<int:year_from>-<int:month_from>-<int:day_from>/<int:year_to>-<int:month_to>-<int:day_to>/',
+    methods=['GET'])
 def get_exchange_rate_of_range(currency, year_from, month_from, day_from, year_to, month_to, day_to):
     currency = currency.upper()
     if currency not in available_currencies:
@@ -72,14 +77,26 @@ def get_exchange_rate_of_range(currency, year_from, month_from, day_from, year_t
     formatted_date_from = date_from.strftime("%Y-%m-%d")
     formatted_date_to = date_to.strftime("%Y-%m-%d")
 
-    query = "SELECT date, price, interpolated FROM exchange_rate WHERE date BETWEEN \'{}\' AND \'{}\'".format(formatted_date_from,
-                                                                                      formatted_date_to)
+    query = "SELECT date, price, interpolated FROM exchange_rate WHERE date BETWEEN \'{}\' AND \'{}\'".format(
+        formatted_date_from,
+        formatted_date_to)
     query_result = __execute_query(query)
     result = []
     for (date, price, interpolated) in query_result:
         rate = __convert_exchange_rate(price, currency)
         result.append({'day': date, 'rate': rate, 'interpolated': True if interpolated == 1 else False})
     return {'code': 'USD', 'result': result}
+
+
+@app.route('/api/sales/<int:year>-<int:month>-<int:day>')
+@app.route('/api/sales/<int:year>-<int:month>-<int:day>/')
+def get_sales_of_day(year, month, day):
+    date = datetime.date(year, month, day)
+
+    query = "SELECT date, sales_usd, sales_pln, number_of_sales FROM total_sales WHERE date = \'{}\'".format(date.strftime("%Y-%m-%d"))
+
+    (date, sales_usd, sales_pln, number_of_sales) = __execute_query(query)[0]
+    return {'result': [{'day': date, 'sales_usd': sales_usd, 'sales_pln': sales_pln, 'number_of_sales': number_of_sales}]}
 
 
 @app.errorhandler(404)
