@@ -1,3 +1,4 @@
+import sqlite3
 from datetime import datetime
 
 PATH_TO_DB = r'../database_files/Northwind.db'
@@ -17,3 +18,7 @@ ABORT_INCORRECT_DATE_FORMAT = f"Incorrect date format: {{date}}. Required date f
 
 DEFAULT_LIMIT = "10/s"
 DEFAULT_CACHE_TIMEOUT = 100
+
+
+def get_db_connection(database_name=PATH_TO_DB):
+    return sqlite3.connect(database_name)
