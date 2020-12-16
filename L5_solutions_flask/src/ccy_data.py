@@ -1,5 +1,4 @@
 import json
-import sqlite3
 from collections import namedtuple
 from datetime import timedelta
 
@@ -10,10 +9,6 @@ from constants import *
 
 API_LIMIT = 367
 CCY_DATE_RANGE_ENDPOINT = "http://api.nbp.pl/api/exchangerates/rates/a/{currency}/{start_date}/{end_date}/"
-
-
-def get_db_connection(database_name=PATH_TO_DB):
-    return sqlite3.connect(database_name)
 
 
 def get_currencies_daily_ex_rates(currencies_iso_codes, start_date, end_date=datetime.today()):
