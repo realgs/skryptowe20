@@ -10,9 +10,28 @@ import db_getters as db
 import etc.conf as conf
 from utils import DATA_DATE_RANGE_START, DATE_FORMAT, DATA_DATE_RANGE_END
 
-HOME_INFO = f"<h1>Northwind Sales API</h1><p>API for obtaining USD and PLN daily exchange rates and sales data from Northwind database in USD and PLN. Data is available for date range: {DATA_DATE_RANGE_START.strftime(DATE_FORMAT)} - {DATA_DATE_RANGE_END.strftime(DATE_FORMAT)}</p>"
+HOME_INFO = f"""<h1>Northwind Sales API</h1>
+    <p>API for obtaining USD and PLN daily exchange rates and sales data from Northwind database in USD and PLN.</p>
+    <p>With the use of this API you can obtain following data:</p>
+     <p> - USD to PLN exchange rate for specified date:</br>
+     http://127.0.0.1:5000/rates/usd/{{date}}</br>
+         example usage ``http://127.0.0.1:5000/rates/usd/2013-01-01</p>
+     <p> - USD to PLN exchange rate for specified date:</br>
+     http://127.0.0.1:5000/rates/usd/{{start_date}}/{{end_date}}</br>
+         example usage ``http://127.0.0.1:5000/rates/usd/2013-01-01/2014-12-31``</br>
+     <p> - sales data for specified date:</br>
+     http://127.0.0.1:5000/sales/{{date}}</br>
+         example usage ``http://127.0.0.1:5000/sales/2013-01-01</br>
+     <p> - USD to PLN exchange rate for specified date:</br>
+     http://127.0.0.1:5000/sales/{{start_date}}/{{end_date}}</br>
+         example usage ``http://127.0.0.1:5000/sales/2013-01-01/2014-12-31``</br>
 
-ABORT_OUT_OF_RANGE_MSG = f"No data found. Note that data is available only for date range: {DATA_DATE_RANGE_START.strftime(DATE_FORMAT)} - {DATA_DATE_RANGE_END.strftime(DATE_FORMAT)}"
+    <p> Data is available for date range: 
+    {DATA_DATE_RANGE_START.strftime(DATE_FORMAT)} - {DATA_DATE_RANGE_END.strftime(DATE_FORMAT)}</p>"""
+
+ABORT_OUT_OF_RANGE_MSG = f"""No data found. Note that data is available only for date range: 
+    {DATA_DATE_RANGE_START.strftime(DATE_FORMAT)} - {DATA_DATE_RANGE_END.strftime(DATE_FORMAT)}"""
+
 ABORT_END_BEFORE_START_MSG = "End date cannot be earlier than start date."
 ABORT_INCORRECT_DATE_FORMAT = f"Incorrect date format: {{date}}. Required date format: {DATE_FORMAT}"
 
