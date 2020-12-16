@@ -4,7 +4,7 @@ Stores methods used to calculate orders value daily with data stored in database
 
 import pandas as pd
 
-from utils import get_db_connection
+from utils import get_db_connection, DATE_FORMAT
 
 
 def get_orders_value_daily(start_date, end_date):
