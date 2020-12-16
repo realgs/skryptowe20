@@ -25,7 +25,7 @@ def home():
 
 
 @app.route('/api/rates/<code>/<date>', methods=['GET'])
-def api_rates_usd_date(code, date):
+def api_rates_date(code, date):
     if date < MINDATE or date > MAXDATE:
         return 'ERROR: Given date is outside of supported range. ' \
                'Supported dates are from {} to {}'.format(MINDATE, MAXDATE)
@@ -42,7 +42,7 @@ def api_rates_usd_date(code, date):
 
 
 @app.route('/api/rates/<code>/<startdate>/<enddate>', methods=['GET'])
-def api_rates_usd_timespan(code, startdate, enddate):
+def api_rates_timespan(code, startdate, enddate):
     if startdate > enddate:
         return 'ERROR: Invalid dates'
     if (startdate < MINDATE and enddate < MINDATE) or (startdate > MAXDATE and enddate > MAXDATE):
