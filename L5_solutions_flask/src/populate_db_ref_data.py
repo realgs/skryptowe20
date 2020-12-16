@@ -1,11 +1,11 @@
 """
 Script to populate database with currency and sales data.
 """
-
-from ccy_data import *
+import pandas as pd
+from ccy_data import get_complete_usd_daily_ex_rates
 from conf import PATH_TO_DB
-from sales_data import *
-from utils import DATA_DATE_RANGE_START, DATA_DATE_RANGE_END
+from sales_data import get_orders_value_daily
+from utils import DATA_DATE_RANGE_START, DATA_DATE_RANGE_END, get_db_connection
 
 USD_EX_RATES_TABLE_NAME = 'USDPrices'
 SALES_TABLE_NAME = 'Sales'
