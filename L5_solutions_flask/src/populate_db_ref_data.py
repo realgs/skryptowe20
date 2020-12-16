@@ -1,3 +1,7 @@
+"""
+Script to populate database with currency and sales data.
+"""
+
 from ccy_data import *
 from sales_data import *
 

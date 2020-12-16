@@ -1,8 +1,11 @@
+"""
+Stores methods used to obtain data for API from database.
+"""
 import sqlite3
 
 import pandas as pd
 
-from constants import *
+from utils import *
 
 
 def get_db_connection(database_name=PATH_TO_DB):
