@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from rates.DataAPI.fetcher import get_avg_rates_for_currency
+from logic.DataAPI.fetcher import get_avg_rates_for_currency
 
 # Create your views here.
 def test(request):
@@ -9,3 +9,6 @@ def test(request):
 def history(request, currency_code, start_date, end_date):
     wrapper = get_avg_rates_for_currency(currency_code, start_date, end_date)
     return HttpResponse(f"{wrapper}")
+
+def summary(request, currency_code, date):
+    return HttpResponse(f"DZIALA")

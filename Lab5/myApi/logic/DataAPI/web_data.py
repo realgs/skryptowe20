@@ -1,5 +1,5 @@
-from rates.DataAPI.constants import DEFAULT_TABLE, API_URL
-# from constants import DEFAULT_TABLE, API_URL
+from logic.DataAPI.constants import DEFAULT_TABLE, API_URL
+
 class Url:
     def __init__(self, currency, start_date, end_date, table=DEFAULT_TABLE):
         self.table = table

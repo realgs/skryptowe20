@@ -1,8 +1,7 @@
 import time
 from datetime import datetime, timedelta
 from copy import deepcopy
-# from constants import \
-from rates.DataAPI.constants import \
+from logic.DataAPI.constants import \
     MAX_DAYS, \
     MIN_DAYS, \
     DAY_IN_SEC, \
@@ -69,25 +68,6 @@ def correct_weekends(rates_wrapper):
     output = correct_inner_weekends(rates_wrapper)
     output = correct_start_edge_weekend(rates_wrapper)
     output = correct_end_edge_weekend(rates_wrapper)
-
-    return output
-
-def convert_days_to_dates_days(days):
-    days+=1
-    if not is_days_valid(days):
-        raise Exception(MSG_ERROR_INVALID_DAYS)
-
-    end_of_period = int(round(time.time()))
-    total_days = days * DAY_IN_SEC
-    fetch_request_limit = FETCH_DAYS_LIMIT * DAY_IN_SEC
-    output = []
-
-    while total_days > 0:
-        days_to_fetch = fetch_request_limit if total_days - fetch_request_limit > 0 else total_days
-        start_of_period = end_of_period - days_to_fetch + DAY_IN_SEC
-        output.append((date_sec_to_string(start_of_period), date_sec_to_string(end_of_period)))
-        end_of_period = start_of_period - DAY_IN_SEC
-        total_days -= days_to_fetch
 
     return output
 

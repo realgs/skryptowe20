@@ -12,7 +12,8 @@ def create_table(cursor, currency):
     querry = f"""
     CREATE TABLE [{currency}Rates] (
         [EffectiveDate] TEXT,
-        [Mid] REAL
+        [Mid] REAL,
+        [Interpolated] INTEGER
     );
     """
     cursor.execute(querry)
@@ -20,8 +21,8 @@ def create_table(cursor, currency):
 def populate_table(cursor, wrapper):
     for rate in wrapper.rates:
         querry = f"""
-        INSERT INTO [{wrapper.currency}Rates] (EffectiveDate, Mid)
-        VALUES ('{rate.date}', {rate.value});
+        INSERT INTO [{wrapper.currency}Rates] (EffectiveDate, Mid, Interpolated)
+        VALUES ('{rate.date}', {rate.value}, {rate.interpolated});
         """
         cursor.execute(querry)
 
@@ -43,7 +44,7 @@ def add_table_currency_mids(wrapper):
     conn.commit()
     conn.close()
 
-def summarise_transactions(currency):
+def summarise_transactions_single_date(currency, date):
     c, conn = connect_to_database()
     pln_wrapper = RatesWrapper("PLN")
     currency_wrapper = RatesWrapper(currency)
@@ -53,7 +54,7 @@ def summarise_transactions(currency):
            ROUND(SUM(Quantity * UnitPrice  * (1 - Discount)), 2) TOTAL{currency}
     FROM [Order] JOIN [OrderDetail] ON [Order].id = [OrderDetail].OrderId
                  JOIN [{currency}Rates] ON DATE = [{currency}Rates].EffectiveDate
-    WHERE DATE BETWEEN '2018-01-01' AND '2020-11-15'
+    WHERE DATE = {date}
     GROUP BY DATE
     ORDER BY DATE;
     """
@@ -65,7 +66,7 @@ def summarise_transactions(currency):
            ROUND(SUM(Quantity * UnitPrice  * (1 - Discount) * Mid), 2) TOTALPLN
     FROM [Order] JOIN [OrderDetail] ON [Order].id = [OrderDetail].OrderId
                  JOIN [{currency}Rates] ON DATE = [{currency}Rates].EffectiveDate
-    WHERE DATE BETWEEN '2018-01-01' AND '2020-11-15'
+    WHERE DATE = {date}
     GROUP BY DATE
     ORDER BY DATE;
     """
