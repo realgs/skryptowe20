@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from rates.fetcher import get_avg_rates_for_currency
+from rates.DataAPI.fetcher import get_avg_rates_for_currency
 
 # Create your views here.
 def test(request):

@@ -1,7 +1,8 @@
 import time
 from datetime import datetime, timedelta
 from copy import deepcopy
-from rates.constants import \
+# from constants import \
+from rates.DataAPI.constants import \
     MAX_DAYS, \
     MIN_DAYS, \
     DAY_IN_SEC, \
@@ -70,7 +71,7 @@ def correct_weekends(rates_wrapper):
 
     return output
 
-def convert_days_to_dates(days):
+def convert_days_to_dates_days(days):
     days+=1
     if not is_days_valid(days):
         raise Exception(MSG_ERROR_INVALID_DAYS)
@@ -90,16 +91,16 @@ def convert_days_to_dates(days):
     return output
 
 def convert_days_to_dates(start_date, end_date):
-    conv_start = date_string_to_datetime(start_date)
-    conv_end = date_string_to_datetime(start_date)
+    converted_start_date = date_string_to_datetime(start_date)
+    converted_end_date = date_string_to_datetime(end_date)
 
-    days = int((conv_end - conv_start).total_seconds() / DAY_IN_SEC)
+    days = int((converted_end_date - converted_start_date).total_seconds() / DAY_IN_SEC)
 
     days+=1
     if not (is_days_valid(days) and are_dates_valid(start_date, end_date)):
         raise Exception(MSG_ERROR_INVALID_DAYS)
 
-    end_of_period = int(round(conv_end.timestamp()))
+    end_of_period = int(round(converted_end_date.timestamp()))
     total_days = days * DAY_IN_SEC
     fetch_request_limit = FETCH_DAYS_LIMIT * DAY_IN_SEC
     output = []
