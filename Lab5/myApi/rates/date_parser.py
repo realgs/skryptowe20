@@ -1,7 +1,7 @@
 import time
 from datetime import datetime, timedelta
 from copy import deepcopy
-from constants import \
+from rates.constants import \
     MAX_DAYS, \
     MIN_DAYS, \
     DAY_IN_SEC, \
@@ -11,6 +11,10 @@ from constants import \
 
 def is_days_valid(days):
     return days > MIN_DAYS and days < MAX_DAYS
+
+#TODO: implement correct logic
+def are_dates_valid(start_date, end_date):
+    return True
 
 def date_sec_to_string(date):
     return datetime.fromtimestamp(date).strftime(DATE_FORMAT)
@@ -72,6 +76,30 @@ def convert_days_to_dates(days):
         raise Exception(MSG_ERROR_INVALID_DAYS)
 
     end_of_period = int(round(time.time()))
+    total_days = days * DAY_IN_SEC
+    fetch_request_limit = FETCH_DAYS_LIMIT * DAY_IN_SEC
+    output = []
+
+    while total_days > 0:
+        days_to_fetch = fetch_request_limit if total_days - fetch_request_limit > 0 else total_days
+        start_of_period = end_of_period - days_to_fetch + DAY_IN_SEC
+        output.append((date_sec_to_string(start_of_period), date_sec_to_string(end_of_period)))
+        end_of_period = start_of_period - DAY_IN_SEC
+        total_days -= days_to_fetch
+
+    return output
+
+def convert_days_to_dates(start_date, end_date):
+    conv_start = date_string_to_datetime(start_date)
+    conv_end = date_string_to_datetime(start_date)
+
+    days = int((conv_end - conv_start).total_seconds() / DAY_IN_SEC)
+
+    days+=1
+    if not (is_days_valid(days) and are_dates_valid(start_date, end_date)):
+        raise Exception(MSG_ERROR_INVALID_DAYS)
+
+    end_of_period = int(round(conv_end.timestamp()))
     total_days = days * DAY_IN_SEC
     fetch_request_limit = FETCH_DAYS_LIMIT * DAY_IN_SEC
     output = []
