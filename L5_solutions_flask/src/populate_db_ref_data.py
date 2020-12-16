@@ -3,7 +3,12 @@ Script to populate database with currency and sales data.
 """
 
 from ccy_data import *
+from etc.conf import PATH_TO_DB
 from sales_data import *
+from utils import DATA_DATE_RANGE_START, DATA_DATE_RANGE_END
+
+USD_EX_RATES_TABLE_NAME = 'USDPrices'
+SALES_TABLE_NAME = 'Sales'
 
 
 def add_table(conn, table_data: pd.DataFrame, table_name):

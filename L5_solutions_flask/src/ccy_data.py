@@ -4,12 +4,12 @@ Stores method used to obtain currency data from http://api.nbp.pl/api.
 
 import json
 from collections import namedtuple
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 import pandas as pd
 import requests
 
-from utils import *
+from utils import USD_ISO_CODE, DATE_FORMAT
 
 API_LIMIT = 367
 CCY_DATE_RANGE_ENDPOINT = "http://api.nbp.pl/api/exchangerates/rates/a/{currency}/{start_date}/{end_date}/"

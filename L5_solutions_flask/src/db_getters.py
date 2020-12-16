@@ -4,7 +4,7 @@ Stores methods used to obtain data for API from database.
 
 import pandas as pd
 
-from utils import *
+from utils import get_db_connection
 
 
 def get_usd_rating(date):

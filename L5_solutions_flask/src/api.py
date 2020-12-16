@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import flask
 from flask import abort
 from flask_caching import Cache
@@ -5,12 +7,20 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
 import db_getters as db
-from utils import *
+import etc.conf as conf
+from utils import DATA_DATE_RANGE_START, DATE_FORMAT, DATA_DATE_RANGE_END
+
+HOME_INFO = f"<h1>Northwind Sales API</h1><p>API for obtaining USD and PLN daily exchange rates and sales data from Northwind database in USD and PLN. Data is available for date range: {DATA_DATE_RANGE_START.strftime(DATE_FORMAT)} - {DATA_DATE_RANGE_END.strftime(DATE_FORMAT)}</p>"
+
+ABORT_OUT_OF_RANGE_MSG = f"No data found. Note that data is available only for date range: {DATA_DATE_RANGE_START.strftime(DATE_FORMAT)} - {DATA_DATE_RANGE_END.strftime(DATE_FORMAT)}"
+ABORT_END_BEFORE_START_MSG = "End date cannot be earlier than start date."
+ABORT_INCORRECT_DATE_FORMAT = f"Incorrect date format: {{date}}. Required date format: {DATE_FORMAT}"
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 limiter = Limiter(app, key_func=get_remote_address)
+
 cache = Cache(config={'CACHE_TYPE': 'simple'})
 cache.init_app(app)
 
@@ -21,8 +31,8 @@ def home():
 
 
 @app.route('/rates/usd/<date>', methods=['GET'])
-@limiter.limit(DEFAULT_LIMIT)
-@cache.cached(DEFAULT_CACHE_TIMEOUT)
+@limiter.limit(conf.DEFAULT_LIMIT)
+@cache.cached(conf.DEFAULT_CACHE_TIMEOUT)
 def usd_rate_specific_date(date):
     date_dt = get_datetime(date)
     if check_date_available(date_dt):
@@ -30,8 +40,8 @@ def usd_rate_specific_date(date):
 
 
 @app.route('/rates/usd/<start_date>/<end_date>', methods=['GET'])
-@limiter.limit(DEFAULT_LIMIT)
-@cache.cached(DEFAULT_CACHE_TIMEOUT)
+@limiter.limit(conf.DEFAULT_LIMIT)
+@cache.cached(conf.DEFAULT_CACHE_TIMEOUT)
 def usd_rate_date_range(start_date, end_date):
     start_date_dt = get_datetime(start_date)
     end_date_dt = get_datetime(end_date)
@@ -42,8 +52,8 @@ def usd_rate_date_range(start_date, end_date):
 
 
 @app.route('/sales/<date>', methods=['GET'])
-@limiter.limit(DEFAULT_LIMIT)
-@cache.cached(DEFAULT_CACHE_TIMEOUT)
+@limiter.limit(conf.DEFAULT_LIMIT)
+@cache.cached(conf.DEFAULT_CACHE_TIMEOUT)
 def sales_specific_date(date):
     date_dt = get_datetime(date)
     if check_date_available(date_dt):
@@ -51,8 +61,8 @@ def sales_specific_date(date):
 
 
 @app.route('/sales/<start_date>/<end_date>', methods=['GET'])
-@limiter.limit(DEFAULT_LIMIT)
-@cache.cached(DEFAULT_CACHE_TIMEOUT)
+@limiter.limit(conf.DEFAULT_LIMIT)
+@cache.cached(conf.DEFAULT_CACHE_TIMEOUT)
 def sales_date_range(start_date, end_date):
     start_date_dt = get_datetime(start_date)
     end_date_dt = get_datetime(end_date)
