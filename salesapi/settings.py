@@ -70,6 +70,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'salesapi.wsgi.application'
 
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '10/day',
+        'user': '1000/day'
+    }
+}
+
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
