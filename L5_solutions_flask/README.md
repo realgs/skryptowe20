@@ -47,19 +47,19 @@ With the use of this API you can obtain following data:
 - USD to PLN exchange rate for specified date:
 ``http://127.0.0.1:5000/rates/usd/{date}``
   - example usage ``http://127.0.0.1:5000/rates/usd/2013-01-01``
-- USD to PLN exchange rate for specified date:
+- USD to PLN exchange rate for date range:
 ``http://127.0.0.1:5000/rates/usd/{start_date}/{end_date}``
   - example usage ``http://127.0.0.1:5000/rates/usd/2013-01-01/2014-12-31``
 - sales data for specified date:
 ``http://127.0.0.1:5000/sales/{date}``
   - example usage ``http://127.0.0.1:5000/sales/2013-01-01``
-- USD to PLN exchange rate for specified date:
+- sales data for specified date range:
 ``http://127.0.0.1:5000/sales/{start_date}/{end_date}``
   - example usage ``http://127.0.0.1:5000/sales/2013-01-01/2014-12-31``
     
 ## Others
 
-- By default cache timeou is set to 100.
+- By default cache timeout is set to 100.
 - By default requests limit is set to 10/s per user.
 
 ## Project structure
