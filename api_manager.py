@@ -1,14 +1,14 @@
 import flask
+import constans
+import threading
 from flask import jsonify
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-import constans
 from data_verifiers import date_format_ok, db_contains_year, dates_order_ok, to_datetime
-from cache import rates_cache, sales_cache
+from cache import rates_cache, sales_cache, updates_manager
 from datetime import timedelta
 
 app = flask.Flask(__name__)
-app.config["DEBUG"] = True
 app.config['JSON_SORT_KEYS'] = False
 
 limiter = Limiter(
@@ -105,4 +105,6 @@ def get_sales_for_period(start_date, end_date):
     return jsonify(sale=response), constans.OK
 
 
+x = threading.Thread(target=updates_manager, daemon=True)
+x.start()
 app.run()

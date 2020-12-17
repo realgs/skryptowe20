@@ -1,5 +1,8 @@
-from db_handler import get_avg_rates_table, get_sums_and_rates_for_period
 import constans
+import schedule
+import time
+from db_handler import get_avg_rates_table, get_sums_and_rates_for_period
+
 rates_cache = {}
 sales_cache = {}
 
@@ -16,5 +19,10 @@ def update_sales_cache():
         sales_cache[row[0]] = {'rate': row[1], 'usd_sum': row[2], 'pln_sum': float(row[1]) * float(row[2])}
 
 
-update_rates_cache()
-update_sales_cache()
+def updates_manager():
+    schedule.every().day.at(constans.CACHE_UPDATE_TIME).do(update_rates_cache)
+    schedule.every().day.at(constans.CACHE_UPDATE_TIME).do(update_sales_cache)
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
