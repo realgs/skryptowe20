@@ -1,13 +1,11 @@
-import flask
-from flask import abort
+from flask import Flask, abort
 from flask_caching import Cache
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from datetime import datetime as dt
-import database_collector as db
-import config
+from src import config, database_collector as db
 
-app = flask.Flask(__name__)
+app = Flask(__name__)
 app.config["DEBUG"] = True
 
 limiter = Limiter(app, key_func=get_remote_address)
@@ -85,4 +83,5 @@ def __start_date_before_end_date_correct(start_date_dt, end_date_dt):
         return True
 
 
-app.run()
+if __name__ == '__main__':
+    app.run()

@@ -1,9 +1,9 @@
 import csv
 import datetime as dt
 import sqlite3 as sql
-from currency_data import get_currency_rates
+from src.currency_data import get_currency_rates
 from typing import List
-import config
+from src import config
 
 
 def create_default_database(conn: sql.Connection):

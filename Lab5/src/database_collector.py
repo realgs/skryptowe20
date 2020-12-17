@@ -1,9 +1,6 @@
-import os
-
-from flask import jsonify
-
-import config
 import sqlite3 as sql
+from src import config
+from flask import jsonify
 
 
 def connect():
@@ -25,28 +22,28 @@ def exec_sql_query(query):
 
 
 def get_usd_rating(selected_date):
-    sql_exec = f"Select rating_date, rate, interpolated " \
-               f"from CurrencyData " \
-               f"where rating_date='{selected_date}'"
+    sql_exec = f"SELECT rating_date, rate, interpolated " \
+               f"FROM CurrencyData " \
+               f"WHERE rating_date='{selected_date}'"
     return jsonify(exec_sql_query(sql_exec))
 
 
 def get_usd_rating_date_range(start_date, end_date):
-    sql_exec = f"select rating_date, rate, interpolated " \
-               f"from CurrencyData " \
-               f"where rating_date between '{start_date}' and '{end_date}'"
+    sql_exec = f"SELECT rating_date, rate, interpolated " \
+               F"FROM currencydata " \
+               F"WHERE rating_date BETWEEN '{start_date}' AND '{end_date}'"
     return jsonify(exec_sql_query(sql_exec))
 
 
 def get_sales(date):
-    sql_query = f"select sales_date, rate,PLN_sales, USD_sales " \
-                f"from DailySales " \
-                f"where sales_date='{date}'"
+    sql_query = f"SELECT sales_date, rate,PLN_sales, USD_sales " \
+                f"FROM DailySales " \
+                f"WHERE sales_date='{date}'"
     return jsonify(exec_sql_query(sql_query))
 
 
 def get_sales_date_range(start_date, end_date):
-    sql_query = f"select sales_date, rate,PLN_sales, USD_sales " \
-                f"from DailySales " \
-                f"where sales_date between '{start_date}' and '{end_date}'"
+    sql_query = f"SELECT sales_date, rate,PLN_sales, USD_sales " \
+                f"FROM DailySales " \
+                f"WHERE sales_date BETWEEN '{start_date}' AND '{end_date}'"
     return jsonify(exec_sql_query(sql_query))

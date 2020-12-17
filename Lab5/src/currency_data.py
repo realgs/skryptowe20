@@ -1,9 +1,9 @@
 import datetime as dt
-import matplotlib.patches as mpatches
-import matplotlib.pyplot as plt
+
 import requests
 from spyder.utils.external.github import ApiError
-import config
+
+from src import config
 
 MAX_COUNT = config.NBP_API_REQUEST_MAX_COUNT
 TODAY_DATE = dt.datetime.date(dt.datetime.today())
