@@ -77,5 +77,5 @@ Sample output:
 }
 ```
 Where:
-- **original_sum** -> sum of all transactions in the original value (PLN).
+- **original_sum** -> sum of all transactions in the original value.
 - **currency_sum** -> sum of all transactions in the requested currency.
