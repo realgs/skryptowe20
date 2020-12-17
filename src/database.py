@@ -114,22 +114,6 @@ def get_sales_between(desired_currency, begin, end):
     conn.close()
     return res
 
-# def get_rates_last(currency, delta):
-#     if not isinstance(delta, int):
-#         raise TypeError('Wrong parameter types') 
-
-#     if delta <= 0:
-#         raise ValueError('Delta must be positive')
-    
-#     conn = sqlite3.connect(__DB_NAME)
-#     currency = currency.upper()
-#     __check_if_table_exists(conn, currency)
-#     c = conn.cursor()
-#     c.execute(f'SELECT * FROM {currency} ORDER BY date DESC LIMIT ?', (delta,))
-#     res = __list_to_disc(c.fetchall())
-#     conn.close()
-#     return res
-
 if __name__ == '__main__':
     # print(json.dumps(get_between('usd', '2020-01-01', '2020-10-10'), indent=4))
     print(json.dumps(get_last('eur', 10), indent=4))

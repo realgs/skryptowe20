@@ -7,6 +7,9 @@ from database import datetime, NoSuchTableError
 import database as db
 from keys import *
 
+time = 365 * 20
+currencies = ['eur', 'usd', 'gbp']
+
 app = Flask(__name__)
 config = {
     'DEBUG': True,
@@ -14,10 +17,8 @@ config = {
     'CACHE_DEFAULT_TIMEOUT': 300
 }
 app.config.from_mapping(config)
+limiter = Limiter(app,key_func=get_remote_address,default_limits=["200 per day", "50 per hour"])
 cache = Cache(app)
-
-time = 365 * 20
-currencies = ['eur', 'usd', 'gbp']
 
 def __get_rates_between_handler(currency, begin, end):
     res = db.get_rates_between(currency, begin, end)
