@@ -16,13 +16,13 @@ HOME_INFO = f"""<h1>Northwind Sales API</h1>
      <p> - USD to PLN exchange rate for specified date:</br>
      http://127.0.0.1:5000/rates/usd/{{date}}</br>
          example usage ``http://127.0.0.1:5000/rates/usd/2013-01-01</p>
-     <p> - USD to PLN exchange rate for specified date:</br>
+     <p> - USD to PLN exchange rate for date range:</br>
      http://127.0.0.1:5000/rates/usd/{{start_date}}/{{end_date}}</br>
          example usage ``http://127.0.0.1:5000/rates/usd/2013-01-01/2014-12-31``</br>
      <p> - sales data for specified date:</br>
      http://127.0.0.1:5000/sales/{{date}}</br>
          example usage ``http://127.0.0.1:5000/sales/2013-01-01</br>
-     <p> - USD to PLN exchange rate for specified date:</br>
+     <p> - sales data for date range:</br>
      http://127.0.0.1:5000/sales/{{start_date}}/{{end_date}}</br>
          example usage ``http://127.0.0.1:5000/sales/2013-01-01/2014-12-31``</br>
 
