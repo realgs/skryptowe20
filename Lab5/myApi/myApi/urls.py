@@ -20,5 +20,4 @@ from logic import views
 urlpatterns = [
     path('rates/<str:currency_code>/<slug:start_date>/<slug:end_date>/', views.history, name='history'),
     path('summary/<str:currency_code>/<slug:date>/', views.summary, name='summary'),
-    path('admin/', admin.site.urls),
 ]

@@ -18,17 +18,17 @@ Starting the API server:
 ## Usage
 Supported API requests:
 
-*/rates/{**currency**}/{**start_date**}/{**end_date**}/*
+`/rates/{currency}/{start_date}/{end_date}/`
 
 Where:
-- **currency** -> ISO compliant currency code,
-- **start_date** -> beginning of period, in format YYYY-MM-DD,
-- **end_date** -> end of period, in format YYYY-MM-DD,
+- `currency` -> ISO compliant currency code,
+- `start_date` -> beginning of period, in format YYYY-MM-DD,
+- `end_date` -> end of period, in format YYYY-MM-DD,
 - start_date has to be smaller than end_date,
 - max period is ....
 
 Sample output:
-
+```json
 {
    "currency":"USD",
    "rates":[
@@ -44,7 +44,7 @@ Sample output:
       }
    ]
 }
-
+```
 Where:
 - **interpolated** -> whether the value is estimated from previous days or not.
 
@@ -55,3 +55,11 @@ Status codes:
 
 Tutorial:
 https://docs.djangoproject.com/en/3.1/intro/tutorial01/
+
+```json
+{
+   "date":"2016-02-18",
+   "original_sum":"202602.31",
+   "currency_sum":"798577.27"
+}
+```

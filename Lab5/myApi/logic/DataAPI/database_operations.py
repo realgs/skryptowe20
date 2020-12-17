@@ -1,6 +1,6 @@
 import sqlite3
-from constants import DATABASE_PATH
-from web_data import RatesWrapper
+from logic.DataAPI.constants import DATABASE_PATH, START_DATE, END_DATE
+from logic.DataAPI.web_data import RatesWrapper
 
 def connect_to_database():
     conn = sqlite3.connect(DATABASE_PATH)
@@ -26,16 +26,7 @@ def populate_table(cursor, wrapper):
         """
         cursor.execute(querry)
 
-def print_rates_table(cursor, currency):
-    querry = f"""
-    SELECT *
-    FROM {currency}Rates;
-    """
-    cursor.execute(querry)
-    for x in cursor.fetchall():
-        print(x)
-
-def add_table_currency_mids(wrapper):
+def add_table_rates(wrapper):
     c, conn = connect_to_database()
 
     create_table(c, wrapper.currency)
@@ -44,34 +35,75 @@ def add_table_currency_mids(wrapper):
     conn.commit()
     conn.close()
 
-def summarise_transactions_single_date(currency, date):
+def summarise_transactions(currency, start_date, end_date):
     c, conn = connect_to_database()
-    pln_wrapper = RatesWrapper("PLN")
-    currency_wrapper = RatesWrapper(currency)
 
-    querry_currency = f"""
+    querry = f"""
     SELECT SUBSTR(OrderDate, 0, 11) DATE,
-           ROUND(SUM(Quantity * UnitPrice  * (1 - Discount)), 2) TOTAL{currency}
+           ROUND(SUM(Quantity * UnitPrice  * (1 - Discount)), 2) TOTALORIGINAL,
+           ROUND(SUM(Quantity * UnitPrice  * (1 - Discount) * Mid), 2) TOTAL{currency}
     FROM [Order] JOIN [OrderDetail] ON [Order].id = [OrderDetail].OrderId
                  JOIN [{currency}Rates] ON DATE = [{currency}Rates].EffectiveDate
-    WHERE DATE = {date}
+    WHERE DATE BETWEEN '{start_date}' AND '{end_date}'
     GROUP BY DATE
     ORDER BY DATE;
     """
-    c.execute(querry_currency)
-    currency_wrapper.append_from_db(c.fetchall())
-
-    querry_pln = f"""
-    SELECT SUBSTR(OrderDate, 0, 11) DATE,
-           ROUND(SUM(Quantity * UnitPrice  * (1 - Discount) * Mid), 2) TOTALPLN
-    FROM [Order] JOIN [OrderDetail] ON [Order].id = [OrderDetail].OrderId
-                 JOIN [{currency}Rates] ON DATE = [{currency}Rates].EffectiveDate
-    WHERE DATE = {date}
-    GROUP BY DATE
-    ORDER BY DATE;
-    """
-    c.execute(querry_pln)
-    pln_wrapper.append_from_db(c.fetchall())
-
+    c.execute(querry)
+    output = c.fetchall()
     conn.close()
-    return [pln_wrapper, currency_wrapper]
+    return output
+
+def create_summary_table(cursor, currency):
+    querry = f"DROP TABLE IF EXISTS {currency}Summary;"
+    cursor.execute(querry)
+    querry = f"""
+    CREATE TABLE [{currency}Summary] (
+        [Date] TEXT,
+        [OriginalSum] REAL,
+        [CurrencySum] REAL
+    );
+    """
+    cursor.execute(querry)
+
+def populate_summary_table(cursor, currency, summary):
+    for date, original_sum, currency_sum in summary:
+        querry = f"""
+        INSERT INTO [{currency}Summary] (Date, OriginalSum, CurrencySum)
+        VALUES ('{date}', {original_sum}, {currency_sum});
+        """
+        cursor.execute(querry)
+
+def summary_to_json(summary):
+    date, original, currency = summary[0]
+    return ("{"
+            f"\"date\":\"{date}\","
+            f"\"original_sum\":\"{original}\","
+            f"\"currency_sum\":\"{currency}\""
+            "}")
+
+def get_summary(currency, date):
+    c, conn = connect_to_database()
+    querry = f"""
+    SELECT *
+    FROM [{currency}Summary]
+    WHERE Date = {date};
+    """
+    c.execute(querry)
+    output = c.fetchall()
+    conn.close()
+    return output
+
+def add_table_summary(wrapper):
+    c, conn = connect_to_database()
+
+    create_summary_table(c, wrapper.currency)
+    summary = summarise_transactions(wrapper.currency, START_DATE, END_DATE)
+    populate_summary_table(c, wrapper.currency, summary)
+
+    conn.commit()
+    conn.close()
+
+def init_database(list_of_wrappers):
+    for wrapper in list_of_wrappers:
+        add_table_rates(wrapper)
+        add_table_summary(wrapper)

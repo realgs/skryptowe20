@@ -5,9 +5,16 @@ MAX_DAYS = 6588
 MIN_DAYS = 0
 FETCH_DAYS_LIMIT = 350
 
+START_DATE = "2012-07-04"
+END_DATE = "2016-02-19"
+
 DATE_FORMAT = "%Y-%m-%d"
 
 DEFAULT_TABLE = "A"
+
+SUMMARY_CURRENCIES = {
+    "USD", "EUR", "AUD"
+}
 
 AVAIL_CURRENCIES = {
     "AFN", "EUR", "ALL", "DZD", "USD", "AOA", "XCD", "ARS", "AMD", "AWG", "AUD", "AZN", "BSD", "BHD",
@@ -28,4 +35,4 @@ MSG_ERROR_INVALID_CURRENCY = f"Currency must be one of available values: \n{AVAI
 MSG_ERROR_INVALID_DAYS = f"Days have to be greater than {MIN_DAYS} and less than 18 years ({MAX_DAYS} days)!"
 MSG_ERROR_FAILED_TO_FETCH = "Error fetching data!"
 
-DATABASE_PATH = "Lab5/myApi/logic/Northwind2.sqlite"
+DATABASE_PATH = "Lab5/myApi/logic/DataAPI/Northwind.sqlite"
