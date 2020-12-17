@@ -6,7 +6,7 @@ It is an API made to serve sales and forex data. It's based on NBP's (http://api
 
 ## Technologies
 To make it simple, only simple technologies. These include:
-* Python programming language (version **3.7.4** or higher)
+* [Python](https://www.python.org/dwonloads/) programming language (version **3.7.4** or higher)
 * [Flask framework](https://flask.palletsprojects.com/en/1.1.x/) - an API service framework
 * [Flask-Limiter](https://flask-limiter.readthedocs.io/en/stable/) - a server-load limiter extension to Flask
 * [sqlite3](https://www.sqlite.org/index.html) - a database engine
@@ -80,7 +80,7 @@ You can request available forex tables in various configurations.
     {
         'date' : {date},
         'PLN' : {value},
-        '{currency}' : {value},
+        {currency} : {value},
         …
     }
 ```
@@ -96,8 +96,8 @@ Error message is a JSON response coded as follows:
         {
             'code' : {code},
             'message' : {message}
-            }
         }
+    }
 ```
 where `{code}` is the HTTP response code and `{message}` is the message telling what went wrong with the request.
 
