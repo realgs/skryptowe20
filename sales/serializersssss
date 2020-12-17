@@ -1,0 +1,28 @@
+from rest_framework import serializers
+from sales.models import Currency, SalesStats
+
+
+class CurrencySerializer(serializers.Serializer):
+    symbol = serializers.CharField(max_length=3)
+    date = serializers.DateTimeField()
+    value = serializers.FloatField()
+    interpolated = serializers.BooleanField(default='False')
+
+    def create(self, validated_data):
+        return Currency.objects.create(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.symbol = validated_data.get('symbol', instance.symbol)
+        instance.date = validated_data.get('date', instance.date)
+        instance.value = validated_data.get('value', instance.value)
+        instance.interpolated = validated_data.get('interpolated', instance.interpolated)
+        instance.save()
+        return instance
+
+
+class SalesSerializer(serializers.Serializer):
+    date = serializers.DateTimeField()
+    sales_sum = serializers.FloatField()
+
+    def create(self, validated_data):
+        return SalesStats.objects.create(**validated_data)
