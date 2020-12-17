@@ -1,5 +1,7 @@
 import flask
 from flask import jsonify
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import constans
 from data_verifiers import date_format_ok, db_contains_year, dates_order_ok, to_datetime
 from cache import rates_cache, sales_cache
@@ -8,6 +10,12 @@ from datetime import timedelta
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 app.config['JSON_SORT_KEYS'] = False
+
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=[constans.DEFAULT_DAY_LIMIT, constans.DEFAULT_HOUR_LIMIT]
+)
 
 
 def period_validation(start_date, end_date):
