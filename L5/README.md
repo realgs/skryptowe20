@@ -55,7 +55,7 @@ You can request available forex tables in various configurations.
     * `/api/v1/exchangerates/rates/{currency_code}/{date}` - request for all available `{currency_code}` data of the provided `{date}`
     * `/api/v1/exchangerates/rates/{currency_code}/{start_date}/{end_date}` - request for all available `{currency_code}` data of the period of time between provided `{start_date}` and `{end_date}`
 
-### Geting sales data
+### Getting sales data
 * `/api/v1/salesdata/{date}` - request for all available sales data of the provided `{date}`
 * `/api/v1/salesdata/{start_date}/{end_date}` - request for all available sales data of the period of time between provided `{start_date}` and `{end_date}`
 
