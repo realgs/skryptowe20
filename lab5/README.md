@@ -47,7 +47,7 @@ The server can respond with:
 
 * A dictionary with one key `rates`, containing an ordered list of dictionaries for every day of the time period specified in the request. The dictionary for a single day contains three keys:
 
-  * `date`: *YYYY-MM-DD* - date on which the exchange rate was determined
+  * `date`: *string of format YYYY-MM-DD* - date on which the exchange rate was determined
   * `rate`: *double* - exchange rate from PLN to USD
   * `interpolated`: *boolean* - whether the exchange rate was interpolated based on previous values
 
@@ -79,7 +79,7 @@ The server can respond with:
 
 * A dictionary with one key `sales`, containing another dictionary with three keys:
 
-  * `date`: *YYYY-MM-DD* - date on which the sales were recorded
+  * `date`: *string of format YYYY-MM-DD* - date on which the sales were recorded
   * `original_sales`: *double* - value of total sales made on a given day in USD
   * `exchanged_sales`: *double* - value of total sales made on a given day, converted to PLN using the exchange rate from /rates route for a given day
 

@@ -10,7 +10,6 @@ from .database import (
     PATH_TO_DATABASE,
     DatabaseLimits,
     check_if_database_file_exists,
-    load_limits,
     update_data,
     get_rates_for_dates,
     get_sales_for_date,
@@ -102,5 +101,8 @@ def run(args):
     else:
         check_if_database_file_exists()
 
-    load_limits(date_limits)
+    connection = sqlite3.connect(PATH_TO_DATABASE)
+    date_limits.load_limits(connection)
+    connection.close()
+
     app.run(host=HOST, port=args.port, debug=args.debug)

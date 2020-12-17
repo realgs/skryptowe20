@@ -14,15 +14,32 @@ DB_FILE = "BikeStores.db"
 PATH_TO_DATABASE = join(dirname(__file__), DB_FILE)
 
 
+class Currency(Enum):
+    USD = "USD"
+    EURO = "EUR"
+
+
 class DatabaseLimits:
     def __init__(self):
         self.min_rates_date = self.max_rates_date = None
         self.min_sales_date = self.max_sales_date = None
 
+    def load_limits(self, connection):
+        cursor = connection.cursor()
 
-class Currency(Enum):
-    USD = "USD"
-    EURO = "EUR"
+        min_date, max_date = cursor.execute(
+            "SELECT MIN(date), MAX(date) FROM pln_rates"
+        ).fetchone()
+
+        self.min_rates_date = datetime.strptime(min_date, DB_CUSTOM_DATE_FORMAT).date()
+        self.max_rates_date = datetime.strptime(max_date, DB_CUSTOM_DATE_FORMAT).date()
+
+        min_date, max_date = cursor.execute(
+            "SELECT MIN(date), MAX(date) FROM total_sales"
+        ).fetchone()
+
+        self.min_sales_date = datetime.strptime(min_date, DB_CUSTOM_DATE_FORMAT).date()
+        self.max_sales_date = datetime.strptime(max_date, DB_CUSTOM_DATE_FORMAT).date()
 
 
 def check_if_database_file_exists(file_=PATH_TO_DATABASE):
@@ -36,35 +53,6 @@ def update_data():
     create_or_update_currency_table(connection, Currency.USD)
     create_or_update_sales_tables(connection)
     connection.close()
-
-
-def load_limits(database_limits):
-    connection = sqlite3.connect(PATH_TO_DATABASE)
-    cursor = connection.cursor()
-
-    min_date, max_date = cursor.execute(
-        "SELECT MIN(date), MAX(date) FROM pln_rates"
-    ).fetchone()
-
-    database_limits.min_rates_date = datetime.strptime(
-        min_date, DB_CUSTOM_DATE_FORMAT
-    ).date()
-
-    database_limits.max_rates_date = datetime.strptime(
-        max_date, DB_CUSTOM_DATE_FORMAT
-    ).date()
-
-    min_date, max_date = cursor.execute(
-        "SELECT MIN(date), MAX(date) FROM total_sales"
-    ).fetchone()
-
-    database_limits.min_sales_date = datetime.strptime(
-        min_date, DB_CUSTOM_DATE_FORMAT
-    ).date()
-
-    database_limits.max_sales_date = datetime.strptime(
-        max_date, DB_CUSTOM_DATE_FORMAT
-    ).date()
 
     connection.close()
 
