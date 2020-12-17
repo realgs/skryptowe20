@@ -1,6 +1,7 @@
 import sqlite3
-from datetime import date
+from datetime import date, timedelta
 from ApiService import getAverageExchangeRatesInDays
+import copy
 
 
 def getPricesUsdPlnInHalfYear():
@@ -29,14 +30,23 @@ def createExchangeTable(dbCursor):
         CREATE TABLE IF NOT EXISTS ExchangeUsdPln(
             RateId INTEGER PRIMARY KEY ASC,
             RateDate DATETIME NOT NULL,
-            exchange REAL NOT NULL
+            exchange REAL NOT NULL,
+            interpolated BIT NOT NULL
         )''')
 
 
 def fillExchangeTable(dbCursor):
     exchangeRates = getAverageExchangeRatesInDays('usd', 730, date(2018, 5, 6))
+    if not exchangeRates:
+        return
+    last = exchangeRates[0]
     for item in exchangeRates:
-        dbCursor.execute('INSERT INTO ExchangeUsdPln VALUES(NULL, ?,?)', (item.effectiveDate, item.mid))
+        while item.effectiveDate > last.effectiveDate:
+            dbCursor.execute('INSERT INTO ExchangeUsdPln VALUES(NULL, ?,?,?)', (last.effectiveDate, last.mid, 1))
+            last.effectiveDate += timedelta(days=1)
+        dbCursor.execute('INSERT INTO ExchangeUsdPln VALUES(NULL, ?,?,?)', (item.effectiveDate, item.mid, 0))
+        last = item
+        last.effectiveDate += timedelta(days=1)
 
 
 if __name__ == '__main__':
