@@ -17,7 +17,7 @@ app.config.from_mapping(config)
 cache = Cache(app)
 
 time = 365 * 20
-currencies = ['eur', 'usd']
+currencies = ['eur', 'usd', 'gbp']
 
 def __get_rates_between_handler(currency, begin, end):
     res = db.get_rates_between(currency, begin, end)
