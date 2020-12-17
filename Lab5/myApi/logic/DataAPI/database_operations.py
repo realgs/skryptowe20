@@ -41,7 +41,7 @@ def summarise_transactions(currency, start_date, end_date):
     querry = f"""
     SELECT SUBSTR(OrderDate, 0, 11) DATE,
            ROUND(SUM(Quantity * UnitPrice  * (1 - Discount)), 2) TOTALORIGINAL,
-           ROUND(SUM(Quantity * UnitPrice  * (1 - Discount) * Mid), 2) TOTAL{currency}
+           ROUND(SUM(Quantity * UnitPrice  * (1 - Discount) / Mid), 2) TOTAL{currency}
     FROM [Order] JOIN [OrderDetail] ON [Order].id = [OrderDetail].OrderId
                  JOIN [{currency}Rates] ON DATE = [{currency}Rates].EffectiveDate
     WHERE DATE BETWEEN '{start_date}' AND '{end_date}'
