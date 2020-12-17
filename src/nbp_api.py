@@ -2,8 +2,8 @@ from datetime import datetime
 from datetime import timedelta
 import requests
 import json
+from keys import *
 
-DATE_FORMAT = '%Y-%m-%d'
 __MAX_DAYS_IN_RANGE = 365
 
 def __generate_url(table, currency, prev_date, today):
@@ -26,12 +26,12 @@ def __delta_to_ranges(delta):
 def __convert_array_of_responses(responses):
     rates = []
     for response in responses:
-        rates.extend(response['rates'])
+        rates.extend(response[NBP_RATES_OBJECT_KEY])
     
     return list(map(lambda elem: {
-        'date': datetime.strptime(elem['effectiveDate'], DATE_FORMAT),
-        'rate': elem['mid'],
-        'interpolated': False
+            DATE_KEY: datetime.strptime(elem[NBP_DATE_KEY], NBP_DATE_FORMAT),
+            RATE_KEY: elem[NBP_RATE_KEY],
+            INTERPOLATED_KEY: False
         }, rates))
 
 def __append_missing_dates(rates):
@@ -40,13 +40,13 @@ def __append_missing_dates(rates):
         current = rates[i]
         next_item = rates[i + 1]
 
-        delta = next_item['date'] - current['date']
+        delta = next_item[DATE_KEY] - current[DATE_KEY]
 
         if delta.days > 1:
             rates.insert(i + 1, {
-                'date': current['date'] + timedelta(days=1),
-                'rate': current['rate'],
-                'interpolated': True
+                DATE_KEY: current[DATE_KEY] + timedelta(days=1),
+                RATE_KEY: current[RATE_KEY],
+                INTERPOLATED_KEY: True
             })
 
         i += 1
@@ -56,9 +56,9 @@ def __convert_dates_to_string(rates):
     converted = []
     for rate in rates:
         converted.append({
-            'date': rate['date'].strftime(DATE_FORMAT),
-            'rate': rate['rate'],
-            'interpolated': rate['interpolated']
+            DATE_KEY: rate[DATE_KEY].strftime(DATE_FORMAT),
+            RATE_KEY: rate[RATE_KEY],
+            INTERPOLATED_KEY: rate['interpolated']
         })
     return converted
 
