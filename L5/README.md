@@ -49,15 +49,20 @@ You can request available forex tables in various configurations.
     * `/api/v1/exchangerates/tables/{date}` - request for all available forex data of the provided `{date}`
     * `/api/v1/exchangerates/tables/{start_date}/{end_date}` - request for all available forex data of the period of time between provided `{start_date}` and `{end_date}`
 * specific currency data (`{currency}/PLN`)
-    * `/api/v1/exchangerates/rates/{currency_code}/` - request for all available `{currency_code}` data
-    * `/api/v1/exchangerates/rates/{currency_code}/today` - request for all available `{currency_code}` data of today
-    * `/api/v1/exchangerates/rates/{currency_code}/last/{top_count}` - request for all available `{currency_code}` data, limited by `{top_count}`
-    * `/api/v1/exchangerates/rates/{currency_code}/{date}` - request for all available `{currency_code}` data of the provided `{date}`
-    * `/api/v1/exchangerates/rates/{currency_code}/{start_date}/{end_date}` - request for all available `{currency_code}` data of the period of time between provided `{start_date}` and `{end_date}`
+    * `/api/v1/exchangerates/rates/{currency_code}/` - request for all available `{currency_code}/PLN` data
+    * `/api/v1/exchangerates/rates/{currency_code}/today` - request for all available `{currency_code}/PLN` data of today
+    * `/api/v1/exchangerates/rates/{currency_code}/last/{top_count}` - request for all available `{currency_code}/PLN` data, limited by `{top_count}`
+    * `/api/v1/exchangerates/rates/{currency_code}/{date}` - request for all available `{currency_code}/PLN` data of the provided `{date}`
+    * `/api/v1/exchangerates/rates/{currency_code}/{start_date}/{end_date}` - request for all available `{currency_code}/PLN` data of the period of time between provided `{start_date}` and `{end_date}`
 
 ### Getting sales data
 * `/api/v1/salesdata/{date}` - request for all available sales data of the provided `{date}`
 * `/api/v1/salesdata/{start_date}/{end_date}` - request for all available sales data of the period of time between provided `{start_date}` and `{end_date}`
+
+### Examples of use
+* `/api/v1/exchangerates/tables/2015-10-13/2015-12-13` - request for all available forex data of the period of time between 2015-10-13 and 2015-12-13
+* `/api/v1/exchangerates/rates/USD/2015-10-13/2015-12-13` - request for all available USD/PLN data of the period of 
+* `/api/v1/salesdata/2015-10-13/2015-12-13` - request for all available sales data of the period of time between 2015-10-13 and 2015-12-13
 
 ### Possible response formats
 * a **marking** request results in a list of or a single JSON object of the structure
