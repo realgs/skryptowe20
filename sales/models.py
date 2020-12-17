@@ -3,7 +3,7 @@ from django.db import models
 
 class Currency(models.Model):
     symbol = models.CharField(max_length=3, blank=False, default='')
-    date = models.DateTimeField()
+    date = models.DateField()
     value = models.FloatField()
     interpolated = models.BooleanField(default='False')
 
@@ -13,7 +13,7 @@ class Currency(models.Model):
 
 
 class SalesStats(models.Model):
-    date = models.DateTimeField(primary_key=True)
+    date = models.DateField(primary_key=True)
     sales_sum = models.FloatField()
 
     class Meta:

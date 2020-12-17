@@ -22,9 +22,10 @@ from sales import views
 router = routers.DefaultRouter()
 router.register(r'Currency', views.CurrencyViewSet)
 router.register(r'Sales', views.SalesStatsViewSet)
+router.register(r'CurrencyRange', views.CurrencyRangeList)
 
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]

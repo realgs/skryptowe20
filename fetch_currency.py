@@ -47,7 +47,7 @@ def fix_response(response):
 
 
 def get_currency(currency, start_date, end_date):
-    conn = sqlite3.connect('sales.db')
+    conn = sqlite3.connect('db.sqlite3')
     c = conn.cursor()
     c.execute('''SELECT * FROM CURRENCY WHERE SYMBOL = ?
             AND DATE BETWEEN ? AND ?''', currency.upper(), start_date(), end_date())
@@ -56,24 +56,23 @@ def get_currency(currency, start_date, end_date):
 
 def update_sales_stats():
     conn = sqlite3.connect('sales.db')
+    conn_django = sqlite3.connect('db.sqlite3')
     c = conn.cursor()
+    c_django = conn_django.cursor()
     duplicates = 0
-    x = []
     for row in c.execute('''SELECT SUM(SALES), ORDERDATE FROM SALES
                             GROUP BY ORDERDATE
                             ORDER BY ORDERDATE'''):
-        x.append(row)
-
-    for row in x:
         try:
             safe_data = (int(row[1]), float(row[0]))
-            c.execute('INSERT INTO sales_stats VALUES(?, ?)', safe_data)
+            c_django.execute('INSERT INTO sales_salesstats VALUES(?, ?)', safe_data)
         except(sqlite3.IntegrityError):
             duplicates += 1
 
     print(f'{duplicates} values were already in database')
-    conn.commit()
     conn.close()
+    conn_django.commit()
+    conn_django.close()
 
 
 def get_range(currency, start_date, end_date):
@@ -92,14 +91,14 @@ def get_range(currency, start_date, end_date):
 def fill_currency(currencies, start_date, end_date):
     for currency in currencies:
         currencyValues = get_range(currency, start_date, end_date)
-        conn = sqlite3.connect('sales.db')
+        conn = sqlite3.connect('db.sqlite3')
         c = conn.cursor()
         print("Opened database successfully")
         duplicates = 0
         for daily_value in currencyValues:
             try:
-                safe_data = (currency.upper(), daily_value[0].timestamp(), daily_value[1], daily_value[2], )
-                c.execute('INSERT INTO currency VALUES(?,?,?,?)', safe_data)
+                safe_data = (currency.upper(), daily_value[0].date(), daily_value[1], daily_value[2], )
+                c.execute('INSERT INTO sales_currency(symbol,date,value,interpolated) VALUES(?,?,?,?)', safe_data)
             except sqlite3.IntegrityError:
                 duplicates += 1
 
@@ -189,7 +188,6 @@ def split_date(start_date, end_date):
 #         plt.show()
 
 
-# fill_currency(['USD', 'EUR'], '2006-01-01', '2010-01-01')
+fill_currency(['USD', 'EUR'], '2002-01-01', '2020-12-17')
 update_sales_stats()
-
 
