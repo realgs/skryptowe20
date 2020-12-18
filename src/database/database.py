@@ -107,6 +107,19 @@ class Database:
         return res
 
 
+    def get_avg_usd_rates_in_interval(self, start_date=None, end_date=None):
+        conn = sqlite3.connect(self.db_source)
+        c = conn.cursor()
+
+        c.execute("""SELECT * FROM AvGUsdRates WHERE strftime('%Y-%m-%d', date) BETWEEN ? AND ? """, (start_date, end_date))
+        res = c.fetchall()
+
+        conn.commit()
+        conn.close()
+
+        return res
+
+
 if __name__ == "__main__":
     start_date = '2011-07-04'
     end_date = '2011-07-06'

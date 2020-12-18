@@ -15,7 +15,7 @@ def home(name):
 
 
 @app.route('/api/rates')
-def return_rates():
+def return_all_rates():
   db = Database(DB_NAME)
   rates = db.get_avg_usd_rates()
   rates = [{'rate':x[0], 'date':x[1], 'interpolated':x[2] == 1 if True else False} for x in rates]
@@ -34,6 +34,17 @@ def return_rate(date):
                   date=date,
                   interpolated= interpolated == 1 if True else False
     )
+
+
+@app.route('/api/rates/<start>/<end>')
+def return_rates(start, end):
+  db = Database(DB_NAME)
+  res = db.get_avg_usd_rates_in_interval(start, end)
+  if res == []:
+    return jsonify(status=404, info="Data not found"), 404
+  else:
+    rates = [{'rate': x[0], 'date': x[1], 'interpolated': x[2] == 1 if True else False} for x in res]
+    return jsonify(rates=rates)
 
 
 @app.route('/api/sales/<start_date>/<end_date>')
