@@ -29,26 +29,6 @@ class Database:
         conn.close()
 
 
-    def _add_missing_dates(self, rates):
-        for i in range(len(rates) - 1):
-            curr = rates[i]
-            next = rates[i + 1]
-
-            curr_date = datetime.strptime(curr[1], self.DATEFORMAT)
-            next_date = datetime.strptime(next[1], self.DATEFORMAT)
-            delta = next_date - curr_date
-
-            if delta.days > 1:
-                next_day = curr_date + timedelta(days=1)
-                if next_day.strftime(self.DATEFORMAT) not in [x[1] for x in rates]:
-                    rates.insert(i + 1, (
-                        curr[0],
-                        next_day.strftime(self.DATEFORMAT),
-                        True
-                    ))
-        return rates
-
-
     def get_sales_usd_pln(self, start_date, end_date):
         conn = sqlite3.connect(self.db_source)
         c = conn.cursor()
@@ -102,6 +82,26 @@ class Database:
         conn.close()
 
         return res
+
+
+    def _add_missing_dates(self, rates):
+        for i in range(len(rates) - 1):
+            curr = rates[i]
+            next = rates[i + 1]
+
+            curr_date = datetime.strptime(curr[1], self.DATEFORMAT)
+            next_date = datetime.strptime(next[1], self.DATEFORMAT)
+            delta = next_date - curr_date
+
+            if delta.days > 1:
+                next_day = curr_date + timedelta(days=1)
+                if next_day.strftime(self.DATEFORMAT) not in [x[1] for x in rates]:
+                    rates.insert(i + 1, (
+                        curr[0],
+                        next_day.strftime(self.DATEFORMAT),
+                        True
+                    ))
+        return rates
 
 
     def insert_usd_rates(self, start_date, end_date):

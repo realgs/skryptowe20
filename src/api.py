@@ -1,5 +1,7 @@
 from database.database import Database
 from flask import Flask, jsonify, request
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import sqlite3
 
 
@@ -7,6 +9,11 @@ DB_NAME = "../Source/bazunia.db"
 
 app = Flask(__name__)
 
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"]
+)
 
 @app.route('/api/home/<name>')
 def home(name):
@@ -75,7 +82,7 @@ def return_sale(date):
 
 @app.errorhandler(404)
 def handle_bad_req(e):
-  return jsonify(info="Bad request!"), 400
+  return jsonify(status=400, info="Bad request!"), 400
 
 
 if __name__ == '__main__':
