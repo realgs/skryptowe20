@@ -2,7 +2,7 @@
 This API offers simple GET request, fetching currency values to Polish Zloty. It also allows to get sale statistics based date parameter.
 GET requests return in form of JSON.
 
-
+1. [Install Guide](#install-guide)
 1. [API usage](#api-usage)
 1. [Limits](#limits)
 1. [Dependencies](#dependencies)
