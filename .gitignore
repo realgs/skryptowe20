@@ -1,6 +1,4 @@
 .DS_Store
 .idea
 __pycache__/
-database.db
-sales_data_sample.csv
 venv

@@ -55,7 +55,7 @@ def fetch_rate_for_date(date):
     c.execute('''SELECT day, rate, interpolated
                  FROM avg_rates
                  WHERE day = ?
-                ''', (date, ))
+                ''', (date,))
     row = c.fetchall()
     conn.close()
     return row
@@ -83,7 +83,7 @@ def fetch_sale_and_rate_for_date(date):
                  FROM sales_data
                  INNER JOIN avg_rates ON orderdate = day
                  WHERE orderdate = ?
-                 GROUP BY orderdate''', (date, ))
+                 GROUP BY orderdate''', (date,))
     row = c.fetchall()
     conn.close()
     return row

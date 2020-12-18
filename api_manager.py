@@ -58,11 +58,9 @@ def get_rate_for_date(date):
                      'interpolated': data[0][2]}]
 
         cache.write_rate_to_cache(response[0])
-
         return jsonify(currency=const.CURRENCY, rates=response), const.OK
 
     response = [cache.rates[date]]
-
     return jsonify(currency=const.CURRENCY, rates=response), const.OK
 
 
@@ -119,7 +117,6 @@ def get_sales_for_date(date):
         return jsonify(sale=response), const.OK
 
     response = [cache.sales[date]]
-
     return jsonify(sale=response), const.OK
 
 
@@ -163,7 +160,7 @@ def run_api():
         cache.update_rates()
         cache.update_sales()
 
-    cache_daemon = threading.Thread(target=cache.updates_manager, args=(const.DEFAULT_CACHING, ), daemon=True)
+    cache_daemon = threading.Thread(target=cache.updates_manager, args=(const.DEFAULT_CACHING,), daemon=True)
     cache_daemon.start()
     app.run()
 

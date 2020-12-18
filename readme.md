@@ -128,6 +128,7 @@ Limits for requests per user are listed in table below
 | Hour | Day |
 | --- | --- |
 | 200 per hour | 1000 per day |  
+
 These are fully configurable in `constants.py`
 ``` python
 DEFAULT_DAY_LIMIT = '1000 per day'

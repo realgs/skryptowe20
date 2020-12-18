@@ -4,7 +4,6 @@ import time
 from db_handler import fetch_rates_for_period, fetch_sales_and_rates_for_period
 from data_verifiers import to_datetime
 
-
 rates = {}
 rates_periods = []
 sales = {}

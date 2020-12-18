@@ -20,4 +20,3 @@ def dates_order_ok(start_date, end_date):
 
 def db_contains_year(date):
     return str(to_datetime(date).year) in constants.DB_YEARS_RANGE
-
