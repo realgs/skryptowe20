@@ -12,11 +12,12 @@ class Database:
 
 
     def __init__(self, db_source):
-        self.conn = sqlite3.connect(db_source)
+        self.db_source = db_source
 
 
     def create_avg_currency_rates_table(self):
-        c = self.conn.cursor()
+        conn = sqlite3.connect(self.db_source)
+        c = conn.cursor()
         c.execute(
         '''
         CREATE TABLE if not exists AvgUsdRates (
@@ -26,22 +27,8 @@ class Database:
         )
         '''
         )
-        self.conn.commit()
-
-
-    # def insert_usd_rates(self, start_date, end_date):
-    #     c = self.conn.cursor()
-
-    #     rates = fetch_currency_from_two_tables(start_date, end_date)
-    #     new_rates = set(self._add_missing_dates(rates))
-
-    #     c.execute('SELECT * FROM AvgUsdRates')
-    #     db_rates = c.fetchall()
-    #     to_insert = new_rates - set(db_rates)
-    #     print(to_insert)
-
-    #     c.executemany('INSERT INTO AvgUsdRates VALUES (?, ?, ?)', to_insert)
-    #     self.conn.commit()
+        conn.commit()
+        conn.close()
 
 
     def _add_missing_dates(self, rates):
@@ -63,8 +50,9 @@ class Database:
         return rates
 
 
-    def update_dates(self, conn, years):
-        c = self.conn.cursor()
+    def update_dates(self, years):
+        conn = sqlite3.connect(self.db_source)
+        c = conn.cursor()
 
         c.execute(
             f'''
@@ -74,9 +62,13 @@ class Database:
             '''
         )
 
+        conn.commit()
+        conn.close()
+
 
     def get_sales_usd_pln(self, start_date, end_date):
-        c = self.conn.cursor()
+        conn = sqlite3.connect(self.db_source)
+        c = conn.cursor()
 
         c.execute(
             '''
@@ -92,32 +84,34 @@ class Database:
             ''', (start_date, end_date)
         )
         res = c.fetchall()
+        conn.close()
+
         return res
 
 
     def get_avg_usd_rates(self, date=None):
-        c = self.conn.cursor()
+        conn = sqlite3.connect(self.db_source)
+        c = conn.cursor()
+        res = None
 
         if date is None:
             c.execute("""SELECT * FROM AvGUsdRates ORDER BY date""")
-            return c.fetchall()
+            res = c.fetchall()
         else:
             c.execute("""SELECT * FROM AvGUsdRates WHERE strftime(?, date) = strftime(?, ?) """, (self.DATEFORMAT, self.DATEFORMAT, date))
-            return c.fetchall()
+            res = c.fetchall()
 
+        conn.commit()
+        conn.close()
 
-    def closeConn(self):
-        self.conn.close()
+        return res
 
 
 if __name__ == "__main__":
     start_date = '2011-07-04'
-    end_date = '2013-05-06'
+    end_date = '2011-07-06'
 
     db = Database(DB_NAME)
-    print(db.get_avg_usd_rates(start_date))
-    print(db.get_avg_usd_rates('2020-12-12'))
-    # DB OPERATIONS
-    # create_avg_currency_rates_table(conn)
-    # insert_usd_rates(conn, start_date, end_date)
-    # update_dates(conn, 15)
+
+    # db.update_dates(15)
+    print(db.get_sales_usd_pln(start_date, end_date))

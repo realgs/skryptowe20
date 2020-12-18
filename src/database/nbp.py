@@ -37,7 +37,7 @@ def fetch_currency_from_two_tables(prev_date='2012-01-01', curr_date='2012-01-31
     tab_a = fetch_avg_currency(prev_date=prev_date, curr_date=curr_date, currency=currency)
     tab_b = fetch_avg_currency(table='b', prev_date=prev_date, curr_date=curr_date, currency=currency)
 
-    return tab_a + tab_b
+    return list(set(tab_a + tab_b))
 
 
 def from_json_to_list(json_file):

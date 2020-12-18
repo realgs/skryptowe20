@@ -36,6 +36,29 @@ def return_rate(date):
     )
 
 
+@app.route('/api/sales/<start_date>/<end_date>')
+def return_sales(start_date, end_date):
+  db = Database(DB_NAME)
+  res = db.get_sales_usd_pln(start_date, end_date)
+  if res == []:
+    return jsonify(status=404, info="Data not found"), 404
+  else:
+    sales = [{'date': x[0], 'usd': x[1], 'pln': x[2]} for x in res]
+    return jsonify(sales=sales)
+
+
+@app.route('/api/sales/<date>')
+def return_sale(date):
+  db = Database(DB_NAME)
+  res = db.get_sales_usd_pln(date, date)
+
+  if res == []:
+    return jsonify(status=404, info="Data not found"), 404
+  else:
+    [(date, usd, pln)] = res
+    return jsonify(date=date, usd=usd, pln=pln)
+
+
 if __name__ == '__main__':
 
   app.run('0.0.0.0', port=8080, debug=True)
