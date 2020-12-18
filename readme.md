@@ -9,12 +9,14 @@ GET requests return in form of JSON.
 ---
 
 ## Install Guide
-This projects implements automatic database creation for currency values. To make sale statistics to work you will need to make some changes to the code and provide your own database with sales.
+This projects implements automatic database creation for currency values. It also provides sample database file *sales.db* for sales statistic API demonstration.
 
 **Clone this repo:**
 ```git clone https://github.com/Rochala/skryptowe20.git ```
 ** Checkout to REST branch **
 ``` git checkout REST ```
+**Install requirement**
+``` pip install -r requirements.txt ```
 ** Run script **
 ``` python3 fetch_currency.py ```
 ** Configure Django project to your needs **
