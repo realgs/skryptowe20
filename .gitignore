@@ -1,1 +1,7 @@
 .DS_Store
+lab4.txt
+*.bak
+*.sqlite
+.vscode
+__pycache__/
+env
