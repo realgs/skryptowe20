@@ -1,4 +1,7 @@
 # REST with Django Rest Framewok
+
+---
+
 This API offers simple GET request, fetching currency values to Polish Zloty. It also allows to get sale statistics based date parameter.
 GET requests return in form of JSON.
 
@@ -7,6 +10,7 @@ GET requests return in form of JSON.
 1. [API usage](#api-usage)
 1. [Limits](#limits)
 1. [Dependencies](#dependencies)
+1. [Credits](#credits)
 
 ---
 
@@ -67,3 +71,9 @@ Avaliable currencies are: 'USD', 'EUR', 'CHF'
 * [Django](https://www.djangoproject.com/)
 * [Django REST Framework](https://www.django-rest-framework.org/)
 * [requests](https://github.com/psf/requests)
+
+---
+
+## Credits
+* [NBP](https://api.nbp.pl/en.html) for sharing currency API 
+* [Kaggle](https://www.kaggle.com/kyanyoga/sample-sales-data/?select=sales_data_sample.csv) for sharing database sample data
