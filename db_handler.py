@@ -37,22 +37,60 @@ def insert_values_to_rates_table(values):
     conn.close()
 
 
-def get_sums_and_rates_for_period(period):
+def fetch_rates_for_period(period):
     conn = connect_to_db()
     c = conn.cursor()
-    c.execute(f'''SELECT ORDERDATE, rate, SUM(SALES)
-                  FROM sales_data
-                  INNER JOIN avg_rates ON ORDERDATE = day
-                  WHERE ORDERDATE BETWEEN ? AND ?
-                  GROUP BY ORDERDATE
-                  ORDER BY ORDERDATE
+    c.execute('''SELECT day, rate, interpolated
+                 FROM avg_rates
+                 WHERE day BETWEEN ? AND ?
+                 ORDER BY day
                 ''', period)
     rows = c.fetchall()
     conn.close()
     return rows
 
 
-def get_first_sale_date():
+def fetch_rate_for_date(date):
+    conn = connect_to_db()
+    c = conn.cursor()
+    c.execute('''SELECT day, rate, interpolated
+                 FROM avg_rates
+                 WHERE day = ?
+                ''', (date, ))
+    row = c.fetchall()
+    conn.close()
+    return row
+
+
+def fetch_sales_and_rates_for_period(period):
+    conn = connect_to_db()
+    c = conn.cursor()
+    c.execute('''SELECT ORDERDATE, rate, SUM(SALES)
+                 FROM sales_data
+                 INNER JOIN avg_rates ON ORDERDATE = day
+                 WHERE ORDERDATE BETWEEN ? AND ?
+                 GROUP BY ORDERDATE
+                 ORDER BY ORDERDATE
+                ''', period)
+    rows = c.fetchall()
+    conn.close()
+    return rows
+
+
+def fetch_sale_and_rate_for_date(date):
+    conn = connect_to_db()
+    c = conn.cursor()
+    c.execute('''SELECT orderdate, rate, SUM(sales)
+                 FROM sales_data
+                 INNER JOIN avg_rates ON orderdate = day
+                 WHERE orderdate = ?
+                 GROUP BY orderdate''', (date, ))
+    row = c.fetchall()
+    conn.close()
+    return row
+
+
+def fetch_first_sale_date():
     conn = connect_to_db()
     c = conn.cursor()
     c.execute('''SELECT MIN(ORDERDATE)
@@ -60,11 +98,3 @@ def get_first_sale_date():
     values = c.fetchall()
     conn.close()
     return values
-
-
-def get_avg_rates_table():
-    conn = connect_to_db()
-    c = conn.cursor()
-    c.execute('''SELECT * FROM avg_rates''')
-    rows = c.fetchall()
-    return rows

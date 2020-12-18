@@ -1,11 +1,12 @@
 import flask
-import constans
 import threading
+import cache
+import constans as const
+import db_handler as dbh
 from flask import jsonify
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from data_verifiers import date_format_ok, db_contains_year, dates_order_ok, to_datetime
-from cache import rates_cache, sales_cache, updates_manager
 from datetime import timedelta
 
 app = flask.Flask(__name__)
@@ -14,97 +15,149 @@ app.config['JSON_SORT_KEYS'] = False
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
-    default_limits=[constans.DEFAULT_DAY_LIMIT, constans.DEFAULT_HOUR_LIMIT]
+    default_limits=[const.DEFAULT_DAY_LIMIT, const.DEFAULT_HOUR_LIMIT]
 )
 
 
 def period_validation(start_date, end_date):
     if not date_format_ok(start_date) or not date_format_ok(end_date):
-        return jsonify(error='Invalid date format'), constans.BAD_REQUEST
+        return jsonify(error='Invalid date format'), const.BAD_REQUEST
 
     if not db_contains_year(start_date) or not db_contains_year(end_date):
-        return jsonify(error='Dates out of available range'), constans.RANGE_NOT_SATISFIABLE
+        return jsonify(error='Dates out of available range'), const.RANGE_NOT_SATISFIABLE
 
     if not dates_order_ok(start_date, end_date):
-        return jsonify(error='Wrong dates order'), constans.BAD_REQUEST
+        return jsonify(error='Wrong dates order'), const.BAD_REQUEST
 
-    return constans.VALIDATION_OK
+    return const.VALIDATION_OK
 
 
 def date_validation(date):
     if not date_format_ok(date):
-        return jsonify(error='Invalid date format'), constans.BAD_REQUEST
+        return jsonify(error='Invalid date format'), const.BAD_REQUEST
 
     if not db_contains_year(date):
-        return jsonify(error='There is no data for given year'), constans.NOT_FOUND
+        return jsonify(error='There is no data for given year'), const.NOT_FOUND
 
-    return constans.VALIDATION_OK
+    return const.VALIDATION_OK
 
 
 @app.route('/api/rates/<date>', methods=['GET'])
 def get_rate_for_date(date):
     validation_res = date_validation(date)
-    if validation_res != constans.VALIDATION_OK:
+    if validation_res != const.VALIDATION_OK:
         return validation_res
 
-    response = [{'date': date,
-                 'rate': rates_cache[date]['rate'],
-                 'interpolated': rates_cache[date]['interpolated']}]
+    if date not in cache.rates:
+        data = dbh.fetch_rate_for_date(date)
+        if not data:
+            return jsonify(error='There is no data for given date'), const.NOT_FOUND
 
-    return jsonify(currency=constans.CURRENCY, rates=response), constans.OK
+        response = [{'date': date,
+                     'rate': data[0][1],
+                     'interpolated': data[0][2]}]
+
+        cache.write_rate_to_cache(response[0])
+
+        return jsonify(currency=const.CURRENCY, rates=response), const.OK
+
+    response = [cache.rates[date]]
+
+    return jsonify(currency=const.CURRENCY, rates=response), const.OK
 
 
 @app.route('/api/rates/<start_date>/<end_date>', methods=['GET'])
 def get_rates_for_period(start_date, end_date):
     validation_res = period_validation(start_date, end_date)
-    if validation_res != constans.VALIDATION_OK:
+    if validation_res != const.VALIDATION_OK:
         return validation_res
 
     response = []
+
+    if not cache.contains_period_rates((start_date, end_date)):
+        data = dbh.fetch_rates_for_period((start_date, end_date))
+        if not data:
+            return jsonify(error='There is no data for given date'), const.NOT_FOUND
+
+        for value in data:
+            response.append({'date': value[0],
+                             'rate': value[1],
+                             'interpolated': value[2]})
+
+        cache.write_period_rates(response, start_date, end_date)
+        return jsonify(currency=const.CURRENCY, rates=response), const.OK
+
     current_date = to_datetime(start_date)
     end_date = to_datetime(end_date) + timedelta(days=1)
     while current_date != end_date:
-        response.append({'date': str(current_date),
-                         'rate': rates_cache[str(current_date)]['rate'],
-                         'interpolated': rates_cache[str(current_date)]['interpolated']})
+        response.append(cache.rates[str(current_date)])
         current_date += timedelta(days=1)
 
-    return jsonify(currency=constans.CURRENCY, rates=response), constans.OK
+    if not response:
+        return jsonify(error='There is no data for given date'), const.NOT_FOUND
+
+    return jsonify(currency=const.CURRENCY, rates=response), const.OK
 
 
 @app.route('/api/sales/<date>', methods=['GET'])
 def get_sales_for_date(date):
     validation_res = date_validation(date)
-    if validation_res != constans.VALIDATION_OK:
+    if validation_res != const.VALIDATION_OK:
         return validation_res
 
-    response = [{'date': date,
-                 'rate': sales_cache[date]['rate'],
-                 'usd_sum': sales_cache[date]['usd_sum'],
-                 'pln_sum': sales_cache[date]['pln_sum']}]
+    if date not in cache.sales:
+        data = dbh.fetch_sale_and_rate_for_date(date)
+        if not data:
+            return jsonify(error='There is no data for given date'), const.NOT_FOUND
 
-    return jsonify(sale=response), constans.OK
+        response = [{'date': date,
+                     'rate': data[0][1],
+                     'usd_sale': data[0][2],
+                     'pln_sale': float(data[0][1]) * float(data[0][2])}]
+
+        cache.write_sale_to_cache(response[0])
+        return jsonify(sale=response), const.OK
+
+    response = [cache.sales[date]]
+
+    return jsonify(sale=response), const.OK
 
 
 @app.route('/api/sales/<start_date>/<end_date>', methods=['GET'])
 def get_sales_for_period(start_date, end_date):
     validation_res = period_validation(start_date, end_date)
-    if validation_res != constans.VALIDATION_OK:
+    if validation_res != const.VALIDATION_OK:
         return validation_res
+
+    response = []
+
+    if not cache.contains_period_sales((start_date, end_date)):
+        data = dbh.fetch_sales_and_rates_for_period((start_date, end_date))
+        if not data:
+            return jsonify(error='There is no data for given date'), const.NOT_FOUND
+
+        for value in data:
+            response.append({'date': value[0],
+                             'rate': value[1],
+                             'usd_sale': value[2],
+                             'pln_sale': float(value[1]) * float(value[2])})
+
+        cache.write_period_sales(response, start_date, end_date)
+        return jsonify(sale=response), const.OK
 
     start_date = to_datetime(start_date)
     end_date = to_datetime(end_date)
-    keys = [k for k in sales_cache.keys() if start_date <= to_datetime(k) <= end_date]
-    response = []
+    keys = [k for k in cache.sales.keys() if start_date <= to_datetime(k) <= end_date]
+
+    if not keys:
+        return jsonify(error='There is no data for given date'), const.NOT_FOUND
+
     for key in keys:
-        response.append({'date': key,
-                         'rate': sales_cache[key]['rate'],
-                         'usd_sum': sales_cache[key]['usd_sum'],
-                         'pln_sum': sales_cache[key]['pln_sum']})
+        response.append(cache.sales[key])
 
-    return jsonify(sale=response), constans.OK
+    return jsonify(sale=response), const.OK
 
 
-x = threading.Thread(target=updates_manager, daemon=True)
+x = threading.Thread(target=cache.updates_manager, daemon=True)
 x.start()
 app.run()

@@ -3,6 +3,7 @@ from datetime import date, timedelta, datetime
 from db_handler import *
 from constans import *
 from data_verifiers import *
+import cache
 
 
 def to_datetime(date_to_parse):
@@ -138,8 +139,7 @@ def main():
     # dates, rates, interpolated = get_rates_range('usd', '2003-01-01', '2004-12-31')
     # modify_database(zip(dates, rates, interpolated))
     # print_avg_rates()
-    resp = requests.get('http://api.nbp.pl/api/exchangerates/rates/a/gbp/2012-01-02/')
-    print(resp.json())
+    print(fetch_sales_and_rates_for_period(('2003-01-01', '2003-01-30')))
 
 
 if __name__ == '__main__':
