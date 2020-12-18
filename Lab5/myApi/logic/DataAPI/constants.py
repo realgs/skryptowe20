@@ -1,9 +1,12 @@
 API_URL = "http://api.nbp.pl/api/exchangerates/rates"
 
+MINUTE_IN_SEC = 60
 DAY_IN_SEC = 86400
 MAX_DAYS = 6588
 MIN_DAYS = 0
 FETCH_DAYS_LIMIT = 350
+
+MAX_REQ_PER_MINUTE = 10
 
 START_DATE = "2012-07-04"
 END_DATE = "2016-02-19"

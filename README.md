@@ -81,7 +81,7 @@ Where:
 - **currency_sum** -> sum of all transactions in the requested currency.
 
 # Errors
-When status 404 is returned it means something went wrong. A message is returned stating the error:
+When status 404 is returned it means something went wrong. Example message returned stating the error:
 ```json
 {
    "error":"Incorrect date"
@@ -94,3 +94,7 @@ Currently, these are the supported error messages:
 - **Incorrect input** -> other input error
 - **Start date should be smaller than end date** -> start date should be smaller than end date
 - **Internal database error** -> something went wrong with database connection
+- **Requests limit reached** -> limit of requests per minute was reached
+
+# Requests limit
+Requests are limited to 100 requests per minute for everyone. The value can be changed by updating `MAX_REQ_PER_MINUTE` in `constants.py`
