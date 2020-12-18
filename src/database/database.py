@@ -1,11 +1,9 @@
 from datetime import datetime, timedelta
 import sqlite3
 import json
-# from nbp import fetch_currency_from_two_tables, from_json_to_list
-
 
 DB_NAME = "../../Source/bazunia.db"
-TIME_DELTA = 182
+
 
 class Database:
     DATEFORMAT = "%Y-%m-%d"
@@ -42,28 +40,13 @@ class Database:
 
             if delta.days > 1:
                 next_day = curr_date + timedelta(days=1)
-                rates.insert(i + 1, (
-                    curr[0],
-                    next_day.strftime(self.DATEFORMAT),
-                    True
-                ))
+                if next_day.strftime(self.DATEFORMAT) not in [x[1] for x in rates]:
+                    rates.insert(i + 1, (
+                        curr[0],
+                        next_day.strftime(self.DATEFORMAT),
+                        True
+                    ))
         return rates
-
-
-    def update_dates(self, years):
-        conn = sqlite3.connect(self.db_source)
-        c = conn.cursor()
-
-        c.execute(
-            f'''
-            UPDATE Orders
-            SET OrderDate = DATETIME(OrderDate, '+{years} YEARS')
-            WHERE DATETIME(OrderDate, '+{years} YEARS') < date('now')
-            '''
-        )
-
-        conn.commit()
-        conn.close()
 
 
     def get_sales_usd_pln(self, start_date, end_date):
@@ -81,6 +64,7 @@ class Database:
             JOIN AvgUsdRates ON strftime('%Y-%m-%d', OrderDate) = strftime('%Y-%m-%d', date)
             WHERE strftime('%Y-%m-%d', date) BETWEEN ? AND ?
             GROUP BY date
+            ORDER BY date
             ''', (start_date, end_date)
         )
         res = c.fetchall()
@@ -111,7 +95,7 @@ class Database:
         conn = sqlite3.connect(self.db_source)
         c = conn.cursor()
 
-        c.execute("""SELECT * FROM AvGUsdRates WHERE strftime('%Y-%m-%d', date) BETWEEN ? AND ? """, (start_date, end_date))
+        c.execute("""SELECT * FROM AvGUsdRates WHERE strftime('%Y-%m-%d', date) BETWEEN ? AND ? ORDER BY date""", (start_date, end_date))
         res = c.fetchall()
 
         conn.commit()
@@ -120,11 +104,23 @@ class Database:
         return res
 
 
-if __name__ == "__main__":
-    start_date = '2011-07-04'
-    end_date = '2011-07-06'
+    def insert_usd_rates(self, start_date, end_date):
+        from nbp import fetch_currency_from_two_tables
 
-    db = Database(DB_NAME)
+        conn = sqlite3.connect(self.db_source)
+        c = conn.cursor()
 
-    # db.update_dates(15)
-    print(db.get_sales_usd_pln(start_date, end_date))
+        rates = fetch_currency_from_two_tables(start_date, end_date)
+        # new_rates = rates
+        new_rates = self._add_missing_dates(rates)
+
+        c.execute('SELECT date FROM AvgUsdRates')
+        db_rates = c.fetchall()
+        to_insert = []
+
+        for x in new_rates:
+            if x[1] not in db_rates:
+                to_insert.append(x)
+
+        c.executemany('INSERT INTO AvgUsdRates VALUES (?, ?, ?)', to_insert)
+        conn.commit()

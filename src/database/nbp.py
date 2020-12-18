@@ -27,7 +27,8 @@ def get_dates(start, end):
 
     while days_left > 0:
         date += timedelta(days=min(LIMIT, days_left))
-        dates.append(date)
+        if date not in dates:
+            dates.append(date)
 
         days_left -= (min(LIMIT, days_left) + 1)
     return [x.strftime('%Y-%m-%d') for x in dates]
