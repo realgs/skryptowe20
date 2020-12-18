@@ -158,6 +158,15 @@ def get_sales_for_period(start_date, end_date):
     return jsonify(sale=response), const.OK
 
 
-x = threading.Thread(target=cache.updates_manager, daemon=True)
-x.start()
-app.run()
+def run_api():
+    if const.DEFAULT_CACHING:
+        cache.update_rates()
+        cache.update_sales()
+
+    cache_daemon = threading.Thread(target=cache.updates_manager, args=(const.DEFAULT_CACHING, ), daemon=True)
+    cache_daemon.start()
+    app.run()
+
+
+if __name__ == '__main__':
+    run_api()

@@ -67,13 +67,19 @@ def contains_period_sales(period):
     return False
 
 
-def print_cached():
-    print(rates)
-    print(sales)
+def clear_cache():
+    rates.clear()
+    rates_periods.clear()
+    sales.clear()
+    sales_periods.clear()
 
 
-def updates_manager():
-    schedule.every(5).seconds.do(print_cached)
+def updates_manager(default_caching):
+    if default_caching:
+        schedule.every().day.at(constans.CACHE_UPDATE_TIME).do(update_rates)
+        schedule.every().day.at(constans.CACHE_UPDATE_TIME).do(update_sales)
+    else:
+        schedule.every().day.at(constans.CACHE_UPDATE_TIME).do(clear_cache)
 
     while True:
         schedule.run_pending()

@@ -1,22 +1,17 @@
 import requests
-from datetime import date, timedelta, datetime
-from db_handler import *
-from constans import *
-from data_verifiers import *
-import cache
-
-
-def to_datetime(date_to_parse):
-    return datetime.strptime(str(date_to_parse), '%Y-%m-%d').date()
+from datetime import date, timedelta
+import db_handler as dbh
+import constans as const
+from data_verifiers import to_datetime
 
 
 def get_nearest_rate(currency, known_date):
     currency_symbol = currency.lower()
     req_date = to_datetime(known_date)
-    if currency_symbol in CURRENCIES_SYMBOLS:
+    if currency_symbol in const.CURRENCIES_SYMBOLS:
         while True:
             resp = requests.get(
-                f'{REQUEST_ADDRESS}/{currency_symbol}/{req_date}')
+                f'{const.REQUEST_ADDRESS}/{currency_symbol}/{req_date}')
             if resp.status_code == 200:
                 return resp.json()
             else:
@@ -25,7 +20,7 @@ def get_nearest_rate(currency, known_date):
 
 def make_request(currency, start_date, end_date):
     resp = requests.get(
-        f'{REQUEST_ADDRESS}/{currency}/{start_date}/{end_date}/')
+        f'{const.REQUEST_ADDRESS}/{currency}/{start_date}/{end_date}/')
     if resp.status_code != 200:
         print(f'Request error: {resp.status_code}')
         return resp.status_code
@@ -85,15 +80,16 @@ def split_request(currency, number_of_days, start_date):
     total_rates = []
     total_interpolated = []
     start_date = to_datetime(start_date)
-    number_of_requests, days_left = int(number_of_days / REQUEST_DAYS_LIMIT), number_of_days % REQUEST_DAYS_LIMIT
-    end_date = start_date + timedelta(days=REQUEST_DAYS_LIMIT - 1)
+    number_of_requests, days_left = int(number_of_days / const.REQUEST_DAYS_LIMIT), \
+                                    number_of_days % const.REQUEST_DAYS_LIMIT
+    end_date = start_date + timedelta(days=const.REQUEST_DAYS_LIMIT - 1)
     for i in range(number_of_requests):
         days, rates, interpolated = make_request(currency, start_date, end_date)
         total_days.extend(days)
         total_rates.extend(rates)
         total_interpolated.extend(interpolated)
-        start_date += timedelta(days=REQUEST_DAYS_LIMIT)
-        end_date += timedelta(days=REQUEST_DAYS_LIMIT)
+        start_date += timedelta(days=const.REQUEST_DAYS_LIMIT)
+        end_date += timedelta(days=const.REQUEST_DAYS_LIMIT)
 
     if days_left != 0:
         completed_days, completed_rates, completed_interpolated = \
@@ -107,10 +103,10 @@ def split_request(currency, number_of_days, start_date):
 
 def get_rates_days(currency, number_of_days):
     currency_symbol = currency.lower()
-    if currency_symbol in CURRENCIES_SYMBOLS:
+    if currency_symbol in const.CURRENCIES_SYMBOLS:
         end_date = date.today()
         start_date = end_date - timedelta(days=number_of_days)
-        if number_of_days < REQUEST_DAYS_LIMIT:
+        if number_of_days < const.REQUEST_DAYS_LIMIT:
             return make_request(currency_symbol, start_date, end_date)
         else:
             return split_request(currency_symbol, number_of_days, start_date)
@@ -120,9 +116,9 @@ def get_rates_days(currency, number_of_days):
 
 def get_rates_range(currency, start_date, end_date):
     currency_symbol = currency.lower()
-    if currency_symbol in CURRENCIES_SYMBOLS:
+    if currency_symbol in const.CURRENCIES_SYMBOLS:
         number_of_days = (to_datetime(end_date) - to_datetime(start_date)).days
-        if number_of_days < REQUEST_DAYS_LIMIT:
+        if number_of_days < const.REQUEST_DAYS_LIMIT:
             return make_request(currency, start_date, end_date)
         else:
             return split_request(currency, number_of_days, start_date)
@@ -131,16 +127,9 @@ def get_rates_range(currency, start_date, end_date):
 
 
 def modify_database(values):
-    create_rates_table()
-    insert_values_to_rates_table(values)
+    dbh.create_rates_table()
+    dbh.insert_values_to_rates_table(values)
 
 
-def main():
-    # dates, rates, interpolated = get_rates_range('usd', '2003-01-01', '2004-12-31')
-    # modify_database(zip(dates, rates, interpolated))
-    # print_avg_rates()
-    print(fetch_sales_and_rates_for_period(('2003-01-01', '2003-01-30')))
-
-
-if __name__ == '__main__':
-    main()
+def run_nbp_api_handler():
+    pass
