@@ -33,6 +33,8 @@ def insert_rates(rate_vals_interpolated):
     conn.close()
 
 
+
+
 def get_sales_sum_for_dates(start_date, end_date):
     conn = create_connection()
     cursor = conn.cursor()

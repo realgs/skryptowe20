@@ -12,7 +12,7 @@ CACHE_UPDATE_INTERVAL = 12
 
 APPLICATION_REQUEST_LIMIT = ['300 per day', '40 per minute']
 REQUEST_LIMIT_RATE = '300 per day;40 per minute'
-REQUEST_LIMIT_SALE = '200 per day;30 per minute'
+REQUEST_LIMIT_SALE = '300 per day;30 per minute'
 
 DATE_FORMAT = "%Y-%m-%d"
 END_DATE = to_datetime("2005-05-05")
