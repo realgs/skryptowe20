@@ -3,9 +3,11 @@ This API offers simple GET request, fetching currency values to Polish Zloty. It
 GET requests return in form of JSON.
 
 1. [Install Guide](#install-guide)
+1. [Adding new currency](#adding-new-currency)
 1. [API usage](#api-usage)
 1. [Limits](#limits)
 1. [Dependencies](#dependencies)
+
 ---
 
 ## Install Guide
@@ -17,13 +19,25 @@ This projects implements automatic database creation for currency values. It als
 ``` git checkout REST ```
 1. **Install requirement**  
 ``` pip install -r requirements.txt ```
-1. ** Run script **  
-``` python3 fetch_currency.py ```
+1. **Run initializing script**  
+``` python3 init.py ```
+1. **[OPTIONAL] Make sure models.py SalesStats contains every currency**  
 1. ** Configure Django project to your needs **  
 1. **Start django**  
 ``` python3 manage.py runserver ```
 
 ---
+
+## Adding new currency
+1. **Make sure NBP api supports it**  
+1. **Add new currency symbol to constants.py Currency enum**  
+1. **Run init.py script**  
+```python3 init.py```
+1. **Add new variable in models.py to SalesStats class following way:**  
+```{CURRENCY_SYMBOL_LOWERCASED} = models.FloatField()```
+
+---
+
 ## API usage
 **Currency data range**
 ``` http://127.0.0.1:8000/CurrencyRange/?symbol={CURRENCY SYMBOL}start={DATE START}&end={DATE END} ```
@@ -45,7 +59,7 @@ This projects implements automatic database creation for currency values. It als
 |Standard User : | 1000 / hour |
 
 Currency API is also limited by dates **2001-01-02** and **2020-12-17**  
-Avaliable currencies are: 'USD', 'EUR'
+Avaliable currencies are: 'USD', 'EUR', 'CHF'
 
 ---
 
