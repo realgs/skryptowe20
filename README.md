@@ -20,8 +20,7 @@ pip install apscheduler
 ```
 
 This API requires also an existing database. I've included in my repository a database under name the **data.db**.
-Database is already filled with sales data from Kaggle. 
-With every start of API database will initialize table **rates** with exchange rates of USD from  [NBP API](http://api.nbp.pl/en.html).
+Database is already filled with sales data from Kaggle and corresponding exchange rates of USD from [NBP API](http://api.nbp.pl/en.html).
 
 ## Project structure
 The project consists of: **main.py**, serving as a main function, **data.db**, local database with sales and rates. Other file such as **nbp_operations.py**, **db_operations.py**, **validate_operations.py**
