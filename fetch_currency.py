@@ -135,7 +135,7 @@ def split_date(start_date, end_date):
     return dates
 
 
-# fill_currency(['USD', 'EUR'], '2002-01-01', '2020-12-17')
+fill_currency(['USD', 'EUR'], '2002-01-01', '2020-12-17')
 create_sales_stats()
 update_sales_stats('USD')
 update_sales_stats('EUR')

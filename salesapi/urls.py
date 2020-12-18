@@ -20,8 +20,6 @@ from sales import views
 
 
 router = routers.DefaultRouter()
-router.register(r'Currency', views.CurrencyViewSet)
-router.register(r'Sales', views.SalesStatsViewSet)
 router.register(r'CurrencyRange', views.CurrencyRangeList)
 router.register(r'SaleStats', views.SalesStatGetView)
 

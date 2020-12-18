@@ -7,24 +7,6 @@ from django.http import Http404
 import constants
 
 
-class CurrencyViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = Currency.objects.all().order_by('date')
-    serializer_class = CurrencySerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-
-class SalesStatsViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
-    queryset = SalesStats.objects.all()
-    serializer_class = SalesStatsSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-
 class CurrencyRangeList(viewsets.ReadOnlyModelViewSet):
     queryset = Currency.objects.all()
     serializer_class = CurrencySerializer
@@ -56,6 +38,4 @@ class SalesStatGetView(viewsets.ReadOnlyModelViewSet):
 
         if date is not None:
             qs = qs.filter(date=date)
-            return qs
-        else:
-            raise Http404()
+        return qs
