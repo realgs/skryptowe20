@@ -1,4 +1,4 @@
-import constans
+import constants
 import schedule
 import time
 from db_handler import fetch_rates_for_period, fetch_sales_and_rates_for_period
@@ -11,7 +11,7 @@ sales = {}
 sales_periods = []
 
 
-def update_rates(start=constans.DB_START_DATE, end=constans.DB_END_DATE):
+def update_rates(start=constants.DB_START_DATE, end=constants.DB_END_DATE):
     rows = fetch_rates_for_period((start, end))
     for row in rows:
         rates[row[0]] = {'date': row[0], 'rate': row[1], 'interpolated': row[2]}
@@ -39,7 +39,7 @@ def contains_period_rates(period):
     return False
 
 
-def update_sales(start=constans.DB_START_DATE, end=constans.DB_END_DATE):
+def update_sales(start=constants.DB_START_DATE, end=constants.DB_END_DATE):
     rows = fetch_sales_and_rates_for_period((start, end))
     for row in rows:
         sales[row[0]] = {'date': row[0], 'rate': row[1], 'usd_sale': row[2], 'pln_sale': float(row[1]) * float(row[2])}
@@ -76,10 +76,10 @@ def clear_cache():
 
 def updates_manager(default_caching):
     if default_caching:
-        schedule.every().day.at(constans.CACHE_UPDATE_TIME).do(update_rates)
-        schedule.every().day.at(constans.CACHE_UPDATE_TIME).do(update_sales)
+        schedule.every().day.at(constants.CACHE_UPDATE_TIME).do(update_rates)
+        schedule.every().day.at(constants.CACHE_UPDATE_TIME).do(update_sales)
     else:
-        schedule.every().day.at(constans.CACHE_UPDATE_TIME).do(clear_cache)
+        schedule.every().day.at(constants.CACHE_UPDATE_TIME).do(clear_cache)
 
     while True:
         schedule.run_pending()

@@ -1,7 +1,7 @@
 import flask
 import threading
 import cache
-import constans as const
+import constants as const
 import db_handler as dbh
 from flask import jsonify
 from flask_limiter import Limiter

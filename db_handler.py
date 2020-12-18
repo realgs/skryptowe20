@@ -1,13 +1,12 @@
 import sqlite3
+import constants as const
 from sqlite3 import Error
-
-DB_FILE = 'database.db'
 
 
 def connect_to_db():
     conn = None
     try:
-        conn = sqlite3.connect(DB_FILE)
+        conn = sqlite3.connect(const.DB_FILE)
     except Error as e:
         print(e)
 

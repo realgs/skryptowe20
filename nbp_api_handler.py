@@ -1,7 +1,7 @@
 import requests
 from datetime import date, timedelta
 import db_handler as dbh
-import constans as const
+import constants as const
 from data_verifiers import to_datetime
 
 
