@@ -3,7 +3,8 @@ from rest_framework import viewsets
 from rest_framework import permissions
 from sales.serializers import CurrencySerializer, SalesStatsSerializer
 from datetime import datetime
-from django.http import Http404
+from rest_framework.exceptions import ValidationError
+
 import constants
 
 
@@ -18,12 +19,12 @@ class CurrencyRangeList(viewsets.ReadOnlyModelViewSet):
         start = self.request.query_params.get('start', None)
         end = self.request.query_params.get('end', datetime.now())
         if datetime.strptime(start, '%Y-%m-%d') < constants.FIRST_DAY \
-                or datetime.strptime(end, '%Y-%m-%d') > constants.LAST_DAY \
-                or symbol not in constants.Currency._value2member_map_:
-            raise Http404()
+                or datetime.strptime(end, '%Y-%m-%d') > constants.LAST_DAY:
+            raise ValidationError({"error": ["Dates are not is valid range"]})
+        if symbol not in constants.Currency._value2member_map_:
+            raise ValidationError({"error": [f"{symbol} is not valid currency symbol"]})
 
-        if symbol is not None:
-            qs = qs.filter(symbol=symbol, date__range=(start, end))
+        qs = qs.filter(symbol=symbol, date__range=(start, end))
         return qs
 
 
