@@ -3,9 +3,9 @@ This API offers simple GET request, fetching currency values to Polish Zloty. It
 GET requests return in form of JSON.
 
 
-1. API usage [api-usage]
-1. Limits [limits]
-1. Dependencies [dependencies]
+1. [API usage](#api-usage)
+1. [Limits](#limits)
+1. [Dependencies](#dependencies)
 ---
 
 ## Install Guide
@@ -34,6 +34,8 @@ This projects implements automatic database creation for currency values. To mak
 ```http://127.0.0.1:8000/SaleStats/?date=2005-05-17 ```
 *You can also get whole range by using*
 ```http://127.0.0.1:8000/SaleStats/```
+
+---
 ## Limits
 |User type | Limit |
 |:-|:-
@@ -42,7 +44,9 @@ This projects implements automatic database creation for currency values. To mak
 
 Currency API is also limited by dates **2001-01-02** and **2020-12-17**
 
+---
+
 ## Dependencies
-[Django](https://www.djangoproject.com/)
-[Django REST Framework](https://www.django-rest-framework.org/)
-[requests](https://github.com/psf/requests)
+* [Django](https://www.djangoproject.com/)
+* [Django REST Framework](https://www.django-rest-framework.org/)
+* [requests](https://github.com/psf/requests)
