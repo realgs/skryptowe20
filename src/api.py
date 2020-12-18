@@ -2,7 +2,7 @@ from database.database import Database
 from flask import Flask, jsonify, request
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-import sqlite3
+from flask_caching import Cache
 
 
 DB_NAME = "../Source/bazunia.db"
@@ -15,13 +15,18 @@ limiter = Limiter(
     default_limits=["200 per day", "50 per hour"]
 )
 
+cache = Cache(config={'CACHE_TYPE': 'simple'})
+cache.init_app(app)
+
 @app.route('/api/home/<name>')
+@cache.cached(timeout=50)
 def home(name):
   return jsonify(hello= "Hello",
               world=name)
 
 
 @app.route('/api/rates')
+@cache.cached(timeout=50)
 def return_all_rates():
   db = Database(DB_NAME)
   rates = db.get_avg_usd_rates()
@@ -33,6 +38,7 @@ def return_all_rates():
 
 
 @app.route('/api/rates/<date>')
+@cache.cached(timeout=50)
 def return_rate(date):
   db = Database(DB_NAME)
   res = db.get_avg_usd_rates(date)
@@ -47,6 +53,7 @@ def return_rate(date):
 
 
 @app.route('/api/rates/<start>/<end>')
+@cache.cached(timeout=50)
 def return_rates(start, end):
   db = Database(DB_NAME)
   res = db.get_avg_usd_rates_in_interval(start, end)
@@ -58,6 +65,7 @@ def return_rates(start, end):
 
 
 @app.route('/api/sales/<start_date>/<end_date>')
+@cache.cached(timeout=50)
 def return_sales(start_date, end_date):
   db = Database(DB_NAME)
   res = db.get_sales_usd_pln(start_date, end_date)
@@ -69,6 +77,7 @@ def return_sales(start_date, end_date):
 
 
 @app.route('/api/sales/<date>')
+@cache.cached(timeout=50)
 def return_sale(date):
   db = Database(DB_NAME)
   res = db.get_sales_usd_pln(date, date)
@@ -78,6 +87,11 @@ def return_sale(date):
   else:
     [(date, usd, pln)] = res
     return jsonify(date=date, usd=usd, pln=pln)
+
+
+@app.errorhandler(429)
+def handle_too_many_req(e):
+  return jsonify(status=429, info="Too many requests!"), 429
 
 
 @app.errorhandler(404)
