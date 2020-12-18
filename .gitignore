@@ -1,5 +1,4 @@
 .DS_Store
-sales.db
 # Django #
 *.log
 *.pot
