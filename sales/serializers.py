@@ -11,4 +11,4 @@ class CurrencySerializer(serializers.HyperlinkedModelSerializer):
 class SalesStatsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = SalesStats
-        fields = ['date', 'sales_sum']
+        fields = ['date', 'sales_sum', 'usd', 'eur']

@@ -43,3 +43,19 @@ class CurrencyRangeList(viewsets.ReadOnlyModelViewSet):
         if symbol is not None:
             qs = qs.filter(symbol=symbol, date__range=(start, end))
         return qs
+
+
+class SalesStatGetView(viewsets.ReadOnlyModelViewSet):
+    queryset = SalesStats.objects.all()
+    serializer_class = SalesStatsSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        date = self.request.query_params.get('date', None)
+
+        if date is not None:
+            qs = qs.filter(date=date)
+            return qs
+        else:
+            raise Http404()

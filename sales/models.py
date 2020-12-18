@@ -15,6 +15,8 @@ class Currency(models.Model):
 class SalesStats(models.Model):
     date = models.DateField(primary_key=True)
     sales_sum = models.FloatField()
+    usd = models.FloatField()
+    eur = models.FloatField()
 
     class Meta:
         ordering = ('date',)

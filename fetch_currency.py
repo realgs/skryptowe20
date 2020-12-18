@@ -56,8 +56,8 @@ def create_sales_stats():
                             GROUP BY ORDERDATE
                             ORDER BY ORDERDATE'''):
         try:
-            safe_data = (int(row[1]), float(row[0]))
-            c_django.execute('INSERT INTO sales_salesstats VALUES(?, ?)', safe_data)
+            safe_data = (datetime.fromtimestamp(int(row[1])).date(), float(row[0]))
+            c_django.execute('INSERT INTO sales_salesstats(date, sales_sum) VALUES(?, ?)', safe_data)
         except(sqlite3.IntegrityError):
             duplicates += 1
 
@@ -67,8 +67,25 @@ def create_sales_stats():
     conn_django.close()
 
 
-def update_sales_stats():
-    return 0
+def update_sales_stats(symbol):
+    conn = sqlite3.connect('db.sqlite3')
+    c = conn.cursor()
+    c.execute('''SELECT value, date, sales_sum FROM sales_currency
+            join sales_salesstats using (date)
+            where symbol = ? order by date''', (symbol.upper(),))
+    currency_data = c.fetchall()
+
+    try:
+        c.execute(f'ALTER TABLE sales_salesstats add column {symbol.upper()} real')
+    except(sqlite3.OperationalError):
+        print("Column already exists")
+
+    for currency in currency_data:
+        c.execute(f'update sales_salesstats set {symbol.upper()} = ? where date = ?',
+                  (currency[0] * currency[2], currency[1],))
+
+    conn.commit()
+    conn.close()
 
 
 def get_range(currency, start_date, end_date):
@@ -118,5 +135,8 @@ def split_date(start_date, end_date):
     return dates
 
 
-fill_currency(['USD', 'EUR'], '2002-01-01', '2020-12-17')
+# fill_currency(['USD', 'EUR'], '2002-01-01', '2020-12-17')
 create_sales_stats()
+update_sales_stats('USD')
+update_sales_stats('EUR')
+
