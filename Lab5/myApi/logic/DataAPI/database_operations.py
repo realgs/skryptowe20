@@ -1,6 +1,8 @@
 import sqlite3
-from logic.DataAPI.constants import DATABASE_PATH, START_DATE, END_DATE
+from logic.DataAPI.constants import DATABASE_PATH, START_DATE, END_DATE, SUMMARY_SUPPORTED_CURRENCIES
 from logic.DataAPI.web_data import RatesWrapper
+from logic.DataAPI.date_parser import is_date_valid
+from logic.DataAPI.exceptions import UnsupportedCurrencyException
 
 def connect_to_database():
     conn = sqlite3.connect(DATABASE_PATH)
@@ -81,7 +83,13 @@ def summary_to_json(summary):
             f"\"currency_sum\":\"{currency}\""
             "}")
 
+def validate_currency(currency):
+    if not currency in SUMMARY_SUPPORTED_CURRENCIES:
+        raise UnsupportedCurrencyException
+
 def get_summary(currency, date):
+    validate_currency(currency)
+    is_date_valid(date)
     c, conn = connect_to_database()
     querry = f"""
     SELECT *

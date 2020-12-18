@@ -6,15 +6,17 @@ from logic.DataAPI.constants import \
     MIN_DAYS, \
     DAY_IN_SEC, \
     DATE_FORMAT, \
-    FETCH_DAYS_LIMIT, \
-    MSG_ERROR_INVALID_DAYS
+    FETCH_DAYS_LIMIT
+from logic.DataAPI.exceptions import IncorrectDateException
 
 def is_days_valid(days):
     return days > MIN_DAYS and days < MAX_DAYS
 
-#TODO: implement correct logic
-def are_dates_valid(start_date, end_date):
-    return True
+def is_date_valid(date):
+    try:
+        date_string_to_datetime(date)
+    except ValueError:
+        raise IncorrectDateException
 
 def date_sec_to_string(date):
     return datetime.fromtimestamp(date).strftime(DATE_FORMAT)
@@ -72,14 +74,14 @@ def correct_weekends(rates_wrapper):
     return output
 
 def convert_days_to_dates(start_date, end_date):
+    is_date_valid(start_date)
+    is_date_valid(end_date)
     converted_start_date = date_string_to_datetime(start_date)
     converted_end_date = date_string_to_datetime(end_date)
 
     days = int((converted_end_date - converted_start_date).total_seconds() / DAY_IN_SEC)
 
     days+=1
-    if not (is_days_valid(days) and are_dates_valid(start_date, end_date)):
-        raise Exception(MSG_ERROR_INVALID_DAYS)
 
     end_of_period = int(round(converted_end_date.timestamp()))
     total_days = days * DAY_IN_SEC

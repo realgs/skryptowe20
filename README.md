@@ -79,3 +79,18 @@ Sample output:
 Where:
 - **original_sum** -> sum of all transactions in the original value.
 - **currency_sum** -> sum of all transactions in the requested currency.
+
+# Errors
+When status 404 is returned it means something went wrong. A message is returned stating the error:
+```json
+{
+   "error":"Incorrect date"
+}
+```
+Currently, these are the supported error messages:
+- **Incorrect date** -> input date format is not correct
+- **Unsupported currency** -> currency is not on supported currencies list
+- **Failed to fetch from NBPAPI** -> error connecting with NBPAPI
+- **Incorrect input** -> other input error
+- **Start date should be smaller than end date** -> start date should be smaller than end date
+- **Internal database error** -> something went wrong with database connection
