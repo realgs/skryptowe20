@@ -8,6 +8,7 @@ requests_cache = []
 
 def update_cache():
     data_rates = get_rates_for_dates(START_DATE, END_DATE)
+
     for date, rate, interpolated in data_rates:
         rates_cache[date] = {'date': date, 'usd_rate': rate, 'interpolated': interpolated}
 
