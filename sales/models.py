@@ -1,5 +1,5 @@
 from django.db import models
-
+import constants
 
 class Currency(models.Model):
     symbol = models.CharField(max_length=3, blank=False, default='')
@@ -17,6 +17,7 @@ class SalesStats(models.Model):
     sales_sum = models.FloatField()
     usd = models.FloatField()
     eur = models.FloatField()
+    chf = models.FloatField()
 
     class Meta:
         ordering = ('date',)

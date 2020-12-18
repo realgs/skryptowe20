@@ -1,5 +1,6 @@
 from sales.models import SalesStats, Currency
 from rest_framework import serializers
+import constants
 
 
 class CurrencySerializer(serializers.HyperlinkedModelSerializer):
@@ -11,4 +12,6 @@ class CurrencySerializer(serializers.HyperlinkedModelSerializer):
 class SalesStatsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = SalesStats
-        fields = ['date', 'sales_sum', 'usd', 'eur']
+        fields = ['date', 'sales_sum']
+        for c in constants.Currency:
+            fields.append(c.value.lower())

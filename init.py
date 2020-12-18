@@ -10,8 +10,7 @@ def make_request(currency, start_date, end_date):
         print('Invalid arguments, please try again')
     else:
         response = requests.get(
-            f'http://api.nbp.pl/api/exchangerates/rates/a/{currency} \
-            /{start_date.date()}/{end_date.date()}/?format=json')
+            f'http://api.nbp.pl/api/exchangerates/rates/a/{currency}/{start_date.date()}/{end_date.date()}/?format=json')
         if(response.status_code != 200):
             print(f'Request Error {response.status_code}')
             return response.status_code
@@ -101,6 +100,20 @@ def get_range(currency, start_date, end_date):
     return [item for subl in x for item in subl]
 
 
+def split_date(start_date, end_date):
+    days_between = (to_date(end_date) - to_date(start_date)).days
+    dates = []
+    while days_between != 0:
+        if days_between >= constants.REQUEST_LIMIT:
+            dates.append((to_date(end_date) - timedelta(days=days_between), to_date(end_date) -
+                          timedelta(days=days_between) + timedelta(days=constants.REQUEST_LIMIT - 1)))
+            days_between -= constants.REQUEST_LIMIT
+        else:
+            dates.append((to_date(end_date) - timedelta(days=days_between), to_date(end_date)))
+            days_between = 0
+    return dates
+
+
 def fill_currency(currencies, start_date, end_date):
     for currency in currencies:
         currencyValues = get_range(currency, start_date, end_date)
@@ -121,22 +134,7 @@ def fill_currency(currencies, start_date, end_date):
         conn.close()
 
 
-def split_date(start_date, end_date):
-    days_between = (to_date(end_date) - to_date(start_date)).days
-    dates = []
-    while days_between != 0:
-        if days_between >= constants.REQUEST_LIMIT:
-            dates.append((to_date(end_date) - timedelta(days=days_between), to_date(end_date) -
-                          timedelta(days=days_between) + timedelta(days=constants.REQUEST_LIMIT - 1)))
-            days_between -= constants.REQUEST_LIMIT
-        else:
-            dates.append((to_date(end_date) - timedelta(days=days_between), to_date(end_date)))
-            days_between = 0
-    return dates
-
-
-fill_currency(['USD', 'EUR'], '2002-01-01', '2020-12-17')
+fill_currency(list(map(lambda c: c.value, constants.Currency)), '2001-01-02', '2020-12-17')
 create_sales_stats()
-update_sales_stats('USD')
-update_sales_stats('EUR')
-
+for c in constants.Currency:
+    update_sales_stats(c.value)

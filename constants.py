@@ -5,7 +5,6 @@ from datetime import datetime
 class Currency(Enum):
     USD = 'USD'
     EUR = 'EUR'
-    PLN = 'PLN'
     CHF = 'CHF'
 
 
