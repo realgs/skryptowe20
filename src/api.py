@@ -18,8 +18,11 @@ def home(name):
 def return_all_rates():
   db = Database(DB_NAME)
   rates = db.get_avg_usd_rates()
-  rates = [{'rate':x[0], 'date':x[1], 'interpolated':x[2] == 1 if True else False} for x in rates]
-  return jsonify(rates=rates)
+  if rates == []:
+    return jsonify(status=404, info="Data not found"), 404
+  else:
+    rates = [{'rate':x[0], 'date':x[1], 'interpolated':x[2] == 1 if True else False} for x in rates]
+    return jsonify(rates=rates)
 
 
 @app.route('/api/rates/<date>')
@@ -68,6 +71,11 @@ def return_sale(date):
   else:
     [(date, usd, pln)] = res
     return jsonify(date=date, usd=usd, pln=pln)
+
+
+@app.errorhandler(404)
+def handle_bad_req(e):
+  return jsonify(info="Bad request!"), 400
 
 
 if __name__ == '__main__':
