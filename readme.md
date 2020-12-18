@@ -42,7 +42,8 @@ This projects implements automatic database creation for currency values. To mak
 | Anonymous user: | 10 / hour |
 |Standard User : | 1000 / hour |
 
-Currency API is also limited by dates **2001-01-02** and **2020-12-17**
+Currency API is also limited by dates **2001-01-02** and **2020-12-17**  
+Avaliable currencies are: 'USD', 'EUR'
 
 ---
 
