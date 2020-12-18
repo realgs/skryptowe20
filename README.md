@@ -53,7 +53,7 @@ python main.py
 The API runs under http://127.0.0.1:5000/api address. Available endpoints are listed below. 
 
 ## Endpoints
-###Get rates for day
+### Get rates for day
   Returns json data about USD to PLN exchange rate for a given day.
 
 **Requests per user**  
@@ -75,7 +75,7 @@ The API runs under http://127.0.0.1:5000/api address. Available endpoints are li
   "usd_rate": 3.2111
 }`
 
-###Get rates for data range
+### Get rates for data range
   Returns json data about USD to PLN exchange rate for a given period of time.
 
 **Requests per user**  
@@ -104,7 +104,7 @@ The API runs under http://127.0.0.1:5000/api address. Available endpoints are li
 }`
 
 
-###Get sales for day
+### Get sales for day
   Returns json data about sales, represented in USD and PLN for a given day.
 
 **Requests per user**  
@@ -127,7 +127,7 @@ The API runs under http://127.0.0.1:5000/api address. Available endpoints are li
   "usd_sale_sum": 58437.04
 }`   
     
-###Get sales for data range
+### Get sales for data range
   Returns json data about sales represented in USD and PLN for a given period of time.
 
 **Requests per user**  
@@ -158,7 +158,7 @@ The API runs under http://127.0.0.1:5000/api address. Available endpoints are li
   }}`
   
      
-##Error Response Codes
+## Error Response Codes
 
 
 **WRONG_DATE_FORMAT**
