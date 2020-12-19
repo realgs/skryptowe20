@@ -34,22 +34,30 @@ def __convert_array_of_responses(responses):
             INTERPOLATED_KEY: False
         }, rates))
 
-def __append_missing_dates(rates):
+def __append_missing_dates(rates, today):
     i = 0
-    while i < len(rates) - 1:
+    while i < len(rates) :
         current = rates[i]
-        next_item = rates[i + 1]
+        if i < len(rates) - 1:
+            next_item = rates[i + 1]
 
-        delta = next_item[DATE_KEY] - current[DATE_KEY]
+            delta = next_item[DATE_KEY] - current[DATE_KEY]
 
-        if delta.days > 1:
-            rates.insert(i + 1, {
+            if delta.days > 1:
+                rates.insert(i + 1, {
+                    DATE_KEY: current[DATE_KEY] + timedelta(days=1),
+                    RATE_KEY: current[RATE_KEY],
+                    INTERPOLATED_KEY: True
+                })
+        elif (today - current[DATE_KEY]).days > 0:
+            rates.append({
                 DATE_KEY: current[DATE_KEY] + timedelta(days=1),
                 RATE_KEY: current[RATE_KEY],
                 INTERPOLATED_KEY: True
             })
 
         i += 1
+
     return rates
 
 def __convert_dates_to_string(rates):
@@ -69,7 +77,7 @@ def get_rete_of_currency(currency, delta):
     if delta <= 0:
         raise ValueError('Delta must be posivite')
 
-    date_ranges = __delta_to_ranges(delta)
+    date_ranges = __delta_to_ranges(delta - 1)
     responses = []
 
     for date_range in date_ranges:
@@ -85,16 +93,16 @@ def get_rete_of_currency(currency, delta):
             responses.append(json.loads(rb.text))
 
     final_result = __convert_array_of_responses(responses)
-    __append_missing_dates(final_result)
+    __append_missing_dates(final_result, datetime.today())
     final_result = __convert_dates_to_string(final_result)
 
     return final_result
 
 if __name__ == '__main__':
-    eur = get_rete_of_currency('eur', 365 // 2)
-    usd = get_rete_of_currency('usd', 365 // 2)
+    eur = get_rete_of_currency('eur', 30)
+    usd = get_rete_of_currency('usd', 30)
     print(len(eur))
     print(len(usd))
 
-    # print(json.dumps(eur, indent=4))
-    # print(json.dumps(usd, indent=4))
+    print(json.dumps(eur, indent=4))
+    print(json.dumps(usd, indent=4))

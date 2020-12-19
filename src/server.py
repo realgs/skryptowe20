@@ -3,6 +3,7 @@ from flask_caching import Cache
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from database import datetime, NoSuchTableError
+import argparse
 
 import database as db
 from keys import *
@@ -82,8 +83,14 @@ def get_sales_from_given_day(currency, day):
 def get_sales_between(currency, begin, end):
     return __error_handler(__get_sales_between_handler, currency, begin, end)
 
-if __name__ == "__main__":
-    # for currency in currencies:
-    #     db.create_and_fill_rates_table(currency, time)
+def init_server_database():
+    for currency in currencies:
+        db.create_and_fill_rates_table(currency, time)
 
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', '--init', help='init database', action='store_true', default=False)
+    args = parser.parse_args()
+    if args.init:
+        init_server_database()
     app.run()

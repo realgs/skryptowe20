@@ -3,6 +3,7 @@ import json
 import nbp_api 
 from datetime import datetime, timedelta
 from keys import *
+import argparse
 
 
 class NoSuchTableError(Exception):
@@ -21,7 +22,7 @@ def __rates_dict_to_tuple(dictionaries):
 
 def __check_if_table_exists(conn, table_name):
     c = conn.cursor()
-    c.execute(''' SELECT count(name) FROM sqlite_master WHERE type = 'table' AND name = ?''', (table_name,))
+    c.execute(''' SELECT count(name) FROM sqlite_master WHERE type = 'table' AND name = ?''', (table_name.upper(),))
     if c.fetchone()[0] == 0:
         conn.close()
         raise NoSuchTableError('Such table does not exist')
@@ -115,5 +116,5 @@ def get_sales_between(desired_currency, begin, end):
     return res
 
 if __name__ == '__main__':
-    # print(json.dumps(get_between('usd', '2020-01-01', '2020-10-10'), indent=4))
+    print(json.dumps(get_between('usd', '2020-01-01', '2020-10-10'), indent=4))
     print(json.dumps(get_last('eur', 10), indent=4))
