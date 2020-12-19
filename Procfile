@@ -1,1 +1,1 @@
-web: cd lab5_solutions && python api.py
+web: cd lab5_solutions && gunicorn api:app
