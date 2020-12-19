@@ -1,15 +1,13 @@
-from datetime import datetime
-import currency_api
+from flask import Flask
+from flask_restful import Api
 
+from currency_api import TwoDatesCurrencyRates, OneDayCurrencyRate
 
-def parse_str_to_date(str_date):
-    return datetime.strptime(str_date, '%Y-%m-%d').date()
+app = Flask(__name__)
+api = Api(app)
 
+api.add_resource(OneDayCurrencyRate, "/currency-rates/<string:currency>/<string:date>")
+api.add_resource(TwoDatesCurrencyRates, "/currency-rates/<string:currency>/<string:start_date>/<string:end_date>")
 
 if __name__ == '__main__':
-    str_date_from = "2019-11-05"
-    str_date_to = "2019-11-12"
-
-    date_from = parse_str_to_date(str_date_from)
-    date_to = parse_str_to_date(str_date_to)
-    currency_api.get_currency_rates('GBP', date_from, date_to)
+    app.run(debug=True)

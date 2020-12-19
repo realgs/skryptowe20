@@ -1,13 +1,79 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 
-from database import DatabaseManager
+from flask_restful import Resource
+
+import currencies
+from database import CurrenciesDatabaseManager
 
 SERVER = 'DESKTOP-LKE4F79'
 DATABASE_NAME = 'AdventureWorks2019'
 
+MIN_AVAILABLE_YEAR = 2002
+
+
+class TwoDatesCurrencyRates(Resource):
+    def get(self, currency, start_date, end_date):
+        error_msg = get_error_json_with_code_for_data(currency, start_date, end_date)
+        if error_msg is not None:
+            return error_msg
+
+        start_date = parse_str_to_date(start_date)
+        end_date = parse_str_to_date(end_date)
+        rates = get_currency_rates(currency, start_date, end_date)
+        return create_json_from_rates(rates, currency)
+
+
+class OneDayCurrencyRate(Resource):
+    def get(self, currency, date):
+        error_msg = get_error_json_with_code_for_data(currency, date)
+        if error_msg is not None:
+            return error_msg
+
+        date = parse_str_to_date(date)
+        rates = get_currency_rates(currency, date, date)
+        return create_json_from_rates(rates, currency)
+
+
+def get_error_json_with_code_for_data(currency, date, end_date=None):
+    currency_available = currency_is_available(currency)
+    dates_are_correct = date_is_correct(date)
+    if dates_are_correct and end_date is not None:
+        dates_are_correct = date_is_correct(end_date)
+
+    if not currency_available:
+        if dates_are_correct:
+            return create_error_message_json("Wrong currency"), 400
+        return create_error_message_json("Wrong request"), 400
+    if not dates_are_correct:
+        return create_error_message_json("Wrong date"), 400
+
+    date = parse_str_to_date(date)
+    if date.year < MIN_AVAILABLE_YEAR or date >= datetime.now().date():
+        return create_error_message_json("No data available"), 404
+    if end_date is not None:
+        end_date = parse_str_to_date(end_date)
+        if end_date >= datetime.now().date():
+            return create_error_message_json("End date is out of range"), 400
+        if date > end_date:
+            return create_error_message_json("Start date must be before end date"), 400
+
+    return None
+
+
+def currency_is_available(currency):
+    return currencies.AVAILABLE_CURRENCIES.__contains__(str(currency).upper())
+
+
+def date_is_correct(date):
+    try:
+        datetime.strptime(date, '%Y-%m-%d')
+    except ValueError:
+        return False
+    return True
+
 
 def get_currency_rates(currency, date_from, date_to):
-    database_manager = DatabaseManager(SERVER, DATABASE_NAME)
+    database_manager = CurrenciesDatabaseManager(SERVER, DATABASE_NAME)
     db_rates = database_manager.get_currency_rates(currency, date_from, date_to)
     if len(db_rates) == 0:
         database_manager.insert_currency_data_to_table(currency, date_from, date_to)
@@ -18,9 +84,28 @@ def get_currency_rates(currency, date_from, date_to):
             upload_missing_rows_to_database(database_manager, currency, date_from, date_to)
             db_rates = database_manager.get_currency_rates(currency, date_from, date_to)
 
-    for row in db_rates:
-        print(row)
-    # CREATE AND THEN RETURN JSON
+    return db_rates
+
+
+def create_json_from_rates(rates, currency):
+    json_respond = {
+        "rates": [],
+        "currency": str(currency).upper()
+    }
+    for rate in rates:
+        str_date = parse_datetime_to_str(rate[0])
+        currency_day_data = {
+            "date": str_date,
+            "value": rate[1],
+            "isInterpolated": rate[2]
+        }
+        json_respond["rates"].append(currency_day_data)
+
+    return json_respond
+
+
+def create_error_message_json(message):
+    return {"message": message}
 
 
 def upload_missing_rows_to_database(database, currency, date_from, date_to):
@@ -42,3 +127,11 @@ def upload_missing_rows_to_database(database, currency, date_from, date_to):
 
     if empty_data:
         database.insert_currency_data_to_table(currency, empty_data_begin_date, last_date)
+
+
+def parse_str_to_date(str_datetime):
+    return datetime.strptime(str_datetime, '%Y-%m-%d').date()
+
+
+def parse_datetime_to_str(date):
+    return date.strftime('%Y-%m-%d')

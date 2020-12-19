@@ -4,6 +4,8 @@ from datetime import date, timedelta
 import dateutil.parser
 import requests
 
+NO_DATA_RESPONSE = '404 NotFound - Not Found - Brak danych'
+
 
 def get_url_data(url):
     try:
@@ -13,7 +15,8 @@ def get_url_data(url):
     except requests.exceptions.ConnectionError:
         print('No connection')
     except json.decoder.JSONDecodeError as err:
-        print('Error occurred while decoding JSON: ', err.doc)
+        if err.doc != NO_DATA_RESPONSE:
+            print('Error occurred while decoding JSON: ', err.doc)
     return None
 
 

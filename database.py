@@ -6,7 +6,7 @@ from currency_api_connector import CurrencyDataDownloader
 import currencies
 
 
-class DatabaseManager:
+class CurrenciesDatabaseManager:
 
     def __init__(self, server, database):
         self.__min_available_year = 2002
