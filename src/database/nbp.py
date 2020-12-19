@@ -49,14 +49,3 @@ def from_json_to_list(json_file):
         return list(zip(mids, dates, interpolated))
     else:
         return []
-
-
-if __name__ == "__main__":
-    date1 ='2020-05-01'
-    date2 = '2020-11-15'
-
-    avg_usd = fetch_currency_from_two_tables(date1, date2)
-    usd_mids, usd_dates = zip(*avg_usd)
-
-    avg_euro = fetch_currency_from_two_tables(date1, date2, 'eur')
-    euro_mids, euro_dates = zip(*avg_euro)

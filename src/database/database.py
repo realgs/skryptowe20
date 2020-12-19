@@ -13,6 +13,18 @@ class Database:
         self.db_source = db_source
 
 
+    def get_min_max_dates(self):
+        conn = sqlite3.connect(self.db_source)
+        c = conn.cursor()
+        c.execute("""
+            SELECT MIN(OrderDate), MAX(OrderDate) FROM Orders
+        """)
+        res = c.fetchall()
+        conn.close()
+
+        return res
+
+
     def create_avg_currency_rates_table(self):
         conn = sqlite3.connect(self.db_source)
         c = conn.cursor()
@@ -111,7 +123,6 @@ class Database:
         c = conn.cursor()
 
         rates = fetch_currency_from_two_tables(start_date, end_date)
-        # new_rates = rates
         new_rates = self._add_missing_dates(rates)
 
         c.execute('SELECT date FROM AvgUsdRates')
