@@ -193,8 +193,8 @@ def add_rate_entries(dates, rates, interpolated, currency_code):
 
 
 if __name__ == '__main__':
-    date_from = '2009-01-02'
-    date_to = '2014-12-31'
+    date_from = '2009-01-01'
+    date_to = '2020-12-17'
 
     # __drop_rates_table()
     # __create_rates_table()
@@ -204,7 +204,7 @@ if __name__ == '__main__':
     #                                                                                       date_from,
     #                                                                                       date_to)
     #     add_rate_entries(dates, rates, interpolated, currency)
-    dates, rates, ipd = get_rates_dates_interpolated('USD', '2014-12-20', '2014-12-31')
-    print(dates)
-    print(rates)
-    print(ipd)
+    # dates, rates, ipd = get_rates_dates_interpolated('USD', '2014-12-20', '2014-12-31')
+    # print(dates)
+    # print(rates)
+    # print(ipd)

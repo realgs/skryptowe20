@@ -112,10 +112,10 @@ def __url(path):
 
 
 if __name__ == '__main__':
-    date_from = '2009-01-02'
-    date_to = '2014-12-31'
+    date_from = '2009-01-01'
+    date_to = '2020-12-17'
 
-    dates, rates, interpolated = currency_rates_dates_interpolated_time_frame('USD', date_from, date_to)
-    print(len(dates))
-    print(len(rates))
-    print(len(interpolated))
+    # dates, rates, interpolated = currency_rates_dates_interpolated_time_frame('USD', date_from, date_to)
+    # print(len(dates))
+    # print(len(rates))
+    # print(len(interpolated))
