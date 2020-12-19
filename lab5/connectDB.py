@@ -3,10 +3,11 @@ import pyodbc
 SALES_DATABASE = 'AdventureWorks2019'
 NAME_SALES_TABLE = 'Sales.SalesOrderHeader'
 NAME_CURRENCY_TABLE = 'Sales.UsdRate'
+NAME_DAILY_TURNOVER_TABLE = 'Sales.DailyTurnover'
 
 
 def connect():
-    conn = pyodbc.connect('Driver={SQL Server};'
+    conn = pyodbc.connect('Driver={SQL Server Native Client 11.0};'
                           'Server=DESKTOP-IN8O3LQ;'
                           'Database=AdventureWorks2019;'
                           'Trusted_Connection=yes;')
@@ -14,17 +15,28 @@ def connect():
     return cursor
 
 
-def add_table_to_db(cursor):
-    cursor.execute(f"CREATE TABLE {NAME_CURRENCY_TABLE} (RateDate DATETIME PRIMARY KEY, CurrencyRate REAL NOT NULL)")
+def add_usd_rate_table_to_db(cursor):
+    cursor.execute(f"CREATE TABLE {NAME_CURRENCY_TABLE} (RateDate DATETIME PRIMARY KEY, CurrencyRate REAL NOT NULL, "
+                   f"InterpolatedRate BIT NOT NULL)")
     cursor.commit()
 
 
-def fill_table_usd_rate(cursor, currency_date_list, currency_mid_list):
+def add_daily_turnover_table_to_db(cursor):
+    cursor.execute(f"CREATE TABLE {NAME_DAILY_TURNOVER_TABLE} (TurnoverDate DATETIME PRIMARY KEY, "
+                   f"TotalTurnover REAL NOT NULL, Rate CHAR NOT NULL )")
+    cursor.commit()
+
+
+def fill_table_usd_rate(cursor, currency_data):
     currency_table = download_currency_table(cursor)
-    for i in range(len(currency_date_list)):
-        if not find_date_in_table(currency_table, currency_date_list[i]):
-            cursor.execute(f"INSERT INTO {SALES_DATABASE}.{NAME_CURRENCY_TABLE} (RateDate, CurrencyRate) VALUES ("
-                           f"\'{currency_date_list[i]}\',{currency_mid_list[i]})")
+    for i in range(len(currency_data)):
+        if not find_date_in_table(currency_table, currency_data[i]["date"]):
+            if currency_data[i]["interpolated"]:
+                interpolated = 1
+            else:
+                interpolated = 0
+            cursor.execute(f"INSERT INTO {SALES_DATABASE}.{NAME_CURRENCY_TABLE} (RateDate, CurrencyRate, InterpolatedRate) VALUES ("
+                           f"\'{currency_data[i]['date']}\',{currency_data[i]['mid_rate']},{interpolated})")
             cursor.commit()
 
 

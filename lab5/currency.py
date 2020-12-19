@@ -31,42 +31,74 @@ def get_listing_coursers_between_date(currency, date_from_string, date_to_string
 
 
 def get_listing_coursers_less_than_year(currency, date_from_string, date_to_string):
-    api_json_result = requests.get(f"{API_URL}a/{str(currency)}/{str(date_from_string)}/{str(date_to_string)}/?format=json").json()
+    api_json_result = requests.get(
+        f"{API_URL}a/{str(currency)}/{str(date_from_string)}/{str(date_to_string)}/?format=json").json()
     return api_json_result
 
 
 def get_listing_courses(currency, number_of_days):
-    return get_listing_coursers_between_date(currency, str(date.today() - dt.timedelta(number_of_days)), str(date.today()))
+    return get_listing_coursers_between_date(currency, str(date.today() - dt.timedelta(number_of_days)),
+                                             str(date.today()))
 
 
 def get_rate_list(json):
-    date_list = []
-    mid_rate_list = []
+    currency_data = []
     number_of_next_date = 0
     for data in json["rates"]:
         actual_date = __datetime_converter(data["effectiveDate"])
-        if len(date_list) != 0:
-            next_date_object = date_list[len(date_list)-1] + dt.timedelta(days=1)
-            while (next_date_object != actual_date) & (not number_of_next_date == json["number_of_days"] - 1):
-                date_list.append(next_date_object)
-                mid_rate_list.append(mid_rate_list[len(mid_rate_list) - 1])
+        if len(currency_data) != 0:
+            next_date_object = __datetime_with_time_converter(currency_data[len(currency_data) - 1]["date"]) + \
+                               dt.timedelta(days=1)
+            while (next_date_object != actual_date) & (not number_of_next_date == json["number_of_days"]):
+                currency_data.append({"date": f'{next_date_object}',
+                                      "mid_rate": currency_data[len(currency_data) - 1]["mid_rate"],
+                                      "interpolated": True})
                 next_date_object += dt.timedelta(days=1)
                 number_of_next_date += 1
         else:
             date_before = __datetime_converter(json["date_from"])
-            while date_before < actual_date:
-                date_list.append(date_before)
-                mid_rate_list.append(data["mid"])
+            while (date_before < actual_date) & (not number_of_next_date == json["number_of_days"]):
+                currency_data.append({"date": f'{date_before}', "mid_rate": data["mid"],
+                                      "interpolated": True})
                 date_before += dt.timedelta(days=1)
                 number_of_next_date += 1
-        date_list.append(actual_date)
-        mid_rate_list.append(data["mid"])
+        currency_data.append({"date": f'{actual_date}', "mid_rate": data["mid"],
+                              "interpolated": False})
         number_of_next_date += 1
-    return date_list, mid_rate_list
+    if number_of_next_date != json["number_of_days"] + 1:
+        next_date_object = __datetime_with_time_converter(currency_data[len(currency_data) - 1]["date"]) + dt.timedelta(
+            days=1)
+        while (next_date_object <= __datetime_converter(json["date_to"])) & \
+                (not number_of_next_date == json["number_of_days"]):
+            currency_data.append({"date": f'{next_date_object}',
+                                  "mid_rate": currency_data[len(currency_data) - 1]["mid_rate"],
+                                  "interpolated": True})
+            next_date_object += dt.timedelta(days=1)
+            number_of_next_date += 1
+        currency_data.append({"date": f'{next_date_object}', "mid_rate": data["mid"],
+                              "interpolated": False})
+        number_of_next_date += 1
+
+    return currency_data
+
+
+def append_next_date(currency_data, actual_date, number_of_next_date, json):
+    next_date_object = __datetime_with_time_converter(currency_data[len(currency_data) - 1]["date"]) + dt.timedelta(
+        days=1)
+    while (next_date_object != actual_date) & (not number_of_next_date == json["number_of_days"] - 1):
+        currency_data.append({"date": f'{next_date_object}',
+                              "mid_rate": currency_data[len(currency_data) - 1]["mid_rate"],
+                              "interpolated": True})
+        next_date_object += dt.timedelta(days=1)
+        number_of_next_date += 1
 
 
 def __datetime_converter(string_date):
     return dt.datetime.strptime(str(string_date), '%Y-%m-%d')
+
+
+def __datetime_with_time_converter(string_datetime):
+    return dt.datetime.strptime(str(string_datetime), '%Y-%m-%d %H:%M:%S')
 
 
 def __add_json_row_to_list(json):
