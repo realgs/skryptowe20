@@ -5,6 +5,7 @@ from datetime import datetime, date
 from flask_caching import Cache
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+import os
 
 config = {
     "DEBUG": True,
@@ -24,6 +25,7 @@ limiter = Limiter(
 )
 shared_limit = limiter.shared_limit("5/hour", scope="api")  # 2. version
 
+port = int(os.environ.get("PORT", 5000))
 
 @app.route('/exchange-rates/USD/<date>', methods=['GET'])
 @shared_limit
@@ -96,4 +98,4 @@ def sale_from_date_to_date(start_date, end_date):
 def close_database_connection(exception):
     close_connection(exception)
 
-app.run()
+app.run(port=port)
