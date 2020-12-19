@@ -5,12 +5,12 @@ import nbp
 import lzma
 import sqlite3
 import datetime as dt
-from datetime import timedelta
 from nbp import DATE_FORMAT, Currency
 from typing import List, Optional, Tuple
 
 DATABASE_FILE = "database.sqlite"
 CSV_XZ_FILE = "Superstore.csv.xz"
+START_DATE = dt.date(2010, 1, 1)
 
 
 def read_csv_xz(csv_xz_filepath: str, delimiter=';') -> List[List[str]]:
@@ -168,8 +168,8 @@ def add_rate_table_to_database(conn: sqlite3.Connection):
     create_table(conn, sql_create_rates)
 
 
-def add_rates_to_database(conn: sqlite3.Connection, currency: nbp.Currency):
-    start_date = dt.date(2010, 1, 3)
+def add_rates_to_database(conn: sqlite3.Connection, currency: Currency):
+    start_date = START_DATE
     end_date = dt.datetime.now().date()
 
     rates = nbp.rates_time_range(
@@ -196,8 +196,8 @@ if __name__ == "__main__":
     if conn:
         create_default_database(conn)
         add_rate_table_to_database(conn)
-        for currency in nbp.Currency:
-            if currency != nbp.Currency.POLISH_ZLOTY:
+        for currency in Currency:
+            if currency != Currency.POLISH_ZLOTY:
                 create_currency(conn, (currency.code,))
                 add_rates_to_database(conn, currency)
         conn.close()
