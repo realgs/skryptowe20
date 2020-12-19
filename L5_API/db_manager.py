@@ -1,5 +1,5 @@
 import sqlite3
-# import /L5_API.api_handler as api_hdl
+import L5_API.api_handler as api_hdl
 
 
 DB_FILE = '/Users/limi/Desktop/INF/5 JS/L/skryptowe20/L5_API/sales.db'
@@ -81,6 +81,22 @@ def get_rate(date, currency_code):
     conn.close()
 
     return rate
+
+
+def get_todays_date(currency_code):
+    conn = __connect_db()
+    cursor = conn.cursor()
+    date = ''
+
+    try:
+        cursor.execute("""SELECT MAX(RateDate) FROM rates
+                            WHERE Code = '{}';""".format(currency_code))
+        date = cursor.fetchone()[0]
+    except sqlite3.Error as e:
+        print('db_handler: get_todays_date(' + currency_code + ') ' + str(e))
+
+    conn.close()
+    return date
 
 
 def get_rates_dates_interpolated(currency_code, date_from, date_to):
@@ -184,10 +200,10 @@ if __name__ == '__main__':
     # __create_rates_table()
     #
     # for currency in CURRENCIES:
-    #     rates, dates, interpolated = api_hdl.currency_rates_dates_interpolated_time_frame(currency_code,
+    #     rates, dates, interpolated = api_hdl.currency_rates_dates_interpolated_time_frame(currency,
     #                                                                                       date_from,
     #                                                                                       date_to)
-    #     add_rate_entries(dates, rates, interpolated, currency_code)
+    #     add_rate_entries(dates, rates, interpolated, currency)
     dates, rates, ipd = get_rates_dates_interpolated('USD', '2014-12-20', '2014-12-31')
     print(dates)
     print(rates)
