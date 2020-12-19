@@ -17,20 +17,22 @@ app = flask.Flask(__name__)
 app.config.from_mapping(config)
 cache = Cache(app)
 
+
 def limit_per_all():
     return '0'
+
 
 limiter = Limiter(
     app,
     key_func=limit_per_all,
-    default_limits=["10 per day", "2 per hour"]
-    # 1. version
+    default_limits=["500 per day", "9 per hour"]
 )
 
-# shared_limit = limiter.shared_limit("5/hour", scope="api")  # 2. version
+shared_limit = limiter.shared_limit("5/hour", scope="api", key_func=get_remote_address, override_defaults=False)
+
 
 @app.route('/exchange-rates/<currency>/<date>', methods=['GET'])
-# @shared_limit
+@shared_limit
 # @limiter.limit('4 per hour')
 @cache.cached()
 def rate_one_day(currency, date):
@@ -45,7 +47,7 @@ def rate_one_day(currency, date):
 
 
 @app.route('/exchange-rates/<currency>/<start_date>/<end_date>', methods=['GET'])
-# @shared_limit
+@shared_limit
 @cache.cached()
 def rate_from_date_to_date(currency, start_date, end_date):
     try:
@@ -64,7 +66,7 @@ def rate_from_date_to_date(currency, start_date, end_date):
 
 
 @app.route('/sales/<currency>/<date>', methods=['GET'])
-# @shared_limit
+@shared_limit
 @cache.cached()
 def sale_one_day(currency, date):
     try:
@@ -78,7 +80,7 @@ def sale_one_day(currency, date):
 
 
 @app.route('/sales/<currency>/<start_date>/<end_date>', methods=['GET'])
-# @shared_limit
+@shared_limit
 @cache.cached()
 def sale_from_date_to_date(currency, start_date, end_date):
     try:
@@ -99,6 +101,7 @@ def sale_from_date_to_date(currency, start_date, end_date):
 @app.teardown_appcontext
 def close_database_connection(exception):
     close_connection(exception)
+
 
 if __name__ == '__main__':
     app.run()
