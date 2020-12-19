@@ -24,16 +24,14 @@ def limit_per_all():
 
 limiter = Limiter(
     app,
-    key_func=limit_per_all,
+    key_func=get_remote_address,
     default_limits=["500 per day", "9 per hour"]
 )
 
-shared_limit = limiter.shared_limit("5/hour", scope="api", key_func=get_ipaddr, override_defaults=False)
-
+# shared_limit = limiter.shared_limit("5/hour", scope="api", key_func=limit_per_all, override_defaults=False)
 
 @app.route('/exchange-rates/<currency>/<date>', methods=['GET'])
-@shared_limit
-# @limiter.limit('4 per hour')
+# @shared_limit
 @cache.cached()
 def rate_one_day(currency, date):
     try:
@@ -47,7 +45,7 @@ def rate_one_day(currency, date):
 
 
 @app.route('/exchange-rates/<currency>/<start_date>/<end_date>', methods=['GET'])
-@shared_limit
+# @shared_limit
 @cache.cached()
 def rate_from_date_to_date(currency, start_date, end_date):
     try:
@@ -66,7 +64,7 @@ def rate_from_date_to_date(currency, start_date, end_date):
 
 
 @app.route('/sales/<currency>/<date>', methods=['GET'])
-@shared_limit
+# @shared_limit
 @cache.cached()
 def sale_one_day(currency, date):
     try:
@@ -80,7 +78,7 @@ def sale_one_day(currency, date):
 
 
 @app.route('/sales/<currency>/<start_date>/<end_date>', methods=['GET'])
-@shared_limit
+# @shared_limit
 @cache.cached()
 def sale_from_date_to_date(currency, start_date, end_date):
     try:
