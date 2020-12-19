@@ -1,5 +1,6 @@
 import sqlite3
-import L5_API.api_handler as api_hdl
+# import /L5_API.api_handler as api_hdl
+
 
 DB_FILE = '/Users/limi/Desktop/INF/5 JS/L/skryptowe20/L5_API/sales.db'
 CURRENCIES = ['USD', 'EUR', 'GBP']
@@ -187,3 +188,7 @@ if __name__ == '__main__':
     #                                                                                       date_from,
     #                                                                                       date_to)
     #     add_rate_entries(dates, rates, interpolated, currency_code)
+    dates, rates, ipd = get_rates_dates_interpolated('USD', '2014-12-20', '2014-12-31')
+    print(dates)
+    print(rates)
+    print(ipd)
