@@ -1,1 +1,1 @@
-web: cd lab5_solutions && gunicorn -b :$PORT api:app
+web: gunicorn -b :$PORT lab5_solutions/api:app
