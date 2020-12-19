@@ -3,19 +3,20 @@ from flask import Flask, jsonify, request
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_caching import Cache
+from conf import conf, API_ERROR_NOT_FOUND, API_ERROR_BAD_REQ, API_ERROR_TOO_MANY_REQS
 
 
-DB_NAME = "../Source/bazunia.db"
+DB_NAME = conf['db']['db_name']
 
 app = Flask(__name__)
 
 limiter = Limiter(
     app,
     key_func=get_remote_address,
-    default_limits=["200 per day", "50 per hour"]
+    default_limits=conf['limits']
 )
 
-cache = Cache(config={'CACHE_TYPE': 'simple'})
+cache = Cache(config=conf['cache'])
 cache.init_app(app)
 
 @app.route('/api/home/<name>')
@@ -31,7 +32,7 @@ def return_all_rates():
   db = Database(DB_NAME)
   rates = db.get_avg_usd_rates()
   if rates == []:
-    return jsonify(status=404, info="Data not found"), 404
+    return jsonify(error=API_ERROR_NOT_FOUND), API_ERROR_NOT_FOUND['status']
   else:
     rates = [{'rate':x[0], 'date':x[1], 'interpolated':x[2] == 1 if True else False} for x in rates]
     return jsonify(rates=rates)
@@ -43,7 +44,7 @@ def return_rate(date):
   db = Database(DB_NAME)
   res = db.get_avg_usd_rates(date)
   if res == []:
-    return jsonify(status=404, info="Data not found"), 404
+    return jsonify(error=API_ERROR_NOT_FOUND), API_ERROR_NOT_FOUND['status']
   else:
     [(rate, date, interpolated)] = res
     return jsonify(rate=rate,
@@ -58,7 +59,7 @@ def return_rates(start, end):
   db = Database(DB_NAME)
   res = db.get_avg_usd_rates_in_interval(start, end)
   if res == []:
-    return jsonify(status=404, info="Data not found"), 404
+    return jsonify(error=API_ERROR_NOT_FOUND), API_ERROR_NOT_FOUND['status']
   else:
     rates = [{'rate': x[0], 'date': x[1], 'interpolated': x[2] == 1 if True else False} for x in res]
     return jsonify(rates=rates)
@@ -70,7 +71,7 @@ def return_sales(start_date, end_date):
   db = Database(DB_NAME)
   res = db.get_sales_usd_pln(start_date, end_date)
   if res == []:
-    return jsonify(status=404, info="Data not found"), 404
+    return jsonify(error=API_ERROR_NOT_FOUND), API_ERROR_NOT_FOUND['status']
   else:
     sales = [{'date': x[0], 'usd': x[1], 'pln': x[2]} for x in res]
     return jsonify(sales=sales)
@@ -83,7 +84,7 @@ def return_sale(date):
   res = db.get_sales_usd_pln(date, date)
 
   if res == []:
-    return jsonify(status=404, info="Data not found"), 404
+    return jsonify(error=API_ERROR_NOT_FOUND), API_ERROR_NOT_FOUND['status']
   else:
     [(date, usd, pln)] = res
     return jsonify(date=date, usd=usd, pln=pln)
@@ -91,14 +92,13 @@ def return_sale(date):
 
 @app.errorhandler(429)
 def handle_too_many_req(e):
-  return jsonify(status=429, info="Too many requests!"), 429
+  return jsonify(error=API_ERROR_TOO_MANY_REQS), API_ERROR_TOO_MANY_REQS['status']
 
 
 @app.errorhandler(404)
 def handle_bad_req(e):
-  return jsonify(status=400, info="Bad request!"), 400
+  return jsonify(error=API_ERROR_BAD_REQ), API_ERROR_BAD_REQ['status']
 
 
 if __name__ == '__main__':
-
   app.run('0.0.0.0', port=8080, debug=True)
