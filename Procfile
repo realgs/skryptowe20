@@ -1,1 +1,1 @@
-web: python lab5_solutions/api.py
+web: gunicorn lab5_solutions/api:app

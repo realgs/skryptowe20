@@ -96,5 +96,4 @@ def sale_from_date_to_date(start_date, end_date):
 def close_database_connection(exception):
     close_connection(exception)
 
-
 app.run()
