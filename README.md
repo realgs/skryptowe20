@@ -37,15 +37,18 @@ Having done that, this API allows you to get following data:
 ``http://127.0.0.1:5000/api/rates/USD/{date}``
   
    - example ``http://127.0.0.1:5000/api/rates/USD/2020-02-20``
-- USD to PLN exchange rate from the start_date to end_date:
+   
+- USD to PLN exchange rate from the start_date to end_date:             
 ``http://127.0.0.1:5000/api/rates/USD/{start_date}/{end_date}``
-  - example ``http://127.0.0.1:5000/api/rates/USD/2013-01-01/2014-12-31``
+  - example ``http://127.0.0.1:5000/api/rates/USD/2013-04-07/2014-10-22``
+  
 - sales data at date:  
 ``http://127.0.0.1:5000/api/sales/{date}``
   - example ``http://127.0.0.1:5000/api/sales/2013-01-01``
-- USD to PLN exchange rate from start_date to end_date:
+  
+- sales data from start_date to end_date:
 ``http://127.0.0.1:5000/api/sales/{start_date}/{end_date}``
-  - example ``http://127.0.0.1:5000/api/sales/2013-01-01/2014-12-31``
+  - example ``http://127.0.0.1:5000/api/sales/2013-04-07/2014-10-22``
 
 Alternatively, instead of **127.0.0.1**, you could use **localhost**, those are the same
 
