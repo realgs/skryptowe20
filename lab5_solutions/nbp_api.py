@@ -2,9 +2,9 @@ import json
 from datetime import date, timedelta
 import requests
 import matplotlib.pyplot as plt
-from exceptions import RequestException, ArgumentException
+from lab5_solutions.exceptions import RequestException, ArgumentException
 import matplotlib.ticker as ticker
-from currency import Currency
+from lab5_solutions.currency import Currency
 import pandas as pd
 
 NBP_EXCHANGE_RATES_URL = 'http://api.nbp.pl/api/exchangerates/rates/{table_type}/{currency}/{start_date}/{end_date}/'

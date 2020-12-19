@@ -2,13 +2,10 @@ import sqlite3
 from sqlite3 import Error
 from flask import g
 import flask
-from nbp_api import get_avg_rates_from_period
 import pandas
 from datetime import date
-from utils import MAX_DATE, MIN_DATE, DATE_FORMAT
-from currency import Currency
-from exceptions import ArgumentException
-from nbp_api import *
+from lab5_solutions.utils import MAX_DATE, MIN_DATE, DATE_FORMAT
+from lab5_solutions.nbp_api import *
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -17,12 +14,13 @@ DATABASE_PATH = os.path.join(BASE_DIR, "database.db")
 # DATABASE_PATH = '.\database.db'
 TABLE_NAME = 'exchange_rates'
 CREATE_TABLE_QUERY = '''CREATE TABLE IF NOT EXISTS exchange_rates (
-                                               date DATE PRIMARY KEY,
+                                               currency TEXT NOT NULL,
+                                               date DATE NOT NULL,
                                                rate REAL NOT NULL,
-                                               interpolated INTEGER NOT NULL
+                                               interpolated INTEGER NOT NULL,
+                                               PRIMARY KEY (currency, date)
                                            ); '''
 
-INSERT_DATA_QUERY = 'INSERT OR IGNORE INTO exchange_rates VALUES (?,?,?)'
 DROP_TABLE_QUERY = 'DROP TABLE IF EXISTS {}'
 
 
@@ -64,8 +62,8 @@ def fill_table_period(start_date, end_date, currency):
             if x['date'] == day[0]:
                 interpolated = 0
 
-        tuple = (day[0], day[1], interpolated)
-        cursor.execute(INSERT_DATA_QUERY, tuple)
+        tuple = (currency.value, day[0], day[1], interpolated)
+        cursor.execute('INSERT OR IGNORE INTO exchange_rates VALUES (?,?,?,?)', tuple)
 
     cursor.connection.commit()
 
@@ -75,62 +73,62 @@ def drop_table(table_name):
     cursor.execute(DROP_TABLE_QUERY.format(table_name))
 
 
-def select_rate_one_day(date):
+def select_rate_one_day(currency, date):
     cursor = get_database().cursor()
     cursor.execute(
         """
-        SELECT date, rate, interpolated
+        SELECT currency, date, rate, interpolated
         FROM exchange_rates 
-        WHERE DATE(date) IS DATE('{}')
-        """.format(date)
+        WHERE DATE(date) IS DATE('{}') AND currency = '{}'
+        """.format(date, currency)
     )
-    return [{'date': x[0], 'rate': x[1], 'interpolated': True if x[2] == 1 else False} for x in
+    return [{'currency': x[0], 'date': x[1], 'rate': x[2], 'interpolated': True if x[3] == 1 else False} for x in
             cursor.fetchall()]
 
 
-def select_rate_between_dates(start_date, end_date):
+def select_rate_between_dates(currency, start_date, end_date):
     cursor = get_database().cursor()
     cursor.execute(
         """
-        SELECT date, rate, interpolated
+        SELECT currency, date, rate, interpolated
         FROM exchange_rates 
-        WHERE (DATE(date) BETWEEN DATE('{}') AND DATE('{}'))
+        WHERE (DATE(date) BETWEEN DATE('{}') AND DATE('{}')) AND currency = '{}'
         ORDER BY date
-        """.format(start_date, end_date)
+        """.format(start_date, end_date, currency)
     )
-    return [{'date': x[0], 'rate': x[1], 'interpolated': True if x[2] == 1 else False} for x in
+    return [{'currency': x[0], 'date': x[1], 'rate': x[2], 'interpolated': True if x[3] == 1 else False} for x in
             cursor.fetchall()]
 
 
-def get_sale_in_USD_PLN_one_day(date):
+def get_sale_in_USD_PLN_one_day(currency, date):
     cursor = get_database().cursor()
     cursor.execute(
         """
-        SELECT order_date 'SaleDate', SUM(sales) 'USD', ROUND(SUM(sales) * rate, 2) 'PLN'
+        SELECT order_date 'SaleDate', SUM(sales) 'Currency', ROUND(SUM(sales) * rate, 2) 'PLN'
         FROM SalesOrder, exchange_rates 
         WHERE DATE(order_date) IS '{}'
-        AND DATE(order_date) = DATE(date)
+        AND DATE(order_date) = DATE(date) AND currency = '{}'
         GROUP BY order_date
-        """.format(date)
+        """.format(date, currency)
     )
 
-    return [{'date': x[0], 'usd': x[1], 'pln': x[2]} for x in
+    return [{'date': x[0], currency: x[1], 'pln': x[2]} for x in
             cursor.fetchall()]
 
 
-def get_sale_in_USD_PLN_from_date_to_date(start_date, end_date):
+def get_sale_in_USD_PLN_from_date_to_date(currency, start_date, end_date):
     cursor = get_database().cursor()
     cursor.execute(
         """
-        SELECT order_date 'SaleDate', SUM(sales) 'USD', ROUND(SUM(sales) * rate, 2) 'PLN'
+        SELECT order_date 'SaleDate', SUM(sales) 'Currency', ROUND(SUM(sales) * rate, 2) 'PLN'
         FROM SalesOrder, exchange_rates 
         WHERE (DATE(order_date) BETWEEN '{}' AND '{}')
-        AND DATE(order_date) = DATE(date)
+        AND DATE(order_date) = DATE(date) AND currency = '{}'
         GROUP BY order_date
-        """.format(start_date, end_date)
+        """.format(start_date, end_date, currency)
     )
 
-    return [{'date': x[0], 'usd': x[1], 'pln': x[2]} for x in
+    return [{'date': x[0], currency: x[1], 'pln': x[2]} for x in
             cursor.fetchall()]
 
 
@@ -142,4 +140,5 @@ if __name__ == '__main__':
         start_date = MIN_DATE
         end_date = MAX_DATE
         fill_table_period(start_date, end_date, Currency.USD)
+        fill_table_period(start_date, end_date, Currency.EUR)
         close_connection(get_database().cursor().connection)

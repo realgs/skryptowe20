@@ -1,6 +1,6 @@
 import flask
 from flask import request, jsonify
-from database_repository import *
+from lab5_solutions.database_repository import *
 from datetime import datetime, date
 from flask_caching import Cache
 from flask_limiter import Limiter
@@ -25,11 +25,11 @@ limiter = Limiter(
 )
 shared_limit = limiter.shared_limit("5/hour", scope="api")  # 2. version
 
-@app.route('/exchange-rates/USD/<date>', methods=['GET'])
+@app.route('/exchange-rates/<currency>/<date>', methods=['GET'])
 @shared_limit
 @limiter.limit('4 per hour')
 @cache.cached()
-def rate_one_day(date):
+def rate_one_day(currency, date):
     try:
         date_dt = datetime.strptime(date, format(DATE_FORMAT)).date()
         if date_dt > MAX_DATE or date_dt < MIN_DATE:
@@ -37,13 +37,13 @@ def rate_one_day(date):
     except ValueError:
         return jsonify(cause="Invalid date format."), 400
 
-    return jsonify(select_rate_one_day(date))
+    return jsonify(rates=select_rate_one_day(currency, date))
 
 
-@app.route('/exchange-rates/USD/<start_date>/<end_date>', methods=['GET'])
+@app.route('/exchange-rates/<currency>/<start_date>/<end_date>', methods=['GET'])
 @shared_limit
 @cache.cached()
-def rate_from_date_to_date(start_date, end_date):
+def rate_from_date_to_date(currency, start_date, end_date):
     try:
         start_date_dt = datetime.strptime(start_date, format(DATE_FORMAT)).date()
         end_date_dt = datetime.strptime(end_date, format(DATE_FORMAT)).date()
@@ -56,13 +56,13 @@ def rate_from_date_to_date(start_date, end_date):
     except ValueError:
         return jsonify(cause="Invalid date format."), 400
 
-    return jsonify(select_rate_between_dates(start_date, end_date))
+    return jsonify(rates=select_rate_between_dates(currency, start_date, end_date))
 
 
-@app.route('/sales/USD/<date>', methods=['GET'])
+@app.route('/sales/<currency>/<date>', methods=['GET'])
 @shared_limit
 @cache.cached()
-def sale_one_day(date):
+def sale_one_day(currency, date):
     try:
         date_dt = datetime.strptime(date, format(DATE_FORMAT)).date()
         if date_dt > MAX_DATE or date_dt < MIN_DATE:
@@ -70,13 +70,13 @@ def sale_one_day(date):
     except ValueError:
         return jsonify(cause="Invalid date format."), 400
 
-    return jsonify(get_sale_in_USD_PLN_one_day(date))
+    return jsonify(sales=get_sale_in_USD_PLN_one_day(currency, date))
 
 
-@app.route('/sales/USD/<start_date>/<end_date>', methods=['GET'])
+@app.route('/sales/<currency>/<start_date>/<end_date>', methods=['GET'])
 @shared_limit
 @cache.cached()
-def sale_from_date_to_date(start_date, end_date):
+def sale_from_date_to_date(currency, start_date, end_date):
     try:
         start_date_dt = datetime.strptime(start_date, format(DATE_FORMAT)).date()
         end_date_dt = datetime.strptime(end_date, format(DATE_FORMAT)).date()
@@ -89,11 +89,11 @@ def sale_from_date_to_date(start_date, end_date):
     except ValueError:
         return jsonify(cause="Invalid date format."), 400
 
-    return jsonify(get_sale_in_USD_PLN_from_date_to_date(start_date, end_date))
+    return jsonify(sales=get_sale_in_USD_PLN_from_date_to_date(currency, start_date, end_date))
 
 
 @app.teardown_appcontext
 def close_database_connection(exception):
     close_connection(exception)
 
-# app.run()
+app.run()
