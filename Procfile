@@ -1,1 +1,1 @@
-web: python lab5_solutions/api.py
+web: cd lab5_solutions && python api.py
