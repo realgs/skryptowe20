@@ -9,8 +9,12 @@ from utils import MAX_DATE, MIN_DATE, DATE_FORMAT
 from currency import Currency
 from exceptions import ArgumentException
 from nbp_api import *
+import os
 
-DATABASE_PATH = '.\database.db'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATABASE_PATH = os.path.join(BASE_DIR, "database.db")
+
+# DATABASE_PATH = '.\database.db'
 TABLE_NAME = 'exchange_rates'
 CREATE_TABLE_QUERY = '''CREATE TABLE IF NOT EXISTS exchange_rates (
                                                date DATE PRIMARY KEY,

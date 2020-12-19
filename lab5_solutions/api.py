@@ -96,6 +96,4 @@ def sale_from_date_to_date(start_date, end_date):
 def close_database_connection(exception):
     close_connection(exception)
 
-if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
-    app.run(debug=True, port=port)
+# app.run()

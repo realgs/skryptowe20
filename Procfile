@@ -1,1 +1,1 @@
-web: gunicorn -b :$PORT lab5_solutions/api:app
+web: gunicorn -b :$PORT wsgi:app
