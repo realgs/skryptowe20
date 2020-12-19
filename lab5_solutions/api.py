@@ -28,7 +28,7 @@ limiter = Limiter(
     default_limits=["500 per day", "9 per hour"]
 )
 
-shared_limit = limiter.shared_limit("5/hour", scope="api", key_func=get_remote_address, override_defaults=False)
+shared_limit = limiter.shared_limit("5/hour", scope="api", key_func=get_ipaddr, override_defaults=False)
 
 
 @app.route('/exchange-rates/<currency>/<date>', methods=['GET'])
