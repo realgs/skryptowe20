@@ -1,5 +1,5 @@
-from database_connector import DatabaseManager
 from datetime import datetime
+import currency_api
 
 
 def parse_str_to_date(str_date):
@@ -7,17 +7,9 @@ def parse_str_to_date(str_date):
 
 
 if __name__ == '__main__':
-    str_date_from = "2020-11-10"
-    str_date_to = "2020-11-13"
+    str_date_from = "2020-11-07"
+    str_date_to = "2020-11-08"
 
     date_from = parse_str_to_date(str_date_from)
     date_to = parse_str_to_date(str_date_to)
-
-    server_name = 'DESKTOP-LKE4F79'
-    database_name = 'AdventureWorks2019'
-    table_name = 'CurrencyRatesForLastYears'
-    db_manager = DatabaseManager(server_name, database_name)
-    db_manager.delete_table(table_name)
-    db_manager.create_table_with_currency_rates(table_name)
-    db_manager.insert_currency_data_to_table(table_name, 'USD')
-    db_manager.read(table_name, date_from, date_to)
+    currency_api.get_currency_rates('USD', date_from, date_to)
