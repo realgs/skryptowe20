@@ -4,7 +4,7 @@ from lab5_solutions.database_repository import *
 from datetime import datetime, date
 from flask_caching import Cache
 from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
+from flask_limiter.util import get_remote_address, get_ipaddr
 import os
 
 config = {
@@ -19,7 +19,7 @@ cache = Cache(app)
 
 
 def limit_per_all():
-    return '0'
+    return "0"
 
 
 limiter = Limiter(
@@ -28,7 +28,7 @@ limiter = Limiter(
     default_limits=["500 per day", "9 per hour"]
 )
 
-shared_limit = limiter.shared_limit("5/hour", scope="api", key_func=get_remote_address, override_defaults=False)
+shared_limit = limiter.shared_limit("5/hour", scope="api", key_func=get_ipaddr, override_defaults=False)
 
 
 @app.route('/exchange-rates/<currency>/<date>', methods=['GET'])
