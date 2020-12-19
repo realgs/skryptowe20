@@ -96,4 +96,5 @@ def sale_from_date_to_date(currency, start_date, end_date):
 def close_database_connection(exception):
     close_connection(exception)
 
-app.run()
+if __name__ == '__main__':
+    app.run()
