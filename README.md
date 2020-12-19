@@ -46,7 +46,7 @@ Having done that, this API allows you to get following data:
 ``http://127.0.0.1:5000/api/sales/{date}``
   - example ``http://127.0.0.1:5000/api/sales/2013-01-01``
   
-- sales data from start_date to end_date:
+- sales data from start_date to end_date:         
 ``http://127.0.0.1:5000/api/sales/{start_date}/{end_date}``
   - example ``http://127.0.0.1:5000/api/sales/2013-04-07/2014-10-22``
 
