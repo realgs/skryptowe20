@@ -3,7 +3,12 @@ conf = {
     'db_name' : "../Source/bazunia.db"
   },
   'limits': ["200 per day", "50 per hour"],
-  'cache':{'CACHE_TYPE': 'simple'}
+  'cache': {'CACHE_TYPE': 'simple'},
+  'api': {
+    'host': '0.0.0.0',
+    'port': 8080,
+    'debug': True
+  }
 }
 
 

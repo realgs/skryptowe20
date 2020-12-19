@@ -19,6 +19,7 @@ limiter = Limiter(
 cache = Cache(config=conf['cache'])
 cache.init_app(app)
 
+
 @app.route('/api/home/<name>')
 @cache.cached(timeout=50)
 def home(name):
@@ -101,4 +102,4 @@ def handle_bad_req(e):
 
 
 if __name__ == '__main__':
-  app.run('0.0.0.0', port=8080, debug=True)
+  app.run(conf['api']['host'], port=conf['api']['port'], debug=conf['api']['debug'])
