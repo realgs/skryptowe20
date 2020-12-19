@@ -82,17 +82,6 @@ def get_rate_list(json):
     return currency_data
 
 
-def append_next_date(currency_data, actual_date, number_of_next_date, json):
-    next_date_object = __datetime_with_time_converter(currency_data[len(currency_data) - 1]["date"]) + dt.timedelta(
-        days=1)
-    while (next_date_object != actual_date) & (not number_of_next_date == json["number_of_days"] - 1):
-        currency_data.append({"date": f'{next_date_object}',
-                              "mid_rate": currency_data[len(currency_data) - 1]["mid_rate"],
-                              "interpolated": True})
-        next_date_object += dt.timedelta(days=1)
-        number_of_next_date += 1
-
-
 def __datetime_converter(string_date):
     return dt.datetime.strptime(str(string_date), '%Y-%m-%d')
 

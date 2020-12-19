@@ -23,7 +23,7 @@ def add_usd_rate_table_to_db(cursor):
 
 def add_daily_turnover_table_to_db(cursor):
     cursor.execute(f"CREATE TABLE {NAME_DAILY_TURNOVER_TABLE} (TurnoverDate DATETIME PRIMARY KEY, "
-                   f"TotalTurnover REAL NOT NULL, Rate CHAR NOT NULL )")
+                   f"TotalTurnover REAL NOT NULL, Rate CHAR(3) NOT NULL )")
     cursor.commit()
 
 
