@@ -43,7 +43,7 @@ def call_nbp_api_for(code, table, **kwargs):
     from_date = str(from_date)
     link = API_URL.format(table, code, from_date, till_date)
     nbp_req = requests.get(link)
-    print(link)
+    
     # Parse NBP data into python dicts
     if nbp_req.status_code == OK_CODE:
         result = nbp_api_call_was_successful(nbp_req)
