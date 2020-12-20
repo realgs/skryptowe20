@@ -74,5 +74,5 @@ def create_sum_of_transactions_table():
 
 
 if __name__ == "__main__":
-    # create_exchange_rates_table()
+    create_exchange_rates_table()
     create_sum_of_transactions_table()
