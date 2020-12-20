@@ -17,7 +17,7 @@ def get_string_date_from_date(date):
 
 
 def get_result_from_query(query, parameter):
-    connection = sqlite3.connect("NNorthwind.sqlite")
+    connection = sqlite3.connect("Northwind.sqlite")
     cursor = connection.cursor()
 
     cursor.execute(query, parameter)
