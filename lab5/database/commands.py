@@ -14,3 +14,16 @@ def get_currencies_in_range(date_from: date, date_to: date):
         cursor.execute(f"SELECT * FROM purchasing.pln_currencies WHERE currency_date >= '{date_from}' AND currency_date <= '{date_to}'")
         return cursor.fetchall()
 
+
+def currencies_table_empty() -> bool:
+    with connect() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT CASE WHEN EXISTS (SELECT * FROM purchasing.pln_currencies LIMIT 1) THEN 1 ELSE 0 END")
+        return not bool(cursor.fetchall())
+
+
+def get_sales_for_date(request_date: date):
+    with connect() as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT \"USD\", \"PLN\" FROM purchasing.sales WHERE duedate = '{request_date}'")
+        return cursor.fetchall()

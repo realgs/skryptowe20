@@ -1,6 +1,6 @@
 import os
 from database.connection import connect
-from database.commands import insert_into_pln_currencies
+from database.commands import insert_into_pln_currencies, currencies_table_empty
 from nbp_requests import get_currency_for_period, fill_empty_records, MIN_ALLOWED_DATE, MAX_ALLOWED_DATE
 
 def run_scripts():
@@ -11,13 +11,23 @@ def run_scripts():
     with connect() as conn:
         cursor = conn.cursor()
 
-        print("\nReading Scripts...")
-        for script_path in os.listdir(scripts_path):
-            script_file = open(f"{scripts_path}/{script_path}", "r")
+        print("\nRunning Scripts...")
+
+        script_paths = os.listdir(scripts_path)
+        init_script = script_paths[0]
+        add_sales_table_script = script_paths[1]
+
+        with open(f"{scripts_path}/{init_script}", "r") as script_file:
             script = script_file.read()
             script_file.close()
+            cursor.execute(script)
 
-            print(f"Executing Script {script_path} ...")
+        if currencies_table_empty():
+            insert_interpolated_currencies()
+
+        with open(f"{scripts_path}/{add_sales_table_script}", "r") as script_file:
+            script = script_file.read()
+            script_file.close()
             cursor.execute(script)
 
         conn.commit()
@@ -38,4 +48,3 @@ def insert_interpolated_currencies():
 
 if __name__ == "__main__":
     run_scripts()
-    insert_interpolated_currencies()
