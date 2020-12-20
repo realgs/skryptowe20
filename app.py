@@ -57,7 +57,7 @@ def turn_sum_of_transaction_in_dictionary(transactions):
 def api_single_exchange_rate(date):
     string_date = get_string_date_from_date(date)
     if "" == string_date:
-        abort(404, "Wrong date format")
+        abort(400, "Wrong date format")
 
     select_single_exchange_rate_query = """SELECT ER.date, ER.rate, ER.is_interpolated FROM ExchangeRate ER 
     WHERE ER.date = ?;"""
@@ -72,7 +72,7 @@ def api_exchange_rate_range(start_date, end_date):
     string_end_date = get_string_date_from_date(end_date)
 
     if string_start_date == "" or string_end_date == "" or string_end_date < string_start_date:
-        abort(404, "Wrong dates provided")
+        abort(400, "Wrong dates provided")
 
     select_multiple_exchange_rates_query = """SELECT ER.date, ER.rate, ER.is_interpolated FROM ExchangeRate ER 
     WHERE ER.date >= ? AND ER.date <= ?;"""
@@ -88,7 +88,7 @@ def api_single_sum_of_transaction(currency, date):
     string_date = get_string_date_from_date(date)
 
     if "" == string_date:
-        abort(404, "Wrong date format")
+        abort(400, "Wrong date format")
 
     currency = currency.upper()
 
@@ -101,7 +101,7 @@ def api_single_sum_of_transaction(currency, date):
         select_single_sum_of_transaction_query = """SELECT ST.date, ST.usd_value FROM SumOfTransaction ST 
                 WHERE ST.date = ?;"""
     else:
-        abort(404, "Wrong currency")
+        abort(400, "Wrong currency")
 
     result = get_result_from_query(select_single_sum_of_transaction_query, (string_date,))
 
@@ -114,7 +114,7 @@ def api_multiple_sum_of_transaction(currency, start_date, end_date):
     string_end_date = get_string_date_from_date(end_date)
 
     if string_start_date == "" or string_end_date == "" or string_end_date < string_start_date:
-        abort(404, "Wrong dates provided")
+        abort(400, "Wrong dates provided")
 
     currency = currency.upper()
 
@@ -127,7 +127,7 @@ def api_multiple_sum_of_transaction(currency, start_date, end_date):
         select_single_sum_of_transaction_query = """SELECT ST.date, ST.usd_value FROM SumOfTransaction ST 
                 WHERE ST.date >= ? AND ST.date <= ?;"""
     else:
-        abort(404, "Wrong currency")
+        abort(400, "Wrong currency")
 
     result = get_result_from_query(select_single_sum_of_transaction_query, (string_start_date, string_end_date))
 
