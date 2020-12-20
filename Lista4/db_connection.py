@@ -110,6 +110,17 @@ def update_rates_table_to_today():
             update_rates_table(table_data, today)
 
 
+def get_rates_from_to(date_from, date_to):
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM [BikeStores].[dbo].[rates] '
+    'WHERE [measure_date] >= \'' + date_from + '\'' + 
+    ' AND [measure_date] <= \'' + date_to + '\';')
+    result = []
+    for row in cursor:
+        result.append({'date':datetime.datetime.strptime(row[0], '%Y-%m-%d'),'rate':row[1],'interpolated':False if row[2] == 0 else True})
+    return result
+
+
 if __name__ == '__main__':
     # Add database table and fill it
     table_data = get_average_currency_rates_between('USD', datetime.date(2015, 12, 20), datetime.date(2018, 1, 4))

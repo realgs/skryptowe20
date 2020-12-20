@@ -1,11 +1,39 @@
-from flask import Flask
-
+from flask import Flask, Response
+from db_connection import get_rates_from_to
+import datetime
+import decimal
+import json
 
 app = Flask(__name__)
+first_rate_measure_db = datetime.datetime.strptime('2015-12-21', '%Y-%m-%d')
 
-@app.route('/')
-def index():
-    return 'Hello world'
+
+# Used to serialize data returned by endpoints
+# https://stackoverflow.com/a/22238613
+def json_serializer(obj):
+    if isinstance(obj, (datetime.datetime, datetime.date)):
+        return obj.strftime('%Y-%m-%d')
+    elif isinstance(obj, decimal.Decimal):
+        return str(obj)
+    raise TypeError ("Type %s not serializable" % type(obj))
+
+
+# Task 1 and 2 endpoint
+@app.route('/rates/from/<date_from>/to/<date_to>', methods=['GET'])
+def get_rates(date_from='', date_to=''):
+    try:
+        date_from_parsed = datetime.datetime.strptime(date_from, '%Y-%m-%d')
+        date_to_parsed = datetime.datetime.strptime(date_to, '%Y-%m-%d')
+    except ValueError:
+        return Response('Invalid date format', status=400)
+    if date_from_parsed > date_to_parsed:
+        return Response('date_from cannot be greater than date_to', status=400)
+    if date_from_parsed < first_rate_measure_db or date_to_parsed > datetime.datetime.today() - datetime.timedelta(days=1):
+        first_rate_measure_db_str = datetime.datetime.strftime(first_rate_measure_db, '%Y-%m-%d')
+        today_str = datetime.datetime.strftime(datetime.date.today() - datetime.timedelta(days=1), '%Y-%m-%d')
+        return Response('Date interval must be between ' + first_rate_measure_db_str + ' and ' + today_str, status=400)
+    result = get_rates_from_to(date_from, date_to)
+    return Response(json.dumps(result, default=json_serializer), status=200)
 
 
 if __name__ == '__main__':
