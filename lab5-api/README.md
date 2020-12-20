@@ -97,6 +97,7 @@ Parametry podawane na końcu zapytania po znaku `$`
 `http://host:5000/api/v1/rates/{currency_code}/day/{date}?interpolated=[0,1]`
 
 Przykład zwracanych danych:
+
 `http://host:5000/api/v1/rates/eur/day/2011-01-01`
 
 ```
@@ -119,6 +120,7 @@ Przykład zwracanych danych:
 `http://host:5000/api/v1/rates/{currency_code}/range/{start_date}/{end_date}?interpolated=[0,1]`
 
 Przykład zwracanych danych:
+
 `http://host:5000/api/v1/rates/usd/range/2010-01-01/2010-01-06`
 
 ```
@@ -186,6 +188,7 @@ Przykład zwracanych danych:
 Waluta oryginalna to `USD`, waluta po przeliczeniu to `PLN`.
 
 Przykład zwracanych danych:
+
 `http://host:5000/api/v1/sales/sum/2014-04-28`
 
 ```
