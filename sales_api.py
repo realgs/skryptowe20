@@ -4,8 +4,8 @@ from flask_restful import Resource
 
 import currencies
 from api_date_checker_and_parser import parse_str_to_date, parse_datetime_to_str, date_is_correct
+from currencies_api import API_BASE_CURRENCY
 from sales_database import SalesDatabaseManager, SALES_BASE_CURRENCY
-from sales_database import API_BASE_CURRENCY
 
 SERVER = 'DESKTOP-LKE4F79'
 DATABASE_NAME = 'AdventureWorks2019'
