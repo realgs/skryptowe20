@@ -6,7 +6,7 @@ This API service enables HTTP clients to make enquiries on the following dataset
     * GBP
 2. CD shop sales history 
 
-####General Information
+#### General Information
 Service reply is returned in `JSON` format. 
 
 Available historic data:
@@ -26,8 +26,8 @@ Single enquirey cannot cover a period longer than 365 days.
 * [Installation](#Installation)
 * [Usage](#Usage)
 * [Enquiry limits](#Limits)
-* [Query examples](#Query examples)
-* [Error messages](#Error messages)
+* [Query examples](#Query-examples)
+* [Error messages](#Error-messages)
 * [Links](#Links)
 ---
 
@@ -71,7 +71,7 @@ Then use one of the enquires
     ```bash
     http://localhost:5000/sales/{currency_code}
     ```
-####Query string parameters
+#### Query string parameters
 * `{currency_code}` – a three- letter currency code (ISO 4217 standard)
 * `{date}`, `{startDate}`, `{endDate}` – a date in the YYYY-MM-DD format (ISO 8601 standard)
 
@@ -171,12 +171,12 @@ In the case of incorrectly formulated dates, the service returns `400 BadRequest
 In the case of an enquiry covering more than 365 days, the service returns the message `400 BadRequest - Limit of 365 days has been exceeded`
 
 ## Links
-####Dependencies
+#### Dependencies
 * [Flask](https://flask.palletsprojects.com/en/1.1.x/)
 * [FlaskRESTful](https://flask-restful.readthedocs.io/en/latest/)
 * [FlaskLimiter](https://flask-limiter.readthedocs.io/en/stable/)
 * [SQLAlchemy](https://www.sqlalchemy.org/)
 
-####Sources
+#### Sources
 * [NBP API](http://api.nbp.pl)
 * [Chinook Database](https://github.com/lerocha/chinook-database)
