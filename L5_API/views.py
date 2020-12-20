@@ -3,13 +3,17 @@ from L5_API import db_app
 from L5_API.constants import CURRENCIES, DATE_FORMAT, DATA_LIMIT
 
 
-def get_last_date(code):
+def __get_last_date(code):
     return {"Date": db_app.get_last_date(code)}
 
 
 def get_last_rate(code):
+    if not __is_code(code):
+        return '404 - Currency Code not found', 404
+
     date = db_app.get_last_date(code)
     rate, ipd = db_app.get_rate(code, date)
+
     return {"Currencycode": code, "Rates": {"Rate": {"Date": date, "Rate": rate, "Interpolated": ipd}}}
 
 
@@ -23,6 +27,9 @@ def get_sale(date):
 
 
 def get_rates(code, date_from, date_to):
+    if not __is_code(code):
+        return '404 - Currency Code not found', 404
+
     are_dates_valid = __validate_dates(date_from, date_to, code)
     if not are_dates_valid[0]:
         return are_dates_valid[1], are_dates_valid[2]
@@ -38,6 +45,19 @@ def get_sales(date_from, date_to):
 
     sales = db_app.get_sales(date_from, date_to)
     return __sales_serializer(sales)
+
+
+def get_rates_limits(code):
+    if not __is_code(code):
+        return '404 - Currency Code not found', 404
+
+    date_min, date_max = db_app.get_rates_limits(code)
+    return {"Currency Code": code.upper(), "Limits": {"Lower date limit": date_min, "Upper date limit": date_max}}
+
+
+def get_sales_limits():
+    date_min, date_max = db_app.get_sales_limits()
+    return {"Sales": {"Lower date limit": date_min, "Upper date limit": date_max}}
 
 
 def __sales_serializer(data):
@@ -57,7 +77,7 @@ def __rates_serializer(code, data):
 
 
 def __is_code(code):
-    return code in CURRENCIES
+    return code.upper() in CURRENCIES
 
 
 def __is_date(date):
