@@ -26,7 +26,6 @@ limiter = Limiter(
     default_limits=["500 per day", "30 per hour"]
 )
 
-
 # def limit_per_all():
 #     return "0"
 
@@ -66,17 +65,14 @@ def home():
 # @shared_limit
 @cache.cached()
 def rate_one_day(currency, date):
-    __check_currency(currency)
-    date_dt = __date_string_to_datetime_converter(date)
-    __check_date(date_dt)
-
-    return jsonify(rates=select_rate_one_day(currency, date))
+    return rate_from_date_to_date(currency, date, date)
 
 
 @app.route('/exchange-rates/<currency>/<start_date>/<end_date>', methods=['GET'])
 # @shared_limit
 @cache.cached()
 def rate_from_date_to_date(currency, start_date, end_date):
+    __check_currency(currency)
     start_date_dt = __date_string_to_datetime_converter(start_date)
     end_date_dt = __date_string_to_datetime_converter(end_date)
     __check_date(start_date_dt)
@@ -90,13 +86,7 @@ def rate_from_date_to_date(currency, start_date, end_date):
 # @shared_limit
 @cache.cached()
 def sale_one_day(date):
-    date_dt = __date_string_to_datetime_converter(date)
-    __check_date(date_dt)
-    sales = select_sale_one_day(date)
-    if sales == []:
-        sales = [{'date': date, 'USD': 0, 'PLN': 0}]
-
-    return jsonify(sales=sales)
+    return sale_from_date_to_date(date, date)
 
 
 @app.route('/sales/<start_date>/<end_date>', methods=['GET'])
@@ -110,7 +100,7 @@ def sale_from_date_to_date(start_date, end_date):
     __check_date_range(start_date_dt, end_date_dt)
     sales = select_sale_between_dates(start_date, end_date)
     if sales == []:
-        sales = [{'date': date, 'USD': 0, 'PLN': 0}]
+        sales = [{'date': start_date, 'usd': 0, 'pln': 0}]
 
     return jsonify(sales=sales)
 
