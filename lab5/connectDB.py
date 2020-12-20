@@ -59,3 +59,12 @@ def get_currency_rate_data_between_date(cursor, date_from_string, date_to_string
     for row in cursor:
         rate_data_list.append(row)
     return rate_data_list
+
+
+def get_currency_rate_of_day(cursor, date):
+    result = cursor.execute(f"SELECT CurrencyRate FROM {SALES_DATABASE}.{NAME_CURRENCY_TABLE} WHERE RateDate = "
+                   f" \'{date}\'")
+    result_list = []
+    for row in result:
+        result_list.append(row)
+    return result_list
