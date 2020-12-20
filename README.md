@@ -19,33 +19,33 @@ This project requires some additional python libraries, but you do not have to w
 List of packages, just FYI: flask, flask-caching, flask-limiter, requests, pandas.
 
 ## How to use API - PLN Exchange Rates
-Actually available currencies': USD, EUR, HUF, CHF, GBP, JPY, CZK, AED, BOB. 
+Actually available currencies': USD, EUR, HUF, CHF, GBP, JPY, CZK, AED, BOB, KWD. 
 These are also codes that you are supposed to put in {code}.  Arguments marked as {single_date} / {from_date} / {till_date} must be formatted as: YYYY-MM-DD. 
 Data is taken from [NBP Api](http://api.nbp.pl), so you can request data from 2002-01-02 till today.
 
 Exchange rates from a single day:
-```/rates/inter/{code}/{single_date}```
+``/rates/inter/{code}/{single_date}``
 
 Exchange rates from last X days:
-```/rates/inter/{code}/{last_days}```
+``/rates/inter/{code}/{last_days}``
 
 Exchange rates from given date till today:
-```/rates/inter/{code}/{from_date}/today```
+``/rates/inter/{code}/{from_date}/today``
 
 Exchange rates from given period:
-```/rates/inter/{code}/{from_date}/{till_date}```
+``/rates/inter/{code}/{from_date}/{till_date}``
 
-You can also request data without "Interpolated flag". Just remove ```/inter``` from lines presented above.
+You can also request data without "Interpolated flag". Just remove ``/inter`` from lines presented above.
 
 ## How to use API - Sales Data
 Available values for {code} are almost the same as for exchange rates. The original currency used in the dataset is USD, so you cannot request for it, but you can request for data calculated to PLN instead.
 The data comes from Connecicut real estate dataset. Even though the file's names says: 2001-2017, the actual data is available only for period from 2006-10-01 to 2017-09-29. That's because some parts of original .csv file are spoiled.
 
 Sales data from single day:
-```/sales/{code}/{single_date}```
+``/sales/{code}/{single_date}``
 
 Sales data from given period:
-```/sales/{code}/{from_date}/{till_date}```
+``/sales/{code}/{from_date}/{till_date}``
 
 ## Examples of API uses
 
@@ -88,7 +88,7 @@ Sales data from given period:
 	  }
 	]
 	```
-* Sales data from single day, calculated to EUR: ``/sales/CZK/2011-01-01/`` 
+* Sales data from single day, calculated to CZK: ``/sales/CZK/2011-01-01/`` 
 	```	
 	[
 	  {
@@ -101,7 +101,7 @@ Sales data from given period:
 	]
 	```
 * Sales data from whole available period, calculated to PLN:
-``/sales/CZK/2006-10-01/2017-09-29`` 
+``/sales/PLN/2006-10-01/2017-09-29`` 
 	```
 	[
 	  {
