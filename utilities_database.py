@@ -13,7 +13,7 @@ DB_PATH = os.path.join(os.path.dirname(__file__), "my_db.db")
 CSV_PATH = os.path.join(os.path.dirname(__file__), "real-estate-sales-2001-2017-1.csv")
 FIRST_DAY_OF_NBP_CURRENCY_RATE = "2002-01-02"
 TABLE_A = ["usd", "eur", "huf", "chf", "gbp", "jpy", "czk"]
-TABLE_B = ["aed", "bob", "kwd"]
+TABLE_B = ["aed", "bob"]
 TODAY = lambda: datetime.now().strftime('%Y-%m-%d')
 
 
@@ -71,7 +71,7 @@ def add_currency_table(conn, code, table, from_date=FIRST_DAY_OF_NBP_CURRENCY_RA
     actual_table = RATES_TABLE_TEMPLATE.format(code)
     c.execute(f'DROP TABLE IF EXISTS {actual_table}')
     c.execute(f'CREATE TABLE {actual_table} (date TEXT, rate REAL, interpolated INTEGER)')
-    insert_exchange_rates_to_database(conn, code, table, from_date, "2020-12-15")
+    insert_exchange_rates_to_database(conn, code, table, from_date, TODAY())
 
 
 def update_datebase():
@@ -86,6 +86,8 @@ def update_datebase():
     actual_day = TODAY()
     for code in TABLE_A:
         insert_exchange_rates_to_database(conn, code, "a", last_saved_day, actual_day)
+    for code in TABLE_B:
+        insert_exchange_rates_to_database(conn, code, "b", last_saved_day, actual_day)
     conn.commit()
     conn.close()
 
