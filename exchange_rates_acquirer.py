@@ -107,7 +107,8 @@ def expand_exchange_rates_to_range(api_exchange_rates, currency_code, start_date
             api_rates_index += 1
         else:
             all_days_exchange_rates.append(
-                (format_datetime_to_string(start_date), api_exchange_rates[api_rates_index - 1][1], IS_VALUE_INTERPOLATED))
+                (format_datetime_to_string(start_date), api_exchange_rates[api_rates_index - 1][1],
+                 IS_VALUE_INTERPOLATED))
 
         start_date += DELTA_ONE_DAY
 
@@ -123,16 +124,3 @@ def get_exchange_rates_from_last_x_days(currency_code, number_of_days):
     api_rates = get_exchange_rates_from_api(currency_code, start_date, end_date)
 
     return api_rates
-
-
-if __name__ == "__main__":
-    # start = datetime.date(2000, 1, 1)
-    # end = datetime.date(2000, 10, 12)
-    currency_usd = "usd"
-    currency_eur = "eur"
-
-    # api_values = get_exchange_rates_from_api(currency_usd, start, end)
-    # expanded_values = expand_exchange_rates_to_range(api_values, currency_usd, start, end)
-
-    last_half_year_usd = get_exchange_rates_from_last_x_days(currency_usd, 366 / 2)
-    last_half_year_eur = get_exchange_rates_from_last_x_days(currency_eur, 366 / 2)
