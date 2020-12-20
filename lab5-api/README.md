@@ -75,7 +75,7 @@ W tej sekcji znajdują się informacje o sposobie korzystania z API.
 
 ### Format
 
-Dane zwracane są w formacie `JSON`.
+Dane zwracane są w formacie `JSON`. Wartości notowań (sekcja `rates`) są podawane w walucie `PLN` - polski złoty.
 
 ### Parametry zapytań
 
@@ -104,6 +104,8 @@ Przykład zwracanych danych:
 {}
 ```
 
+Standardowo zwracane są notowania z polem `"interpolated": 0`, czyli takie, które nie zostały sztucznie wygenerowane. W takim wypadku jeżeli wybrany zostanie dzień, w którym banki nie prowadziły notowań to zostanie zwrócony pusty słownik. W celu uwzględnienia w zapytaniu notowań wygenerowanych sztucznie należy zastosować opcjonalny argument `interpolated` w ciele zapytania. Poniżej jest przykład jego zastosowania:
+
 `http://host:5000/api/v1/rates/eur/day/2011-01-01?interpolated=1`
 
 ```
@@ -114,6 +116,8 @@ Przykład zwracanych danych:
   "rate": 3.9603
 }
 ```
+
+Te działanie jest właściwe dla wszystkich zapytań dotyczących notowań walut.
 
 #### Notowania z danego okresu
 
