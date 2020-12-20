@@ -1,6 +1,6 @@
 from datetime import date, timedelta, datetime
 import requests
-from mongoengine import *
+from dbModels import *
 from copy import copy
 import sqlite3
 
@@ -123,13 +123,5 @@ def fillDB():
     fillSales(getSales())
 
 
-def apiTest():
-    usd = requests.get('http://127.0.0.1:5000/rates/eur/2020-12-20').json()
-    print(usd)
-    sale = requests.get('http://127.0.0.1:5000/sales/2017-01-01').json()
-    print(sale)
-
-
 if __name__ == '__main__':
-    # fillDB()
-    apiTest()
+    fillDB()
