@@ -1,13 +1,13 @@
 import sqlite3
 import L5_API.nbp_api_handler as api_hdl
-from L5_API.constants import DB_FILE
+from L5_API.constants import DB_PATH
 
 
 def __connect_db():
     conn = None
 
     try:
-        conn = sqlite3.connect(DB_FILE)
+        conn = sqlite3.connect(DB_PATH)
     except sqlite3.Error as e:
         print('db_handler: connect_db ' + str(e))
 

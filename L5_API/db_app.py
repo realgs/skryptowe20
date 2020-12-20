@@ -6,9 +6,7 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func, and_
 
-from L5_API.constants import DATE_FORMAT, DB_LIMITS
-
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+from L5_API.constants import DATE_FORMAT, DB_LIMITS, BASE_DIR
 
 Base = automap_base()
 engine = create_engine('sqlite:///' + os.path.join(BASE_DIR, 'sales.db' + '?check_same_thread=False'))
