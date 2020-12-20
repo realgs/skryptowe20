@@ -186,7 +186,7 @@ Przykład zwracanych danych:
 Waluta oryginalna to `USD`, waluta po przeliczeniu to `PLN`.
 
 Przykład zwracanych danych:
-`http://host:5000/api/v1/sales/sum/2017-04-28`
+`http://host:5000/api/v1/sales/sum/2014-04-28`
 
 ```
 {
