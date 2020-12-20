@@ -151,4 +151,59 @@ def query_rates_all(currency: Currency, interpolated: bool = False) -> List[Dict
 
 
 def query_sales_sum_all_original() -> List[Dict[str, Any]]:
+    has_failed = False
+    connection = None
+    rows = []
+    try:
+        connection = sqlite3.connect(DATABASE_FILE_PATH)
+        connection.row_factory = dict_factory
+        cursor = connection.cursor()
+        rows = cursor.execute(
+            'SELECT order_date"date", SUM(value)"sum" FROM orders GROUP BY order_date').fetchall()
+
+    except sqlite3.Error as err:
+        print(err)
+        has_failed = True
+
+    finally:
+        if connection:
+            connection.close()
+        if has_failed:
+            raise sqlite3.DatabaseError
+
+    return rows
+
+
+def query_sales_sum_all_exchanged(currency: Currency) -> List[Dict[str, Any]]:
+    has_failed = False
+    connection = None
+    rows = []
+    try:
+        connection = sqlite3.connect(DATABASE_FILE_PATH)
+        connection.row_factory = dict_factory
+        cursor = connection.cursor()
+        rows = cursor.execute(
+            '''SELECT O.order_date"date", SUM(O.value)*R.rate"sum" 
+               FROM orders O JOIN rates R ON O.order_date=R.date AND R.code=?
+               GROUP BY order_date;''', (currency.code,)).fetchall()
+
+    except sqlite3.Error as err:
+        print(err)
+        has_failed = True
+
+    finally:
+        if connection:
+            connection.close()
+        if has_failed:
+            raise sqlite3.DatabaseError
+
+    return rows
+
+
+if __name__ == "__main__":
+    # print(query_minmax_date())
+    # print(query_rates_all(Currency.EUROPEAN_EURO, interpolated=True))
+    # print(query_rate(Currency.UNITED_STATES_DOLLAR, dt.date(2011,1,1), interpolated=True))
+    # print(query_sales_sum_all_original())
+    # print(query_sales_sum_all_exchanged(Currency.UNITED_STATES_DOLLAR))
     pass
