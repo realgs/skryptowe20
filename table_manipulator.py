@@ -26,7 +26,7 @@ def get_rows_from_api(currency_code, start_date, end_date):
     return all_days_rates
 
 
-if __name__ == "__main__":
+def create_exchange_rates_table():
     connection = sqlite3.connect("NNorthwind.sqlite")
     cursor = connection.cursor()
 
@@ -43,3 +43,7 @@ if __name__ == "__main__":
 
     cursor.close()
     connection.close()
+
+
+if __name__ == "__main__":
+    create_exchange_rates_table()
