@@ -96,6 +96,3 @@ def print_plot_for_currencies(dollar, euro, dates):
     plt.savefig('dollar_euro_exchange_rates_chart.svg')
     plt.show()
 
-
-if __name__ == '__main__':
-    print_plot_for_dollar_euro_x_days(604)
