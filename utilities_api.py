@@ -144,7 +144,7 @@ def get_sales_in_foreign_curr(code, from_date, till_date):
     conn.close()
     output = [{"Date": d, "USD sales": v1, f"{code.upper()} sales": v2, "USD rate": v3,
                f"{code.upper()} rate": v4} for d, v1, v2, v3, v4 in data]
-    return {"res": output}
+    return jsonify(output)
 
 
 def check_rates_request_data(code, kwargs):
