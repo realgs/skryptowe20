@@ -55,6 +55,28 @@ def convert_to_currency(code: str) -> Currency:
     return curr
 
 
+def convert_to_date(date: str) -> dt.date:
+    try:
+        date_obj = dt.datetime.strptime(date, DATE_FORMAT).date()
+        min_date, max_date = minmax_rates_date()
+        if date_obj > max_date or date_obj < min_date:
+            raise OutOfRangeError
+    except ValueError:
+        raise DateFormatError
+    return date_obj
+
+
+def get_interpolated_param() -> bool:
+    query_parameters = request.args
+    interpolated = False
+    try:
+        if 'interpolated' in query_parameters:
+            interpolated = bool(int(query_parameters['interpolated']))
+    except ValueError:
+        raise InterpolatedParamError
+    return interpolated
+
+
 sales_sum_precached: Dict[Currency, Dict[dt.date, float]] = {}
 sales_sum_precached[Currency.UNITED_STATES_DOLLAR] = caching.cache_sales_sum_original()
 sales_sum_precached[Currency.POLISH_ZLOTY] = caching.cache_sales_sum(
@@ -124,14 +146,7 @@ def index():
 
 @app.route('/api/v1/rates/<currency_code>/all', methods=['GET'])
 def get_rates_all(currency_code: str):
-    query_parameters = request.args
-    interpolated = False
-    try:
-        if 'interpolated' in query_parameters:
-            interpolated = bool(int(query_parameters['interpolated']))
-    except ValueError:
-        raise InterpolatedParamError
-
+    interpolated = get_interpolated_param()
     curr = convert_to_currency(currency_code)
 
     return jsonify(dbhandler.query_rates_all(curr, interpolated))
@@ -139,23 +154,9 @@ def get_rates_all(currency_code: str):
 
 @app.route('/api/v1/rates/<currency_code>/day/<date>', methods=['GET'])
 def get_rate_day(currency_code: str, date: str):
-    query_parameters = request.args
-    interpolated = False
-    try:
-        if 'interpolated' in query_parameters:
-            interpolated = bool(int(query_parameters['interpolated']))
-    except ValueError:
-        raise InterpolatedParamError
-
+    interpolated = get_interpolated_param()
     curr = convert_to_currency(currency_code)
-
-    try:
-        date_obj = dt.datetime.strptime(date, DATE_FORMAT).date()
-        min_date, max_date = minmax_rates_date()
-        if date_obj > max_date or date_obj < min_date:
-            raise OutOfRangeError
-    except ValueError:
-        raise DateFormatError
+    date_obj = convert_to_date(date)
 
     return jsonify(dbhandler.query_rate(curr, date_obj, interpolated))
 
