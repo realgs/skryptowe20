@@ -67,7 +67,7 @@ def api_single_exchange_rate(date):
         abort(400, "Wrong date format")
 
     select_single_exchange_rate_query = """SELECT ER.date, ER.rate, ER.is_interpolated FROM ExchangeRate ER 
-    WHERE ER.date = ?;"""
+        WHERE ER.date = ?;"""
     result = get_result_from_query(select_single_exchange_rate_query, (string_date,))
 
     return jsonify({'date': string_date, 'result': turn_exchange_rates_in_dictionary(result)})
@@ -82,7 +82,7 @@ def api_exchange_rate_range(start_date, end_date):
         abort(400, "Wrong dates provided")
 
     select_multiple_exchange_rates_query = """SELECT ER.date, ER.rate, ER.is_interpolated FROM ExchangeRate ER 
-    WHERE ER.date >= ? AND ER.date <= ?;"""
+        WHERE ER.date >= ? AND ER.date <= ?;"""
 
     result = get_result_from_query(select_multiple_exchange_rates_query, (string_start_date, string_end_date))
 
@@ -104,10 +104,10 @@ def api_single_sum_of_transaction(currency, date):
 
     if currency == "PLN":
         select_single_sum_of_transaction_query = """SELECT ST.date, ST.pln_value FROM SumOfTransaction ST 
-        WHERE ST.date = ?;"""
+            WHERE ST.date = ?;"""
     elif currency == "USD":
         select_single_sum_of_transaction_query = """SELECT ST.date, ST.usd_value FROM SumOfTransaction ST 
-                WHERE ST.date = ?;"""
+            WHERE ST.date = ?;"""
     else:
         abort(400, "Wrong currency")
 
@@ -130,10 +130,10 @@ def api_multiple_sum_of_transaction(currency, start_date, end_date):
 
     if currency == "PLN":
         select_single_sum_of_transaction_query = """SELECT ST.date, ST.pln_value FROM SumOfTransaction ST 
-        WHERE ST.date >= ? AND ST.DATE <= ?;"""
+            WHERE ST.date >= ? AND ST.DATE <= ?;"""
     elif currency == "USD":
         select_single_sum_of_transaction_query = """SELECT ST.date, ST.usd_value FROM SumOfTransaction ST 
-                WHERE ST.date >= ? AND ST.date <= ?;"""
+            WHERE ST.date >= ? AND ST.date <= ?;"""
     else:
         abort(400, "Wrong currency")
 
