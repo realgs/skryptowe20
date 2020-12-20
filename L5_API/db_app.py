@@ -8,7 +8,7 @@ from sqlalchemy import create_engine, func, and_
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 Base = automap_base()
-engine = create_engine('sqlite:///' + os.path.join(BASE_DIR, 'sales.db'))
+engine = create_engine('sqlite:///' + os.path.join(BASE_DIR, 'sales.db' + '?check_same_thread=False'))
 Base.prepare(engine, reflect=True)
 
 Rates = Base.classes.rates
@@ -40,6 +40,3 @@ def get_rates_ipd(date_from, date_to, code):
 def get_sales(date_from, date_to):
     data = session.query(Sales.InvoiceDate, sum(Sales.Total)).group_by(Sales.InvoiceDate).all()
     return data
-
-
-get_sales('2009-01-01', '2009-01-31')
