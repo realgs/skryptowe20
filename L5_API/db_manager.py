@@ -1,9 +1,6 @@
 import sqlite3
 import L5_API.api_handler as api_hdl
-
-
-DB_FILE = '/Users/limi/Desktop/INF/5 JS/L/skryptowe20/L5_API/sales.db'
-CURRENCIES = ['USD', 'EUR', 'GBP']
+from L5_API.constants import DB_FILE
 
 
 def __connect_db():
