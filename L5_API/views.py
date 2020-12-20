@@ -1,12 +1,10 @@
-from datetime import datetime, timedelta
-
-from flask import jsonify
+from datetime import datetime
 from L5_API import db_app
 from L5_API.constants import CURRENCIES, DATE_FORMAT, DATA_LIMIT
 
 
 def get_last_date(code):
-    return jsonify(date=db_app.get_last_date(code))
+    return {"Date": db_app.get_last_date(code)}
 
 
 def get_last_rate(code):
