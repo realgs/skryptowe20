@@ -7,11 +7,11 @@ MAX_DATE = datetime.date(2016, 2, 29)
 
 CREATE_TABLE_EXCHANGE_RATE_QUERY = "CREATE TABLE ExchangeRate (date text, rate real, is_interpolated boolean)"
 INSERT_EXCHANGE_RATE_QUERY = "INSERT INTO ExchangeRate (date, rate, is_interpolated) VALUES (?, ?, ?)"
-DROP_TABLE_EXCHANGE_RATE_QUERY = "DROP TABLE ExchangeRate"
+DROP_TABLE_EXCHANGE_RATE_QUERY = "DROP TABLE IF EXISTS ExchangeRate"
 
 CREATE_TABLE_SUM_OF_TRANSACTION_QUERY = "CREATE TABLE SumOfTransaction (date text, usd_value real, pln_value boolean)"
 INSERT_SUM_OF_TRANSACTION_QUERY = "INSERT INTO SumOfTransaction (date, usd_value, pln_value) VALUES (?, ?, ?)"
-DROP_TABLE_SUM_OF_TRANSACTION_QUERY = "DROP TABLE SumOfTransaction"
+DROP_TABLE_SUM_OF_TRANSACTION_QUERY = "DROP TABLE IF EXISTS SumOfTransaction"
 
 SELECT_SUM_OF_TRANSACTIONS_QUERY = """
 SELECT 
@@ -58,7 +58,7 @@ def create_sum_of_transactions_table():
     connection = sqlite3.connect("Northwind.sqlite")
     cursor = connection.cursor()
 
-    # cursor.execute(DROP_TABLE_SUM_OF_TRANSACTION_QUERY)
+    cursor.execute(DROP_TABLE_SUM_OF_TRANSACTION_QUERY)
     cursor.execute(CREATE_TABLE_SUM_OF_TRANSACTION_QUERY)
     cursor.execute(SELECT_SUM_OF_TRANSACTIONS_QUERY)
 
