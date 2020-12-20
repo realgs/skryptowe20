@@ -1,12 +1,12 @@
-import flask
-from flask import request, jsonify, abort, render_template
-from lab5_solutions.currency import Currency
-from lab5_solutions.database_repository import *
 from datetime import datetime, date
+
+from flask import jsonify, abort, render_template
 from flask_caching import Cache
 from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address, get_ipaddr
-import os
+from flask_limiter.util import get_remote_address
+
+from lab5_solutions.currency import Currency
+from lab5_solutions.database_repository import *
 
 TWENTY_FOUR_HOURS = 24 * 60 * 60
 
@@ -56,9 +56,11 @@ def __date_string_to_datetime_converter(date_string):
     except ValueError:
         abort(400, description="Invalid date format: '{}'.".format(date_string))
 
+
 @app.route('/')
 def home():
     return render_template("home.html")
+
 
 @app.route('/exchange-rates/<currency>/<date>', methods=['GET'])
 # @shared_limit

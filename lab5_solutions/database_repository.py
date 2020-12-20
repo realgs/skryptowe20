@@ -1,12 +1,13 @@
+import os
 import sqlite3
 from sqlite3 import Error
-from flask import g
+
 import flask
 import pandas
-from datetime import date
-from lab5_solutions.utils import MAX_DATE, MIN_DATE, DATE_FORMAT
+from flask import g
+
 from lab5_solutions.nbp_api import *
-import os
+from lab5_solutions.utils import MAX_DATE, MIN_DATE, DATE_FORMAT
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATABASE_PATH = os.path.join(BASE_DIR, "database.db")

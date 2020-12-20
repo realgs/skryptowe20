@@ -1,35 +1,43 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
+<head>
     <meta charset="utf-8">
     <title>Exchange rates & Sales</title>
-  </head>
-  <body>
-    <h2>Exchange rates and sales API</h2>
-    <p>This API provides exchange rates of three currencies (USD, EUR, GBP)
-        and data on total sales in two currencies - original (USD)
-        and converted at the exchange rate of the National Bank of Poland (PLN).</p>
-    <p>Exchange rate data and sales data are from 2014-12-28 to 2016-12-28.</p>
-    <p>Date format used is <b>YYYY-MM-DD</b>, e.g. 2015-10-13.</p>
-    <p>Exchange rate data - property <i>interpolated</i> is set to true for days that had no value
-      and took their value from the previous (or next, depending on the situation) day
-      that had the exchange rate. False otherwise.</p>
-    <h4>There are currently four endpoints you can use:</h4>
+</head>
+<body>
+<h2>Exchange rates and sales API</h2>
+<p>This API provides exchange rates of three currencies (USD, EUR, GBP)
+    and data on total sales in two currencies - original (USD)
+    and converted at the exchange rate of the National Bank of Poland (PLN).</p>
+<p>Exchange rate data and sales data are from 2014-12-28 to 2016-12-28.</p>
+<p>Date format used is <b>YYYY-MM-DD</b>, e.g. 2015-10-13.</p>
+<p>Exchange rate data - property <i>interpolated</i> is set to true for days that had no value
+    and took their value from the previous (or next, depending on the situation) day
+    that had the exchange rate. False otherwise.</p>
+<h4>There are currently four endpoints you can use:</h4>
 
-    <h3><li>/exchange-rates/{currency}/{date}</li></h3>
-    <p>Provides exchange rate of the selected currency on the selected date.</p>
-    <p>For example: <b>/exchange-rates/GBP/2015-10-13</b></p>
+<h3>
+    <li>/exchange-rates/{currency}/{date}</li>
+</h3>
+<p>Provides exchange rate of the selected currency on the selected date.</p>
+<p>For example: <b>/exchange-rates/GBP/2015-10-13</b></p>
 
-    <h3><li>/exchange-rates/{currency}/{start_date}/{end_date}</li></h3>
-    <p>Provides exchange rates of the selected currency on the selected time period.</p>
-    <p>For example: <b>/exchange-rates/EUR/2015-10-13/2015-10-18</b></p>
+<h3>
+    <li>/exchange-rates/{currency}/{start_date}/{end_date}</li>
+</h3>
+<p>Provides exchange rates of the selected currency on the selected time period.</p>
+<p>For example: <b>/exchange-rates/EUR/2015-10-13/2015-10-18</b></p>
 
-    <h3><li>/sales/{date}</li></h3>
-    <p>Provides sales data for the selected date.</p>
-    <p>For example: <b>/sales/2016-10-13</b></p>
+<h3>
+    <li>/sales/{date}</li>
+</h3>
+<p>Provides sales data for the selected date.</p>
+<p>For example: <b>/sales/2016-10-13</b></p>
 
-    <h3><li>/sales/{start_date}/{end_date}</li></h3>
-    <p>Provides sales data for the selected time period.</p>
-    <p>For example: <b>/sales/2016-10-13/2016-10-19</b></p>
-  </body>
+<h3>
+    <li>/sales/{start_date}/{end_date}</li>
+</h3>
+<p>Provides sales data for the selected time period.</p>
+<p>For example: <b>/sales/2016-10-13/2016-10-19</b></p>
+</body>
 </html>
