@@ -4,6 +4,7 @@ conf = {
   },
   'limits': ["200 per day", "50 per hour"],
   'cache': {'CACHE_TYPE': 'simple'},
+  'cache-timeout': 50,
   'api': {
     'host': '0.0.0.0',
     'port': 8080,

@@ -21,14 +21,14 @@ cache.init_app(app)
 
 
 @app.route('/api/home/<name>')
-@cache.cached(timeout=50)
+@cache.cached(timeout=conf['cache-timeout'])
 def home(name):
   return jsonify(hello= "Hello",
               world=name)
 
 
 @app.route('/api/rates')
-@cache.cached(timeout=50)
+@cache.cached(timeout=conf['cache-timeout'])
 def return_all_rates():
   db = Database(DB_NAME)
   rates = db.get_avg_usd_rates()
@@ -40,7 +40,7 @@ def return_all_rates():
 
 
 @app.route('/api/rates/<date>')
-@cache.cached(timeout=50)
+@cache.cached(timeout=conf['cache-timeout'])
 def return_rate(date):
   db = Database(DB_NAME)
   res = db.get_avg_usd_rates(date)
@@ -55,7 +55,7 @@ def return_rate(date):
 
 
 @app.route('/api/rates/<start>/<end>')
-@cache.cached(timeout=50)
+@cache.cached(timeout=conf['cache-timeout'])
 def return_rates(start, end):
   db = Database(DB_NAME)
   res = db.get_avg_usd_rates_in_interval(start, end)
@@ -67,7 +67,7 @@ def return_rates(start, end):
 
 
 @app.route('/api/sales/<start_date>/<end_date>')
-@cache.cached(timeout=50)
+@cache.cached(timeout=conf['cache-timeout'])
 def return_sales(start_date, end_date):
   db = Database(DB_NAME)
   res = db.get_sales_usd_pln(start_date, end_date)
@@ -79,7 +79,7 @@ def return_sales(start_date, end_date):
 
 
 @app.route('/api/sales/<date>')
-@cache.cached(timeout=50)
+@cache.cached(timeout=conf['cache-timeout'])
 def return_sale(date):
   db = Database(DB_NAME)
   res = db.get_sales_usd_pln(date, date)
