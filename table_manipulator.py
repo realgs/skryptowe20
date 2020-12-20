@@ -2,6 +2,9 @@ import sqlite3
 import exchange_rates_acquirer as rates_acquirer
 import datetime
 
+MIN_DATE = datetime.date(2012, 7, 1)
+MAX_DATE = datetime.date(2016, 2, 29)
+
 CREATE_TABLE_QUERY = "CREATE TABLE ExchangeRate (date text, rate real)"
 INSERT_QUERY = "INSERT INTO ExchangeRate (date, rate) VALUES (?, ?)"
 SELECT_QUERY = """SELECT ER.date, ER.rate, ROUND(orderSum, 2)
@@ -28,15 +31,12 @@ if __name__ == "__main__":
 
     cursor.execute(CREATE_TABLE_QUERY)
 
-    rows = get_rows_from_api("usd", datetime.date(2013, 1, 1), datetime.date(2015, 12, 31))
+    rows = get_rows_from_api("usd", MIN_DATE, MAX_DATE)
 
     for row in rows:
         cursor.execute(INSERT_QUERY, row)
 
     connection.commit()
-
-    cursor.execute(SELECT_QUERY)
-    table_rows = cursor.fetchall()
 
     cursor.close()
     connection.close()
