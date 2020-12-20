@@ -4,10 +4,10 @@ NorthwindAPI to projekt pozwalający na pozyskiwanie danych o sumie sprzedaży z
 Możliwe jest takźe uzyskanie samego interesującego nas kursu.
 
 ## Pliki
-- exchange_rates_acquirer.py - odpowiada za pobieranie kursów ze strony nbp.pl jak i ich odpowiednie formatowanie
-- table_manipulator.py - plik dodający dane o kursach i sumie sprzedaży do bazy danych
-- app.py - właściwa aplikacja udostępniająca API
-- Northwind.sqlite - baza danych Northwind, do pobrania tutaj: https://github.com/jpwhite3/northwind-SQLite3 (Northwind_large.sqlite.zip)
+- _exchange_rates_acquirer.py_ - odpowiada za pobieranie kursów ze strony nbp.pl jak i ich odpowiednie formatowanie
+- _table_manipulator.py_ - plik dodający dane o kursach i sumie sprzedaży do bazy danych
+- _app.py_ - właściwa aplikacja udostępniająca API
+- _Northwind.sqlite_ - baza danych Northwind, do pobrania tutaj: https://github.com/jpwhite3/northwind-SQLite3 (Northwind_large.sqlite.zip)
 
 Wszystkie pliki należy umieścić w jednym folderze
 
@@ -31,17 +31,17 @@ Następnie należy uruchomić plik app.py, podczas którego działania dostępne
 Powyższe zapytania w polu 'result' zwracają informacje o znalezionych kursach dolara do złotówki. 
 Rządanie z pojedynczą datą zwróci przelicznik z danego dnia, rządanie z dwoma zwróci dane z podanego zakresu (włacznie z <end_date>).
 Dla każdego pola w 'result' dostępne są trzy informacje:
-- date - data 
-- rate - kurs z danego dnia
-- is_interpolated - true, jeżeli w danym dniu nie był dostępny kurs (kurs jest wtedy z poprzedniego dostępnego dnia); w innym przypadku false
+- **date** - data 
+- **rate** - kurs z danego dnia
+- **is_interpolated** - true, jeżeli w danym dniu nie był dostępny kurs (kurs jest wtedy z poprzedniego dostępnego dnia); w innym przypadku false
 
 Oprócz tego w odpowiedzi znajdują się użyte w rządaniu wartości (date lub start_date z end_date).
 
 ### /api/sum/{currency}/{date}
 ### /api/sum/{currency}/{start_date}/{end_date}
 Te żądania zwracają sumę wartości transakcji z danego dnia. W polu 'result' dostępne są zwrócone wyniki, gdzie 
-- date - data
-- sum - suma wartości transakcji z danego dnia
+- **date** - data
+- **sum** - suma wartości transakcji z danego dnia
 
 Oprócz tego w odpowiedzi znajdują się użyte w rządaniu wartości (date lub start_date z end_date).
 
@@ -64,13 +64,13 @@ W przypadku błędnie podanej waluty, zostanie zwrócony kod błędu: 400.
 Możliwe jest wysłanie 20 żądań na minutę, liczone osobno dla każdego użytkownika. W przypadku przkroczeniu limitu otrzymamy wynik: Too Many Requests.
 
 ## Przykładowe zapytania
-/api/exchangerates/2015-12-31 - zapytanie o przelicznik dolarów na złotówki w dniu 2015-12-31
+`/api/exchangerates/2015-12-31` - zapytanie o przelicznik dolarów na złotówki w dniu 2015-12-31
 
-/api/exchangerates/2015-12-12/2015-12-24 - zapytanie o przelicznik dolarów na złotówki w dniach od 2015-12-12 do 2015-12-24 (włącznie)
+`/api/exchangerates/2015-12-12/2015-12-24` - zapytanie o przelicznik dolarów na złotówki w dniach od 2015-12-12 do 2015-12-24 (włącznie)
 
-/api/sum/usd/2015-04-5 - zapytanie o sumę transakcji w dniu 2015-04-05, wartości podane w dolarach
+`/api/sum/usd/2015-04-5` - zapytanie o sumę transakcji w dniu 2015-04-05, wartości podane w dolarach
 
-/api/sum/pln/2013-03-04/2013-4-18 - zapytanie o sumę transakcji z zakresu od 2013-03-04 do 2013-4-18 (włacznie), wartości podane w złotówkach
+`/api/sum/pln/2013-03-04/2013-4-18` - zapytanie o sumę transakcji z zakresu od 2013-03-04 do 2013-4-18 (włacznie), wartości podane w złotówkach
 
 ## Cache
 W programie używany jest system cache używający Flask-Caching. 
