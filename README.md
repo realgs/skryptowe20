@@ -2,7 +2,7 @@
 ## Description
 
 Exchange rates and sales API is a service for historical foreign exchange rates published by the National Bank of Poland (http://api.nbp.pl/) and sales data in **json** format. Sales data come from the database (*‘database.db’*) shared in this repository.
-Exchange rate data and sales data are **from 2014-12-28 to 2016-12-28**.
+Exchange rate data and sales data are available **from 2014-12-28 to 2016-12-28**.
 
 ## Project structure
 * `wsgi.py` - startup script
@@ -10,8 +10,8 @@ Exchange rate data and sales data are **from 2014-12-28 to 2016-12-28**.
 * `lab5_solutions/api.py` - script responsible for the functioning of the API
 * `lab5_solutions/currency.py` - currencies available in the application
 * `lab5_solutions/database.db` - database file containing sales and exchange rates data
-* `lab5_solutions/database_repository.py` - script containing functions to connect to and operate on cthe database
-* `lab5_solutions/exceptions.py` - exceptions defined by me
+* `lab5_solutions/database_repository.py` - script containing functions to connect to and operate on the database
+* `lab5_solutions/exceptions.py` - domain exceptions
 * `lab5_solutions/nbp_api.py` - script containing the function to manage client for the NBP API
 * `lab5_solutions/utils.py` - contains useful variables
 * `lab5_solutions/templates/home.html` - HTML document for the start page
@@ -23,9 +23,9 @@ Exchange rate data and sales data are **from 2014-12-28 to 2016-12-28**.
 In your browser, run the website:
 ### https://sale-and-exchange-rate.herokuapp.com/
 
-That's all! Read the Usage section and enjoy the exchange rates walut and sales data. 
+That's all! Read the Usage section and enjoy the exchange rates and sales data. 
 ### Second option
-You will need **Python 3.7.x (or higher)**. You will also require a web browser (such as Chrome).
+You will need **Python 3.7.x (or higher)**. 
 
 To get Python 3, follow this link:
 https://www.python.org/downloads/, 
@@ -38,7 +38,7 @@ To check if Python is installed correctly, open a command line and run  these co
 
 The outputs of these commands should contain information about Python 3.7.x.
 
-I can highly recommend Python 3.7.9., because this version was used in developing and testing the project.
+I can highly recommend Python 3.7.9., because this version was used in development and testing the project.
 
 *my_requirements.txt* - contains the set of packages that this application depends on. To install them, use this command in terminal/command line:
 
@@ -67,11 +67,11 @@ There are currently four endpoints you can use.
 #### Get the exchange rate of the selected currency on the selected day
 `/exchange-rates/{currency}/{date}`
 
- **Example:**
+Example:
 
 `/exchange-rates/GBP/2015-10-13`
 
-**Result:**
+Result:
 
 ```json
 {
@@ -90,11 +90,11 @@ There are currently four endpoints you can use.
 
 `/exchange-rates/{currency}/{start_date}/{end_date}`
 
-**Example:**
+Example:
 
 ` /exchange-rates/EUR/2015-10-13/2015-10-15`
 
-**Result:**
+Result:
 
 ```json
 {
@@ -125,11 +125,11 @@ There are currently four endpoints you can use.
 
 `/sales/{date}`
 
-**Example:**
+Example:
 
 `/sales/2016-10-13`
 
-**Result:**
+Result:
 
 ```json
 {
@@ -143,11 +143,11 @@ There are currently four endpoints you can use.
 }
 ```
 
-**Example:**
+Example:
 
 `/sales/2015-02-12`
 
-**Result:**
+Result:
 
 ```json
 {
@@ -165,11 +165,11 @@ There are currently four endpoints you can use.
 
 `/sales/{start_date}/{end_date}`
 
-**Example:**
+Example:
 
 `/sales/2016-10-13/2016-10-15`
 
-**Result:**
+Result:
 
 ```json
 {
@@ -194,28 +194,45 @@ There are currently four endpoints you can use.
 ```
 ### Exchange rate response
 
-```json
+```
 {
   "rates": [
     {
       "currency": {currency}, 
       "date": {date}, 
-      "interpolated": true | false, 
+      "interpolated": {true | false}, 
       "rate": {rate}
     }
   ]
 }
 ```
+* *currency* - currency code in the ISO 4217 standard
+* *date* - date of the currency exchange rate in the ISO 8601 standard
+* Property *interpolated* is set to **true** for days that had no value and took their value from the previous (or next, depending on the situation) day that had the exchange rate. **False** otherwise.
+* *rate* - selected currency to PLN exchange rate
 
-Property *interpolated* is set to true for days that had no value and took their value from the previous (or next, depending on the situation) day that had the exchange rate. False otherwise.
+### Sales data response
+```
+{
+  "sales": [
+    {
+      "date": {date}, 
+      "pln": {PLN}, 
+      "usd": {USD}
+    }
+  ]
+}
+```
+* *date* - date of the sale in the ISO 8601 standard
+* *pln* - sum of the total sales on the selected day in PLN counted using the exchange rate for the day
+* *usd* - sum of the total sales on the selected day in the original currency (USD)
 
 ### Types of bad requests
+Making a request with any of the following types of errors results in the **HTTP 400 Bad request** response status code.
 * Using an unsupported currency in the request
 * Using a date from an unsupported time period
 * Using an end date that is before a start date
 * Using invalid date format
-
-Making a request with any of the following types of errors results in the **HTTP 400 Bad request** response status code.
 
 ## Limits
 Requests limit is set to **500 per day** and **30 per hour**, 
