@@ -4,24 +4,58 @@ import matplotlib.pyplot as plt
 from api_connection import get_average_currency_rates_between
 
 
+# Database created with:
+# https://www.sqlservertutorial.net/sql-server-sample-database/
+conn = db.connect('Driver={SQL Server};'
+                'Server=DESKTOP-AKTNFDK;'
+                'Database=BikeStores;'
+                'Trusted_Connection=yes;')
+
+
 # Zadanie 4 - modyfikacja istniejcej bazy danych
 def create_rates_table(data):
     cursor = conn.cursor()
     cursor.execute('CREATE TABLE BikeStores.dbo.rates ('
                    'measure_date DATE NOT NULL PRIMARY KEY,'
-                   'measure_rate DECIMAL (7, 4) NOT NULL);')
+                   'measure_rate DECIMAL (7, 4) NOT NULL,'
+                   'interpolated BIT NOT NULL);')
+    conn.commit()
 
-    query = 'INSERT INTO BikeStores.dbo.rates(measure_date,measure_rate) VALUES(?,?)'
+    update_rates_table(data)
+
+# Added option to add interpolation from db in case update_rates_table_to_today is called on weekend
+def update_rates_table(data, interpolate_date=None):
+    cursor = conn.cursor()
+    query = 'INSERT INTO BikeStores.dbo.rates(measure_date,measure_rate, interpolated) VALUES(?,?,?)'
 
     for idx in range(len(data)):
-        cursor.execute(query, (data[idx]['effectiveDate'], float(data[idx]['mid'])))
+        cursor.execute(query, (data[idx]['effectiveDate'], float(data[idx]['mid']), 0))
         if idx < len(data) - 1:
             date_idx0 = datetime.datetime.strptime(data[idx]['effectiveDate'], '%Y-%m-%d')
             date_idx1 = datetime.datetime.strptime(data[idx+1]['effectiveDate'], '%Y-%m-%d')
             date_diff = (date_idx1 - date_idx0).days
             for excess in range(date_diff - 1):
                 date_idx0 += datetime.timedelta(days=1)
-                cursor.execute(query, (date_idx0, float(data[idx]['mid'])))
+                cursor.execute(query, (date_idx0, float(data[idx]['mid']), 1))
+    
+    # interpolate_date -> date of last rate that will be stored in db
+    if interpolate_date != None:
+        # if there is option, interpolate from data list passed as arg
+        if (len(data) > 0):
+            last_date = datetime.datetime.strptime(data[-1]['effectiveDate'], '%Y-%m-%d')
+            for excess in range((interpolate_date - last_date).days):
+                last_date += datetime.timedelta(days=1)
+                cursor.execute(query, (last_date, float(data[-1]['mid']), 1))
+        # otherwise take last rate from db
+        else:
+            cursor.execute('SELECT TOP (1) [measure_date],[measure_rate] FROM [BikeStores].[dbo].[rates] ORDER BY [measure_date] DESC;')
+            last_tuple = cursor.fetchone()
+            if last_tuple != None:
+                last_date = datetime.datetime.strptime(last_tuple[0], '%Y-%m-%d')
+                for excess in range((interpolate_date - last_date).days):
+                    last_date += datetime.timedelta(days=1)
+                    cursor.execute(query, (last_date, float(last_tuple[1]), 1))
+
 
     conn.commit()
 
@@ -60,14 +94,23 @@ def draw_profit_diagram():
     plt.show()
 
 
-if __name__ == '__main__':
-    # Database created with:
-    # https://www.sqlservertutorial.net/sql-server-sample-database/
-    conn = db.connect('Driver={SQL Server};'
-                      'Server=DESKTOP-AKTNFDK;'
-                      'Database=BikeStores;'
-                      'Trusted_Connection=yes;')
+def update_rates_table_to_today():
+    cursor = conn.cursor()
+    # Get most recent date in table
+    cursor.execute("""SELECT TOP (1) [measure_date]
+    FROM [BikeStores].[dbo].[rates]
+    ORDER BY [measure_date] DESC""")
 
+    last_date = cursor.fetchone()
+    if last_date != None:
+        last_date = datetime.datetime.strptime(last_date[0], '%Y-%m-%d')
+        today = datetime.datetime.today()
+        if (today > last_date):
+            table_data = get_average_currency_rates_between('USD', last_date + datetime.timedelta(days=1), today)
+            update_rates_table(table_data, today)
+
+
+if __name__ == '__main__':
     # Add database table and fill it
     table_data = get_average_currency_rates_between('USD', datetime.date(2015, 12, 20), datetime.date(2018, 1, 4))
     create_rates_table(table_data)
