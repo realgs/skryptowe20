@@ -12,14 +12,12 @@ def generate_sales_information(currency_to_db_name, data_from, data_to):
     # add_usd_rate_table_to_db(cursor)
     # ################### #
 
-    listing_between_date = get_listing_coursers_between_date(currency_to_db_name, data_from, data_to)
-    currency_data = get_rate_list(listing_between_date)
-    print(currency_data)
-    fill_table_usd_rate(cursor, currency_data)
+    # listing_between_date = get_listing_coursers_between_date(currency_to_db_name, data_from, data_to)
+    # currency_data = get_rate_list(listing_between_date)
+    # fill_table_usd_rate(cursor, currency_data)
 
 
 def main():
-    # import_usd_eur_mid_year()
     generate_sales_information("USD", MY_DB_DATE_FROM, MY_DB_DATE_TO)
 
 

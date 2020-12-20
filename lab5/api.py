@@ -1,4 +1,6 @@
 from flask import Flask
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from flask_restful import Api, Resource
 import datetime as dt
 
@@ -11,7 +13,11 @@ MY_DB_DATE_TO = "2014-05-28"
 app = Flask(__name__)
 api = Api(app)
 cursor = connect()
-
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["10 per minutes"]
+)
 
 
 class CurrencyRates(Resource):
@@ -21,19 +27,14 @@ class CurrencyRates(Resource):
             if check_date_format(date_from) & check_date_format(date_to):
                 if check_date_range(date_from) & check_date_range(date_from):
                     currency_rate = get_currency_rate_data_between_date(cursor, date_from, date_to)
-                    print(currency_rate)
                     json_list = currency_rate_list_to_json_format(currency_rate)
-                    print(json_list)
-                    wynik = {
+                    return {
                         "status": 200,
                         "result": {
                             "currency": currency_id,
                             "rates": json_list
                         }
-
                     }
-                    print(wynik)
-                    return wynik
                 else:
                     return {"status": 400, "description": "Data out of range selected. Allowed range from " +
                                                           MY_DB_DATE_FROM + " to " + MY_DB_DATE_TO}
@@ -84,14 +85,14 @@ api.add_resource(DailyTurnover, "/turnover/<string:date>/<string:currency_id>")
 
 
 def currency_rate_list_to_json_format(data):
-    list = []
+    new_list = []
     for row in data:
-        list.append({
+        new_list.append({
             "date": str(__datetime_with_time_converter(row[0]))[:10],
             "mid_rate": row[1],
             "is_interpolated": row[2]
         })
-    return list
+    return new_list
 
 
 def __datetime_with_time_converter(string_datetime):
