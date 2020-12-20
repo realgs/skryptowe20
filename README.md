@@ -19,7 +19,7 @@ This project requires some additional python libraries, but you do not have to w
 List of packages, just FYI: flask, flask-caching, flask-limiter, requests, pandas.
 
 ## How to use API - PLN Exchange Rates
-Actually available currencies': USD, EUR, HUF, CHF, GBP, JPY, CZK, AED, BOB, KWD. 
+Actually available currencies': USD, EUR, HUF, CHF, GBP, JPY, CZK, AED, BOB. 
 These are also codes that you are supposed to put in {code}.  Arguments marked as {single_date} / {from_date} / {till_date} must be formatted as: YYYY-MM-DD. 
 Data is taken from [NBP Api](http://api.nbp.pl), so you can request data from 2002-01-02 till today.
 
