@@ -46,7 +46,9 @@ I can highly recommend Python 3.7.9., because this version was used in developme
 
 
 To start, use this command:
-python wsgi.py
+
+`python wsgi.py`
+
 Now head over to **http://127.0.0.1:5000/** (or **http://localhost:5000/**), and you should see the home page.
 
 ## Usage
