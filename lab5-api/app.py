@@ -3,6 +3,7 @@
 from typing import Dict, Tuple
 import flask
 from flask import Flask, request
+from flask.json import jsonify
 from werkzeug.exceptions import InternalServerError
 from config import *
 from sqlite3 import DatabaseError
@@ -39,6 +40,19 @@ class InterpolatedParamError(Exception):
 
 def validate_currency_code(code: str) -> bool:
     return code.isalpha() and len(code) == 3
+
+
+def convert_to_currency(code: str) -> Currency:
+    if not validate_currency_code(code):
+        raise CurrencyCodeError
+    code = code.upper()
+    if code in currencyCodes:
+        curr = currencyCodes[code]
+        if curr == Currency.POLISH_ZLOTY:
+            raise NoCurrencyError
+    else:
+        raise NoCurrencyError
+    return curr
 
 
 sales_sum_precached: Dict[Currency, Dict[dt.date, float]] = {}
@@ -90,6 +104,7 @@ def date_exception_handler(error):
 def date_exception_handler(error):
     return {'error': type(error).__name__, 'message': 'Requested currency is not available in database.'}, 422
 
+
 @app.errorhandler(InterpolatedParamError)
 def date_exception_handler(error):
     return {'error': type(error).__name__, 'message': 'Invalid argument value - interpolated should be set as 0 or 1'}, 422
@@ -104,18 +119,22 @@ def handle_500(error):
 
 @app.route('/', methods=['GET'])
 def index():
-    return ''
+    return '<h1>Exchange rates and sales API</h1>'
 
 
 @app.route('/api/v1/rates/<currency_code>/all', methods=['GET'])
 def get_rates_all(currency_code: str):
-    if not validate_currency_code(currency_code):
-        raise CurrencyCodeError
-    currency_code = currency_code.upper()
-    if currency_code in currencyCodes:
-        curr = currencyCodes[currency_code]
-    else:
-        raise NoCurrencyError
+    query_parameters = request.args
+    interpolated = False
+    try:
+        if 'interpolated' in query_parameters:
+            interpolated = bool(int(query_parameters['interpolated']))
+    except ValueError:
+        raise InterpolatedParamError
+
+    curr = convert_to_currency(currency_code)
+
+    return jsonify(dbhandler.query_rates_all(curr, interpolated))
 
 
 @app.route('/api/v1/rates/<currency_code>/day/<date>', methods=['GET'])
@@ -128,15 +147,8 @@ def get_rate_day(currency_code: str, date: str):
     except ValueError:
         raise InterpolatedParamError
 
-    if not validate_currency_code(currency_code):
-        raise CurrencyCodeError
-    currency_code = currency_code.upper()
-    if currency_code in currencyCodes:
-        curr = currencyCodes[currency_code]
-        if curr == Currency.POLISH_ZLOTY:
-            raise NoCurrencyError
-    else:
-        raise NoCurrencyError
+    curr = convert_to_currency(currency_code)
+
     try:
         date_obj = dt.datetime.strptime(date, DATE_FORMAT).date()
         min_date, max_date = minmax_rates_date()
@@ -145,7 +157,7 @@ def get_rate_day(currency_code: str, date: str):
     except ValueError:
         raise DateFormatError
 
-    return flask.jsonify(dbhandler.query_rate(curr, date_obj, interpolated))
+    return jsonify(dbhandler.query_rate(curr, date_obj, interpolated))
 
 
 @app.route('/api/v1/rates/<currency_code>/range/<start_date>/<end_date>', methods=['GET'])

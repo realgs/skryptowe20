@@ -97,8 +97,32 @@ def query_rate(currency: Currency, date: dt.date, interpolated: bool = False) ->
     return {}
 
 
-def query_rates_all(currency: Currency) -> List[Dict[str, Any]]:
-    pass
+def query_rates_all(currency: Currency, interpolated: bool = False) -> List[Dict[str, Any]]:
+    has_failed = False
+    connection = None
+    rows = []
+    try:
+        connection = sqlite3.connect(DATABASE_FILE_PATH)
+        connection.row_factory = dict_factory
+        cursor = connection.cursor()
+        if interpolated:
+            rows = cursor.execute('SELECT * FROM rates WHERE code=?',
+                                  (currency.code,)).fetchall()
+        else:
+            rows = cursor.execute(
+                'SELECT * FROM rates WHERE code=? AND interpolated=0', (currency.code,)).fetchall()
+
+    except sqlite3.Error as err:
+        print(err)
+        has_failed = True
+
+    finally:
+        if connection:
+            connection.close()
+        if has_failed:
+            raise sqlite3.DatabaseError
+
+    return rows
 
 
 def query_sales_sum(currency: Currency, date: dt.date) -> List[Dict[str, Any]]:
