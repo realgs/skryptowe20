@@ -1,18 +1,15 @@
 from .connection import connect
+from datetime import date
 
 def insert_into_pln_currencies(currency):
-    conn = connect()
-    with conn:
+    with connect() as conn:
         cursor = conn.cursor()
         cursor.execute("INSERT INTO purchasing.pln_currencies(currency_date, currency_value, interpolated) VALUES(%s, %s, %s)", currency)
 
-# def execute_custom_query(query: str):
-#     conn = connect()
-#     cursor = conn.cursor()
-#     try:
-#         cursor.execute(query)
-#         query_result = cursor.fetchall()
-#         return query_result
-#     finally:
-#         cursor.close()
-#         conn.close()
+
+def get_currencies_in_range(date_from: date, date_to: date):
+    with connect() as conn:
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT * FROM purchasing.pln_currencies WHERE currency_date >= '{date_from}' AND currency_date <= '{date_to}'")
+        return cursor.fetchall()
+

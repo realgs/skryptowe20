@@ -1,16 +1,14 @@
 import os
 from database.connection import connect
 from database.commands import insert_into_pln_currencies
-from nbp_requests import get_currency_for_period, fill_empty_records
-from datetime import date
+from nbp_requests import get_currency_for_period, fill_empty_records, MIN_ALLOWED_DATE, MAX_ALLOWED_DATE
 
 def run_scripts():
     scripts_path = "sql_scripts/"
 
     print("\nConnecting to the DB...")
-    conn = connect()
 
-    with conn:
+    with connect() as conn:
         cursor = conn.cursor()
 
         print("\nReading Scripts...")
@@ -28,9 +26,8 @@ def run_scripts():
 
 
 def insert_interpolated_currencies():
-    # Min and max ranges from DB. TODO get range using SQL query
-    start_date = date(2003, 10, 26)
-    end_date = date(2004, 8, 24)
+    start_date = MIN_ALLOWED_DATE
+    end_date = MAX_ALLOWED_DATE
 
     currencies_for_period = get_currency_for_period("USD", start_date, end_date)
     fixed_currencies = fill_empty_records(currencies_for_period, start_date, end_date)

@@ -1,6 +1,10 @@
 import requests
 from datetime import date, timedelta
 
+# Min and max ranges available in the DB. TODO get range using SQL query
+MIN_ALLOWED_DATE = date(2003, 10, 26)
+MAX_ALLOWED_DATE = date(2004, 8, 24)
+
 def get_currency_for_period(currency_code: str, start_date: date, end_date: date) -> [(str, float)]:
     request_url = f"http://api.nbp.pl/api/exchangerates/rates/a/{currency_code}/{start_date}/{end_date}/"
 
