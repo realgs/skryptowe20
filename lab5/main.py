@@ -1,8 +1,9 @@
 import requests
 import psycopg2
 from datetime import date, timedelta, datetime
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
+#
+import flask
+from currency_controller import currency_controller
 
 def get_currency_for_period(currency_code: str, start_date: date, end_date: date) -> [(str, float)]:
     request_url = f"http://api.nbp.pl/api/exchangerates/rates/a/{currency_code}/{start_date}/{end_date}/"
@@ -148,18 +149,6 @@ def zad5():
         usd_sums = [x[1] for x in result]
         pln_sums = [x[2] for x in result]
 
-        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter("%Y/%m/%d"))
-        plt.gca().xaxis.set_major_locator(mdates.MonthLocator())
-
-        plt.plot(dates, usd_sums, label="USD")
-        plt.plot(dates, pln_sums, label="PLN")
-
-        plt.xlabel('Month')
-        plt.ylabel('Sum')
-
-        plt.legend()
-        plt.show()
-
     except (Exception, psycopg2.Error) as ex:
         print("Error while connecting to PostgreSQL", ex)
 
@@ -169,22 +158,13 @@ def zad5():
             connection.close()
             print("PostgreSQL connection is closed")
 
+
+##
+app = flask.Flask(__name__)
+app.config["DEBUG"] = True
+
+app.register_blueprint(currency_controller)
+
+
 if __name__ == "__main__":
-    # last_days = 12
-    # currency_code = "USD"
-    # zad1_result = zad1(currency_code, last_days)
-    # print(f"Mean currency value of {currency_code} by last {last_days} days: {zad1_result}")
-    #
-    # zad2_result = zad2()
-    # print(f"Mean currency value of USD and EUR respectively by last half of the year: {zad2_result}")
-
-    # zad4()
-
-    # start_date = date(2003, 10, 26)
-    # end_date = date(2004, 8, 24)
-    #
-    # currencies_for_period = get_currency_for_period("USD", start_date, end_date)
-    # fixed_currencies = zad4_fill_empty_records(currencies_for_period, start_date, end_date)
-    #
-    # zad4(fixed_currencies)
-    zad5()
+    app.run()
