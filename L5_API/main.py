@@ -8,7 +8,7 @@ api = Api(app)
 
 app.add_url_rule('/rates/<code>', view_func=views.get_last_rate)
 app.add_url_rule('/rates/<code>/<date_from>/<date_to>', view_func=views.get_rates)
-app.add_url_rule('/date/<code>', view_func=views.get_last_date)
+app.add_url_rule('/sales/<date_from>/<date_to>', view_func=views.get_sales)
 
 
 if __name__ == "__main__":

@@ -5,6 +5,8 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func, and_
 
+from L5_API.constants import DATE_FORMAT
+
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 Base = automap_base()
@@ -35,7 +37,12 @@ def get_rates_ipd(code, date_from, date_to):
 
 
 def get_sales(date_from, date_to):
-    data = session.query(Sales.InvoiceDate, sum(Sales.Total)).group_by(Sales.InvoiceDate).all()
+    data = session.query(Sales.InvoiceDate,
+                         sum(Sales.Total * 100)/100,
+                         sum(Sales.Total_pln * 100)/100).group_by(Sales.InvoiceDate)
+    data = data.filter(and_(Sales.InvoiceDate >= date_from,
+                            Sales.InvoiceDate <= date_to)).all()
+    data = [{"date": d[0].strftime(DATE_FORMAT), "total_usd": float(d[1]), "total_pln": float(d[2])} for d in data]
     return data
 
 

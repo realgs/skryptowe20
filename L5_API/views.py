@@ -21,10 +21,28 @@ def get_rates(code, date_from, date_to):
         rates = db_app.get_rates_ipd(code, date_from, date_to)
     else:
         rates = []
-    return __serializer(code, rates)
+    return __rates_serializer(code, rates)
 
 
-def __serializer(code, data):
+def get_sales(date_from, date_to):
+    if __are_dates(date_from, date_to):
+        # date_from, date_to = __valid_dates(date_from, date_to, code)
+        sales = db_app.get_sales(date_from, date_to)
+    else:
+        sales = []
+    return __sales_serializer(sales)
+
+
+def __sales_serializer(data):
+    output = {"Sales": {}}
+    for index, d in enumerate(data, start=1):
+        output["Sales"]["Sale" + str(index)] = {"Date": d["date"],
+                                                "USD Total": d["total_usd"],
+                                                "PLN Total": d["total_pln"]}
+    return output
+
+
+def __rates_serializer(code, data):
     output = {"Currencycode": code.upper(), "Rates": {}}
     for index, d in enumerate(data, start=1):
         output["Rates"]["Rate" + str(index)] = {"Date": d["date"], "Rate": d["rate"], "Interpolated": d["ipd"]}
