@@ -46,7 +46,13 @@ def get_sales(date_from, date_to):
     return data
 
 
-def get_limits(code):
+def get_rates_limits(code):
     date_max = session.query(func.max(Rates.RateDate)).filter_by(Code=code.upper()).first()[0]
     date_min = session.query(func.min(Rates.RateDate)).filter_by(Code=code.upper()).first()[0]
+    return date_min, date_max
+
+
+def get_sales_limits():
+    date_max = session.query(func.max(Sales.InvoiceDate)).first()[0].strftime(DATE_FORMAT)
+    date_min = session.query(func.min(Sales.InvoiceDate)).first()[0].strftime(DATE_FORMAT)
     return date_min, date_max

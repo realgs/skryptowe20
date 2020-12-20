@@ -26,26 +26,26 @@ def get_rates(code, date_from, date_to):
 
 def get_sales(date_from, date_to):
     if __are_dates(date_from, date_to):
-        # date_from, date_to = __valid_dates(date_from, date_to, code)
-        sales = db_app.get_sales(date_from, date_to)
-    else:
-        sales = []
+        return '400 BadRequest - Wrong format of dates - should be 0000-00-00', 400
+
+    date_from, date_to = __valid_dates(date_from, date_to)
+    sales = db_app.get_sales(date_from, date_to)
     return __sales_serializer(sales)
 
 
 def __sales_serializer(data):
     output = {"Sales": {}}
     for index, d in enumerate(data, start=1):
-        output["Sales"]["Sale" + str(index)] = {"Date": d["date"],
-                                                "USD Total": d["total_usd"],
-                                                "PLN Total": d["total_pln"]}
+        output["Sales"][index] = {"Date": d["date"],
+                                                 "USD Total": d["total_usd"],
+                                                 "PLN Total": d["total_pln"]}
     return output
 
 
 def __rates_serializer(code, data):
     output = {"Currencycode": code.upper(), "Rates": {}}
     for index, d in enumerate(data, start=1):
-        output["Rates"]["Rate" + str(index)] = {"Date": d["date"], "Rate": d["rate"], "Interpolated": d["ipd"]}
+        output["Rates"][index] = {"Date": d["date"], "Rate": d["rate"], "Interpolated": d["ipd"]}
     return output
 
 
@@ -54,21 +54,42 @@ def __is_code(code):
 
 
 def __is_date(date):
-    return date == datetime.strptime(date, DATE_FORMAT).strftime(DATE_FORMAT)
+    is_date = True
+
+    try:
+        datetime.strptime(date, DATE_FORMAT)
+    except ValueError:
+        is_date = False
+
+    return is_date
 
 
 def __are_dates(date_from, date_to):
-    return __is_date(date_from), __is_date(date_to)
+    are_dates = True
+
+    try:
+        datetime.strptime(date_from, DATE_FORMAT)
+        datetime.strptime(date_to, DATE_FORMAT)
+    except ValueError:
+        are_dates = False
+
+    return are_dates
 
 
-def __valid_dates(date_from, date_to, code):
-    error_msg = ''
-
+def __valid_dates(date_from, date_to, code='NONE'):
     date_from = datetime.strptime(date_from, DATE_FORMAT).date()
     date_to = datetime.strptime(date_to, DATE_FORMAT).date()
-    date_min, date_max = db_app.get_limits(code)
+
+    if code == 'NONE':
+        date_min, date_max = db_app.get_sales_limits()
+    else:
+        date_min, date_max = db_app.get_rates_limits(code)
+
     date_min = datetime.strptime(date_min, DATE_FORMAT).date()
     date_max = datetime.strptime(date_max, DATE_FORMAT).date()
+
+    # date_from = max(date_from, date_min)
+    # date_to = min(date_to, date_max)
 
     if (date_to - date_from).days > DATA_LIMIT:
         print('400 BadRequest - Limit of {} days has been exceeded\n'.format(DATA_LIMIT))
