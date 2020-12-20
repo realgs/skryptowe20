@@ -26,23 +26,23 @@ config = {
     "CACHE_DEFAULT_TIMEOUT": CACHE_DEFAULT_TIMEOUT
 }
 
-HOME_SITE = f"""<h1>USD currency rates and product sales API</h1>
+HOME_SITE_INFO = f"""<h1>USD currency rates and product sales API</h1>
     <p>With this API you can obtain following data:</p>
-     <p> - USD to PLN exchange rate for specified date:</br>
-     http://127.0.0.1:5000/api/rates/{{date}}/</br>
-         example \"http://127.0.0.1:5000/api/rates/2018-07-13/\"</p>
-     <p> - USD to PLN exchange rate for dates range:</br>
-     http://127.0.0.1:5000/api/rates/{{start_date}}/{{end_date}}/</br>
-         example \"http://127.0.0.1:5000/api/rates/2018-10-10/2019-10-10/\"</br>
      <p> - sales data for specified date:</br>
      http://127.0.0.1:5000/api/sales/{{date}}/</br>
          example \"http://127.0.0.1:5000/api/sales/2018-08-08/\"</br>
      <p> - sales data for date range:</br>
      http://127.0.0.1:5000/api/sales/{{start_date}}/{{end_date}}/</br>
          example \"http://127.0.0.1:5000/api/sales/2018-10-10/2019-10-10/\"</br>
+     <p> - USD to PLN exchange rate for specified date:</br>
+     http://127.0.0.1:5000/api/rates/{{date}}/</br>
+         example \"http://127.0.0.1:5000/api/rates/2018-07-13/\"</p>
+     <p> - USD to PLN exchange rate for dates range:</br>
+     http://127.0.0.1:5000/api/rates/{{start_date}}/{{end_date}}/</br>
+         example \"http://127.0.0.1:5000/api/rates/2018-10-10/2019-10-10/\"</br>
     <p> Sales and exchange rates data is available for date range: 
     {START_DATE} - {END_DATE}</p>
-    <p>Note, that there is a limit for requests: {DEFAULT_LIMIT}. 
+    <p>There is a limit for requests: {DEFAULT_LIMIT}. 
     Cache timeout is set to {CACHE_DEFAULT_TIMEOUT} seconds.</p>
 """
 
@@ -57,7 +57,7 @@ limiter = Limiter(
 
 appLimiter = limiter.shared_limit(
     DEFAULT_LIMIT,
-    scope="myCurrencyApi"
+    scope="myapi"
 )
 cache = Cache(app)
 
@@ -77,7 +77,7 @@ def check_dates(start_date, end_date):
 
 @app.route('/', methods=['GET'])
 def home():
-    return HOME_SITE
+    return HOME_SITE_INFO
 
 
 @app.route('/api/sales/<sales_date>/', methods=['GET'])
