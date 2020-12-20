@@ -48,7 +48,7 @@ def get_exchange_rates_from_database(code, interpolated, kwargs):
     conn = sql.connect(DB_PATH)
     c = conn.cursor()
     select_cmd = f"""
-    SELECT date, rate {'{}'} FROM {code}_exchange_rate_table
+    SELECT DISTINCT date, rate {'{}'} FROM {code}_exchange_rate_table
     WHERE '{from_date}' <= date AND date <= '{till_date}'
     """
     if interpolated:
@@ -101,7 +101,7 @@ def get_sales_in_pln(from_date, till_date):
     conn = sql.connect(DB_PATH)
     c = conn.cursor()
     select_cmd = f"""
-    SELECT USD.date, SUM(IFNULL(S.SaleAmount,0)), ROUND(SUM(IFNULL(S.SaleAmount,0)) 
+    SELECT DISTINCT USD.date, SUM(IFNULL(S.SaleAmount,0)), ROUND(SUM(IFNULL(S.SaleAmount,0)) 
     * USD.rate, 2), USD.rate 
     FROM usd_exchange_rate_table AS USD 
     LEFT JOIN SALES AS S ON USD.date=S.DateRecorded
@@ -131,7 +131,7 @@ def get_sales_in_foreign_curr(code, from_date, till_date):
     conn = sql.connect(DB_PATH)
     c = conn.cursor()
     select_cmd = f"""
-    SELECT USD.date, SUM(IFNULL(S.SaleAmount,0)), ROUND(SUM(IFNULL(S.SaleAmount,0)) 
+    SELECT DISTINCT USD.date, SUM(IFNULL(S.SaleAmount,0)), ROUND(SUM(IFNULL(S.SaleAmount,0)) 
     * USD.rate / BUF.rate, 2), USD.rate , BUF.rate 
     FROM usd_exchange_rate_table AS USD 
     JOIN {code}_exchange_rate_table AS BUF ON USD.date = BUF.date 
