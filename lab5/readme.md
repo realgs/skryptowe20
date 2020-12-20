@@ -19,6 +19,12 @@ MySQL server. I recommend you XAMPP. You can get it from https://www.apachefrien
 ### d)
 In this repo you have db.sql file. That is database with all API data. You can import it with MySQL Workbench.
 
+## Project structure
+* api.py is main file with API configuration
+* db_service.py is file with functions that allow to work with database
+* init.py is initial script for set up the database. If you have imported database given in repo you don't need this script.
+* nbp.py is script that allows to fetch data from NBP API.
+
 ## Run app
 1. Run MySQL server with imported database
 2. Run application by running api.py script.
@@ -69,7 +75,8 @@ Here for /api/sales/2003-05-07
 ```
 
 ##Limitations
-API has limit for querying. For one IP you can make one request per second but max 30 requests per hour.
+* API has limit for querying. For one IP you can make one request per second but max 30 requests per hour.
 
 ## Others
-This API uses cache. That means when you refresh the page you get data from browser cache. The default timeout for cache is set to 60 seconds.
+* This API uses cache. That means when you refresh the page you get data from browser cache. The default timeout for cache is set to 60 seconds.
+* The exchange rates are from NBP API: http://api.nbp.pl
