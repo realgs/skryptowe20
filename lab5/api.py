@@ -14,8 +14,9 @@ TOO_MANY_REQUESTS_CODE = 429
 START_DATE = '2018-07-04'
 END_DATE = '2020-05-06'
 
-DEFAULT_LIMIT = "200 per minute"
-CACHE_DEFAULT_TIMEOUT = 3600
+DEFAULT_LIMIT = "400 per minute"
+USER_LIMIT = "50 per minute"
+CACHE_DEFAULT_TIMEOUT = 86400
 
 DATE_FORMAT = '%Y-%m-%d'
 
@@ -25,20 +26,20 @@ config = {
     "CACHE_DEFAULT_TIMEOUT": CACHE_DEFAULT_TIMEOUT
 }
 
-HOME_SITE = f"""<h1>Prototype of USD currency rates and product sales API</h1>
-    <p>With the use of this API you can obtain following data:</p>
+HOME_SITE = f"""<h1>USD currency rates and product sales API</h1>
+    <p>With this API you can obtain following data:</p>
      <p> - USD to PLN exchange rate for specified date:</br>
      http://127.0.0.1:5000/api/rates/{{date}}/</br>
-         example usage \"http://127.0.0.1:5000/api/rates/2018-07-13/\"</p>
+         example \"http://127.0.0.1:5000/api/rates/2018-07-13/\"</p>
      <p> - USD to PLN exchange rate for dates range:</br>
      http://127.0.0.1:5000/api/rates/{{start_date}}/{{end_date}}/</br>
-         example usage \"http://127.0.0.1:5000/api/rates/2018-10-10/2019-10-10/\"</br>
+         example \"http://127.0.0.1:5000/api/rates/2018-10-10/2019-10-10/\"</br>
      <p> - sales data for specified date:</br>
      http://127.0.0.1:5000/api/sales/{{date}}/</br>
-         example usage \"http://127.0.0.1:5000/api/sales/2018-08-08/\"</br>
+         example \"http://127.0.0.1:5000/api/sales/2018-08-08/\"</br>
      <p> - sales data for date range:</br>
      http://127.0.0.1:5000/api/sales/{{start_date}}/{{end_date}}/</br>
-         example usage \"http://127.0.0.1:5000/api/sales/2018-10-10/2019-10-10/\"</br>
+         example \"http://127.0.0.1:5000/api/sales/2018-10-10/2019-10-10/\"</br>
     <p> Sales and exchange rates data is available for date range: 
     {START_DATE} - {END_DATE}</p>
     <p>Note, that there is a limit for requests: {DEFAULT_LIMIT}. 
@@ -80,6 +81,8 @@ def home():
 
 
 @app.route('/api/sales/<sales_date>/', methods=['GET'])
+@appLimiter
+@limiter.limit(USER_LIMIT)
 @cache.cached()
 def api_sales_on_date(sales_date):
     if sales_date < START_DATE or sales_date > END_DATE:
@@ -94,6 +97,8 @@ def api_sales_on_date(sales_date):
 
 
 @app.route('/api/sales/<start_date>/<end_date>/', methods=['GET'])
+@appLimiter
+@limiter.limit(USER_LIMIT)
 @cache.cached()
 def api_sales_between_dates(start_date, end_date):
     if start_date < START_DATE or end_date > END_DATE:
@@ -109,6 +114,8 @@ def api_sales_between_dates(start_date, end_date):
 
 
 @app.route('/api/rates/<rate_date>/', methods=['GET'])
+@appLimiter
+@limiter.limit(USER_LIMIT)
 @cache.cached()
 def api_rate_at_date(rate_date):
     if rate_date < START_DATE:
@@ -123,6 +130,8 @@ def api_rate_at_date(rate_date):
 
 
 @app.route('/api/rates/<start_date>/<end_date>/', methods=['GET'])
+@appLimiter
+@limiter.limit(USER_LIMIT)
 @cache.cached()
 def api_rates_between_dates(start_date, end_date):
     if start_date < START_DATE or end_date > END_DATE:
