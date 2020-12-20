@@ -40,6 +40,71 @@ def __create_rates_table():
     conn.close()
 
 
+def __get_invoices():
+    conn = __connect_db()
+    cursor = conn.cursor()
+    data = []
+
+    try:
+        cursor.execute("""SELECT * FROM invoices;""")
+        for inv in cursor.fetchall():
+            data.append(inv)
+    except sqlite3.Error as e:
+        print('db_handler: get_invoices' + str(e))
+
+    conn.close()
+    return data
+
+
+def __add_total_pln_sales_column():
+    conn = __connect_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""ALTER TABLE invoices ADD Total_pln NUMERIC(10,2) DEFAULT 0.00;""")
+
+    conn.commit()
+    conn.close()
+
+
+def __add_total_pln_sales():
+    conn = __connect_db()
+    cursor = conn.cursor()
+    dates = []
+    rate = 0.0
+    sale = 0.0
+
+    try:
+        cursor.execute("""SELECT InvoiceDate FROM invoices;""")
+        for date in cursor.fetchall():
+            dates.append(date[0][:10])
+    except sqlite3.Error as e:
+        print('db_handler: __add_total_pln_sales(): SELECT InvoiceDate FROM invoices ' + str(e))
+
+    for date in dates:
+        try:
+            cursor.execute("""SELECT Rate FROM rates WHERE RateDate = '{}' AND Code = 'USD';""".format(date))
+            rate = float(cursor.fetchone()[0])
+        except sqlite3.Error as e:
+            print('db_handler: __add_total_pln_sales() ' + str(e))
+
+        try:
+            cursor.execute("""SELECT Total FROM invoices 
+                              WHERE InvoiceDate == '{}'""".format('{} 00:00:00'.format(date)))
+            sale = float(cursor.fetchone()[0])
+        except sqlite3.Error as e:
+            print('db_handler: __add_total_pln_sales(): SELECT Total FROM invoices ' + str(e))
+
+        try:
+            cursor.execute("""UPDATE invoices SET Total_pln = {};""".format(round(rate * sale, 2)))
+        except sqlite3.Error as e:
+            print('db_handler: __add_total_pln_sales(): UPDATE invoices ' + str(e))
+
+    conn.commit()
+    conn.close()
+
+    return dates
+
+
 def get_sales(date):
     conn = __connect_db()
     cursor = conn.cursor()
@@ -48,7 +113,7 @@ def get_sales(date):
 
     try:
         cursor.execute("""SELECT Total FROM invoices
-                            WHERE InvoiceDate = '{} 00:00:00'""".format(date))
+                          WHERE InvoiceDate = '{} 00:00:00'""".format(date))
         sales = [float(x[0]) for x in cursor.fetchall()]
     except sqlite3.Error as e:
         print('db_handler: get_sales ' + str(e))
@@ -78,22 +143,6 @@ def get_rate(currency_code, date):
     conn.close()
 
     return rate
-
-
-def get_todays_date(currency_code):
-    conn = __connect_db()
-    cursor = conn.cursor()
-    date = ''
-
-    try:
-        cursor.execute("""SELECT MAX(RateDate) FROM rates
-                            WHERE Code = '{}';""".format(currency_code))
-        date = cursor.fetchone()[0]
-    except sqlite3.Error as e:
-        print('db_handler: get_todays_date(' + currency_code + ') ' + str(e))
-
-    conn.close()
-    return date
 
 
 def get_rates_dates_interpolated(currency_code, date_from, date_to):
@@ -201,7 +250,7 @@ if __name__ == '__main__':
     #                                                                                       date_from,
     #                                                                                       date_to)
     #     add_rate_entries(dates, rates, interpolated, currency)
-    # dates, rates, ipd = get_rates_dates_interpolated('USD', '2014-12-20', '2014-12-31')
-    # print(dates)
-    # print(rates)
-    # print(ipd)
+
+    # __add_total_pln_sales_column()
+    # __add_total_pln_sales()
+    # print(__get_invoices())
