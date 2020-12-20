@@ -17,7 +17,7 @@ def get_string_date_from_date(date):
 
 
 def get_result_from_query(query, parameter):
-    connection = sqlite3.connect("Northwind.sqlite")
+    connection = sqlite3.connect("NNorthwind.sqlite")
     cursor = connection.cursor()
 
     cursor.execute(query, parameter)
@@ -35,7 +35,8 @@ def api_single_exchange_rate(date):
     if "" == string_date:
         abort(404, "Wrong date format")
 
-    select_single_exchange_rate_query = """SELECT ER.date, ER.rate FROM ExchangeRate ER WHERE ER.date = ?;"""
+    select_single_exchange_rate_query = """SELECT ER.date, ER.rate, ER.is_interpolated FROM ExchangeRate ER 
+    WHERE ER.date = ?;"""
     result = get_result_from_query(select_single_exchange_rate_query, (string_date,))
 
     return jsonify(result)
@@ -49,7 +50,7 @@ def api_exchange_rate_range(start_date, end_date):
     if string_start_date == "" or string_end_date == "" or string_end_date < string_start_date:
         abort(404, "Wrong dates provided")
 
-    select_multiple_exchange_rates_query = """SELECT ER.date, ER.rate FROM ExchangeRate ER 
+    select_multiple_exchange_rates_query = """SELECT ER.date, ER.rate, ER.is_interpolated FROM ExchangeRate ER 
     WHERE ER.date >= ? AND ER.DATE <= ?;"""
 
     result = get_result_from_query(select_multiple_exchange_rates_query, (string_start_date, string_end_date))

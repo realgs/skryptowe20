@@ -5,8 +5,9 @@ import datetime
 MIN_DATE = datetime.date(2012, 7, 1)
 MAX_DATE = datetime.date(2016, 2, 29)
 
-CREATE_TABLE_QUERY = "CREATE TABLE ExchangeRate (date text, rate real)"
-INSERT_QUERY = "INSERT INTO ExchangeRate (date, rate) VALUES (?, ?)"
+CREATE_TABLE_QUERY = "CREATE TABLE ExchangeRate (date text, rate real, is_interpolated boolean)"
+INSERT_QUERY = "INSERT INTO ExchangeRate (date, rate, is_interpolated) VALUES (?, ?, ?)"
+DROP_TABLE_QUERY = "DROP TABLE ExchangeRate"
 SELECT_QUERY = """SELECT ER.date, ER.rate, ROUND(orderSum, 2)
 FROM ExchangeRate ER LEFT JOIN 
 (
@@ -26,8 +27,10 @@ def get_rows_from_api(currency_code, start_date, end_date):
 
 
 if __name__ == "__main__":
-    connection = sqlite3.connect("Northwind.sqlite")
+    connection = sqlite3.connect("NNorthwind.sqlite")
     cursor = connection.cursor()
+
+    cursor.execute(DROP_TABLE_QUERY)
 
     cursor.execute(CREATE_TABLE_QUERY)
 

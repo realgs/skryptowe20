@@ -5,6 +5,8 @@ MIN_AVAILABLE_DATE = datetime.date(2002, 1, 2)
 MAX_DAYS = 93
 DELTA_ONE_DAY = datetime.timedelta(days=1)
 
+IS_VALUE_INTERPOLATED = True
+
 
 def format_datetime_to_string(date):
     return date.strftime("%Y-%m-%d")
@@ -92,17 +94,20 @@ def expand_exchange_rates_to_range(api_exchange_rates, currency_code, start_date
         # marks start_date with the value from previous available day
         if not previous_available_day_data:
             return []
-        all_days_exchange_rates.append((format_datetime_to_string(start_date), previous_available_day_data[1]))
+        all_days_exchange_rates.append(
+            (format_datetime_to_string(start_date), previous_available_day_data[1], IS_VALUE_INTERPOLATED))
         start_date += DELTA_ONE_DAY
 
     api_rates_index = 0
     while start_date <= end_date:
         if day_is_in_api(api_exchange_rates, start_date, api_rates_index):
-            all_days_exchange_rates.append(api_exchange_rates[api_rates_index])
+            all_days_exchange_rates.append(
+                (api_exchange_rates[api_rates_index][0], api_exchange_rates[api_rates_index][1],
+                 not IS_VALUE_INTERPOLATED))
             api_rates_index += 1
         else:
             all_days_exchange_rates.append(
-                (format_datetime_to_string(start_date), api_exchange_rates[api_rates_index - 1][1]))
+                (format_datetime_to_string(start_date), api_exchange_rates[api_rates_index - 1][1], IS_VALUE_INTERPOLATED))
 
         start_date += DELTA_ONE_DAY
 
