@@ -83,5 +83,31 @@ def api_single_sum_of_transaction(currency, date):
     return jsonify(result)
 
 
+@app.route('/api/sum/<currency>/<start_date>/<end_date>', methods=['GET'])
+def api_multiple_sum_of_transaction(currency, start_date, end_date):
+    string_start_date = get_string_date_from_date(start_date)
+    string_end_date = get_string_date_from_date(end_date)
+
+    if string_start_date == "" or string_end_date == "" or string_end_date < string_start_date:
+        abort(404, "Wrong dates provided")
+
+    currency = currency.upper()
+
+    select_single_exchange_rate_query = ""
+
+    if currency == "PLN":
+        select_single_exchange_rate_query = """SELECT ST.date, ST.pln_value FROM SumOfTransaction ST 
+        WHERE ST.date >= ? AND ST.DATE <= ?;"""
+    elif currency == "USD":
+        select_single_exchange_rate_query = """SELECT ST.date, ST.usd_value FROM SumOfTransaction ST 
+                WHERE ST.date >= ? AND ST.DATE <= ?;"""
+    else:
+        abort(404, "Wrong currency")
+
+    result = get_result_from_query(select_single_exchange_rate_query, (string_start_date, string_end_date))
+
+    return jsonify(result)
+
+
 if __name__ == "__main__":
     app.run()
