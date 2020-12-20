@@ -59,9 +59,21 @@ Notacja limitów zapytań jest dostępna w [dokumentacji Flask-Limiter](https://
 
 ### Uruchomienie
 
-Aplikację uruchamia się z folderu projektu komendą:
+1. W terminalu przejdź do folderu projektu:
 
-`$ python app.py`
+```
+$ cd lab5-api/
+```
+
+2. Uruchom aplikację:
+   - w trybie lokalnym (`host=127.0.0.1`):
+   ```
+   $ flask run
+   ```
+   - wykorzystująć jako adres hosta IP urządzenia:
+   ```
+   $ flask run --host=0.0.0.0
+   ```
 
 ## Funkcjonalności
 
