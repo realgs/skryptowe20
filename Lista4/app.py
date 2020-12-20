@@ -1,10 +1,19 @@
-from flask import Flask, Response
+from flask import Flask, Response, request
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from db_connection import get_rates_from_to
 import datetime
 import decimal
 import json
 
 app = Flask(__name__)
+# Used to limit number of requests per user // task 4
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["5/minute"],
+)
+
 first_rate_measure_db = datetime.datetime.strptime('2015-12-21', '%Y-%m-%d')
 
 
@@ -25,6 +34,7 @@ def get_rates(date_from='', date_to=''):
         date_from_parsed = datetime.datetime.strptime(date_from, '%Y-%m-%d')
         date_to_parsed = datetime.datetime.strptime(date_to, '%Y-%m-%d')
     except ValueError:
+        return Response(request.remote_addr)
         return Response('Invalid date format', status=400)
     if date_from_parsed > date_to_parsed:
         return Response('date_from cannot be greater than date_to', status=400)
@@ -38,4 +48,7 @@ def get_rates(date_from='', date_to=''):
 
 if __name__ == '__main__':
     app.run(debug=True)
-    
+    # todo caching
+    # todo updatowanie bazki 
+    # todo readme 
+    # todo screeny xd
