@@ -221,6 +221,16 @@ def check_sales_request_data(code, from_date, till_date):
         str: possible error message, int: err_code
     """
     err_msg = None
+    
+    # Check date format
+    try:
+        to_date(from_date)
+        to_date(till_date)
+    except ValueError:
+        err_msg = "Wrong date format"
+        return err_msg, NOT_ACCEPTABLE_CODE
+
+    # Check other possibilities
     if (code.lower() not in (TABLE_A + TABLE_B) and code.lower() != "pln") or code.lower() == "usd":
         err_msg = f"Given currency code is not available: {code}"
     elif from_date < FIRST_EVER_SALES_DAY:
