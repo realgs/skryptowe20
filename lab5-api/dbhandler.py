@@ -64,7 +64,32 @@ def query_minmax_date() -> Tuple[dt.date, dt.date]:
 
 
 def query_rates_range(currency: Currency, start_date: dt.date, end_date: dt.date, interpolated: bool = False) -> List[Dict[str, Any]]:
-    pass
+    has_failed = False
+    connection = None
+    rows = []
+    try:
+        connection = sqlite3.connect(DATABASE_FILE_PATH)
+        connection.row_factory = dict_factory
+        cursor = connection.cursor()
+        if interpolated:
+            rows = cursor.execute('SELECT * FROM rates WHERE date BETWEEN ? AND ? AND code=?;',
+                                  (start_date.strftime(DATE_FORMAT), end_date.strftime(DATE_FORMAT), currency.code)).fetchall()
+        else:
+            rows = cursor.execute(
+                'SELECT * FROM rates WHERE date BETWEEN ? AND ? AND code=? AND interpolated=0;',
+                (start_date.strftime(DATE_FORMAT), end_date.strftime(DATE_FORMAT), currency.code)).fetchall()
+
+    except sqlite3.Error as err:
+        print(err)
+        has_failed = True
+
+    finally:
+        if connection:
+            connection.close()
+        if has_failed:
+            raise sqlite3.DatabaseError
+
+    return rows
 
 
 def query_rate(currency: Currency, date: dt.date, interpolated: bool = False) -> Dict[str, Any]:
@@ -76,11 +101,11 @@ def query_rate(currency: Currency, date: dt.date, interpolated: bool = False) ->
         connection.row_factory = dict_factory
         cursor = connection.cursor()
         if interpolated:
-            row = cursor.execute('SELECT * FROM rates WHERE date=? AND code=?',
+            row = cursor.execute('SELECT * FROM rates WHERE date=? AND code=?;',
                                  (date.strftime(DATE_FORMAT), currency.code)).fetchall()
         else:
             row = cursor.execute(
-                'SELECT * FROM rates WHERE date=? AND code=? AND interpolated=0', (date.strftime(DATE_FORMAT), currency.code)).fetchall()
+                'SELECT * FROM rates WHERE date=? AND code=? AND interpolated=0;', (date.strftime(DATE_FORMAT), currency.code)).fetchall()
 
     except sqlite3.Error as err:
         print(err)
@@ -106,11 +131,11 @@ def query_rates_all(currency: Currency, interpolated: bool = False) -> List[Dict
         connection.row_factory = dict_factory
         cursor = connection.cursor()
         if interpolated:
-            rows = cursor.execute('SELECT * FROM rates WHERE code=?',
+            rows = cursor.execute('SELECT * FROM rates WHERE code=?;',
                                   (currency.code,)).fetchall()
         else:
             rows = cursor.execute(
-                'SELECT * FROM rates WHERE code=? AND interpolated=0', (currency.code,)).fetchall()
+                'SELECT * FROM rates WHERE code=? AND interpolated=0;', (currency.code,)).fetchall()
 
     except sqlite3.Error as err:
         print(err)
@@ -125,5 +150,5 @@ def query_rates_all(currency: Currency, interpolated: bool = False) -> List[Dict
     return rows
 
 
-def query_sales_sum(currency: Currency, date: dt.date) -> List[Dict[str, Any]]:
+def query_sales_sum_all_original() -> List[Dict[str, Any]]:
     pass

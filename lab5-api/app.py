@@ -163,7 +163,12 @@ def get_rate_day(currency_code: str, date: str):
 
 @app.route('/api/v1/rates/<currency_code>/range/<start_date>/<end_date>', methods=['GET'])
 def get_rates_range(currency_code: str, start_date: str, end_date: str):
-    pass
+    interpolated = get_interpolated_param()
+    curr = convert_to_currency(currency_code)
+    start_date_obj = convert_to_date(start_date)
+    end_date_obj = convert_to_date(end_date)
+
+    return jsonify(dbhandler.query_rates_range(curr, start_date_obj, end_date_obj, interpolated))
 
 
 @app.route('/api/v1/sales/sum/<date>', methods=['GET'])
