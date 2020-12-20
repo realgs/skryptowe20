@@ -92,7 +92,7 @@ Result:
 
 Example:
 
-` /exchange-rates/EUR/2015-10-13/2015-10-15`
+` /exchange-rates/EUR/2015-12-11/2015-12-14`
 
 Result:
 
@@ -101,21 +101,27 @@ Result:
   "rates": [
     {
       "currency": "EUR", 
-      "date": "2015-10-13", 
+      "date": "2015-12-11", 
       "interpolated": false, 
-      "rate": 4.2336
+      "rate": 4.3471
     }, 
     {
       "currency": "EUR", 
-      "date": "2015-10-14", 
-      "interpolated": false, 
-      "rate": 4.2365
+      "date": "2015-12-12", 
+      "interpolated": true, 
+      "rate": 4.3471
     }, 
     {
       "currency": "EUR", 
-      "date": "2015-10-15", 
+      "date": "2015-12-13", 
+      "interpolated": true, 
+      "rate": 4.3471
+    }, 
+    {
+      "currency": "EUR", 
+      "date": "2015-12-14", 
       "interpolated": false, 
-      "rate": 4.2295
+      "rate": 4.35
     }
   ]
 }
@@ -208,7 +214,7 @@ Result:
 ```
 * *currency* - currency code in the ISO 4217 standard
 * *date* - date of the currency exchange rate in the ISO 8601 standard
-* Property *interpolated* is set to **true** for days that had no value and took their value from the previous (or next, depending on the situation) day that had the exchange rate. **False** otherwise.
+* property *interpolated* is set to **true** for days that had no value and took their value from the previous (or next, depending on the situation) day that had the exchange rate. **False** otherwise.
 * *rate* - selected currency to PLN exchange rate
 
 ### Sales data response
