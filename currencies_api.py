@@ -3,7 +3,7 @@ from datetime import timedelta, datetime
 from flask_restful import Resource
 
 import currencies
-from database import CurrenciesDatabaseManager
+from currencies_database import CurrenciesDatabaseManager
 
 SERVER = 'DESKTOP-LKE4F79'
 DATABASE_NAME = 'AdventureWorks2019'
@@ -119,14 +119,14 @@ def upload_missing_rows_to_database(database, currency, date_from, date_to):
             empty_data_begin_date = currency_date
             empty_data = True
         elif date_exist_in_database and empty_data:
-            database.insert_currency_data_to_table(currency, empty_data_begin_date, last_date)
+            database.insert_currency_sales_data_to_table(currency, empty_data_begin_date, last_date)
             empty_data = False
 
         last_date = currency_date
         currency_date += timedelta(days=1)
 
     if empty_data:
-        database.insert_currency_data_to_table(currency, empty_data_begin_date, last_date)
+        database.insert_currency_sales_data_to_table(currency, empty_data_begin_date, last_date)
 
 
 def parse_str_to_date(str_datetime):

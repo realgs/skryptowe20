@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import Api
 
-from currency_api import TwoDatesCurrencyRates, OneDayCurrencyRate
+from currencies_api import TwoDatesCurrencyRates, OneDayCurrencyRate
 
 app = Flask(__name__)
 api = Api(app)
