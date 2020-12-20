@@ -92,7 +92,7 @@ def nbp_api_call_error_while_reapeating(from_date, till_date, code, table):
         buf_result = call_nbp_api_for(
             code, table, from_date=buf_day, till_date=buf_day, repeating=i)
         if isinstance(buf_result, dict):
-            return buf_result
+            return {from_date:list(buf_result.values())[0]}
     raise ValueError(DEFAULT_ERR_MSG.format(
         code, table, from_date, till_date))
 

@@ -84,10 +84,11 @@ def update_datebase():
     c.execute(select_cmd)
     last_saved_day = c.fetchall()[0][0]
     actual_day = TODAY()
-    for code in TABLE_A:
-        insert_exchange_rates_to_database(conn, code, "a", last_saved_day, actual_day)
-    for code in TABLE_B:
-        insert_exchange_rates_to_database(conn, code, "b", last_saved_day, actual_day)
+    if actual_day != last_saved_day:
+        for code in TABLE_A:
+            insert_exchange_rates_to_database(conn, code, "a", last_saved_day, actual_day)
+        for code in TABLE_B:
+            insert_exchange_rates_to_database(conn, code, "b", last_saved_day, actual_day)
     conn.commit()
     conn.close()
 
