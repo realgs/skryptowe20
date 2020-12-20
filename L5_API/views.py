@@ -6,11 +6,11 @@ from L5_API.constants import CURRENCIES, DATE_FORMAT, DATA_LIMIT
 
 
 def get_last_date(code):
-    return jsonify(date=db_app.get_todays_date(code))
+    return jsonify(date=db_app.get_last_date(code))
 
 
 def get_last_rate(code):
-    date = db_app.get_todays_date(code)
+    date = db_app.get_last_date(code)
     rate, ipd = db_app.get_rate(code, date)
     return {"Currencycode": code, "Rates": {"Rate": {"Date": date, "Rate": rate, "Interpolated": ipd}}}
 

@@ -15,10 +15,9 @@ Rates = Base.classes.rates
 Sales = Base.classes.invoices
 
 session = Session(engine)
-# "RateDate" "Rate" "Code" "Interpolated"
 
 
-def get_todays_date(code):
+def get_last_date(code):
     return session.query(func.max(Rates.RateDate)).filter_by(Code=code.upper()).first()[0]
 
 
