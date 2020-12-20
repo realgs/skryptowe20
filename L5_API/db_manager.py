@@ -62,7 +62,7 @@ def get_total_sale(date):
     return sum(get_sales(date))
 
 
-def get_rate(date, currency_code):
+def get_rate(currency_code, date):
     conn = __connect_db()
     cursor = conn.cursor()
     rate = 0.0
@@ -142,7 +142,7 @@ def get_sales_and_dates(date_from, date_to):
     return sales, dates
 
 
-def add_rate_entry(date, rate, currency_code, interpolated):
+def add_rate_entry(currency_code, date, rate, interpolated):
     conn = __connect_db()
     cursor = conn.cursor()
 
@@ -156,7 +156,7 @@ def add_rate_entry(date, rate, currency_code, interpolated):
     conn.close()
 
 
-def delete_rate_entry(date, currency_code):
+def delete_rate_entry(currency_code, date):
     conn = __connect_db()
     cursor = conn.cursor()
 
@@ -171,7 +171,7 @@ def delete_rate_entry(date, currency_code):
     conn.close()
 
 
-def add_rate_entries(dates, rates, interpolated, currency_code):
+def add_rate_entries(currency_code, dates, rates, interpolated):
     conn = __connect_db()
     cursor = conn.cursor()
 
