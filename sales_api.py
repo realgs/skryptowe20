@@ -1,14 +1,99 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 
-from sales_database import SalesDatabaseManager
+from flask_restful import Resource
+
+import currencies
+from api_date_checker_and_parser import parse_str_to_date, parse_datetime_to_str, date_is_correct
+from sales_database import SalesDatabaseManager, SALES_BASE_CURRENCY
 from sales_database import API_BASE_CURRENCY
 
 SERVER = 'DESKTOP-LKE4F79'
 DATABASE_NAME = 'AdventureWorks2019'
 
-MIN_AVAILABLE_YEAR = 2011
-MIN_AVAILABLE_MONTH = 5
-MIN_AVAILABLE_DAY = 31
+MIN_AVAILABLE_DATE = datetime(2011, 5, 31)
+MAX_AVAILABLE_DATE = datetime(2014, 6, 30)
+
+
+class TwoDatesSalesForCurrency(Resource):
+    def get(self, currency, start_date, end_date):
+        error_msg = get_error_json_with_code_for_data(currency, start_date, end_date)
+        if error_msg is not None:
+            return error_msg
+
+        start_date = parse_str_to_date(start_date)
+        end_date = parse_str_to_date(end_date)
+        sales = get_sales_for_date_and_currency(currency, start_date, end_date)
+        return create_json_from_sales(sales, currency)
+
+
+class OneDateSalesForCurrency(Resource):
+    def get(self, currency, date):
+        error_msg = get_error_json_with_code_for_data(currency, date)
+        if error_msg is not None:
+            return error_msg
+
+        date = parse_str_to_date(date)
+        sales = get_sales_for_date_and_currency(currency, date, date)
+        return create_json_from_sales(sales, currency)
+
+
+def get_error_json_with_code_for_data(currency, date, end_date=None):
+    currency_available = currency_is_available(currency)
+    dates_are_correct = date_is_correct(date)
+    if dates_are_correct and end_date is not None:
+        dates_are_correct = date_is_correct(end_date)
+
+    if not currency_available:
+        if dates_are_correct:
+            return create_error_message_json("Wrong currency"), 400
+        return create_error_message_json("Wrong request"), 400
+    if not dates_are_correct:
+        return create_error_message_json("Wrong date"), 400
+
+    date = parse_str_to_date(date)
+    if date < MIN_AVAILABLE_DATE.date() or date > MAX_AVAILABLE_DATE.date():
+        return create_error_message_json("No data available"), 404
+    if end_date is not None:
+        end_date = parse_str_to_date(end_date)
+        if end_date >= datetime.now().date():
+            return create_error_message_json("End date is out of range"), 400
+        if date > end_date:
+            return create_error_message_json("Start date must be before end date"), 400
+
+    return None
+
+
+def create_error_message_json(message):
+    return {"message": message}
+
+
+def currency_is_available(currency):
+    return currencies.AVAILABLE_CURRENCIES.__contains__(str(currency).upper()) or \
+           str(currency).upper() == API_BASE_CURRENCY.upper()
+
+
+def create_json_from_sales(sales, currency):
+    json_respond = {
+        "sales": [],
+        "originalCurrency": SALES_BASE_CURRENCY.upper(),
+        "chosenCurrency": str(currency).upper()
+    }
+    for sale in sales:
+        str_date = parse_datetime_to_str(sale[0])
+        if str(currency).upper() == SALES_BASE_CURRENCY.upper():
+            currency_day_data = {
+                "date": str_date,
+                "saleOriginalCurrency": float(sale[1]),
+            }
+        else:
+            currency_day_data = {
+                "date": str_date,
+                "saleOriginalCurrency": float(sale[1]),
+                "saleCurrency": float(sale[2])
+            }
+        json_respond["sales"].append(currency_day_data)
+
+    return json_respond
 
 
 def get_sales_for_date_and_currency(currency, date_from, date_to):

@@ -2,11 +2,10 @@ from datetime import timedelta
 from decimal import Decimal
 
 import currencies
-from currencies_api import get_currency_rates
+from currencies_api import get_currency_rates, API_BASE_CURRENCY
 from database_manager import DatabaseManager
 
 SALES_BASE_CURRENCY = 'USD'
-API_BASE_CURRENCY = 'PLN'
 
 
 class SalesDatabaseManager(DatabaseManager):
@@ -33,7 +32,7 @@ class SalesDatabaseManager(DatabaseManager):
         if date_from > date_to:
             raise ValueError("date from must be before date to")
 
-        if currency == API_BASE_CURRENCY:
+        if str(currency).upper() == API_BASE_CURRENCY.upper():
             self.__update_base_api_currency_table(date_from, date_to)
         else:
             table_name = self.__get_table_name_for_currency(currency)
@@ -52,7 +51,7 @@ class SalesDatabaseManager(DatabaseManager):
                 self.__insert_sales_data(currency_sales_data, table_name)
 
     def get_total_sales_in_currency(self, currency, date_from, date_to):
-        if currency == SALES_BASE_CURRENCY:
+        if str(currency).upper() == SALES_BASE_CURRENCY.upper():
             return self.__get_base_currency_total_sales(date_from, date_to)
 
         total_sales_base_currency = self.__get_base_currency_total_sales(date_from, date_to)

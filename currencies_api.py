@@ -3,12 +3,14 @@ from datetime import timedelta, datetime
 from flask_restful import Resource
 
 import currencies
+from api_date_checker_and_parser import parse_datetime_to_str, parse_str_to_date, date_is_correct
 from currencies_database import CurrenciesDatabaseManager
 
 SERVER = 'DESKTOP-LKE4F79'
 DATABASE_NAME = 'AdventureWorks2019'
 
 MIN_AVAILABLE_YEAR = 2002
+API_BASE_CURRENCY = 'PLN'
 
 
 class TwoDatesCurrencyRates(Resource):
@@ -62,14 +64,6 @@ def get_error_json_with_code_for_data(currency, date, end_date=None):
 
 def currency_is_available(currency):
     return currencies.AVAILABLE_CURRENCIES.__contains__(str(currency).upper())
-
-
-def date_is_correct(date):
-    try:
-        datetime.strptime(date, '%Y-%m-%d')
-    except ValueError:
-        return False
-    return True
 
 
 def get_currency_rates(currency, date_from, date_to):
@@ -127,11 +121,3 @@ def upload_missing_rows_to_database(database, currency, date_from, date_to):
 
     if empty_data:
         database.insert_currency_sales_data_to_table(currency, empty_data_begin_date, last_date)
-
-
-def parse_str_to_date(str_datetime):
-    return datetime.strptime(str_datetime, '%Y-%m-%d').date()
-
-
-def parse_datetime_to_str(date):
-    return date.strftime('%Y-%m-%d')
