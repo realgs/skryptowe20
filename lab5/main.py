@@ -4,6 +4,8 @@ from datetime import date, timedelta, datetime
 #
 import flask
 from currency_controller import currency_controller
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 def get_currency_for_period(currency_code: str, start_date: date, end_date: date) -> [(str, float)]:
     request_url = f"http://api.nbp.pl/api/exchangerates/rates/a/{currency_code}/{start_date}/{end_date}/"
@@ -162,6 +164,13 @@ def zad5():
 ##
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
+
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["1000 per day", "300 per hour"]
+)
+limiter.limit("5/minute")(currency_controller)
 
 app.register_blueprint(currency_controller)
 

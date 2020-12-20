@@ -1,6 +1,7 @@
 from .connection import connect
 from datetime import date
 
+
 def insert_into_pln_currencies(currency):
     with connect() as conn:
         cursor = conn.cursor()
