@@ -1,11 +1,12 @@
 import os
+from datetime import datetime, timedelta
 
 from sqlalchemy.sql.functions import sum
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func, and_
 
-from L5_API.constants import DATE_FORMAT
+from L5_API.constants import DATE_FORMAT, DB_LIMITS
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -37,6 +38,7 @@ def get_rates_ipd(code, date_from, date_to):
 
 
 def get_sales(date_from, date_to):
+    date_to = (datetime.strptime(date_to, DATE_FORMAT).date() + timedelta(days=1)).strftime(DATE_FORMAT)
     data = session.query(Sales.InvoiceDate,
                          sum(Sales.Total * 100)/100,
                          sum(Sales.Total_pln * 100)/100).group_by(Sales.InvoiceDate)
@@ -47,12 +49,16 @@ def get_sales(date_from, date_to):
 
 
 def get_rates_limits(code):
-    date_max = session.query(func.max(Rates.RateDate)).filter_by(Code=code.upper()).first()[0]
-    date_min = session.query(func.min(Rates.RateDate)).filter_by(Code=code.upper()).first()[0]
+    # date_max = session.query(func.max(Rates.RateDate)).filter_by(Code=code.upper()).first()[0]
+    # date_min = session.query(func.min(Rates.RateDate)).filter_by(Code=code.upper()).first()[0]
+    date_min = DB_LIMITS[code.upper()]['date_min']
+    date_max = DB_LIMITS[code.upper()]['date_max']
     return date_min, date_max
 
 
 def get_sales_limits():
-    date_max = session.query(func.max(Sales.InvoiceDate)).first()[0].strftime(DATE_FORMAT)
-    date_min = session.query(func.min(Sales.InvoiceDate)).first()[0].strftime(DATE_FORMAT)
+    # date_max = session.query(func.max(Sales.InvoiceDate)).filter_by(Code=code.upper()).first()[0]
+    # date_min = session.query(func.min(Sales.InvoiceDate)).filter_by(Code=code.upper()).first()[0]
+    date_min = DB_LIMITS['SALES']['date_min']
+    date_max = DB_LIMITS['SALES']['date_max']
     return date_min, date_max
