@@ -1,10 +1,15 @@
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from flask import Flask
 from flask_restful import Api
 from L5_API import views
-
+from L5_API.constants import REQ_LIMIT
 
 app = Flask(__name__)
 api = Api(app)
+limiter = Limiter(app,
+                  key_func=get_remote_address,
+                  default_limits=[REQ_LIMIT])
 
 app.add_url_rule('/rates/<code>', view_func=views.get_last_rate)
 app.add_url_rule('/rates/<code>/<date_from>/<date_to>', view_func=views.get_rates)
