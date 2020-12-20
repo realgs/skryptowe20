@@ -15,6 +15,7 @@ Wszystkie pliki należy umieścić w jednym folderze
 Do działania aplikacji potrzebny jest Python, którego można pobrać z, przykładow: https://www.anaconda.com/products/individual. 
 Następnie korzystając z polecenia "pip install <nazwa>" dodajemy brakujące biblioteki.
 - Flask_Limiter (pip install Flask_Limiter)
+- Flask-Caching (pip install Flask-Caching)
 
 Dostępnych jest wiele różnych dystrybucji Pythona, więc w niektórych przypadkach może być wymagane doinstalowanie dodatkowych bibliotek, takich jak:
 - requests
@@ -70,3 +71,7 @@ Możliwe jest wysłanie 20 żądań na minutę, liczone osobno dla każdego uży
 /api/sum/usd/2015-04-5 - zapytanie o sumę transakcji w dniu 2015-04-05, wartości podane w dolarach
 
 /api/sum/pln/2013-03-04/2013-4-18 - zapytanie o sumę transakcji z zakresu od 2013-03-04 do 2013-4-18 (włacznie), wartości podane w złotówkach
+
+## Cache
+W programie używany jest system cache używający Flask-Caching. 
+W przypadku wywoływania rządań z jedną, konkretną datą, wynik działania jest przechowywany w pamięci przez 5 minut - ponowienie takiego rządania nie wywołuje połączenia z bazą danych.

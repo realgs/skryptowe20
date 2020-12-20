@@ -4,6 +4,7 @@ import datetime
 from flask import abort, request, jsonify
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_caching import Cache
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
@@ -13,6 +14,11 @@ limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["20 per minute"]
 )
+
+app.config["CACHE_TYPE"] = "simple"
+app.config["CACHE_DEFAULT_TIMEOUT"] = 300
+
+cache = Cache(app)
 
 
 def get_string_date_from_date(date):
@@ -54,6 +60,7 @@ def turn_sum_of_transaction_in_dictionary(transactions):
 
 
 @app.route('/api/exchangerates/<date>', methods=['GET'])
+@cache.memoize(timeout=300)
 def api_single_exchange_rate(date):
     string_date = get_string_date_from_date(date)
     if "" == string_date:
@@ -84,6 +91,7 @@ def api_exchange_rate_range(start_date, end_date):
 
 
 @app.route('/api/sum/<currency>/<date>', methods=['GET'])
+@cache.memoize(timeout=300)
 def api_single_sum_of_transaction(currency, date):
     string_date = get_string_date_from_date(date)
 
