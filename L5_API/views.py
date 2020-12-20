@@ -15,20 +15,29 @@ def get_last_rate(code):
     return {"Currencycode": code, "Rates": {"Rate": {"Date": date, "Rate": rate, "Interpolated": ipd}}}
 
 
+def get_sale(date):
+    is_date_valid = __test_date(date)
+    if not is_date_valid[0]:
+        return is_date_valid[1], is_date_valid[2]
+
+    sales = db_app.get_sales(date, date)
+    return __sales_serializer(sales)
+
+
 def get_rates(code, date_from, date_to):
-    if __are_dates(date_from, date_to):
-        date_from, date_to = __valid_dates(date_from, date_to, code)
-        rates = db_app.get_rates_ipd(code, date_from, date_to)
-    else:
-        rates = []
+    are_dates_valid = __test_dates(date_from, date_to, code)
+    if not are_dates_valid[0]:
+        return are_dates_valid[1], are_dates_valid[2]
+
+    rates = db_app.get_rates_ipd(code, date_from, date_to)
     return __rates_serializer(code, rates)
 
 
 def get_sales(date_from, date_to):
-    if __are_dates(date_from, date_to):
-        return '400 BadRequest - Wrong format of dates - should be 0000-00-00', 400
+    are_dates_valid = __test_dates(date_from, date_to)
+    if not are_dates_valid[0]:
+        return are_dates_valid[1], are_dates_valid[2]
 
-    date_from, date_to = __valid_dates(date_from, date_to)
     sales = db_app.get_sales(date_from, date_to)
     return __sales_serializer(sales)
 
@@ -37,8 +46,8 @@ def __sales_serializer(data):
     output = {"Sales": {}}
     for index, d in enumerate(data, start=1):
         output["Sales"][index] = {"Date": d["date"],
-                                                 "USD Total": d["total_usd"],
-                                                 "PLN Total": d["total_pln"]}
+                                  "USD Total": d["total_usd"],
+                                  "PLN Total": d["total_pln"]}
     return output
 
 
@@ -76,10 +85,11 @@ def __are_dates(date_from, date_to):
     return are_dates
 
 
-def __valid_dates(date_from, date_to, code='NONE'):
-    date_from = datetime.strptime(date_from, DATE_FORMAT).date()
-    date_to = datetime.strptime(date_to, DATE_FORMAT).date()
+def __are_dates_chronological(date_from, date_to):
+    return date_from < date_to
 
+
+def __are_in_range(date_from, date_to, code):
     if code == 'NONE':
         date_min, date_max = db_app.get_sales_limits()
     else:
@@ -88,31 +98,39 @@ def __valid_dates(date_from, date_to, code='NONE'):
     date_min = datetime.strptime(date_min, DATE_FORMAT).date()
     date_max = datetime.strptime(date_max, DATE_FORMAT).date()
 
-    # date_from = max(date_from, date_min)
-    # date_to = min(date_to, date_max)
+    return date_to > date_min or date_to < date_max or date_from > date_min or date_from < date_max
 
-    if (date_to - date_from).days > DATA_LIMIT:
-        print('400 BadRequest - Limit of {} days has been exceeded\n'.format(DATA_LIMIT))
-        date_from = date_to - timedelta(days=DATA_LIMIT)
 
-    if date_from > date_to:
-        print('400 BadRequest - Invalid date range - endDate is before startDate\n')
-        date_temp = date_to
-        date_to = date_from
-        date_from = date_temp
+def __are_in_limit(date_from, date_to):
+    return (date_to - date_from).days < DATA_LIMIT
 
-    if date_from < date_min:
-        print('400 BadRequest - Invalid date range - startDate outside the db limit\n')
-        date_from = date_min
-    elif date_from > date_max:
-        print('400 BadRequest - Invalid date range - startDate outside the db limit\n')
-        date_from = date_max - timedelta(days=1)
 
-    if date_to < date_min:
-        print('400 BadRequest - Invalid date range - endDate outside the db limit\n')
-        date_to = date_min + timedelta(days=1)
-    elif date_from > date_max:
-        print('400 BadRequest - Invalid date range - endDate outside the db limit\n')
-        date_to = date_max
+def __test_date(date, code='NONE'):
+    if not __is_date(date):
+        return False, '400 BadRequest - Wrong format of date - should be 0000-00-00', 400
 
-    return date_from, date_to
+    date = datetime.strptime(date, DATE_FORMAT).date()
+
+    if not __are_in_range(date, date, code):
+        return False, '400 BadRequest - Invalid date range - date outside the database limit', 400
+
+    return True, '', 200
+
+
+def __test_dates(date_from, date_to, code='NONE'):
+    if not __are_dates(date_from, date_to):
+        return False, '400 BadRequest - Wrong format of dates - should be 0000-00-00', 400
+
+    date_from = datetime.strptime(date_from, DATE_FORMAT).date()
+    date_to = datetime.strptime(date_to, DATE_FORMAT).date()
+
+    if not __are_dates_chronological(date_from, date_to):
+        return False, '400 BadRequest - Invalid date range - endDate is before startDate', 400
+
+    if not __are_in_range(date_from, date_to, code):
+        return False, '400 BadRequest - Invalid date range - date outside the database limit', 400
+
+    if not __are_in_limit(date_from, date_to):
+        return False, '400 BadRequest - Limit of {} days has been exceeded'.format(DATA_LIMIT), 400
+
+    return True, '', 200
