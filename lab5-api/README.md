@@ -232,14 +232,15 @@ Przykładowa wiadomość o wystąpieniu wyjątku:
 **Zdefiniowane wyjątki**
 | Nazwa `error` | Wiadomość `message` | Kod HTML |
 | ------------- | :------------------:| -------: |
-|DatabaseError | Database connection failed. Please contact server administrator.| 500 |
 |DateFormatError | Invalid date argument. Date has to be passed in given format: YYYY-MM-DD| 422 |
+|RangeOrderError| Dates are in wrong order. End date must be after/equal start date.| 422 |
 |OutOfRangeError | Requested range exceedes the maximum range available in database.| 422 |
 |CurrencyCodeError | Invalid currency code. Valid code should consist of 3 letters| 422 |
 |NoCurrencyError | Requested currency is not available in database.| 422 |
 |InterpolatedParamError| Invalid argument value - interpolated should be set as 0 or 1| 422 |
 |NoSalesError | There were no sales on given day| 422 |
 |InternalServerError | 500 Internal Server Error| 500 |
+|DatabaseError | Database connection failed. Please contact server administrator.| 500 |
 
 ## Inne
 

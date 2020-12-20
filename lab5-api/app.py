@@ -26,6 +26,10 @@ class OutOfRangeError(Exception):
     pass
 
 
+class RangeOrderError(Exception):
+    pass
+
+
 class CurrencyCodeError(Exception):
     pass
 
@@ -40,6 +44,7 @@ class InterpolatedParamError(Exception):
 
 class NoSalesError(Exception):
     pass
+
 
 ############    MISC    ##############
 
@@ -158,6 +163,11 @@ def date_exception_handler(error):
     return {'error': type(error).__name__, 'message': 'There were no sales on given day'}, 422
 
 
+@app.errorhandler(RangeOrderError)
+def date_exception_handler(error):
+    return {'error': type(error).__name__, 'message': 'Dates are in wrong order. End date must be after/equal start date.'}, 422
+
+
 @app.errorhandler(InternalServerError)
 def handle_500(error):
     return {'error': type(error).__name__, 'message': '500 Internal Server Error'}, 500
@@ -197,6 +207,9 @@ def get_rates_range(currency_code: str, start_date: str, end_date: str):
     curr = convert_to_currency(currency_code)
     start_date_obj = convert_to_date(start_date)
     end_date_obj = convert_to_date(end_date)
+
+    if end_date_obj < start_date_obj:
+        raise RangeOrderError
 
     return jsonify(dbhandler.query_rates_range(curr, start_date_obj, end_date_obj, interpolated))
 
