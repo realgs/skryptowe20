@@ -7,6 +7,7 @@ from flask_limiter.util import get_remote_address
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
+app.config['JSON_SORT_KEYS'] = False
 limiter = Limiter(
     app,
     key_func=get_remote_address,
@@ -36,6 +37,22 @@ def get_result_from_query(query, parameter):
     return result
 
 
+def turn_exchange_rates_in_dictionary(rates):
+    results = []
+    for row in rates:
+        results.append({'date': row[0], 'rate': row[1], 'is_interpolated': bool(row[2])})
+
+    return results
+
+
+def turn_sum_of_transaction_in_dictionary(transactions):
+    results = []
+    for row in transactions:
+        results.append({'date': row[0], 'sum': row[1]})
+
+    return results
+
+
 @app.route('/api/exchangerates/<date>', methods=['GET'])
 def api_single_exchange_rate(date):
     string_date = get_string_date_from_date(date)
@@ -46,7 +63,7 @@ def api_single_exchange_rate(date):
     WHERE ER.date = ?;"""
     result = get_result_from_query(select_single_exchange_rate_query, (string_date,))
 
-    return jsonify(result)
+    return jsonify({'date': string_date, 'result': turn_exchange_rates_in_dictionary(result)})
 
 
 @app.route('/api/exchangerates/<start_date>/<end_date>', methods=['GET'])
@@ -62,7 +79,8 @@ def api_exchange_rate_range(start_date, end_date):
 
     result = get_result_from_query(select_multiple_exchange_rates_query, (string_start_date, string_end_date))
 
-    return jsonify(result)
+    return jsonify({'start_date': string_start_date, 'end_date': string_end_date,
+                    'result': turn_exchange_rates_in_dictionary(result)})
 
 
 @app.route('/api/sum/<currency>/<date>', methods=['GET'])
@@ -87,7 +105,7 @@ def api_single_sum_of_transaction(currency, date):
 
     result = get_result_from_query(select_single_sum_of_transaction_query, (string_date,))
 
-    return jsonify(result)
+    return jsonify({'date': string_date, 'currency': currency, 'result': turn_sum_of_transaction_in_dictionary(result)})
 
 
 @app.route('/api/sum/<currency>/<start_date>/<end_date>', methods=['GET'])
@@ -113,7 +131,8 @@ def api_multiple_sum_of_transaction(currency, start_date, end_date):
 
     result = get_result_from_query(select_single_sum_of_transaction_query, (string_start_date, string_end_date))
 
-    return jsonify(result)
+    return jsonify({'start_date': string_start_date, 'end_date': string_end_date, 'currency': currency,
+                    'result': turn_sum_of_transaction_in_dictionary(result)})
 
 
 if __name__ == "__main__":
