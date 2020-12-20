@@ -183,7 +183,7 @@ def query_sales_sum_all_exchanged(currency: Currency) -> List[Dict[str, Any]]:
         connection.row_factory = dict_factory
         cursor = connection.cursor()
         rows = cursor.execute(
-            '''SELECT O.order_date"date", SUM(O.value)*R.rate"sum" 
+            '''SELECT O.order_date"date", SUM(O.value)*R.rate"sum", R.rate "rate"
                FROM orders O JOIN rates R ON O.order_date=R.date AND R.code=?
                GROUP BY order_date;''', (currency.code,)).fetchall()
 
@@ -205,5 +205,5 @@ if __name__ == "__main__":
     # print(query_rates_all(Currency.EUROPEAN_EURO, interpolated=True))
     # print(query_rate(Currency.UNITED_STATES_DOLLAR, dt.date(2011,1,1), interpolated=True))
     # print(query_sales_sum_all_original())
-    # print(query_sales_sum_all_exchanged(Currency.UNITED_STATES_DOLLAR))
+    print(query_sales_sum_all_exchanged(Currency.UNITED_STATES_DOLLAR))
     pass

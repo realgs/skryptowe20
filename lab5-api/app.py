@@ -35,6 +35,10 @@ class NoCurrencyError(Exception):
 class InterpolatedParamError(Exception):
     pass
 
+
+class NoSalesError(Exception):
+    pass
+
 ############    MISC    ##############
 
 
@@ -77,12 +81,6 @@ def get_interpolated_param() -> bool:
     return interpolated
 
 
-sales_sum_precached: Dict[Currency, Dict[dt.date, float]] = {}
-sales_sum_precached[Currency.UNITED_STATES_DOLLAR] = caching.cache_sales_sum_original()
-sales_sum_precached[Currency.POLISH_ZLOTY] = caching.cache_sales_sum(
-    Currency.POLISH_ZLOTY, sales_sum_precached[Currency.UNITED_STATES_DOLLAR])
-
-
 ############    API   #################
 config = {
     "DEBUG": DEBUG_MODE,          # some Flask specific configs
@@ -100,7 +98,24 @@ def minmax_rates_date() -> Tuple[dt.date, dt.date]:
     return dbhandler.query_minmax_date()
 
 
+@cache.memoize()
+def precached_sales_sum_org() -> Dict[dt.date, float]:
+    print('Pre-caching query. It may take a while...')
+    return caching.cache_sales_sum_original()
+
+
+@cache.memoize()
+def precached_sales_sum_exch() -> Dict[dt.date, Dict[str, float]]:
+    print('Pre-caching query. It may take a while...')
+    return caching.cache_sales_sum_exchanged(
+        Currency.UNITED_STATES_DOLLAR)
+
+
+precached_sales_sum_exch()
+precached_sales_sum_org()
+
 ############    ERROR HANDLING  ##############
+
 
 @app.errorhandler(DatabaseError)
 def db_exception_handler(error):
@@ -130,6 +145,11 @@ def date_exception_handler(error):
 @app.errorhandler(InterpolatedParamError)
 def date_exception_handler(error):
     return {'error': type(error).__name__, 'message': 'Invalid argument value - interpolated should be set as 0 or 1'}, 422
+
+
+@app.errorhandler(NoSalesError)
+def date_exception_handler(error):
+    return {'error': type(error).__name__, 'message': 'There were no sales on given day'}, 422
 
 
 @app.errorhandler(InternalServerError)
@@ -173,7 +193,17 @@ def get_rates_range(currency_code: str, start_date: str, end_date: str):
 
 @app.route('/api/v1/sales/sum/<date>', methods=['GET'])
 def get_sales_sum_day(date: str):
-    pass
+    date_obj = convert_to_date(date)
+    if date_obj in precached_sales_sum_org():
+        sales_sum_org = precached_sales_sum_org()[date_obj]
+        sales_sum_exch = precached_sales_sum_exch()[date_obj]['sum']
+        sales_sum_exch_rate = precached_sales_sum_exch()[date_obj]['rate']
+
+        return jsonify({'date': date_obj.strftime(DATE_FORMAT),
+                        'original_value': sales_sum_org, 'exchanged_value': sales_sum_exch,
+                        'exchange_rate': sales_sum_exch_rate})
+    else:
+        raise NoSalesError
 
 
 ############    TESTS       ##############
