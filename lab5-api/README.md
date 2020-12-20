@@ -121,7 +121,8 @@ Przykład zwracanych danych:
 Przykład zwracanych danych:
 `http://host:5000/api/v1/rates/usd/range/2010-01-01/2010-01-06`
 
-```[
+```
+[
   {
     "code": "USD",
     "date": "2010-01-04",
