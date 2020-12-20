@@ -9,8 +9,11 @@ app.config["DEBUG"] = True
 
 @app.route('/api/exchangerates/<date>', methods=['GET'])
 def api_single_exchange_rate(date):
-    selected_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
-    string_date = selected_date.strftime("%Y-%m-%d")
+    try:
+        selected_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+        string_date = selected_date.strftime("%Y-%m-%d")
+    except ValueError:
+        return jsonify([])
 
     connection = sqlite3.connect("Northwind.sqlite")
     cursor = connection.cursor()
