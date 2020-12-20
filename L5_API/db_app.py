@@ -19,24 +19,28 @@ session = Session(engine)
 
 
 def get_todays_date(code):
-    date = session.query(func.max(Rates.RateDate)).first()[0]
-    return date
+    return session.query(func.max(Rates.RateDate)).filter_by(Code=code.upper()).first()[0]
 
 
-def get_rate(date, code):
-    rate, ipd = session.query(Rates.Rate, Rates.Interpolated).filter_by(Code=code, RateDate=date).first()
-    return rate, ipd
+def get_rate(code, date):
+    result = session.query(Rates).filter_by(RateDate=date, Code=code.upper()).first()
+    return result.Rate, result.Interpolated
 
 
-def get_rates_ipd(date_from, date_to, code):
-    data = session.query(Rates.RateDate,
-                         Rates.Rate,
-                         Rates.Interpolated).filter(and_(Rates.Code == code,
-                                                         Rates.RateDate >= date_from,
-                                                         Rates.RateDate <= date_to)).all()
+def get_rates_ipd(code, date_from, date_to):
+    data = session.query(Rates).filter(and_(Rates.Code == code.upper(),
+                                            Rates.RateDate >= date_from,
+                                            Rates.RateDate <= date_to)).all()
+    data = [{"date": d.RateDate, "rate": d.Rate, "ipd": d.Interpolated} for d in data]
     return data
 
 
 def get_sales(date_from, date_to):
     data = session.query(Sales.InvoiceDate, sum(Sales.Total)).group_by(Sales.InvoiceDate).all()
     return data
+
+
+def get_limits(code):
+    date_max = session.query(func.max(Rates.RateDate)).filter_by(Code=code.upper()).first()[0]
+    date_min = session.query(func.min(Rates.RateDate)).filter_by(Code=code.upper()).first()[0]
+    return date_min, date_max
