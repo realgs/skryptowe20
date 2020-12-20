@@ -11,7 +11,11 @@ https://github.com/jpwhite3/northwind-SQLite3
 2. Download the database from https://github.com/jpwhite3/northwind-SQLite3 and place all files into ``` /Source ``` folder.
 <br>
 Or change paths relative to the db folder in ``` src/conf.py ``` file and ``` src/database/db_startup.py ``` file.
-
+3. Run scripts from ``` /Source ``` folder.
+   ```
+    $ sqlite3 bazunia.db < Northwind.Sqlite3.create.sql
+    $ sqlite3 bazunia.db < Northwind.Sqlite3.update.sql
+   ```
 #### Optionally you can change configuration in ``` src/conf.py ``` file.
 
 # Run the app
