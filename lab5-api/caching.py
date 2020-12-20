@@ -1,7 +1,8 @@
-from typing import Dict
 import datetime as dt
-from dbhandler import Currency, DATE_FORMAT
+from typing import Dict
+
 import dbhandler
+from dbhandler import Currency, DATE_FORMAT
 
 
 def cache_sales_sum_original() -> Dict[dt.date, float]:
@@ -20,7 +21,6 @@ def cache_sales_sum_exchanged(currency: Currency) -> Dict[dt.date, Dict[str, flo
         cached[dt.datetime.strptime(
             row['date'], DATE_FORMAT).date()] = {'sum': round(float(row['sum']), 2), 'rate': float(row['rate'])}
     return cached
-
 
 
 if __name__ == "__main__":

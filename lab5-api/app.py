@@ -1,18 +1,20 @@
 #!/bin/python3
 
-from typing import Dict, Tuple
-import flask
 from flask import Flask, request
 from flask.json import jsonify
-from werkzeug.exceptions import InternalServerError
-from config import *
-from sqlite3 import DatabaseError
-from flask_limiter import Limiter
-import datetime as dt
-from dbhandler import Currency, DATE_FORMAT, currencyCodes
-import dbhandler
-import caching
 from flask_caching import Cache
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from werkzeug.exceptions import InternalServerError
+from sqlite3 import DatabaseError
+
+import datetime as dt
+from typing import Dict, Tuple
+
+import caching
+import dbhandler
+from config import *
+from dbhandler import Currency, DATE_FORMAT, currencyCodes
 
 
 ############    EXCEPTIONS      ##############
@@ -85,16 +87,19 @@ def get_interpolated_param() -> bool:
 config = {
     "DEBUG": DEBUG_MODE,          # some Flask specific configs
     "CACHE_TYPE": "simple",  # Flask-Caching related configs
-    "CACHE_DEFAULT_TIMEOUT": 300
+    "CACHE_DEFAULT_TIMEOUT": 0  # cache never expires
 }
 
 app = Flask(__name__)
 app.config.from_mapping(config)
 cache = Cache(app)
 
+limiter = Limiter(app, key_func=get_remote_address, enabled=ENABLE_LIMITER)
 
-@cache.cached(timeout=180, key_prefix='minmax_rates')
+
+@cache.memoize()
 def minmax_rates_date() -> Tuple[dt.date, dt.date]:
+    print('Pre-caching query. It may take a while...')
     return dbhandler.query_minmax_date()
 
 
@@ -111,6 +116,7 @@ def precached_sales_sum_exch() -> Dict[dt.date, Dict[str, float]]:
         Currency.UNITED_STATES_DOLLAR)
 
 
+minmax_rates_date()
 precached_sales_sum_exch()
 precached_sales_sum_org()
 
@@ -160,11 +166,13 @@ def handle_500(error):
 ############    ROUTING     ####################
 
 @app.route('/', methods=['GET'])
+@limiter.limit(INDEX_LIMIT)
 def index():
     return '<h1>Exchange rates and sales API</h1>'
 
 
 @app.route('/api/v1/rates/<currency_code>/all', methods=['GET'])
+@limiter.limit(GET_RATES_ALL_LIMIT)
 def get_rates_all(currency_code: str):
     interpolated = get_interpolated_param()
     curr = convert_to_currency(currency_code)
@@ -173,6 +181,7 @@ def get_rates_all(currency_code: str):
 
 
 @app.route('/api/v1/rates/<currency_code>/day/<date>', methods=['GET'])
+@limiter.limit(GET_RATE_DAY_LIMIT)
 def get_rate_day(currency_code: str, date: str):
     interpolated = get_interpolated_param()
     curr = convert_to_currency(currency_code)
@@ -182,6 +191,7 @@ def get_rate_day(currency_code: str, date: str):
 
 
 @app.route('/api/v1/rates/<currency_code>/range/<start_date>/<end_date>', methods=['GET'])
+@limiter.limit(GET_RATES_RANGE_LIMIT)
 def get_rates_range(currency_code: str, start_date: str, end_date: str):
     interpolated = get_interpolated_param()
     curr = convert_to_currency(currency_code)
@@ -192,6 +202,7 @@ def get_rates_range(currency_code: str, start_date: str, end_date: str):
 
 
 @app.route('/api/v1/sales/sum/<date>', methods=['GET'])
+@limiter.limit(GET_SALES_SUM_DAY_LIMIT)
 def get_sales_sum_day(date: str):
     date_obj = convert_to_date(date)
     if date_obj in precached_sales_sum_org():
@@ -204,12 +215,6 @@ def get_sales_sum_day(date: str):
                         'exchange_rate': sales_sum_exch_rate})
     else:
         raise NoSalesError
-
-
-############    TESTS       ##############
-if DEBUG_MODE:
-    with app.test_request_context('/api/v1/rates/usd/day/2011-01-10?interpolated=1'):
-        assert flask.request.args['interpolated'] == '1'
 
 
 if __name__ == '__main__':
