@@ -1,5 +1,6 @@
 import flask
-from flask import request, jsonify
+from flask import request, jsonify, abort, render_template
+from lab5_solutions.currency import Currency
 from lab5_solutions.database_repository import *
 from datetime import datetime, date
 from flask_caching import Cache
@@ -7,39 +8,65 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address, get_ipaddr
 import os
 
+TWENTY_FOUR_HOURS = 24 * 60 * 60
+
 config = {
     "DEBUG": True,
     "CACHE_TYPE": "simple",
-    "CACHE_DEFAULT_TIMEOUT": 300
+    "CACHE_DEFAULT_TIMEOUT": TWENTY_FOUR_HOURS
 }
 
 app = flask.Flask(__name__)
 app.config.from_mapping(config)
 cache = Cache(app)
 
-
-def limit_per_all():
-    return "0"
-
-
 limiter = Limiter(
     app,
     key_func=get_remote_address,
-    default_limits=["500 per day", "9 per hour"]
+    default_limits=["500 per day", "30 per hour"]
 )
 
-# shared_limit = limiter.shared_limit("5/hour", scope="api", key_func=limit_per_all, override_defaults=False)
+
+# def limit_per_all():
+#     return "0"
+
+# shared_limit = limiter.shared_limit("50/hour", scope="api", key_func=limit_per_all, override_defaults=False)
+
+def __check_currency(currency):
+    for curr in Currency:
+        if currency == curr.value:
+            return True
+    abort(400, description="This currency is not supported: '{}'.".format(currency))
+
+
+def __check_date(date):
+    if date > MAX_DATE or date < MIN_DATE:
+        abort(400, description="Date must be in range: from '{}' to '{}'.".format(MIN_DATE, MAX_DATE))
+
+
+def __check_date_range(start_date, end_date):
+    date_diff = (end_date - start_date).days
+    if date_diff < 0:
+        abort(400, description="Start date: '{}' cannot be after the end date: '{}'.".format(start_date, end_date))
+
+
+def __date_string_to_datetime_converter(date_string):
+    try:
+        return datetime.strptime(date_string, format(DATE_FORMAT)).date()
+    except ValueError:
+        abort(400, description="Invalid date format: '{}'.".format(date_string))
+
+@app.route('/')
+def home():
+    return render_template("home.html")
 
 @app.route('/exchange-rates/<currency>/<date>', methods=['GET'])
 # @shared_limit
 @cache.cached()
 def rate_one_day(currency, date):
-    try:
-        date_dt = datetime.strptime(date, format(DATE_FORMAT)).date()
-        if date_dt > MAX_DATE or date_dt < MIN_DATE:
-            return jsonify(cause="Date out of the date range."), 400
-    except ValueError:
-        return jsonify(cause="Invalid date format."), 400
+    __check_currency(currency)
+    date_dt = __date_string_to_datetime_converter(date)
+    __check_date(date_dt)
 
     return jsonify(rates=select_rate_one_day(currency, date))
 
@@ -48,52 +75,42 @@ def rate_one_day(currency, date):
 # @shared_limit
 @cache.cached()
 def rate_from_date_to_date(currency, start_date, end_date):
-    try:
-        start_date_dt = datetime.strptime(start_date, format(DATE_FORMAT)).date()
-        end_date_dt = datetime.strptime(end_date, format(DATE_FORMAT)).date()
-        if start_date_dt > MAX_DATE or start_date_dt < MIN_DATE:
-            return jsonify(cause="Start date out of the date range."), 400
-        if end_date_dt > MAX_DATE or end_date_dt < MIN_DATE:
-            return jsonify(cause="End date out of the date range."), 400
-        if end_date_dt < start_date_dt:
-            return jsonify(couse="End date before start date."), 400
-    except ValueError:
-        return jsonify(cause="Invalid date format."), 400
+    start_date_dt = __date_string_to_datetime_converter(start_date)
+    end_date_dt = __date_string_to_datetime_converter(end_date)
+    __check_date(start_date_dt)
+    __check_date(end_date_dt)
+    __check_date_range(start_date_dt, end_date_dt)
 
     return jsonify(rates=select_rate_between_dates(currency, start_date, end_date))
 
 
-@app.route('/sales/<currency>/<date>', methods=['GET'])
+@app.route('/sales/<date>', methods=['GET'])
 # @shared_limit
 @cache.cached()
-def sale_one_day(currency, date):
-    try:
-        date_dt = datetime.strptime(date, format(DATE_FORMAT)).date()
-        if date_dt > MAX_DATE or date_dt < MIN_DATE:
-            return jsonify(cause="Date out of the date range."), 400
-    except ValueError:
-        return jsonify(cause="Invalid date format."), 400
+def sale_one_day(date):
+    date_dt = __date_string_to_datetime_converter(date)
+    __check_date(date_dt)
+    sales = select_sale_one_day(date)
+    if sales == []:
+        sales = [{'date': date, 'USD': 0, 'PLN': 0}]
 
-    return jsonify(sales=get_sale_in_USD_PLN_one_day(currency, date))
+    return jsonify(sales=sales)
 
 
-@app.route('/sales/<currency>/<start_date>/<end_date>', methods=['GET'])
+@app.route('/sales/<start_date>/<end_date>', methods=['GET'])
 # @shared_limit
 @cache.cached()
-def sale_from_date_to_date(currency, start_date, end_date):
-    try:
-        start_date_dt = datetime.strptime(start_date, format(DATE_FORMAT)).date()
-        end_date_dt = datetime.strptime(end_date, format(DATE_FORMAT)).date()
-        if start_date_dt > MAX_DATE or start_date_dt < MIN_DATE:
-            return jsonify(cause="Start date out of the date range."), 400
-        if end_date_dt > MAX_DATE or end_date_dt < MIN_DATE:
-            return jsonify(cause="End date out of the date range."), 400
-        if end_date_dt < start_date_dt:
-            return jsonify(couse="End date before start date."), 400
-    except ValueError:
-        return jsonify(cause="Invalid date format."), 400
+def sale_from_date_to_date(start_date, end_date):
+    start_date_dt = __date_string_to_datetime_converter(start_date)
+    end_date_dt = __date_string_to_datetime_converter(end_date)
+    __check_date(start_date_dt)
+    __check_date(end_date_dt)
+    __check_date_range(start_date_dt, end_date_dt)
+    sales = select_sale_between_dates(start_date, end_date)
+    if sales == []:
+        sales = [{'date': date, 'USD': 0, 'PLN': 0}]
 
-    return jsonify(sales=get_sale_in_USD_PLN_from_date_to_date(currency, start_date, end_date))
+    return jsonify(sales=sales)
 
 
 @app.teardown_appcontext
