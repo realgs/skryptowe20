@@ -230,8 +230,8 @@ Result:
 }
 ```
 * *date* - date of the sale in the ISO 8601 standard
-* *pln* - sum of the total sales on the selected day in PLN counted using the exchange rate for the day
-* *usd* - sum of the total sales on the selected day in the original currency (USD)
+* *pln* - sum of the total sales on the selected day in PLN counted using the exchange rate for the day. In case of no sale on that date it is equal to 0.
+* *usd* - sum of the total sales on the selected day in the original currency (USD). In case of no sale on that date it is equal to 0.
 
 ### Types of bad requests
 Making a request with any of the following types of errors results in the **HTTP 400 Bad request** response status code.
