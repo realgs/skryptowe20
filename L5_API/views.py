@@ -14,7 +14,7 @@ def get_last_rate(code):
 
 
 def get_sale(date):
-    is_date_valid = __test_date(date)
+    is_date_valid = __validate_date(date)
     if not is_date_valid[0]:
         return is_date_valid[1], is_date_valid[2]
 
@@ -23,7 +23,7 @@ def get_sale(date):
 
 
 def get_rates(code, date_from, date_to):
-    are_dates_valid = __test_dates(date_from, date_to, code)
+    are_dates_valid = __validate_dates(date_from, date_to, code)
     if not are_dates_valid[0]:
         return are_dates_valid[1], are_dates_valid[2]
 
@@ -32,7 +32,7 @@ def get_rates(code, date_from, date_to):
 
 
 def get_sales(date_from, date_to):
-    are_dates_valid = __test_dates(date_from, date_to)
+    are_dates_valid = __validate_dates(date_from, date_to)
     if not are_dates_valid[0]:
         return are_dates_valid[1], are_dates_valid[2]
 
@@ -103,7 +103,7 @@ def __are_in_limit(date_from, date_to):
     return (date_to - date_from).days < DATA_LIMIT
 
 
-def __test_date(date, code='NONE'):
+def __validate_date(date, code='NONE'):
     if not __is_date(date):
         return False, '400 BadRequest - Wrong format of date - should be 0000-00-00', 400
 
@@ -115,7 +115,7 @@ def __test_date(date, code='NONE'):
     return True, '', 200
 
 
-def __test_dates(date_from, date_to, code='NONE'):
+def __validate_dates(date_from, date_to, code='NONE'):
     if not __are_dates(date_from, date_to):
         return False, '400 BadRequest - Wrong format of dates - should be 0000-00-00', 400
 
