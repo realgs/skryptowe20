@@ -2,9 +2,16 @@ import flask
 import sqlite3
 import datetime
 from flask import abort, request, jsonify
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["20 per minute"]
+)
 
 
 def get_string_date_from_date(date):
