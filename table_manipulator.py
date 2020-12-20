@@ -9,7 +9,7 @@ CREATE_TABLE_EXCHANGE_RATE_QUERY = "CREATE TABLE ExchangeRate (date text, rate r
 INSERT_EXCHANGE_RATE_QUERY = "INSERT INTO ExchangeRate (date, rate, is_interpolated) VALUES (?, ?, ?)"
 DROP_TABLE_EXCHANGE_RATE_QUERY = "DROP TABLE IF EXISTS ExchangeRate"
 
-CREATE_TABLE_SUM_OF_TRANSACTION_QUERY = "CREATE TABLE SumOfTransaction (date text, usd_value real, pln_value boolean)"
+CREATE_TABLE_SUM_OF_TRANSACTION_QUERY = "CREATE TABLE SumOfTransaction (date text, usd_value real, pln_value real)"
 INSERT_SUM_OF_TRANSACTION_QUERY = "INSERT INTO SumOfTransaction (date, usd_value, pln_value) VALUES (?, ?, ?)"
 DROP_TABLE_SUM_OF_TRANSACTION_QUERY = "DROP TABLE IF EXISTS SumOfTransaction"
 
