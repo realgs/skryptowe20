@@ -9,4 +9,4 @@ DB_LIMITS = {'USD': {'date_min': '2009-01-01', 'date_max': '2020-12-18'},
              'SALES': {'date_min': '2009-01-01', 'date_max': '2013-12-22'}}
 
 HOUR_LIMIT = '100 per hour'
-DAY_LIMIT = '5000 per day'
+DAY_LIMIT = '1000 per day'
