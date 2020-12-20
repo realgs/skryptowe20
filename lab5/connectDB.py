@@ -28,9 +28,9 @@ def add_daily_turnover_table_to_db(cursor):
 
 
 def fill_table_usd_rate(cursor, currency_data):
-    currency_table = download_currency_table(cursor)
+    currency_table = __download_currency_table(cursor)
     for i in range(len(currency_data)):
-        if not find_date_in_table(currency_table, currency_data[i]["date"]):
+        if not __find_date_in_table(currency_table, currency_data[i]["date"]):
             if currency_data[i]["interpolated"]:
                 interpolated = 1
             else:
@@ -40,11 +40,11 @@ def fill_table_usd_rate(cursor, currency_data):
             cursor.commit()
 
 
-def find_date_in_table(data, date_to_find):
+def __find_date_in_table(data, date_to_find):
     return date_to_find in data
 
 
-def download_currency_table(cursor):
+def __download_currency_table(cursor):
     cursor.execute(f"SELECT RateDate FROM {SALES_DATABASE}.{NAME_CURRENCY_TABLE} ORDER BY RateDate")
     select_list = []
     for row in cursor:
@@ -52,18 +52,9 @@ def download_currency_table(cursor):
     return select_list
 
 
-def get_total_sales_to_chart(cursor, date_from_string, date_to_string):
-    cursor.execute(f"SELECT OrderDate, SUM(TotalDue) FROM {SALES_DATABASE}.{NAME_SALES_TABLE} WHERE OrderDate BETWEEN "
-                   f"\'{date_from_string}\' AND \'{date_to_string}\' GROUP BY OrderDate ORDER BY OrderDate")
-    total_sales_list = []
-    for row in cursor:
-        total_sales_list.append(row)
-    return total_sales_list
-
-
 def get_currency_rate_data_between_date(cursor, date_from_string, date_to_string):
-    cursor.execute(f"SELECT RateDate, MAX(CurrencyRate) FROM {SALES_DATABASE}.{NAME_CURRENCY_TABLE} WHERE RateDate"
-                   f" BETWEEN \'{date_from_string}\' AND \'{date_to_string}\' GROUP BY RateDate ORDER BY RateDate")
+    cursor.execute(f"SELECT * FROM {SALES_DATABASE}.{NAME_CURRENCY_TABLE} WHERE RateDate"
+                   f" BETWEEN \'{date_from_string}\' AND \'{date_to_string}\' ORDER BY RateDate")
     rate_data_list = []
     for row in cursor:
         rate_data_list.append(row)
