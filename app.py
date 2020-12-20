@@ -51,7 +51,7 @@ def api_exchange_rate_range(start_date, end_date):
         abort(404, "Wrong dates provided")
 
     select_multiple_exchange_rates_query = """SELECT ER.date, ER.rate, ER.is_interpolated FROM ExchangeRate ER 
-    WHERE ER.date >= ? AND ER.DATE <= ?;"""
+    WHERE ER.date >= ? AND ER.date <= ?;"""
 
     result = get_result_from_query(select_multiple_exchange_rates_query, (string_start_date, string_end_date))
 
@@ -100,7 +100,7 @@ def api_multiple_sum_of_transaction(currency, start_date, end_date):
         WHERE ST.date >= ? AND ST.DATE <= ?;"""
     elif currency == "USD":
         select_single_sum_of_transaction_query = """SELECT ST.date, ST.usd_value FROM SumOfTransaction ST 
-                WHERE ST.date >= ? AND ST.DATE <= ?;"""
+                WHERE ST.date >= ? AND ST.date <= ?;"""
     else:
         abort(404, "Wrong currency")
 
