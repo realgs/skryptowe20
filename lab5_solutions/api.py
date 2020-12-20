@@ -1,11 +1,10 @@
-from datetime import datetime, date
+from datetime import datetime
 
 from flask import jsonify, abort, render_template
 from flask_caching import Cache
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
-from lab5_solutions.currency import Currency
 from lab5_solutions.database_repository import *
 
 TWENTY_FOUR_HOURS = 24 * 60 * 60
@@ -25,6 +24,7 @@ limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["500 per day", "30 per hour"]
 )
+
 
 # def limit_per_all():
 #     return "0"
