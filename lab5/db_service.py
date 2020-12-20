@@ -152,3 +152,21 @@ def get_usd_exchange_max_date():
 
     except MySQLError as e:
         print('Got error {!r}, errno is {}'.format(e, e.args[0]))
+
+
+def get_sales_sum_for_day_x(date):
+
+    try:
+        with connection.cursor() as cursor:
+            sql = """SELECT date, original_usd, converted_pln
+            FROM daily_sales_summary
+            WHERE date = %s"""
+            cursor.execute(sql, date)
+            row = cursor.fetchone()
+            if row is None:
+                return None
+
+            return row
+
+    except MySQLError as e:
+        print('Got error {!r}, errno is {}'.format(e, e.args[0]))
