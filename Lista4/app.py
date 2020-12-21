@@ -6,6 +6,7 @@ from threading import Timer
 import datetime
 import decimal
 import json
+# paczki: flask, flask_limiter, pyodbc, requests + deps
 
 
 app = Flask(__name__)
@@ -120,11 +121,8 @@ if __name__ == '__main__':
     # Load cache on init
     to_day = datetime.datetime.today() - datetime.timedelta(days=1)
     update_cache(to_day)
-    app.logger.warning(len(profit_cache))
 
     # Start server
     app.run(debug=True)
-    # todo caching 
     # todo readme 
     # todo screeny xd?
-    # todo task 3
