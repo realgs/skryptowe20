@@ -1,4 +1,4 @@
 .DS_Store
 .idea
 .gitignore
-chinook.db
+__pycache__/*
