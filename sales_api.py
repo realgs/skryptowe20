@@ -1,7 +1,5 @@
 from datetime import timedelta, datetime
 
-from flask_restful import Resource
-
 import currencies
 from api_date_checker_and_parser import parse_str_to_date, parse_datetime_to_str, date_is_correct
 from currencies_api import API_BASE_CURRENCY
@@ -12,29 +10,6 @@ DATABASE_NAME = 'AdventureWorks2019'
 
 MIN_AVAILABLE_DATE = datetime(2011, 5, 31)
 MAX_AVAILABLE_DATE = datetime(2014, 6, 30)
-
-
-class TwoDatesSalesForCurrency(Resource):
-    def get(self, currency, start_date, end_date):
-        error_msg = get_error_json_with_code_for_data(currency, start_date, end_date)
-        if error_msg is not None:
-            return error_msg
-
-        start_date = parse_str_to_date(start_date)
-        end_date = parse_str_to_date(end_date)
-        sales = get_sales_for_date_and_currency(currency, start_date, end_date)
-        return create_json_from_sales(sales, currency)
-
-
-class OneDateSalesForCurrency(Resource):
-    def get(self, currency, date):
-        error_msg = get_error_json_with_code_for_data(currency, date)
-        if error_msg is not None:
-            return error_msg
-
-        date = parse_str_to_date(date)
-        sales = get_sales_for_date_and_currency(currency, date, date)
-        return create_json_from_sales(sales, currency)
 
 
 def get_error_json_with_code_for_data(currency, date, end_date=None):

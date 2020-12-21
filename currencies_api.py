@@ -1,39 +1,15 @@
 from datetime import timedelta, datetime
 
-from flask_restful import Resource
-
 import currencies
 from api_date_checker_and_parser import parse_datetime_to_str, parse_str_to_date, date_is_correct
 from currencies_database import CurrenciesDatabaseManager
+
 
 SERVER = 'DESKTOP-LKE4F79'
 DATABASE_NAME = 'AdventureWorks2019'
 
 MIN_AVAILABLE_YEAR = 2002
 API_BASE_CURRENCY = 'PLN'
-
-
-class TwoDatesCurrencyRates(Resource):
-    def get(self, currency, start_date, end_date):
-        error_msg = get_error_json_with_code_for_data(currency, start_date, end_date)
-        if error_msg is not None:
-            return error_msg
-
-        start_date = parse_str_to_date(start_date)
-        end_date = parse_str_to_date(end_date)
-        rates = get_currency_rates(currency, start_date, end_date)
-        return create_json_from_rates(rates, currency)
-
-
-class OneDayCurrencyRate(Resource):
-    def get(self, currency, date):
-        error_msg = get_error_json_with_code_for_data(currency, date)
-        if error_msg is not None:
-            return error_msg
-
-        date = parse_str_to_date(date)
-        rates = get_currency_rates(currency, date, date)
-        return create_json_from_rates(rates, currency)
 
 
 def get_error_json_with_code_for_data(currency, date, end_date=None):
