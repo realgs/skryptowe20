@@ -60,6 +60,26 @@ def update_rates_table(data, interpolate_date=None):
     conn.commit()
 
 
+def get_profit_in_currencies(date_from, date_to):
+    cursor = conn.cursor()
+    cursor.execute("""SELECT [orders].[order_date] AS day_in_year, 
+    SUM([order_items].[list_price]*[order_items].[quantity]) AS profit_usd, 
+    SUM([order_items].[list_price]*[order_items].[quantity]*[rates].[measure_rate]) AS profit_pln
+    FROM [BikeStores].[sales].[orders] 
+    JOIN [BikeStores].[sales].[order_items] 
+    ON [BikeStores].[sales].[orders].[order_id] = [BikeStores].[sales].[order_items].[order_id]
+    JOIN [BikeStores].[dbo].[rates] 
+    ON [BikeStores].[sales].[orders].[order_date] = [BikeStores].[dbo].[rates].[measure_date]
+    GROUP BY [orders].[order_date]
+    HAVING [orders].[order_date] BETWEEN '""" + date_from + "' AND '" + date_to + 
+    '\'ORDER BY [orders].[order_date]')
+
+    result = []
+    for row in cursor:
+        result.append({'date':row[0], 'profit_usd':row[1], 'profit_pln':int(row[2]*100)/100})
+    
+    return result
+
 # Zadanie 5 - dzienne zarobki sklepu
 def draw_profit_diagram():
     cursor = conn.cursor()

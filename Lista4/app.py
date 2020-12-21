@@ -1,7 +1,7 @@
 from flask import Flask, Response, request
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from db_connection import get_rates_from_to, update_rates_table_to_day, initialize_db
+from db_connection import get_rates_from_to, update_rates_table_to_day, initialize_db, get_profit_in_currencies
 from threading import Timer
 import datetime
 import decimal
@@ -58,6 +58,23 @@ def get_rates(date_from='', date_to=''):
     return Response(json.dumps(result, default=json_serializer), status=200)
 
 
+# Task 3 endpoint
+@app.route('/profits/day/<summary_date>', methods=['GET'])
+def get_profit(summary_date=''):
+    try:
+        summary_date_parsed = datetime.datetime.strptime(summary_date, '%Y-%m-%d')
+    except ValueError:
+        return Response('Invalid date format', status=400)
+    if summary_date_parsed < first_rate_measure_db or summary_date_parsed > datetime.datetime.today() - datetime.timedelta(days=1):
+        first_rate_measure_db_str = datetime.datetime.strftime(first_rate_measure_db, '%Y-%m-%d')
+        today_str = datetime.datetime.strftime(datetime.date.today() - datetime.timedelta(days=1), '%Y-%m-%d')
+        return Response('Date must be between ' + first_rate_measure_db_str + ' and ' + today_str, status=400)
+    for entry in profit_cache:
+        if summary_date_parsed == datetime.datetime.strptime(entry['date'], '%Y-%m-%d'):
+            return Response(json.dumps(entry, default=json_serializer), status=200)
+    return Response(json.dumps({'date':summary_date_parsed, 'profit_usd':0.0, 'profit_pln':0.0}, default=json_serializer), status=200)
+
+
 # Call timer_callback at initial_date
 def setup_timer(initial_date, offset_secs):
     now = datetime.datetime.now()
@@ -84,6 +101,9 @@ def update_cache(to_day):
     global rates_cache
     rates_cache = get_rates_from_to(first_rate_measure_db_str, to_day_str)
 
+    global profit_cache
+    profit_cache = get_profit_in_currencies(first_rate_measure_db_str, to_day_str)
+
 
 if __name__ == '__main__':
     #initialize_db()
@@ -100,11 +120,11 @@ if __name__ == '__main__':
     # Load cache on init
     to_day = datetime.datetime.today() - datetime.timedelta(days=1)
     update_cache(to_day)
-    app.logger.warning(len(rates_cache))
+    app.logger.warning(len(profit_cache))
 
     # Start server
     app.run(debug=True)
     # todo caching 
     # todo readme 
-    # todo screeny xd
+    # todo screeny xd?
     # todo task 3
