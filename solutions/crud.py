@@ -3,8 +3,9 @@ import datetime
 import pymongo
 import schemas
 from fastapi import HTTPException
+from functools import lru_cache
 
-
+@lru_cache(256)
 def check_dates(start_date, end_date=None):
     if start_date > datetime.date.today():
         raise HTTPException(status_code=416, detail="Wrong date (there is no data from the future)")
@@ -17,6 +18,7 @@ def check_dates(start_date, end_date=None):
             raise HTTPException(status_code=416, detail='End date should be later than start date')
 
 
+@lru_cache(256)
 def _get_exchange_rates_list(collection):
     exchange_rates = []
     for exchange_rate in collection:
