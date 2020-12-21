@@ -1,5 +1,11 @@
 import datetime
+import aioredis
 from functools import lru_cache
+
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from fastapi_cache.decorator import cache
+from fastapi.encoders import jsonable_encoder
 
 import crud
 import schemas
@@ -25,31 +31,40 @@ def get_collection(coll_name='PLN_exchange_rates'):
 
 @app.get('/api/exchangerates')
 @limiter.limit(OBJECTS_LIST_LIMIT)
+@cache(expire=60)
 async def read_exchange_rates(request: Request):
     collection = get_collection()
-    return crud.get_exchange_rates(collection=collection)
+    return jsonable_encoder(crud.get_exchange_rates(collection=collection))
 
 
 @app.get('/api/exchangerates/{date}', response_model=schemas.ExchangeRate)
 @limiter.limit(SIMPLE_OBJECT_LIMIT)
+@cache(expire=60)
 async def read_exchange_rate(request: Request, date: datetime.date):
     collection = get_collection()
-    return crud.get_exchange_rate(collection=collection, date=date)
+    return jsonable_encoder(crud.get_exchange_rate(collection=collection, date=date))
 
 
 @limiter.limit(OBJECTS_LIST_LIMIT)
 @app.get('/api/exchangerates/{start_date}/{end_date}')
+@cache(expire=60)
 async def read_exchange_rates_in_range(request: Request, start_date: datetime.date, end_date: datetime.date):
     collection = get_collection()
-    return crud.get_exchange_rates_in_range(collection=collection, start_date=start_date, end_date=end_date)
+    return jsonable_encoder(crud.get_exchange_rates_in_range(collection=collection, start_date=start_date, end_date=end_date))
 
 
 @limiter.limit(SIMPLE_OBJECT_LIMIT)
 @app.get('/api/transactions/{date}')
+@cache(expire=60)
 async def read_transaction_sum_in_day(request: Request, date: datetime.date):
     collection = get_collection('transaction_summary')
-    return crud.get_transaction_sum_in_day(collection=collection, date=date)
+    return jsonable_encoder(crud.get_transaction_sum_in_day(collection=collection, date=date))
 
 
+@app.on_event("startup")
+async def startup():
+    redis = await aioredis.create_redis_pool("redis://localhost", encoding="utf8")
+    FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
+    
 if __name__ == "__main__":
     uvicorn.run("api:app", host="0.0.0.0", port=8000, reload=True)

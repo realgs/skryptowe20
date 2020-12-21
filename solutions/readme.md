@@ -4,6 +4,7 @@
 Do utworzenia api wykorzystano następujące technologie:
 * Python v. 3.7.6
 * MongoDB v. 4.4.2
+* Redis v. 3.0.504
 * Dodatkowe biblioteki, pakiety do Python, zawarte w pliku requirements.txt
 
 API zostało oparte o framework FastAPI.
@@ -16,6 +17,8 @@ Jako zbiór danych wykorzystano zbiór Sample Supply Store Dataset pobrany z htt
         pip install -r requirements.txt
 * Należy pobrać i zaimportować bazę danych, opis tych czynności znajduje się na https://github.com/huynhsamha/quick-mongo-atlas-datasets 
 * Należy przygotować dodatkowe tabele do API poprzez uruchomienie skryptu database_preparation.py
+* Należy zainstalować Redis, wersja na Windows 10: https://github.com/microsoftarchive/redis/releases/tag/win-3.0.504
+* Uruchomić redis-server.exe
 * Aby uruchomić API, należy uruchomić skrypt api.py
 
 Z poziomu Windows 10 skrypty można uruchomić poprzez wywołanie:
