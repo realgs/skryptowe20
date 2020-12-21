@@ -58,5 +58,15 @@ profit_pln : float         -->  Dochód z danego dnia w PLN
 
 ## Screeny
 
-### Scr1
+### Poprawna odpowiedź od /rates -> 200
 ![Alt text](req1.png)
+### Data wykracza spoza dozwolonego zakresu -> 400
+![Alt text](req2.png)
+### Data początkowa jest większa niż data końcowa -> 400
+![Alt text](req3.png)
+### Zabezpieczenie antyspamowe -> 429
+![Alt text](req4.png)
+### Niepoprawne daty ('XD', 'ASDF') -> 400
+![Alt text](req5.png)
+### Poprawna odpowiedź od /profits -> 200
+![Alt text](req6.png)
