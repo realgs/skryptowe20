@@ -101,12 +101,12 @@ def get_sales_between(desired_currency, begin, end):
         SELECT
             `OrderDate`,
             ROUND(SUM(`UnitPrice` * `Quantity` * ( 1 - `Discount`)), 2),
-            ROUND(SUM(`UnitPrice` * `Quantity` * ( 1 - `Discount`) / `{desired_currency}`.rate * `USD`.rate), 2)
+            ROUND(SUM(`UnitPrice` * `Quantity` * ( 1 - `Discount`) / `DESIRED`.rate * `USD`.rate), 2)
         FROM `Order`
         JOIN `OrderDetail`
             ON `Order`.`Id` = `OrderDetail`.`OrderId`
-        JOIN `{desired_currency}`
-            ON `{desired_currency}`.date = `Order`.`OrderDate`
+        JOIN `{desired_currency}` AS DESIRED
+            ON DESIRED.date = `Order`.`OrderDate`
         JOIN `USD`
             ON `USD`.date = `Order`.`OrderDate`
         WHERE `OrderDate` BETWEEN ? AND ?
