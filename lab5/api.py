@@ -9,6 +9,10 @@ from connectDB import connect, get_currency_rate_data_between_date, get_currency
 
 MY_DB_DATE_FROM = "2011-10-01"
 MY_DB_DATE_TO = "2014-05-28"
+AVAILABLE_CURRENCIES = ['AUD', 'BYN', 'BGN', 'HRK', 'DKK',
+                        'JPY', 'CAD', 'NOK', 'CZK', 'RUB',
+                        'RON', 'PLN', 'CHF', 'SEK', 'TRY',
+                        'EUR', 'UAH', 'HUF', 'GBP']
 
 app = Flask(__name__)
 api = Api(app)
@@ -23,7 +27,7 @@ limiter = Limiter(
 class CurrencyRates(Resource):
     def get(self, currency_id, date_from, date_to):
         currency_id = currency_id.upper()
-        if currency_id == "USD":
+        if currency_id == "PLN":
             if check_date_format(date_from) & check_date_format(date_to):
                 if check_date_range(date_from) & check_date_range(date_from):
                     currency_rate = get_currency_rate_data_between_date(cursor, date_from, date_to)
@@ -31,7 +35,8 @@ class CurrencyRates(Resource):
                     return {
                         "status": 200,
                         "result": {
-                            "currency": currency_id,
+                            "base_currency": "USD",
+                            "final_currency": currency_id,
                             "rates": json_list
                         }
                     }
@@ -50,24 +55,26 @@ api.add_resource(CurrencyRates, "/rates/<string:currency_id>/<string:date_from>/
 class DailyTurnover(Resource):
     def get(self, date, currency_id):
         currency_id = currency_id.upper()
-        if currency_id == "USD":
+        if AVAILABLE_CURRENCIES.__contains__(str(currency_id)):
             if check_date_format(date):
                 if check_date_range(date):
-                    default_currency_turnover_value = float("{:.2f}".format(get_daily_turnover(cursor, date)))
-                    pln_turnover_value = float("{:.2f}".format(default_currency_turnover_value *
-                                                               get_currency_rate_of_day(cursor, date)[0][0]))
+                    default_currency_turnover_value = float("{:.2f}".format(get_daily_turnover(cursor, date,
+                                                                                               currency_id)))
+                    value_turnover_selected_currency = float("{:.2f}".format(default_currency_turnover_value *
+                                                                             get_currency_rate_of_day(cursor, date,
+                                                                                                      currency_id)))
                     return {
                         "status": 200,
                         "result": {
                             "date": date,
                             "turnover": [
                                 {
-                                    "currency": currency_id,
+                                    "currency": "USD",
                                     "value": default_currency_turnover_value
                                 },
                                 {
-                                    "currency": "PLN",
-                                    "value": pln_turnover_value
+                                    "currency": currency_id,
+                                    "value": value_turnover_selected_currency
                                 }
                             ]
                         }
@@ -90,7 +97,7 @@ def currency_rate_list_to_json_format(data):
         new_list.append({
             "date": str(__datetime_with_time_converter(row[0]))[:10],
             "mid_rate": row[1],
-            "is_interpolated": row[2]
+            "is_interpolated": row[3]
         })
     return new_list
 

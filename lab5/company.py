@@ -13,14 +13,14 @@ def count_daily_turnover(cursor, date):
         return result[0]
 
 
-def get_daily_turnover(cursor, date):
+def get_daily_turnover(cursor, date, currency_id):
     daily_turnover_in_db = __download_daily_turnover_table(cursor)
     is_find, index = __find_date_in_table(daily_turnover_in_db, date)
     if not is_find:
         turnover = count_daily_turnover(cursor, date)
         cursor.execute(f"INSERT INTO {SALES_DATABASE}.{NAME_DAILY_TURNOVER_TABLE} "
-                       f"(TurnoverDate, TotalTurnover, Rate) "
-                       f"VALUES (\'{date}\',{turnover[1]},\'USD\')")
+                       f"(TurnoverDate, TotalTurnover, CurrencyId) "
+                       f"VALUES (\'{date}\',{turnover[1]},\'{currency_id}\')")
         cursor.commit()
         return turnover[1]
     return daily_turnover_in_db[index][1]

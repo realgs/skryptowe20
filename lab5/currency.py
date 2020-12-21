@@ -41,6 +41,20 @@ def get_listing_courses(currency, number_of_days):
                                              str(date.today()))
 
 
+def get_one_day_currency_rate(currency_id, date):
+    api_json_result = ""
+    date += " 00:00:00"
+    is_interpolated = False
+    while api_json_result == "":
+        try:
+            api_json_result = requests.get(f"{API_URL}a/{str(currency_id)}/{str(date)[:10]}/?format=json").json()
+        except ValueError:
+            date = dt.datetime.strptime(str(date), '%Y-%m-%d %H:%M:%S') - dt.timedelta(days=1)
+            is_interpolated = True
+    return api_json_result["rates"][0]["mid"], is_interpolated
+
+
+
 def get_rate_list(json):
     currency_data = []
     number_of_next_date = 0

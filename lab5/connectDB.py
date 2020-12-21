@@ -1,8 +1,10 @@
 import pyodbc
 
+from currency import get_one_day_currency_rate
+
 SALES_DATABASE = 'AdventureWorks2019'
 NAME_SALES_TABLE = 'Sales.SalesOrderHeader'
-NAME_CURRENCY_TABLE = 'Sales.UsdRate'
+NAME_CURRENCY_TABLE = 'Sales.CurrencyRateTable'
 NAME_DAILY_TURNOVER_TABLE = 'Sales.DailyTurnover'
 
 
@@ -15,19 +17,19 @@ def connect():
     return cursor
 
 
-def add_usd_rate_table_to_db(cursor):
-    cursor.execute(f"CREATE TABLE {NAME_CURRENCY_TABLE} (RateDate DATETIME PRIMARY KEY, CurrencyRate REAL NOT NULL, "
-                   f"InterpolatedRate BIT NOT NULL)")
+def add_currency_rate_table_to_db(cursor):
+    cursor.execute(f"CREATE TABLE {NAME_CURRENCY_TABLE} (RateDate DATETIME NOT NULL, CurrencyRateValue REAL NOT NULL, "
+                   f"CurrencyId CHAR(3) NOT NULL, InterpolatedRate BIT NOT NULL)")
     cursor.commit()
 
 
 def add_daily_turnover_table_to_db(cursor):
     cursor.execute(f"CREATE TABLE {NAME_DAILY_TURNOVER_TABLE} (TurnoverDate DATETIME PRIMARY KEY, "
-                   f"TotalTurnover REAL NOT NULL, Rate CHAR(3) NOT NULL )")
+                   f"TotalTurnover REAL NOT NULL, CurrencyId CHAR(3) NOT NULL )")
     cursor.commit()
 
 
-def fill_table_usd_rate(cursor, currency_data):
+def fill_table_currency_rate(cursor, currency_data, currency_id):
     currency_table = __download_currency_table(cursor)
     for i in range(len(currency_data)):
         if not __find_date_in_table(currency_table, currency_data[i]["date"]):
@@ -35,9 +37,19 @@ def fill_table_usd_rate(cursor, currency_data):
                 interpolated = 1
             else:
                 interpolated = 0
-            cursor.execute(f"INSERT INTO {SALES_DATABASE}.{NAME_CURRENCY_TABLE} (RateDate, CurrencyRate, InterpolatedRate) VALUES ("
-                           f"\'{currency_data[i]['date']}\',{currency_data[i]['mid_rate']},{interpolated})")
-            cursor.commit()
+            __insert_currency_rate(cursor, currency_data[i]['date'], currency_data[i]['mid_rate'], currency_id, interpolated)
+
+
+def __insert_currency_rate(cursor, rate_date, currency_rate_value, currency_id, is_interpolated):
+    if is_interpolated:
+        is_interpolated_bit = 1
+    else:
+        is_interpolated_bit = 0
+    cursor.execute(f"INSERT INTO {SALES_DATABASE}.{NAME_CURRENCY_TABLE} (RateDate, CurrencyRateValue, CurrencyId, "
+                   f"InterpolatedRate) "
+                   f"VALUES (\'{rate_date}\',{currency_rate_value},\'{currency_id}\',"
+                   f"{is_interpolated_bit})")
+    cursor.commit()
 
 
 def __find_date_in_table(data, date_to_find):
@@ -61,10 +73,21 @@ def get_currency_rate_data_between_date(cursor, date_from_string, date_to_string
     return rate_data_list
 
 
-def get_currency_rate_of_day(cursor, date):
-    result = cursor.execute(f"SELECT CurrencyRate FROM {SALES_DATABASE}.{NAME_CURRENCY_TABLE} WHERE RateDate = "
-                   f" \'{date}\'")
+def get_currency_rate_of_day(cursor, date, currency_id):
+    result = cursor.execute(f"SELECT CurrencyRateValue FROM {SALES_DATABASE}.{NAME_CURRENCY_TABLE} WHERE RateDate = "
+                   f" \'{date}\' AND CurrencyId = \'{currency_id.upper()}\'")
     result_list = []
     for row in result:
         result_list.append(row)
-    return result_list
+    if not result_list:
+        if currency_id == "PLN":
+            currency_rate, is_interpolated = get_one_day_currency_rate("USD", str(date)[:10])
+            __insert_currency_rate(cursor, str(date)[:10], currency_rate, currency_id, is_interpolated)
+        else:
+            pln_currency_rate, is_interpolated = get_one_day_currency_rate("USD", str(date)[:10])
+            other_currency_rate, is_interpolated = get_one_day_currency_rate(str(currency_id), str(date)[:10])
+            currency_rate = pln_currency_rate/other_currency_rate
+            __insert_currency_rate(cursor, str(date)[:10], currency_rate, currency_id, is_interpolated)
+        return currency_rate
+    else:
+        return result_list[0][0]
