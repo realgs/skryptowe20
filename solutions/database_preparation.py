@@ -5,6 +5,7 @@ from api_usage import get_currency_quotes
 
 DB_NAME = 'sample_supplies'
 
+
 def create_pln_usd_exchange_collection(days, start_date):
     client = MongoClient()
     db = client[DB_NAME]
@@ -73,9 +74,10 @@ def create_transaction_summary_collection(days, start_date):
         date = datetime.datetime(year, month, day)
         transactions_sum = float(data['transactions_sum'].to_decimal())
 
-        transaction_collection.insert_one({'date': date, 
-        'pln': transactions_sum * pln_exchange_rates_collection.find_one({'date': date})['pln_to_usd'], 
-        'usd': transactions_sum})
+        transaction_collection.insert_one({'date': date,
+                                           'pln': transactions_sum *
+                                                  pln_exchange_rates_collection.find_one({'date': date})['pln_to_usd'],
+                                           'usd': transactions_sum})
 
 
 if __name__ == '__main__':

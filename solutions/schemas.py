@@ -29,3 +29,15 @@ class ExchangeRate(BaseModel):
         json_encoders = {
             ObjectId: str
         }
+
+class TransactionSummary(BaseModel):
+    id: PyObjectId = Field(alias='_id')
+    date: datetime.date
+    pln: float
+    usd: float
+        
+    class Config:
+        arbitrary_types_allowed = True
+        json_encoders = {
+            ObjectId: str
+        }

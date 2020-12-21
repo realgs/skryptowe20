@@ -3,11 +3,14 @@ import datetime
 
 MAX_DAYS_FOR_QUERY = 93
 
+
 def _url(path):
     return 'http://api.nbp.pl' + path + '/?format=json'
 
+
 def get_exchange_rates(code, start_date, end_date):
     return requests.get(_url(f'/api/exchangerates/rates/a/{code}/{start_date}/{end_date}'))
+
 
 def get_currency_quotes(currency, start_date, end_date):
     rates = {}
