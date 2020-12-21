@@ -94,7 +94,7 @@ def draw_profit_diagram():
     plt.show()
 
 
-def update_rates_table_to_today():
+def update_rates_table_to_day(day):
     cursor = conn.cursor()
     # Get most recent date in table
     cursor.execute("""SELECT TOP (1) [measure_date]
@@ -104,10 +104,9 @@ def update_rates_table_to_today():
     last_date = cursor.fetchone()
     if last_date != None:
         last_date = datetime.datetime.strptime(last_date[0], '%Y-%m-%d')
-        today = datetime.datetime.today()
-        if (today > last_date):
-            table_data = get_average_currency_rates_between('USD', last_date + datetime.timedelta(days=1), today)
-            update_rates_table(table_data, today)
+        if (day > last_date):
+            table_data = get_average_currency_rates_between('USD', last_date + datetime.timedelta(days=1), day)
+            update_rates_table(table_data, day)
 
 
 def get_rates_from_to(date_from, date_to):
@@ -121,10 +120,17 @@ def get_rates_from_to(date_from, date_to):
     return result
 
 
+def initialize_db():
+    try:
+        table_data = get_average_currency_rates_between('USD', datetime.date(2015, 12, 20), datetime.date(2018, 1, 4))
+        create_rates_table(table_data)
+    except Exception as ex:
+        print("Error while initializing db")
+
+
 if __name__ == '__main__':
     # Add database table and fill it
-    table_data = get_average_currency_rates_between('USD', datetime.date(2015, 12, 20), datetime.date(2018, 1, 4))
-    create_rates_table(table_data)
+    initialize_db()
 
     # Generate diagram for profits
     draw_profit_diagram()
