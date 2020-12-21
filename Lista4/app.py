@@ -6,7 +6,6 @@ from threading import Timer
 import datetime
 import decimal
 import json
-# paczki: flask, flask_limiter, pyodbc, requests + deps
 
 
 app = Flask(__name__)
@@ -14,7 +13,7 @@ app = Flask(__name__)
 limiter = Limiter(
     app,
     key_func=get_remote_address,
-    default_limits=["5/minute"],
+    default_limits=["12/minute"],
 )
 
 first_rate_measure_db = datetime.datetime.strptime('2015-12-21', '%Y-%m-%d')
@@ -42,38 +41,41 @@ def get_rates(date_from='', date_to=''):
         date_from_parsed = datetime.datetime.strptime(date_from, '%Y-%m-%d')
         date_to_parsed = datetime.datetime.strptime(date_to, '%Y-%m-%d')
     except ValueError:
-        return Response('Invalid date format', status=400)
+        return Response('Invalid date format (must be RRRR-MM-DD)', status=400)
     if date_from_parsed > date_to_parsed:
         return Response('date_from cannot be greater than date_to', status=400)
     if date_from_parsed < first_rate_measure_db or date_to_parsed > datetime.datetime.today() - datetime.timedelta(days=1):
         first_rate_measure_db_str = datetime.datetime.strftime(first_rate_measure_db, '%Y-%m-%d')
         today_str = datetime.datetime.strftime(datetime.date.today() - datetime.timedelta(days=1), '%Y-%m-%d')
         return Response('Date interval must be between ' + first_rate_measure_db_str + ' and ' + today_str, status=400)
-    #result = get_rates_from_to(date_from, date_to)
     result = []
     for entry in rates_cache:
         entry_date = entry['date']
-        app.logger.warning(entry['date'])
         if entry_date >= date_from_parsed and entry_date <= date_to_parsed:
             result.append(entry)
     return Response(json.dumps(result, default=json_serializer), status=200)
 
 
 # Task 3 endpoint
-@app.route('/profits/day/<summary_date>', methods=['GET'])
-def get_profit(summary_date=''):
+@app.route('/profits/from/<date_from>/to/<date_to>', methods=['GET'])
+def get_profit(date_from='', date_to=''):
     try:
-        summary_date_parsed = datetime.datetime.strptime(summary_date, '%Y-%m-%d')
+        date_from_parsed = datetime.datetime.strptime(date_from, '%Y-%m-%d')
+        date_to_parsed = datetime.datetime.strptime(date_to, '%Y-%m-%d')
     except ValueError:
-        return Response('Invalid date format', status=400)
-    if summary_date_parsed < first_rate_measure_db or summary_date_parsed > datetime.datetime.today() - datetime.timedelta(days=1):
+        return Response('Invalid date format (must be RRRR-MM-DD)', status=400)
+    if date_from_parsed > date_to_parsed:
+        return Response('date_from cannot be greater than date_to', status=400)
+    if date_from_parsed < first_rate_measure_db or date_to_parsed > datetime.datetime.today() - datetime.timedelta(days=1):
         first_rate_measure_db_str = datetime.datetime.strftime(first_rate_measure_db, '%Y-%m-%d')
         today_str = datetime.datetime.strftime(datetime.date.today() - datetime.timedelta(days=1), '%Y-%m-%d')
-        return Response('Date must be between ' + first_rate_measure_db_str + ' and ' + today_str, status=400)
+        return Response('Date interval must be between ' + first_rate_measure_db_str + ' and ' + today_str, status=400)
+    result = []
     for entry in profit_cache:
-        if summary_date_parsed == datetime.datetime.strptime(entry['date'], '%Y-%m-%d'):
-            return Response(json.dumps(entry, default=json_serializer), status=200)
-    return Response(json.dumps({'date':summary_date_parsed, 'profit_usd':0.0, 'profit_pln':0.0}, default=json_serializer), status=200)
+        entry_date = datetime.datetime.strptime(entry['date'], '%Y-%m-%d')
+        if entry_date >= date_from_parsed and entry_date <= date_to_parsed:
+            result.append(entry)
+    return Response(json.dumps(result, default=json_serializer), status=200)
 
 
 # Call timer_callback at initial_date
@@ -124,5 +126,3 @@ if __name__ == '__main__':
 
     # Start server
     app.run(debug=True)
-    # todo readme 
-    # todo screeny xd?

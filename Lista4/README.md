@@ -18,7 +18,7 @@ pip install numpy==1.19.3*
 ## Uruchomienie
 Po zainstalowaniu paczek:  
 Skonfigurować połączenie z bazą danych w pliku db_connection.py. Użyta baza: https://www.sqlservertutorial.net/sql-server-sample-database/  
-W przypadku pierwszego uruchomienia, wywołać funkcję db_connection -> initialize_db(). Dodaje ona tabelę rates i uzupełnia danymi startowymi.  
+W przypadku pierwszego uruchomienia, wywołać skrypt *db_connection.py*. Dodaje on tabelę rates i uzupełnia ją danymi startowymi.  
 Windows - *python app.py*  
 Linux, Mac - *python3 app.py*  
 Serwer będzie dostępny pod adresem http://localhost:5000
@@ -55,3 +55,8 @@ profit_pln : float         -->  Dochód z danego dnia w PLN
 * Zakres dat obsługiwany przez api: od 2015-12-21 do dzień wcześniej względem dnia poprzedniego
 * Ze względu na małą ilość danych oraz ich niezmienność, wszystkie zwracane dane są przechowywane w cache. Cache jest odświeżane codziennie o 21 (app.py -> update_at_hour)
 * Najnowsze kursy są pobierane codziennie o 21 (app.py -> update_at_hour). Taka godzina gwarantuje, że NBP uzupełni swoje dane na ten dzień i mechanizm odświeżający bazę danych nie wstawi wartości interpolated dla danego dnia 
+
+## Screeny
+
+### Scr1
+![Alt text](req1.png)

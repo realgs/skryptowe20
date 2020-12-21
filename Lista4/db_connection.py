@@ -1,6 +1,5 @@
 import pyodbc as db
 import datetime
-import matplotlib.pyplot as plt
 from api_connection import get_average_currency_rates_between
 
 
@@ -80,39 +79,6 @@ def get_profit_in_currencies(date_from, date_to):
     
     return result
 
-# Zadanie 5 - dzienne zarobki sklepu
-def draw_profit_diagram():
-    cursor = conn.cursor()
-    cursor.execute("""SELECT [orders].[order_date] AS day_in_year, 
-    SUM([order_items].[list_price]*[order_items].[quantity]) AS profit_usd, 
-    SUM([order_items].[list_price]*[order_items].[quantity]*[rates].[measure_rate]) AS profit_pln
-    FROM [BikeStores].[sales].[orders] 
-    JOIN [BikeStores].[sales].[order_items] 
-    ON [BikeStores].[sales].[orders].[order_id] = [BikeStores].[sales].[order_items].[order_id]
-    JOIN [BikeStores].[dbo].[rates] 
-    ON [BikeStores].[sales].[orders].[order_date] = [BikeStores].[dbo].[rates].[measure_date]
-    GROUP BY [orders].[order_date]
-    HAVING [orders].[order_date] BETWEEN '2017-01-01' AND '2017-06-30'
-    ORDER BY [orders].[order_date]""")
-
-    data_time = []
-    data_dollar = []
-    data_pln = []
-    for row in cursor:
-        data_time.append(row[0])
-        data_dollar.append(row[1])
-        data_pln.append(row[2])
-
-    plt.title('Przychód sklepów rowerowych w PLN i USD; 2017-01-01 - 2017-06-30')
-    plt.xlabel('Data')
-    plt.ylabel('Łączna sprzedaż')
-    plt.xticks(range(len(data_time))[::20], rotation=20)
-    plt.plot(data_time, data_dollar, label='USD')
-    plt.plot(data_time, data_pln, label='PLN')
-    plt.legend()
-    plt.savefig('bike_shops_profits.svg', format='svg')
-    plt.show()
-
 
 def update_rates_table_to_day(day):
     cursor = conn.cursor()
@@ -151,6 +117,3 @@ def initialize_db():
 if __name__ == '__main__':
     # Add database table and fill it
     initialize_db()
-
-    # Generate diagram for profits
-    draw_profit_diagram()
