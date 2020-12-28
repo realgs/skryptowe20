@@ -10,6 +10,7 @@ def generate_information(currency, data_from, date_to):
 
     # create
     db.create_currency_table(cursor)
+    db.create_daily_sales_table(cursor)
 
     # insert
     data = api.get_currency_rates_list(api.get_currency_rates_by_dates(currency, data_from, date_to))

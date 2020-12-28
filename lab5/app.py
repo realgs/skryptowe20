@@ -1,7 +1,11 @@
 from flask import Flask
 from flask_restful import Api, Resource
-import datetime as dt
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import database as db
+import rates_api_handler as rah
+import sales_api_handler as sah
+import database_handler as dbh
 
 MY_DB_DATE_FROM = "2011-10-01"
 MY_DB_DATE_TO = "2014-05-28"
@@ -9,86 +13,64 @@ MY_DB_DATE_TO = "2014-05-28"
 app = Flask(__name__)
 api = Api(app)
 cursor = db.connect()
+limiter = Limiter(
+    app,
+    key_func=get_remote_address,
+    default_limits=["10 per minutes"]
+)
 
 
 class CurrencyRates(Resource):
     def get(self, currency, date_from, date_to):
         currency = currency.upper()
-        error_message = create_error_json(currency, date_from, date_to)
+        error_message = rah.create_error_json(currency, date_from, date_to)
         if error_message is not None:
             return error_message
 
         currency_rates = db.get_currency_rate_data_between_date(cursor, date_from, date_to)
-        json_format = convert_to_json_format(currency_rates)
+        json_format = rah.convert_to_json_format(currency_rates)
         return {
-                   "result": {
-                       "base_currency": "USD",
-                       "final_currency": currency,
-                       "rates": json_format
+                   'result': {
+                       'base currency': 'USD',
+                       'exchanged currency': currency,
+                       'rates': json_format
                    }
                }, 200
 
 
-api.add_resource(CurrencyRates, "/rates/<string:currency>/<string:date_from>/<string:date_to>")
+class CurrencySales(Resource):
+    def get(self, currency, date):
+        currency = currency.upper()
+        error_massage = sah.create_error_json(currency, date)
+        if error_massage is not None:
+            return error_massage
+
+        base_currency_sales = float("{:.2f}".format(
+            dbh.get_daily_sales(cursor, date, currency)
+        ))
+        exchanged_currency_sales = float("{:.2f}".format(
+            base_currency_sales * db.get_currency_rate_of_day(cursor, date, currency)
+        ))
+
+        return {
+                   'result': {
+                       'date': date,
+                       'sales': [
+                           {
+                               'base currency': 'USD',
+                               'value': base_currency_sales
+                           },
+                           {
+                               'exchanged currency': currency,
+                               'value': exchanged_currency_sales
+                           }
+                       ]
+                   }
+               }, 200
 
 
-def create_error_json(currency, date_from, date_to):
-    currency_is_correct = check_currency_available(currency)
-    dates_format = check_date_format(date_from) & check_date_format(date_to)
-    if dates_format:
-        dates_range = check_date_range(date_from) & check_date_range(date_to)
-    else:
-        dates_range = False
-
-    if not currency_is_correct:
-        if dates_format:
-            return create_error_message("Invalid currency. Currency not found."), 404
-        return create_error_message("Invalid request"), 400
-    if not dates_format:
-        return create_error_message("Invalid date format. Admissible: YYYY-MM-DD"), 400
-    if not dates_range:
-        return create_error_message("Data out of range selected. Allowed range from " +
-                                    MY_DB_DATE_FROM + " to " + MY_DB_DATE_TO)
-    return None
-
-
-def check_currency_available(currency):
-    return currency == "PLN"
-
-
-def check_date_format(date):
-    if len(date) == 10:
-        for i in range(len(date)):
-            if not (i == 4 or i == 7):
-                if not date[i].isnumeric():
-                    return False
-    else:
-        return False
-    return True
-
-
-def check_date_range(date):
-    date_to_check = dt.datetime.strptime(date, '%Y-%m-%d')
-    if date_to_check < dt.datetime.strptime(MY_DB_DATE_FROM, '%Y-%m-%d') or \
-            date_to_check > dt.datetime.strptime(MY_DB_DATE_TO, '%Y-%m-%d'):
-        return False
-    return True
-
-
-def create_error_message(message):
-    return {"message": message}
-
-
-def convert_to_json_format(list):
-    new_list = []
-    for row in list:
-        new_list.append({
-            "date": str((row[0]))[:10],
-            "mid": row[1],
-            "interpolated": row[3]
-        })
-    return new_list
-
+api.add_resource(CurrencyRates, '/rates/<string:currency>/<string:date_from>/<string:date_to>')
+api.add_resource(CurrencySales, '/sales/<string:currency>/<string:date>')
 
 if __name__ == "__main__":
     app.run(debug=True)

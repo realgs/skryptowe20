@@ -81,6 +81,18 @@ def get_currency_rates_list(json):
     return currency_rate_data
 
 
+def get_one_day_currency_rate(currency, date):
+    api_json_result = ""
+    date += " 00:00:00"
+    interpolated = False
+    while api_json_result == "":
+        try:
+            api_json_result = req.get(f"{NBP_API_URL}a/{str(currency)}/{str(date)[:10]}/?format=json").json()
+        except ValueError:
+            date = dt.datetime.strptime(str(date), '%Y-%m-%d %H:%M:%S') - dt.timedelta(days=1)
+            interpolated = True
+    return api_json_result["rates"][0]["mid"], interpolated
+
 def __convert_to_date(date):
     return dt.datetime.strptime(str(date), '%Y-%m-%d')
 

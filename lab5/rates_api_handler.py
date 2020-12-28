@@ -1,0 +1,61 @@
+import datetime as dt
+
+MY_DB_DATE_FROM = "2011-10-01"
+MY_DB_DATE_TO = "2014-05-28"
+
+
+def create_error_json(currency, date_from, date_to):
+    currency_is_correct = __check_currency_available(currency)
+    dates_format = __check_date_format(date_from) & __check_date_format(date_to)
+
+    if not currency_is_correct:
+        if dates_format:
+            return __create_error_message("Invalid currency. Currency not found."), 404
+        return __create_error_message("Invalid request"), 400
+    if not dates_format:
+        return __create_error_message("Invalid date format. Admissible: YYYY-MM-DD"), 400
+    if dates_format:
+        dates_range = __check_date_range(date_from) & __check_date_range(date_to)
+        if not dates_range:
+            return __create_error_message("Data out of range selected. Allowed range from " +
+                                          MY_DB_DATE_FROM + " to " + MY_DB_DATE_TO), 400
+
+    return None
+
+
+def convert_to_json_format(data_list):
+    new_list = []
+    for row in data_list:
+        new_list.append({
+            "date": str((row[0]))[:10],
+            "mid": row[1],
+            "interpolated": row[3]
+        })
+    return new_list
+
+
+def __check_currency_available(currency):
+    return currency == "PLN"
+
+
+def __check_date_format(date):
+    if len(date) == 10:
+        for i in range(len(date)):
+            if not (i == 4 or i == 7):
+                if not date[i].isnumeric():
+                    return False
+    else:
+        return False
+    return True
+
+
+def __check_date_range(date):
+    date_to_check = dt.datetime.strptime(date, '%Y-%m-%d')
+    if date_to_check < dt.datetime.strptime(MY_DB_DATE_FROM, '%Y-%m-%d') or \
+            date_to_check > dt.datetime.strptime(MY_DB_DATE_TO, '%Y-%m-%d'):
+        return False
+    return True
+
+
+def __create_error_message(message):
+    return {"message": message}
