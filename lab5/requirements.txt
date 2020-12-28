@@ -1,0 +1,6 @@
+requests==2.25.1
+Flask==1.1.2
+Flask_RESTful==0.3.8
+flask_caching==1.9.0
+flask_limiter==1.4
+pyodbc==4.0.30
