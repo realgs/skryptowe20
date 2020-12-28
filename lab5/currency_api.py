@@ -1,9 +1,7 @@
 import requests as req
 from datetime import timedelta
 import datetime as dt
-
-NBP_API_URL = 'http://api.nbp.pl/api/exchangerates/rates/'
-MAX_DAYS_AMOUNT = 365
+import data_file as df
 
 
 def get_elem(url):
@@ -15,18 +13,18 @@ def get_currency_rates_by_dates(currency, date_from_str, date_to_str):
     date_from = __convert_to_date(date_from_str)
     date_to_help = __convert_to_date(date_to_str)
     number_of_days = (date_to_help - date_from).days
-    if number_of_days > MAX_DAYS_AMOUNT:
-        date_to = date_from + timedelta(days=MAX_DAYS_AMOUNT)
+    if number_of_days > df.MAX_DAYS_AMOUNT:
+        date_to = date_from + timedelta(days=df.MAX_DAYS_AMOUNT)
     else:
         date_to = date_to_help
 
     rates = []
     while date_to <= date_to_help:
-        url = f'{NBP_API_URL}/a/{str(currency)}/{str(date_from)[:10]}/{str(date_to)[:10]}/?format=json'
+        url = f'{df.NBP_API_URL}/a/{str(currency)}/{str(date_from)[:10]}/{str(date_to)[:10]}/?format=json'
         request = get_elem(url)
         rates += __json_to_list(request['rates'])
         date_from = date_to + timedelta(days=1)
-        date_to = date_from + timedelta(days=MAX_DAYS_AMOUNT)
+        date_to = date_from + timedelta(days=df.MAX_DAYS_AMOUNT)
 
         if date_to > date_to_help > date_from:
             date_to = date_to_help
@@ -87,11 +85,12 @@ def get_one_day_currency_rate(currency, date):
     interpolated = False
     while api_json_result == "":
         try:
-            api_json_result = req.get(f"{NBP_API_URL}a/{str(currency)}/{str(date)[:10]}/?format=json").json()
+            api_json_result = req.get(f"{df.NBP_API_URL}a/{str(currency)}/{str(date)[:10]}/?format=json").json()
         except ValueError:
             date = dt.datetime.strptime(str(date), '%Y-%m-%d %H:%M:%S') - dt.timedelta(days=1)
             interpolated = True
     return api_json_result["rates"][0]["mid"], interpolated
+
 
 def __convert_to_date(date):
     return dt.datetime.strptime(str(date), '%Y-%m-%d')

@@ -2,25 +2,31 @@ from flask import Flask
 from flask_restful import Api, Resource
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_caching import Cache
 import database as db
 import rates_api_handler as rah
 import sales_api_handler as sah
 import database_handler as dbh
+import data_file as df
 
-MY_DB_DATE_FROM = "2011-10-01"
-MY_DB_DATE_TO = "2014-05-28"
+cursor = db.connect()
 
 app = Flask(__name__)
 api = Api(app)
-cursor = db.connect()
+app.config["CACHE_TYPE"] = df.CACHE_TYPE
+
+cache = Cache()
+cache.init_app(app)
+
 limiter = Limiter(
     app,
     key_func=get_remote_address,
-    default_limits=["10 per minutes"]
+    default_limits=[df.DEFAULT_LIMIT]
 )
 
 
 class CurrencyRates(Resource):
+    @cache.cached(timeout=df.CACHE_TIMEOUT)
     def get(self, currency, date_from, date_to):
         currency = currency.upper()
         error_message = rah.create_error_json(currency, date_from, date_to)
@@ -39,6 +45,7 @@ class CurrencyRates(Resource):
 
 
 class CurrencySales(Resource):
+    @cache.cached(timeout=df.CACHE_TIMEOUT)
     def get(self, currency, date):
         currency = currency.upper()
         error_massage = sah.create_error_json(currency, date)

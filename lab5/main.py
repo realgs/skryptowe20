@@ -1,8 +1,6 @@
 import currency_api as api
 import database as db
-
-MY_DB_DATE_FROM = "2011-10-01"
-MY_DB_DATE_TO = "2014-05-28"
+import data_file as df
 
 
 def generate_information(currency, data_from, date_to):
@@ -18,4 +16,4 @@ def generate_information(currency, data_from, date_to):
 
 
 if __name__ == '__main__':
-    generate_information("USD", MY_DB_DATE_FROM, MY_DB_DATE_TO)
+    generate_information("USD", df.DATABASE_DATE_FROM, df.DATABASE_DATE_TO)

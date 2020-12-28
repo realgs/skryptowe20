@@ -1,13 +1,12 @@
 import datetime as dt
-
-from database import SALES_DATABASE, DAILY_SALES_TABLE_NAME, SALES_TABLE_NAME
+import data_file as df
 
 
 def count_daily_sales(cursor, date):
     result = __query_answer_to_list(
         cursor.execute(f"""
         SELECT OrderDate, SUM(TotalDue) Total
-        FROM {SALES_DATABASE}.{SALES_TABLE_NAME}
+        FROM {df.SALES_DATABASE}.{df.SALES_TABLE_NAME}
         WHERE OrderDate = \'{date}\'
         GROUP BY OrderDate
         ORDER BY OrderDate
@@ -26,7 +25,7 @@ def get_daily_sales(cursor, date, currency):
     if not found:
         sales = count_daily_sales(cursor, date)
         cursor.execute(f"""
-        INSERT INTO {SALES_DATABASE}.{DAILY_SALES_TABLE_NAME} (SaleDate, TotalSale, Currency)
+        INSERT INTO {df.SALES_DATABASE}.{df.DAILY_SALES_TABLE_NAME} (SaleDate, TotalSale, Currency)
         VALUES (\'{date}\', {sales[1]}, \'{currency}\')
         """)
         cursor.commit()
@@ -45,10 +44,10 @@ def __find_date_in_table(data, date_to_find):
 
 
 def __download_daily_sales_table(cursor):
-    return  __query_answer_to_list(
+    return __query_answer_to_list(
         cursor.execute(f"""
         SELECT SaleDate, TotalSale, Currency
-        FROM {SALES_DATABASE}.{DAILY_SALES_TABLE_NAME}
+        FROM {df.SALES_DATABASE}.{df.DAILY_SALES_TABLE_NAME}
         ORDER BY SaleDate
         """)
     )

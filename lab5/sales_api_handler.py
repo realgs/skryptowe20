@@ -1,11 +1,5 @@
 import datetime as dt
-
-MY_DB_DATE_FROM = "2011-10-01"
-MY_DB_DATE_TO = "2014-05-28"
-AVAILABLE_CURRENCIES = ['AUD', 'BYN', 'BGN', 'HRK', 'DKK',
-                        'JPY', 'CAD', 'NOK', 'CZK', 'RUB',
-                        'RON', 'PLN', 'CHF', 'SEK', 'TRY',
-                        'EUR', 'UAH', 'HUF', 'GBP']
+import data_file as df
 
 
 def create_error_json(currency, date):
@@ -21,14 +15,13 @@ def create_error_json(currency, date):
     if dates_format:
         dates_range = __check_date_range(date)
         if not dates_range:
-            return __create_error_message("Data out of range selected. Allowed range from " +
-                                          MY_DB_DATE_FROM + " to " + MY_DB_DATE_TO), 400
-
+            return __create_error_message(f"Selected data is out of range. Allowed range from {df.DATABASE_DATE_FROM} "
+                                          f"to {df.DATABASE_DATE_TO}"), 400
     return None
 
 
 def __check_currency_available(currency):
-    return AVAILABLE_CURRENCIES.__contains__(str(currency))
+    return df.AVAILABLE_CURRENCIES.__contains__(str(currency))
 
 
 def __check_date_format(date):
@@ -44,8 +37,8 @@ def __check_date_format(date):
 
 def __check_date_range(date):
     date_to_check = dt.datetime.strptime(date, '%Y-%m-%d')
-    if date_to_check < dt.datetime.strptime(MY_DB_DATE_FROM, '%Y-%m-%d') or \
-            date_to_check > dt.datetime.strptime(MY_DB_DATE_TO, '%Y-%m-%d'):
+    if date_to_check < dt.datetime.strptime(df.DATABASE_DATE_FROM, '%Y-%m-%d') or \
+            date_to_check > dt.datetime.strptime(df.DATABASE_DATE_TO, '%Y-%m-%d'):
         return False
     return True
 

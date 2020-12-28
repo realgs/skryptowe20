@@ -1,17 +1,12 @@
 import pyodbc
 import currency_api
-
-SALES_DATABASE = 'AdventureWorks2019'
-SALES_TABLE_NAME = 'Sales.SalesOrderHeader'
-CURRENCY_TABLE_NAME = 'Sales.CurrencyRatesTable'
-DAILY_SALES_TABLE_NAME = 'Sales.DailySalesTable'
-SERVER = 'DESKTOP-1A5C2CG'
+import data_file as df
 
 
 def connect():
     conn = pyodbc.connect('Driver={SQL Server Native Client 11.0};'
-                          f'Server={SERVER};'
-                          f'Database={SALES_DATABASE};'
+                          f'Server={df.SERVER};'
+                          f'Database={df.SALES_DATABASE};'
                           'Trusted_Connection=yes;')
     cursor = conn.cursor()
     return cursor
@@ -19,7 +14,7 @@ def connect():
 
 def create_currency_table(cursor):
     cursor.execute(f'''
-    CREATE TABLE {CURRENCY_TABLE_NAME} (
+    CREATE TABLE {df.CURRENCY_TABLE_NAME} (
         QuotationDate DATETIME NOT NULL,
         CurrencyValue REAL NOT NULL,
         CurrencyId CHAR(3) NOT NULL,
@@ -42,7 +37,7 @@ def fill_currency_table(cursor, data_list, currency_id):
 def get_currency_rate_data_between_date(cursor, date_from, date_to):
     cursor.execute(f"""
     SELECT * 
-    FROM {SALES_DATABASE}.{CURRENCY_TABLE_NAME}
+    FROM {df.SALES_DATABASE}.{df.CURRENCY_TABLE_NAME}
     WHERE QuotationDate BETWEEN \'{date_from}\' AND \'{date_to}\'
     ORDER BY QuotationDate
     """)
@@ -55,7 +50,7 @@ def get_currency_rate_data_between_date(cursor, date_from, date_to):
 def __download_currency_table(cursor):
     cursor.execute(f'''
     SELECT QuotationDate 
-    FROM {SALES_DATABASE}.{CURRENCY_TABLE_NAME}
+    FROM {df.SALES_DATABASE}.{df.CURRENCY_TABLE_NAME}
     ORDER BY QuotationDate
     ''')
     list = []
@@ -75,14 +70,15 @@ def __insert_currency_rate(cursor, date, rate, currency_id, is_interpolated):
     else:
         inter = 0
     cursor.execute(f"""
-    INSERT INTO {SALES_DATABASE}.{CURRENCY_TABLE_NAME} (QuotationDate, CurrencyValue, CurrencyId, Interpolated)
+    INSERT INTO {df.SALES_DATABASE}.{df.CURRENCY_TABLE_NAME} (QuotationDate, CurrencyValue, CurrencyId, Interpolated)
     VALUES (\'{date}\', {rate}, \'{currency_id}\', {inter})
     """)
     cursor.commit()
 
+
 def create_daily_sales_table(cursor):
     cursor.execute(f'''
-    CREATE TABLE {DAILY_SALES_TABLE_NAME} (
+    CREATE TABLE {df.DAILY_SALES_TABLE_NAME} (
     SaleDate DATETIME PRIMARY KEY,
     TotalSale REAL NOT NULL,
     Currency CHAR(3) NOT NULL
@@ -90,10 +86,11 @@ def create_daily_sales_table(cursor):
     ''')
     cursor.commit()
 
+
 def get_currency_rate_of_day(cursor, date, currency):
     result = cursor.execute(f"""
     SELECT CurrencyValue
-    FROM {SALES_DATABASE}.{CURRENCY_TABLE_NAME}
+    FROM {df.SALES_DATABASE}.{df.CURRENCY_TABLE_NAME}
     WHERE QuotationDate = \'{date}\' AND CurrencyId = \'{currency.upper()}\'
     """)
 
@@ -107,7 +104,7 @@ def get_currency_rate_of_day(cursor, date, currency):
         else:
             pln_currency_rate, interpolated = currency_api.get_one_day_currency_rate("USD", str(date)[:10])
             other_currency_rate, interpolated = currency_api.get_one_day_currency_rate(str(currency), str(date)[:10])
-            currency_rate = pln_currency_rate/other_currency_rate
+            currency_rate = pln_currency_rate / other_currency_rate
             __insert_currency_rate(cursor, str(date)[:10], currency_rate, currency, interpolated)
         return currency_rate
     else:
