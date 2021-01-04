@@ -2,6 +2,8 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from django.http import JsonResponse, HttpResponse
 from datetime import datetime
+import random
+from django.shortcuts import render
 
 from .serializers import *
 from .models import *
@@ -179,6 +181,15 @@ def get_client_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
     return ip
+
+def readme(request):
+    return render(request, 'readme.html', context)
+
+def index(request):
+    
+    return render(request, 'index.html')
+
+
 
 REQUESTS_PER_MINUTE = 50
 MAX_CACHE_LENGTH = 100

@@ -1,0 +1,68 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <div class="page-header">
+            <h2>SALES & RATES DATA</h2>
+        </div>
+    </div>
+    <div class="container lead">
+        <p>Select records type and data range to display:</p>
+    </div>
+    <div class="container">
+        <form>
+            <div class="col-sm-6">
+                <input type="button" class="btn btn-info btn-lg btn-block" value="USD exchange rates">
+                <input type="button" class="btn btn-info btn-lg btn-block" value="Sales rates">
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <input class="form-control" id="date1" placeholder="Od dnia (DD-MM-YYYY)">
+                </div>
+                <div class="form-group">
+                    <input class="form-control" id="date2" placeholder="Do dnia (DD-MM-YYYY)">
+                </div>
+                <button class="btn btn-default">Show</button>
+            </div>
+        </form>
+    </div>
+    <div class="container">
+        <h3>API LINKS</h3>
+        <div class="container">
+
+            <p>Use these links to get JSON response</p>
+            <table class="table table-striped">
+                <tr>
+                    <th>URL</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>http://localhost:8000/rate/{date}/</td>
+                    <td>Get USD exchange rate from the date</td>
+                </tr>
+                <tr>
+                    <td>http://localhost:8000/rate/{from_date}/{to_date}</td>
+                    <td>Get USD exchange rate from the date range</td>
+                </tr>
+                <tr>
+                    <td>http://localhost:8000/sale/{date}/</td>
+                    <td>Get sales value in PLN and USD from the date</td>
+                </tr>
+                <tr>
+                    <td>http://localhost:8000/sale/{from_date}/{to_date}</td>
+                    <td>Get sales value in PLN and USD from the date range</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
