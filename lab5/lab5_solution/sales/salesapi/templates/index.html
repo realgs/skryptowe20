@@ -7,6 +7,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+
 </head>
 <body>
 
@@ -41,6 +43,14 @@
             </div>
         </form>
     </div>
+    <br />
+    <div class="container">
+        <canvas id="myChart" width="600" height="300"></canvas>
+    </div>
+
+    <script>
+    </script>
+
     <br />
     <div id="outputTable" class="container">
         <h2>[[ myTitle ]]</h2>
@@ -104,12 +114,43 @@
             },
             methods: {
                 getResults: function (dataURL, dataType) {
-                    console.log({ url: dataURL });
                     this.dataType = dataType;
                     this.setHeaders(dataType);
                     var self = this
                     $.getJSON(dataURL, function (data) {
                         self.records = data;
+                        let chartLabels = Object.keys(data);
+                        let chartValues = Object.values(data);
+
+                        let chartDatasets = [];
+                        if (dataType == 'sale') {
+                            let usdSales = chartValues.map(x => x.usd_sales);
+                            let plnSales = chartValues.map(x => x.pln_sales);
+                            chartDatasets = [{
+                                label: 'USD Sales',
+                                data: usdSales
+                            }, {
+                                label: 'PLN Sales',
+                                data: plnSales
+                            }]
+                        }
+                        else if (dataType == 'rate') {
+                            let exchangeRates = chartValues.map(x => x.value)
+                            chartDatasets = [{
+                                label: 'USD/PLN',
+                                data: exchangeRates
+                            }]
+                        }
+                        
+                        var ctx = document.getElementById('myChart');
+
+                        var myChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                datasets: chartDatasets,
+                                labels: chartLabels
+                            }
+                        });
                     });
                 },
                 setHeaders: function (dataType) {
@@ -144,13 +185,17 @@
             methods: {
                 processForm: function () {
                     var dataURL = 'http://localhost:8000/';
-                    console.log({ fromDate: this.fromDate, toDate: this.toDate, dataType: this.dataType });
                     dataURL = dataURL + this.dataType + '/' + this.fromDate + '/' + this.toDate;
                     OutputTable.getResults(dataURL, this.dataType);
+
                 }
             }
 
         });
+
+
+        
+
 
     </script>
 
