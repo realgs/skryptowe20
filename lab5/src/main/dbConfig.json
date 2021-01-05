@@ -1,8 +1,0 @@
-{
-  "script": "new_table.ddl",
-  "dbname": "postgres",
-  "user": "postgres",
-  "password": "admin",
-  "host": "localhost",
-  "port": "5432"
-}
