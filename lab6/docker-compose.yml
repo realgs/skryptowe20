@@ -1,0 +1,39 @@
+version: "3"
+
+networks:
+  exchange-net:
+services:
+  exchange-web-app:
+    container_name: exchange-web-app
+    build:
+      context: exchange-web-app/.
+    networks:
+      - exchange-net
+    ports:
+      - 3000:3000
+    depends_on:
+      - exchange-api
+  exchange-api:
+    container_name: exchange-api
+    build:
+      context: exchange-api/.
+    networks:
+      - exchange-net
+    ports:
+      - 8080:8080
+    depends_on:
+      - exchange-db
+  exchange-db:
+    container_name: exchange-db
+    image: postgres:12
+    environment:
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=exchange
+      - PG_DATA=/var/lib/postgresql/data
+    volumes:
+      - ./data/init-data.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - exchange-net
+    ports:
+      - 5432:5432
