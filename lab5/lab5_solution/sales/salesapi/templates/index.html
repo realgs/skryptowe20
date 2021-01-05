@@ -47,14 +47,16 @@
         <br />
         <table class="table table-striped">
             <tr>
-                <th>Date</th>
-                <th>PLN</th>
-                <th>USD</th>
+                <th>[[ col1 ]]</th>
+                <th>[[ col2 ]]</th>
+                <th>[[ col3 ]]</th>
             </tr>
             <tr v-for="(value, key) in records">
                 <td>[[ key ]]</td>
-                <td>[[ value.pln_sales ]]</td>
-                <td>[[ value.usd_sales ]]</td>
+                <td v-if="dataType == 'sale'">[[ value.pln_sales ]]</td>
+                <td v-if="dataType == 'rate'">[[ value.value ]]</td>
+                <td v-if="dataType == 'sale'">[[ value.usd_sales ]]</td>
+                <td v-if="dataType == 'rate'">[[ value.isInterpolated ]]</td>
             </tr>
         </table>
     </div>
@@ -94,15 +96,40 @@
             delimiters: ['[[', ']]'],
             data: {
                 myTitle: 'Data:',
+                dataType: '',
+                col1: 'Date',
+                col2: 'PLN',
+                col3: 'USD',
                 records: []
             },
             methods: {
-                getResults: function (dataURL) {
+                getResults: function (dataURL, dataType) {
                     console.log({ url: dataURL });
-                    var self = this // create a closure to access component in the callback below
+                    this.dataType = dataType;
+                    this.setHeaders(dataType);
+                    var self = this
                     $.getJSON(dataURL, function (data) {
                         self.records = data;
                     });
+                },
+                setHeaders: function (dataType) {
+                    if (dataType == 'sale') {
+                        this.myTitle = 'Daily sales';
+                        this.col1 = 'Date';
+                        this.col2 = 'PLN';
+                        this.col3 = 'USD';
+                    }
+                    else if (dataType == 'rate') {
+                        this.myTitle = 'Exchange rate';
+                        this.col1 = 'Date';
+                        this.col2 = 'Exchange rate';
+                        this.col3 = 'Is interpolated?';
+                    }
+                    else {
+                        this.col1 = 'Cannot get results';
+                        this.col2 = '';
+                        this.col3 = '';
+                    }
                 }
             }
         });
@@ -119,7 +146,7 @@
                     var dataURL = 'http://localhost:8000/';
                     console.log({ fromDate: this.fromDate, toDate: this.toDate, dataType: this.dataType });
                     dataURL = dataURL + this.dataType + '/' + this.fromDate + '/' + this.toDate;
-                    OutputTable.getResults(dataURL);
+                    OutputTable.getResults(dataURL, this.dataType);
                 }
             }
 
