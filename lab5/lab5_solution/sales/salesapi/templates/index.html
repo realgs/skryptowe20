@@ -10,7 +10,7 @@
 </head>
 <body>
 
-    <div class="container">
+    <div class="container" id="vue-elem">
         <div class="page-header">
             <h2>SALES & RATES DATA</h2>
         </div>
@@ -19,21 +19,44 @@
         <p>Select records type and data range to display:</p>
     </div>
     <div class="container">
-        <form>
+        <form id="userInput" v-on:submit.prevent="processForm">
             <div class="col-sm-6">
-                <input type="button" class="btn btn-info btn-lg btn-block" value="USD exchange rates">
-                <input type="button" class="btn btn-info btn-lg btn-block" value="Sales rates">
+                <div class="form-group">
+                    <input type="radio" name="radioGroup" class="form-check-input" value="rate" id="ratesSwitch" v-model="dataType" />
+                    <label for="ratesSwitch">USD/PLN exchange rates</label>
+                </div>
+                <div class="form-group">
+                    <input type="radio" name="radioGroup" class="form-check-input" value="sale" id="salesSwitch" v-model="dataType">
+                    <label for="sales">Daily sales in USD and PLN</label>
+                </div>
             </div>
             <div class="col-sm-6">
                 <div class="form-group">
-                    <input class="form-control" id="date1" placeholder="Od dnia (DD-MM-YYYY)">
+                    <input class="form-control" id="date1" placeholder="Od dnia (DD-MM-YYYY)" v-model="fromDate">
                 </div>
                 <div class="form-group">
-                    <input class="form-control" id="date2" placeholder="Do dnia (DD-MM-YYYY)">
+                    <input class="form-control" id="date2" placeholder="Do dnia (DD-MM-YYYY)" v-model="toDate">
                 </div>
-                <button class="btn btn-default">Show</button>
+                <button class="btn btn-default" id="showButton">Show</button>
             </div>
         </form>
+    </div>
+    <br />
+    <div id="outputTable" class="container">
+        <h2>[[ myTitle ]]</h2>
+        <br />
+        <table class="table table-striped">
+            <tr>
+                <th>Date</th>
+                <th>PLN</th>
+                <th>USD</th>
+            </tr>
+            <tr v-for="(value, key) in records">
+                <td>[[ key ]]</td>
+                <td>[[ value.pln_sales ]]</td>
+                <td>[[ value.usd_sales ]]</td>
+            </tr>
+        </table>
     </div>
     <div class="container">
         <h3>API LINKS</h3>
@@ -64,5 +87,45 @@
             </table>
         </div>
     </div>
+
+    <script type="text/javascript">
+        let OutputTable = new Vue({
+            el: '#outputTable',
+            delimiters: ['[[', ']]'],
+            data: {
+                myTitle: 'Data:',
+                records: []
+            },
+            methods: {
+                getResults: function (dataURL) {
+                    console.log({ url: dataURL });
+                    var self = this // create a closure to access component in the callback below
+                    $.getJSON(dataURL, function (data) {
+                        self.records = data;
+                    });
+                }
+            }
+        });
+        let UserInput = new Vue({
+            el: '#userInput',
+            delimiters: ['[[', ']]'],
+            data: {
+                fromDate: '',
+                toDate: '',
+                dataType: ''
+            },
+            methods: {
+                processForm: function () {
+                    var dataURL = 'http://localhost:8000/';
+                    console.log({ fromDate: this.fromDate, toDate: this.toDate, dataType: this.dataType });
+                    dataURL = dataURL + this.dataType + '/' + this.fromDate + '/' + this.toDate;
+                    OutputTable.getResults(dataURL);
+                }
+            }
+
+        });
+
+    </script>
+
 </body>
 </html>
