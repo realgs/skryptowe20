@@ -1,21 +1,12 @@
-Frontend-app:
-
-Wymagane programy:
-- docker
-
-Sposób uruchomienia:
- - 1.) Uruchamiamy aplikacje komenda: 'docker-compose up' z poziomu katalogu lab6 
- ( Trochę to niestety trwa. Jeśli wystąpi jakiś błąd związany z exchange-api, proszę powtórzyć)
- - 2.) Uruchamiamy przeglądarkę ( najlepiej google chrome )
- - 3.) Przechodzimy pod adres: localhost:5000
-
 API :
 
 Wymagane programy:
 - docker
 
 Sposób uruchomienia:
- - 1.) Uruchamiamy aplikacje komenda: docker-compose up
+ - 1.) Uruchamiamy aplikacje komenda: 'docker-compose up' z poziomu katalogu lab6 ( Jeśli wystąpi jakiś błąd związany z exchange-api, proszę powtórzyć)
+ - 2.) Uruchamiamy przeglądarkę ( najlepiej google chrome )
+ - 3.) Przechodzimy pod adres: localhost:8080
 
 Endpointy:
 
