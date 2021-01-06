@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Line Chart Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+    <script language="JavaScript">
+        function displayLineChart() {
+            const url = 'http://' + document.location.host + '/api/rates';
+            fetch(url).then(response => {
+                response.json().then(ratesData => {
+                    console.log(ratesData);
+                    const dates = [];
+                    const euroRates = [];
+                    const dollarRates = [];
+                    for (const rate of ratesData['rates']) {
+                        dates.push(rate['date']);
+                        euroRates.push(rate['euroRate']);
+                        dollarRates.push(rate['dollarRate'])
+                    }
+                    new Chart(document.getElementById("line-chart1"), {
+                        type: 'line',
+                        data: {
+                            labels: dates,
+                            datasets: [{
+                                data: euroRates,
+                                label: "Euro rates",
+                                borderColor: "#053dcd",
+                                fill: false
+                            }, {
+                                data: dollarRates,
+                                label: "Dollar rates",
+                                borderColor: "#c6b600",
+                                fill: false
+                            }
+                            ]
+                        },
+                        options: {
+                            title: {
+                                display: true,
+                                text: 'Euro And Dollar To Polish Zloty Rates'
+                            }
+                        }
+                    });
+                });
+            });
+
+            const dailyOrdersUrl = 'http://' + document.location.host + '/api/daily_orders';
+            fetch(dailyOrdersUrl).then(response => {
+                response.json().then(dailyOrdersData => {
+                    console.log(dailyOrdersData);
+                    dailyOrders = dailyOrdersData['dailyOrders'];
+                    const dates = [];
+                    const totalOrdersAmountUsd = [];
+                    const totalOrdersAmountPln = [];
+                    for (const dailyOrder of dailyOrders) {
+                        dates.push(dailyOrder['date']);
+                        totalOrdersAmountUsd.push(dailyOrder['totalAmountUsd']);
+                        totalOrdersAmountPln.push(dailyOrder['totalAmountPln'])
+                    }
+                    new Chart(document.getElementById("line-chart2"), {
+                        type: 'line',
+                        data: {
+                            labels: dates,
+                            datasets: [{
+                                data: totalOrdersAmountPln,
+                                label: "Total orders amount in Polish zlotys",
+                                borderColor: "rgba(172,3,15,0.91)",
+                                fill: false
+                            }, {
+                                data: totalOrdersAmountUsd,
+                                label: "Total orders amount in dollars",
+                                borderColor: "#c6b600",
+                                fill: false
+                            }
+                            ]
+                        },
+                        options: {
+                            title: {
+                                display: true,
+                                text: 'Daily Orders Total Amount'
+                            }
+                        }
+                    });
+                });
+            });
+
+        }
+    </script>
+    <style>
+        body {
+            text-align: center;
+        }
+
+        section {
+            background: url("https://cdn.hipwallpaper.com/i/97/62/ZDOVqJ.gif");
+            background-size: cover;
+            border: 2px solid #bbbbbb;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body onload="displayLineChart();">
+<section>
+    <div class="box">
+        <canvas id="line-chart1" width="800" height="450"></canvas>
+    </div>
+</section>
+<section>
+    <div class="box">
+        <canvas id="line-chart2" width="800" height="450"></canvas>
+    </div>
+</section>
+</body>
+</html>
