@@ -2,7 +2,7 @@ import decimal
 import flask.json
 from datetime import date, datetime
 from operator import itemgetter
-from flask import Flask, request
+from flask import Flask, request, render_template
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from dbManager import DataAccessObject
@@ -46,7 +46,7 @@ def limit_per_address_call_exceeded(e):
     return {'errorType': 'TooManyRequestsError', 'messages': [message]}, 429
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="./templates/static/", template_folder="./templates")
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.json_encoder = MyJSONEncoder
@@ -56,6 +56,9 @@ dao = DataAccessObject(DB_CONFIG)
 rates_supplier = lambda currency_code, date: get_currency_rates(currency_code, date, date)
 salesDataCalculator = SalesDataCalculator(dao, rates_supplier)
 
+@app.route("/")
+def index():
+    return render_template("index.html")
 
 @app.route('/api/rates/<currency_code>')
 @cross_origin()

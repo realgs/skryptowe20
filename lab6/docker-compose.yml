@@ -3,16 +3,6 @@ version: "3"
 networks:
   exchange-net:
 services:
-  exchange-web-app:
-    container_name: exchange-web-app
-    build:
-      context: exchange-web-app/.
-    networks:
-      - exchange-net
-    ports:
-      - 5000:5000
-    depends_on:
-      - exchange-api
   exchange-api:
     container_name: exchange-api
     build:

@@ -1,15 +1,14 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {useStateWithCallbackLazy} from 'use-state-with-callback';
 
 const TODAY_DATE = new Date().toISOString().slice(0, 10);
 
 export default function SalesInformation() {
 
-    const [currency, setCurrency] = useStateWithCallbackLazy('USD');
+    const [currency, setCurrency] = useState('USD');
     const [date, setDate] = useState(new Date(2019, 1, 1).toISOString().slice(0, 10));
-    const [response, setResponse] = useStateWithCallbackLazy(null);
-    const [isLoading, setIsLoading] = useStateWithCallbackLazy(true)
-    const [isError, setIsError] = useStateWithCallbackLazy(false)
+    const [response, setResponse] = useState(null);
+    const [isLoading, setIsLoading] = useState(true)
+    const [isError, setIsError] = useState(false)
     const isFirstRender = useRef(true)
 
     useEffect(() => {
@@ -22,27 +21,27 @@ export default function SalesInformation() {
         isFirstRender.current = false
     }, [])
 
-
     function callExchanges() {
-        setIsLoading(true, () => {
-            fetch(`http://localhost:8080/api/sales/${currency}?date=${date}`, {
-                method: 'GET'
-            }).then(res => {
-                if (res.status === 200) {
-                    res.json().then(value => {
-                        console.log(value)
-                        setResponse(value, () => {
-                            setIsLoading(false, () => {
-                                if (isError) {
-                                    setIsError(false)
-                                }
-                            });
-                        })
-                    })
-                } else {
-                    setIsError(true, () => setIsLoading(false))
-                }
-            }).catch(_ => setIsError(true, () => setIsLoading(false)))
+        setIsLoading(true);
+        fetch(`http://localhost:8080/api/sales/${currency}?date=${date}`, {
+            method: 'GET'
+        }).then(res => {
+            if (res.status === 200) {
+                res.json().then(value => {
+                    console.log(value)
+                    setResponse(value)
+                    setIsLoading(false)
+                    if (isError) {
+                        setIsError(false)
+                    }
+                });
+            } else {
+                setIsError(true)
+                setIsLoading(false)
+            }
+        }).catch(_ => {
+            setIsError(true)
+            setIsLoading(false)
         })
     }
 
@@ -52,16 +51,16 @@ export default function SalesInformation() {
     }
 
     function generateBody() {
-        if (isLoading) {
-            return (<div className="spinner-border text-dark mt-5" role="status">
-                <span className="visually-hidden">Loading...</span>
-            </div>);
-        } else if (isError) {
+        if (isError) {
             return (<div className="alert alert-danger text-start m-5" role="alert">
                 <h4 className="alert-heading">Error!</h4>
                 <p>There was an error while connecting to exchange api.</p>
                 <hr/>
                 <p className="mb-0">Please try again later.</p>
+            </div>);
+        } else if (isLoading) {
+            return (<div className="spinner-border text-dark mt-5" role="status">
+                <span className="visually-hidden">Loading...</span>
             </div>);
         } else {
             return (
