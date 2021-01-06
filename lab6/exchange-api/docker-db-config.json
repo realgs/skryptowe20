@@ -1,0 +1,7 @@
+{
+  "dbname": "exchange",
+  "user": "admin",
+  "password": "admin",
+  "host": "exchange-db",
+  "port": "5432"
+}
