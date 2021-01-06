@@ -1,17 +1,21 @@
-Wymagane programy:
-- pytohn3
-- docker
-- psql
+Frontend-app:
 
-Wymagane paczki python3:
-- flask
-- flask_limiter
-- psycopg2
+Wymagane programy:
+- docker
 
 Sposób uruchomienia:
- - 1.) Uruchamiamy skrypt instalujący bazę danych postgres - ./configuredb.sh
- - 2.) Przechodzimy do katalogu src/main/
- - 3.) Uruchamiamy serwer komendą: python3 app.py
+ - 1.) Uruchamiamy aplikacje komenda: 'docker-compose up' z poziomu katalogu lab6 
+ ( Trochę to niestety trwa. Jeśli wystąpi jakiś błąd związany z exchange-api, proszę powtórzyć)
+ - 2.) Uruchamiamy przeglądarkę ( najlepiej google chrome )
+ - 3.) Przechodzimy pod adres: localhost:5000
+
+API :
+
+Wymagane programy:
+- docker
+
+Sposób uruchomienia:
+ - 1.) Uruchamiamy aplikacje komenda: docker-compose up
 
 Endpointy:
 
@@ -36,5 +40,5 @@ Przykładowe zapytania:
 - localhost:8080/api/sales/USD?date=2020-11-22
 
 
-Liczba zapytań jest organiczona do 10 na minutę. 
+Liczba zapytań jest organiczona do 10 na sekundę. 
 Limit nakładany jest na każdy adres ip osobno. 
