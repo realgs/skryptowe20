@@ -14,7 +14,7 @@ limiter = Limiter(
     app,
     key_func=get_remote_address,
     default_limits=["300 per day", "20 per minute"],
-    application_limits=["10000 per day", "3 per minute", "10 per second"]
+    application_limits=["10000 per day", "300 per minute", "10 per second"]
 )
 app.config["DEBUG"] = True
 SALES = []
