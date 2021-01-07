@@ -40,7 +40,7 @@ def drop_table(conn):
 
 
 def delete_all_rates(conn):
-    sql = """DELETE FROM Rates"""
+    sql = """DELETE * FROM Rates"""
     cur = conn.cursor()
     cur.execute(sql)
     conn.commit()
