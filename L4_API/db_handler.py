@@ -1,9 +1,10 @@
 from datetime import datetime
 import sqlite3
 import matplotlib.pyplot as plt
+from matplotlib import cycler
 import matplotlib.dates as mdates
 
-DB_FILE = '/Users/limi/Desktop/INF/5 JS/L/skryptowe20/L4_API/sales.db'
+DB_FILE = '/Users/limi/Desktop/INF/5 JS/L/skryptowe20/L5_API/sales.db'
 PLOT_SIZE_X = 14
 PLOT_SIZE_Y = 7
 PLOT_LEFT_POS = 0.07
@@ -189,6 +190,9 @@ def data_to_plot(currency_code, date_from, date_to):
 
 
 def plot_sale_time_frame(currency_code, date_from, date_to):
+    colors = cycler('color', ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728'])
+    plt.rc('axes', prop_cycle=colors)
+
     sale_dates, sales_usd, sales_pln = data_to_plot(currency_code, date_from, date_to)
 
     fig, ax = plt.subplots(figsize=(PLOT_SIZE_X, PLOT_SIZE_Y))

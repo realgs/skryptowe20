@@ -4,14 +4,16 @@ from matplotlib import cycler, ticker
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
+MAX_TIME_FRAME = 366
 PLOT_SIZE_X = 10
 PLOT_SIZE_Y = 5
 PLOT_LEFT_POS = 0.1
 PLOT_BOTTOM_POS = 0.2
 PLOT_MARGIN = 0.01
-PLOT_TICKS_DAY_INTERVAL = 14
+PLOT_TICKS_DAY_INTERVAL = 10
+PLOT_TICKS_MINOR_X_INTERVAL = 180
 PLOT_TICKS_Y_INTERVAL = 0.1
-PLOT_TICKS_MINOR_Y_INTERVAL = 0.01
+PLOT_TICKS_MINOR_Y_INTERVAL = 0.1
 PLOT_GRID_LW = 0.25
 PLOT_SAVE = False
 
@@ -68,7 +70,7 @@ def split_time_frame(date_from, date_to):
                 temp_date_obj = temp_date_obj - timedelta(days=2)
 
             new_from = temp_date_obj
-            new_to = new_from + timedelta(days=366)
+            new_to = new_from + timedelta(days=MAX_TIME_FRAME)
 
             if new_to > date_to_obj:
                 new_to = date_to_obj
@@ -153,13 +155,15 @@ def plot(currencies, days):
     plt.xlabel("data")
     plt.ylabel("kurs średni")
 
+    delta_days = (datetime.strptime(x_max, '%Y-%m-%d') - datetime.strptime(x_min, '%Y-%m-%d')).days
+
     legend = plt.legend(loc='best')
     legend.get_frame().set_facecolor('white')
     legend.get_frame().set_edgecolor('white')
     plt.grid(axis='y', lw=PLOT_GRID_LW)
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
-    ax.xaxis.set_major_locator(mdates.DayLocator(interval=PLOT_TICKS_DAY_INTERVAL))
-    ax.xaxis.set_minor_locator(mdates.DayLocator())
+    ax.xaxis.set_major_locator(mdates.DayLocator(interval=delta_days // PLOT_TICKS_DAY_INTERVAL))
+    ax.xaxis.set_minor_locator(mdates.DayLocator(interval=delta_days // PLOT_TICKS_MINOR_X_INTERVAL))
     ax.yaxis.set_major_locator(ticker.MultipleLocator(PLOT_TICKS_Y_INTERVAL))
     ax.yaxis.set_minor_locator(ticker.MultipleLocator(PLOT_TICKS_MINOR_Y_INTERVAL))
     fig.autofmt_xdate()

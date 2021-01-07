@@ -31,4 +31,4 @@ if __name__ == '__main__':
 
     # add_rates_to_db(CURRENCIES[0], '2009-01-02', '2014-12-31')
 
-    plot_sales(CURRENCIES[0], '2010-01-01', '2010-12-31')
+    plot_sales('USD', '2011-01-01', '2011-12-31')
