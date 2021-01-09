@@ -12,11 +12,41 @@
 </head>
 <body>
 
-    <div class="container" id="vue-elem">
+    <div class="container" id="pageHeader">
         <div class="page-header">
             <h2>SALES & RATES DATA</h2>
         </div>
     </div>
+    <div class="container">
+        <h3>API LINKS</h3>
+        <div class="container">
+
+            <p>Use these links to get JSON response</p>
+            <table class="table table-striped">
+                <tr>
+                    <th>URL</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>http://localhost:8000/rate/{date}/</td>
+                    <td>Get USD exchange rate from the date</td>
+                </tr>
+                <tr>
+                    <td>http://localhost:8000/rate/{from_date}/{to_date}</td>
+                    <td>Get USD exchange rate from the date range</td>
+                </tr>
+                <tr>
+                    <td>http://localhost:8000/sale/{date}/</td>
+                    <td>Get sales value in PLN and USD from the date</td>
+                </tr>
+                <tr>
+                    <td>http://localhost:8000/sale/{from_date}/{to_date}</td>
+                    <td>Get sales value in PLN and USD from the date range</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <br />
     <div class="container lead">
         <p>Select records type and data range to display:</p>
     </div>
@@ -30,6 +60,14 @@
                 <div class="form-group">
                     <input type="radio" name="radioGroup" class="form-check-input" value="sale" id="salesSwitch" v-model="dataType">
                     <label for="sales">Daily sales in USD and PLN</label>
+                </div>
+                <div class="form-group">
+                    <input type="radio" name="radioGroup" class="form-check-input" value="sale-usd" id="salesSwitchUSD" v-model="dataType">
+                    <label for="sales">Daily sales in USD</label>
+                </div>
+                <div class="form-group">
+                    <input type="radio" name="radioGroup" class="form-check-input" value="sale-pln" id="salesSwitchPLN" v-model="dataType">
+                    <label for="sales">Daily sales in PLN</label>
                 </div>
             </div>
             <div class="col-sm-6">
@@ -70,35 +108,6 @@
             </tr>
         </table>
     </div>
-    <div class="container">
-        <h3>API LINKS</h3>
-        <div class="container">
-
-            <p>Use these links to get JSON response</p>
-            <table class="table table-striped">
-                <tr>
-                    <th>URL</th>
-                    <th>Description</th>
-                </tr>
-                <tr>
-                    <td>http://localhost:8000/rate/{date}/</td>
-                    <td>Get USD exchange rate from the date</td>
-                </tr>
-                <tr>
-                    <td>http://localhost:8000/rate/{from_date}/{to_date}</td>
-                    <td>Get USD exchange rate from the date range</td>
-                </tr>
-                <tr>
-                    <td>http://localhost:8000/sale/{date}/</td>
-                    <td>Get sales value in PLN and USD from the date</td>
-                </tr>
-                <tr>
-                    <td>http://localhost:8000/sale/{from_date}/{to_date}</td>
-                    <td>Get sales value in PLN and USD from the date range</td>
-                </tr>
-            </table>
-        </div>
-    </div>
 
     <script type="text/javascript">
         let OutputTable = new Vue({
@@ -113,44 +122,12 @@
                 records: []
             },
             methods: {
-                getResults: function (dataURL, dataType) {
+                getResultsTable: function (dataURL, dataType) {
                     this.dataType = dataType;
                     this.setHeaders(dataType);
                     var self = this
                     $.getJSON(dataURL, function (data) {
                         self.records = data;
-                        let chartLabels = Object.keys(data);
-                        let chartValues = Object.values(data);
-
-                        let chartDatasets = [];
-                        if (dataType == 'sale') {
-                            let usdSales = chartValues.map(x => x.usd_sales);
-                            let plnSales = chartValues.map(x => x.pln_sales);
-                            chartDatasets = [{
-                                label: 'USD Sales',
-                                data: usdSales
-                            }, {
-                                label: 'PLN Sales',
-                                data: plnSales
-                            }]
-                        }
-                        else if (dataType == 'rate') {
-                            let exchangeRates = chartValues.map(x => x.value)
-                            chartDatasets = [{
-                                label: 'USD/PLN',
-                                data: exchangeRates
-                            }]
-                        }
-                        
-                        var ctx = document.getElementById('myChart');
-
-                        var myChart = new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                datasets: chartDatasets,
-                                labels: chartLabels
-                            }
-                        });
                     });
                 },
                 setHeaders: function (dataType) {
@@ -171,7 +148,54 @@
                         this.col2 = '';
                         this.col3 = '';
                     }
-                }
+                },
+                getResultsChart: function (dataURL, dataType) {
+                    this
+                    $.getJSON(dataURL, function (data) {
+                        let chartLabels = Object.keys(data);
+                        let chartValues = Object.values(data);
+
+                        usdDataset = {
+                            label: 'USD Sales',
+                            data: chartValues.map(x => x.usd_sales),
+                            fill: false,
+                            borderColor: 'rgb(68,67,238)'
+                        }
+                        plnDataset = {
+                            label: 'PLN Sales',
+                            data: chartValues.map(x => x.pln_sales),
+                            fill: false,
+                            borderColor: 'rgb(28,169,201)'
+                        }
+                        exchangeRateDataset = {
+                            label: 'USD/PLN',
+                            data: exchangeRates = chartValues.map(x => x.value),
+                            fill: false,
+                            borderColor: 'rgb(113,238,184)'
+                        }
+
+                        let chartDatasets = [];
+                        if (dataType == 'sale-usd')
+                            chartDatasets = [usdDataset];
+                        else if (dataType == 'sale-pln')
+                            chartDatasets = [plnDataset];
+                        else if (dataType == 'sale')
+                            chartDatasets = [usdDataset, plnDataset];
+                        else if (dataType == 'rate')
+                            chartDatasets = [exchangeRateDataset];
+
+
+                        var ctx = document.getElementById('myChart');
+
+                        var myChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                datasets: chartDatasets,
+                                labels: chartLabels
+                            }
+                        });
+                    });
+                },
             }
         });
         let UserInput = new Vue({
@@ -185,17 +209,21 @@
             methods: {
                 processForm: function () {
                     var dataURL = 'http://localhost:8000/';
-                    dataURL = dataURL + this.dataType + '/' + this.fromDate + '/' + this.toDate;
-                    OutputTable.getResults(dataURL, this.dataType);
+                    if (this.dataType == 'sale-usd' || this.dataType == 'sale-pln') {
+                        dataURL = dataURL + 'sale/' + this.fromDate + '/' + this.toDate;
+                        OutputTable.getResultsTable(dataURL, 'sale');
+                    }
+                    else {
+                        dataURL = dataURL + this.dataType + '/' + this.fromDate + '/' + this.toDate;
+                        OutputTable.getResultsTable(dataURL, this.dataType);
+                    }
+
+                    OutputTable.getResultsChart(dataURL, this.dataType);
 
                 }
             }
 
         });
-
-
-        
-
 
     </script>
 
