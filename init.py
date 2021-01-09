@@ -25,16 +25,26 @@ def to_date(date):
         return datetime.strptime(date, '%Y-%m-%d')
 
 
-def fix_response(response):
+def fix_response(currencies, start_date, end_date, currency):
     x = []
-    previous_date = response.json()['rates'][0]
-    for value in response.json()['rates']:
-        for date in range(1, (to_date(value['effectiveDate']) - to_date(previous_date['effectiveDate'])).days):
-            x.append((to_date(previous_date['effectiveDate']) + timedelta(days=date), previous_date['mid'], True))
-        x.append((to_date(value['effectiveDate']), value['mid'], False))
-        previous_date = value
+    if currencies[0][0] != to_date(start_date):
+        request = make_request(currency, to_date(start_date) - timedelta(days=7), to_date(start_date))
+        if request is not None:
 
-    return x
+            x.append((to_date(request.json()['rates'][-1]['effectiveDate']), request.json()['rates'][-1]['mid'], True))
+            previous_date = x[0]
+    else:
+        previous_date = currencies[0]
+    for value in currencies:
+        for date in range(1, (to_date(value[0]) - to_date(previous_date[0])).days):
+            print(range(1, (to_date(value[0]) - to_date(previous_date[0])).days))
+            x.append((to_date(previous_date[0]) + timedelta(days=date), previous_date[1], True))
+        previous_date = value
+    if currencies[-1][0] != to_date(end_date):
+        print((currencies[-1][0] - to_date(end_date)).days)
+        for date in range(1, (to_date(end_date) - currencies[-1][0]).days + 1):
+            x.append((to_date(currencies[-1][0]) + timedelta(days=date), currencies[-1][1], True))
+    return x + currencies
 
 
 def get_currency(currency, start_date, end_date):
@@ -95,9 +105,9 @@ def get_range(currency, start_date, end_date):
         if isinstance(response, int) or response is None:
             print(f'Failed fetching data between {date_range[0]} and {date_range[1]}')
         else:
-            x.append(fix_response(response))
-
-    return [item for subl in x for item in subl]
+            for value in response.json()['rates']:
+                x.append((to_date(value['effectiveDate']), value['mid'], False))
+    return fix_response(x, start_date, end_date, currency)
 
 
 def split_date(start_date, end_date):
@@ -134,7 +144,7 @@ def fill_currency(currencies, start_date, end_date):
         conn.close()
 
 
-fill_currency(list(map(lambda c: c.value, constants.Currency)), '2001-01-02', '2020-12-17')
+fill_currency(list(map(lambda c: c.value, constants.Currency)), constants.FIRST_DAY, constants.LAST_DAY)
 create_sales_stats()
 for c in constants.Currency:
     update_sales_stats(c.value)

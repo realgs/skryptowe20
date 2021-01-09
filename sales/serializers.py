@@ -3,13 +3,13 @@ from rest_framework import serializers
 import constants
 
 
-class CurrencySerializer(serializers.HyperlinkedModelSerializer):
+class CurrencySerializer(serializers.ModelSerializer):
     class Meta:
         model = Currency
         fields = ['symbol', 'date', 'value', 'interpolated']
 
 
-class SalesStatsSerializer(serializers.HyperlinkedModelSerializer):
+class SalesStatsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SalesStats
         fields = ['date', 'sales_sum']

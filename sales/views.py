@@ -15,9 +15,9 @@ class CurrencyRangeList(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        symbol = self.request.query_params.get('symbol')
-        start = self.request.query_params.get('start', None)
-        end = self.request.query_params.get('end', datetime.now())
+        symbol = self.request.query_params.get('symbol', "USD")
+        start = self.request.query_params.get('start', datetime.strftime(constants.FIRST_DAY, '%Y-%m-%d'))
+        end = self.request.query_params.get('end', datetime.strftime(constants.LAST_DAY, '%Y-%m-%d'))
         if datetime.strptime(start, '%Y-%m-%d') < constants.FIRST_DAY \
                 or datetime.strptime(end, '%Y-%m-%d') > constants.LAST_DAY:
             raise ValidationError({"error": ["Dates are not is valid range"]})

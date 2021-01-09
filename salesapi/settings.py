@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'sales.apps.SalesConfig',
+    'frontend',
 ]
 
 MIDDLEWARE = [
@@ -78,7 +79,10 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         'anon': '10/day',
         'user': '1000/day'
-    }
+    },
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    )
 }
 
 
