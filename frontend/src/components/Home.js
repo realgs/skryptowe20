@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Typography, Container, Link } from "@material-ui/core";
+import { Typography, Container } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -36,27 +36,27 @@ const Home = () => {
             <main>
                 <div className={classes.heroContent}>
                     <Container maxWidth="md">
-                        <Typography variant="h2" component="h1" align="center" color="textPrimary" gutterBottom>
+                        <Typography variant="h2" component="h1" align="center" color="textPrimary" >
                             REST with Django Rest Framework
                         </Typography>
                         <Typography variant="h5" align="left" paragraph>
                             <div>
-                                This API offers simple GET request, fetching currency values to Polish Zloty.
+                                This API offers simple GET request, fetching currency values to PLN.
                                 It also allows to get sale statistics based date parameter.
                                 GET requests return in form of JSON.<br />
                             </div>
                             <br />
                             <ol>
-                                <li><a href="#paragraph1" className={classes.links}>Install Guide</a></li>
-                                <li><a href="#paragraph2" className={classes.links}>Adding new currency</a></li>
-                                <li><a href="#paragraph3" className={classes.links}>API usage</a></li>
-                                <li><a href="#paragraph4" className={classes.links}>Limits</a></li>
-                                <li><a href="#paragraph5" className={classes.links}>Dependencies</a></li>
-                                <li><a href="#paragraph6" className={classes.links}>Credits</a></li>
+                                <li key="1"><a href="#paragraph1" className={classes.links}>Install Guide</a></li>
+                                <li key="2"><a href="#paragraph2" className={classes.links}>Adding new currency</a></li>
+                                <li key="3"><a href="#paragraph3" className={classes.links}>API usage</a></li>
+                                <li key="4"><a href="#paragraph4" className={classes.links}>Limits</a></li>
+                                <li key="5"><a href="#paragraph5" className={classes.links}>Dependencies</a></li>
+                                <li key="6"><a href="#paragraph6" className={classes.links}>Credits</a></li>
                             </ol>
                         </Typography>
                         <hr />
-                        <Typography id="paragraph1" variant="h4" component="h1" align="center" color="textPrimary" gutterBottom>
+                        <Typography id="paragraph1" variant="h4" component="h1" align="center" color="textPrimary" >
                             Install Guide
                         </Typography>
                         <Typography variant="h5" align="left" paragraph>
@@ -66,33 +66,33 @@ const Home = () => {
                             </div>
                             <br />
                             <ol>
-                                <li><b>Clone this repo:</b><br />
+                                <li key="7"><b>Clone this repo:</b><br />
                             git clone https://github.com/Rochala/skryptowe20.git</li>
-                                <li><b>Install requirements</b><br />
+                                <li key="8"><b>Install requirements</b><br />
                             pip install -r requirements.txt</li>
-                                <li><b>Run initializing script</b><br />
+                                <li key="9"><b>Run initializing script</b><br />
                             python3 init.py</li>
-                                <li><b>Configure Django for your needs</b></li>
-                                <li><b>Start Django server</b><br />
+                                <li key="10"><b>Configure Django for your needs</b></li>
+                                <li key="11"><b>Start Django server</b><br />
                             python3 manage.py runserver</li>
                             </ol>
                         </Typography>
                         <hr />
-                        <Typography id="paragraph2" variant="h4" component="h1" align="center" color="textPrimary" gutterBottom>
+                        <Typography id="paragraph2" variant="h4" component="h1" align="center" color="textPrimary" >
                             Adding new currency
                         </Typography>
                         <Typography variant="h5" align="left" paragraph>
                             <ol>
-                                <li><b>Make sure NBP api supports it</b></li>
-                                <li><b>Add new currency symbol to constants.py Currency enum</b></li>
-                                <li><b>Run init.py script:</b><br />
+                                <li key="12"><b>Make sure NBP api supports it</b></li>
+                                <li key="13"><b>Add new currency symbol to constants.py Currency enum</b></li>
+                                <li key="14"><b>Run init.py script:</b><br />
                             python3 init.py</li>
-                                <li><b>Add new variable in models.py to SalesStats class:</b></li>
-                                {"{CURRENCY_SYMBOL_LOWERCASED} = models.FloatField()"}<br />
+                                <li key="15"><b>Add new variable in models.py to SalesStats class:</b></li>
+                                {"{SYMBOL_LOWERCASE} = models.FloatField()"}<br />
                             </ol>
                         </Typography>
                         <hr />
-                        <Typography id="paragraph3" variant="h4" component="h1" align="center" color="textPrimary" gutterBottom>
+                        <Typography id="paragraph3" variant="h4" component="h1" align="center" color="textPrimary" >
                             API usage
                         </Typography>
                         <Typography variant="h5" align="left" paragraph>
@@ -110,7 +110,7 @@ const Home = () => {
                             </div>
                         </Typography>
                         <hr />
-                        <Typography id="paragraph4" variant="h4" component="h1" align="center" color="textPrimary" gutterBottom>
+                        <Typography id="paragraph4" variant="h4" component="h1" align="center" color="textPrimary" >
                             Limits
                         </Typography>
                         <Table>
@@ -132,27 +132,27 @@ const Home = () => {
                             </TableBody>
                         </Table>
                         <hr />
-                        <Typography id="paragraph5" variant="h4" component="h1" align="center" color="textPrimary" gutterBottom>
+                        <Typography id="paragraph5" variant="h4" component="h1" align="center" color="textPrimary" >
                             Dependencies
                         </Typography>
                         <Typography variant="h5" align="left" paragraph>
                             <ul>
-                                <li><a href="" className={classes.links}>Django</a></li>
-                                <li><a href="" className={classes.links}>Django REST Framework</a></li>
-                                <li><a href="" className={classes.links}>requests</a></li>
-                                <li><a href="" className={classes.links}>ReactJS</a></li>
-                                <li><a href="" className={classes.links}>MaterialUI</a></li>
-                                <li><a href="" className={classes.links}>React router</a></li>
+                                <li key="16"><a href="" className={classes.links}>Django</a></li>
+                                <li key="17"><a href="" className={classes.links}>Django REST Framework</a></li>
+                                <li key="18"><a href="" className={classes.links}>requests</a></li>
+                                <li key="19"><a href="" className={classes.links}>ReactJS</a></li>
+                                <li key="20"><a href="" className={classes.links}>MaterialUI</a></li>
+                                <li key="21"><a href="" className={classes.links}>React router</a></li>
                             </ul>
                         </Typography>
                         <hr />
-                        <Typography id="paragraph6" variant="h4" component="h1" align="center" color="textPrimary" gutterBottom>
+                        <Typography id="paragraph6" variant="h4" component="h1" align="center" color="textPrimary" >
                             Credits
                         </Typography>
                         <Typography variant="h5" align="left" paragraph>
                             <ul>
-                                <li><a href="" className={classes.links}>NBP</a> for sharing currency API</li>
-                                <li><a href="" className={classes.links}>Kaggle</a> for sharing database sample data</li>
+                                <li key="22"><a href="" className={classes.links}>NBP</a> for sharing currency API</li>
+                                <li key="23"><a href="" className={classes.links}>Kaggle</a> for sharing database sample data</li>
                             </ul>
                         </Typography>
                     </Container>

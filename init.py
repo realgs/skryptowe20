@@ -37,11 +37,9 @@ def fix_response(currencies, start_date, end_date, currency):
         previous_date = currencies[0]
     for value in currencies:
         for date in range(1, (to_date(value[0]) - to_date(previous_date[0])).days):
-            print(range(1, (to_date(value[0]) - to_date(previous_date[0])).days))
             x.append((to_date(previous_date[0]) + timedelta(days=date), previous_date[1], True))
         previous_date = value
     if currencies[-1][0] != to_date(end_date):
-        print((currencies[-1][0] - to_date(end_date)).days)
         for date in range(1, (to_date(end_date) - currencies[-1][0]).days + 1):
             x.append((to_date(currencies[-1][0]) + timedelta(days=date), currencies[-1][1], True))
     return x + currencies
@@ -55,7 +53,7 @@ def get_currency(currency, start_date, end_date):
     return c.fetchall()
 
 
-def create_sales_stats():
+def migrate_sales_stats():
     conn = sqlite3.connect('sales.db')
     conn_django = sqlite3.connect('db.sqlite3')
     c = conn.cursor()
@@ -74,27 +72,6 @@ def create_sales_stats():
     conn.close()
     conn_django.commit()
     conn_django.close()
-
-
-def update_sales_stats(symbol):
-    conn = sqlite3.connect('db.sqlite3')
-    c = conn.cursor()
-    c.execute('''SELECT value, date, sales_sum FROM sales_currency
-            join sales_salesstats using (date)
-            where symbol = ? order by date''', (symbol.upper(),))
-    currency_data = c.fetchall()
-
-    try:
-        c.execute(f'ALTER TABLE sales_salesstats add column {symbol.upper()} real')
-    except(sqlite3.OperationalError):
-        print("Column already exists")
-
-    for currency in currency_data:
-        c.execute(f'update sales_salesstats set {symbol.upper()} = ? where date = ?',
-                  (currency[0] * currency[2], currency[1],))
-
-    conn.commit()
-    conn.close()
 
 
 def get_range(currency, start_date, end_date):
@@ -145,6 +122,4 @@ def fill_currency(currencies, start_date, end_date):
 
 
 fill_currency(list(map(lambda c: c.value, constants.Currency)), constants.FIRST_DAY, constants.LAST_DAY)
-create_sales_stats()
-for c in constants.Currency:
-    update_sales_stats(c.value)
+migrate_sales_stats()

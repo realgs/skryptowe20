@@ -13,5 +13,5 @@ class SalesStatsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SalesStats
         fields = ['date', 'sales_sum']
-        for c in constants.Currency:
-            fields.append(c.value.lower())
+        # for c in constants.Currency:
+        #     fields.append(c.value.lower())

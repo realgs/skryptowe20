@@ -9,7 +9,7 @@ import TableRow from '@material-ui/core/TableRow';
 
 
 const useStyles = makeStyles((theme) => ({
-    heroContent: {
+    contentCss: {
         backgroundColor: theme.palette.background.paper,
         padding: theme.spacing(8, 0, 6),
     }
@@ -22,9 +22,9 @@ const Sales = () => {
     return (
         <React.Fragment>
             <main>
-                <div className={classes.heroContent}>
+                <div className={classes.contentCss}>
                     <Container maxWidth="md">
-                        <Typography variant="h2" component="h1" align="center" color="textPrimary" gutterBottom>
+                        <Typography variant="h2" component="h1" align="center" color="textPrimary">
                             Sales API
                         </Typography>
                     </Container>

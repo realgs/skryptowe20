@@ -30,11 +30,11 @@ const Footer = () => {
 
     return (
         <footer className={classes.footer}>
-            <Typography variant="h6" align="center" gutterBottem>
+            <Typography variant="h6" align="center">
                 Skryptowe 2020
                         </Typography>
             <Typography variant="subtitle1" align="center" color="textSecondary" component="p">
-                Jedrzej Rochala
+                Jędrzej Rochala
                         </Typography>
             <Copyright />
         </footer>

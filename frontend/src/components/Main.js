@@ -8,9 +8,15 @@ const Main = () => {
     return(
         <main>
             <Switch>
-                <Route exact path='/' component={Home}/>
-                <Route path='/sales' component={Sales}/>
-                <Route path='/currency' component={Currency}/>
+                <Route exact path='/'>
+                    <Home />
+                </Route>
+                <Route path='/sales'>
+                    <Sales />
+                </Route>
+                <Route path='/currency'>
+                    <Currency />
+                </Route>
             </Switch>
         </main>
     );
