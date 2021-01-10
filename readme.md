@@ -1,4 +1,4 @@
-# REST with Django Rest Framewok
+# REST with Django Rest Framework
 
 ---
 
