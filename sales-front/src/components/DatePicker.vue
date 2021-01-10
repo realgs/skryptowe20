@@ -10,22 +10,27 @@
       <template v-slot:activator="{ on }">
         <v-text-field
           v-model="date"
-          label="Choose date"
+          :label="label"
           prepend-icon="mdi-calendar"
           readonly
           v-on="on"
+          required
+          :rules="rules"
         ></v-text-field>
       </template>
       <v-date-picker
+        ref="picker"
         v-model="date"
         max="2005-12-31"
         min="2004-01-01"
+        @change="$emit('setDate', date)"
       ></v-date-picker>
     </v-menu>
 </template>
 <script>
 export default {
     name: "DatePicker",
+    props: ['label', 'rules'],
     data: () => ({
     date: null,
     menu: false,

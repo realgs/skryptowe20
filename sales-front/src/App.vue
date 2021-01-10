@@ -31,26 +31,42 @@
         <span class="mr-2">Latest Version</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
+      <template v-slot:extension>
+        <v-tabs v-model="tab" align-with-title>
+          <v-tabs-slider color="yellow"></v-tabs-slider>
+          <v-tab>Docs</v-tab>
+          <v-tab>Request form</v-tab>
+        </v-tabs>
+      </template>
     </v-app-bar>
 
     <v-main>
-      <HelloWorld />
+        <v-tabs-items v-model="tab">
+      <v-tab-item><Docs/></v-tab-item>
+      <v-tab-item><RequestForm/></v-tab-item>
+    </v-tabs-items>
+      
+
     </v-main>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld";
+import RequestForm from "./components/RequestForm";
+import Docs from "./components/Docs"
 
 export default {
   name: "App",
 
   components: {
-    HelloWorld
+    RequestForm,
+    Docs
   },
 
-  data: () => ({
-    //
-  })
+  data () {
+      return {
+        tab: null,
+      }
+    },
 };
 </script>
