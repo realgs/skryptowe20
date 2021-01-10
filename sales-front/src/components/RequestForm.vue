@@ -7,12 +7,15 @@
   color: red;
   font-size: 12px;
 }
+.request-failed {
+  color: red;
+}
 </style>
 
 <template>
   <v-container>
     <v-row class="text-center">
-      <v-col align="center">
+      <v-col align="center" size="12">
         <v-form class="form" v-model="valid" ref="form">
           <v-select
             :items="items"
@@ -69,9 +72,19 @@
           ></DatePicker>
           <p class="dates-order" v-if="!datesOrdered">End date must be smaller than start date!</p>
           <v-btn color="primary" v-on:click="submitForm">Submit Form</v-btn>
+          <p class="request-failed ma-4" v-if="requestError">No data for given parameters!</p>
         </v-form>
       </v-col>
+
     </v-row>
+      <v-row align="center" class="ma-4">
+        <v-expansion-panels>
+          <v-expansion-panel>
+            <v-expansion-panel-header>Response</v-expansion-panel-header>
+            <v-expansion-panel-content><pre>{{response | prettify}}</pre></v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-row>
   </v-container>
 </template>
 
@@ -80,6 +93,11 @@ import DatePicker from "./DatePicker";
 import axios from "axios";
 export default {
   name: "RequestForm",
+  filters: {
+    prettify: function(value) {
+      return JSON.stringify(JSON.parse(JSON.stringify(value)), null, 2);
+      }
+    },
   data: () => ({
     selectedRequest: "",
     selectedEndpoint: "",
@@ -91,6 +109,7 @@ export default {
     days: 0,
     response: null,
     valid: true,
+    requestError: false,
     datesOrdered: true,
     dataRules: [
       v => !!v || 'Field required'
@@ -108,25 +127,27 @@ export default {
       this.valid = true;
       this.datesOrdered = true;
     },
-    getDataForRange(dataType) {
-      const url = dataType;
-      axios
-        .get(url)
-        .then((resp) => {
-          this.response = resp.data;
-        })
+    async getDataForRange() {
+      await axios.get(`http://127.0.0.1:5000/api/${this.selectedRequest}/${this.startDate}/${this.endDate}`,{responseType: 'json'})
+        .then((resp) =>(this.response = resp.data[this.selectedRequest]))
         .catch((e) => {
+          this.requestError = true;
           console.log(e);
         });
     },
-    getDataForDay() {
-      const url = "";
-      axios
-        .get(url)
-        .then((resp) => {
-          this.response = resp.data;
-        })
+    async getLastNData() {
+      await axios.get(`http://127.0.0.1:5000/api/${this.selectedRequest}/last/${this.days}`,{responseType: 'json'})
+        .then((resp) =>(this.response = resp.data[this.selectedRequest]))
         .catch((e) => {
+          this.requestError = true;
+          console.log(e);
+        });
+    },
+    async getDataForDay() {
+      await axios.get(`http://127.0.0.1:5000/api/${this.selectedRequest}/${this.startDate}`,{responseType: 'json'})
+        .then((resp) =>(this.response = resp.data))
+        .catch((e) => {
+          this.requestError = true;
           console.log(e);
         });
     },
@@ -135,11 +156,21 @@ export default {
         this.datesOrdered = this.datesValid()
       this.valid = this.$refs.form.validate();
       if (this.valid && this.datesOrdered)
-        console.log("Form submitted")
+        switch (this.selectedEndpoint) {
+          case 'Day': 
+            this.getDataForDay();
+            break;
+          case 'Period':
+            this.getDataForRange();
+            break;
+          case 'Last N':
+            this.getLastNData();
+            break;
+        }
     },
     datesValid() {
       return new Date(this.startDate) <= new Date(this.endDate);
-    }
+    },
   },
 };
 </script>
