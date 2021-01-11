@@ -34,6 +34,7 @@
               v-model="selectedEndpoint"
               required
               :rules="dataRules"
+              @change="resetChart"
             ></v-select>
             <v-slider
               v-model="days"
@@ -55,6 +56,7 @@
               v-model="selectedEndpoint"
               required
               :rules="dataRules"
+              @change="resetChart"
             ></v-select>
           </div>
 
@@ -85,12 +87,14 @@
           </v-expansion-panel>
         </v-expansion-panels>
       </v-row>
+      <Chart :chartdata="chartdata" :options="options" chartLabel="label" v-if="chartdata !== null && selectedEndpoint === 'Period'"/>
   </v-container>
 </template>
 
 <script>
 import DatePicker from "./DatePicker";
 import axios from "axios";
+import Chart from "./Chart"
 export default {
   name: "RequestForm",
   filters: {
@@ -111,14 +115,44 @@ export default {
     valid: true,
     requestError: false,
     datesOrdered: true,
+    chartdata: null,
+    options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+              yAxes: [{
+                  scaleLabel: {
+                      display: true,
+                      labelString: ""
+                  },
+                  ticks: {
+                    maxTicksLimit: 10,
+                    autoSkip: true
+                  }
+              }],
+              xAxes: [{
+                  scaleLabel: {
+                      display: true,
+                      label: "",
+                  },
+                  ticks: {
+                    maxTicksLimit: 10,
+                    autoSkip: true
+                  }
+              }]
+          }
+        },
     dataRules: [
       v => !!v || 'Field required'
     ],
   }),
   components: {
-    DatePicker,
+    DatePicker, Chart
   },
   methods: {
+    resetChart() {
+      this.chartdata = null;
+    },
     resetData() {
       this.selectedEndpoint = "";
       this.startDate = "";
@@ -126,6 +160,7 @@ export default {
       this.days = 0;
       this.valid = true;
       this.datesOrdered = true;
+      this.resetChart();
     },
     async getDataForRange() {
       await axios.get(`http://127.0.0.1:5000/api/${this.selectedRequest}/${this.startDate}/${this.endDate}`,{responseType: 'json'})
@@ -134,6 +169,10 @@ export default {
           this.requestError = true;
           console.log(e);
         });
+        if (this.selectedRequest === 'rates' && this.selectedEndpoint === 'Period')
+          this.prepareRatesChartData();
+        else if (this.selectedRequest === 'sales' && this.selectedEndpoint === 'Period')
+          this.prepareSalesChartData();
     },
     async getLastNData() {
       await axios.get(`http://127.0.0.1:5000/api/${this.selectedRequest}/last/${this.days}`,{responseType: 'json'})
@@ -143,13 +182,64 @@ export default {
           console.log(e);
         });
     },
-    async getDataForDay() {
-      await axios.get(`http://127.0.0.1:5000/api/${this.selectedRequest}/${this.startDate}`,{responseType: 'json'})
+    getDataForDay() {
+      axios.get(`http://127.0.0.1:5000/api/${this.selectedRequest}/${this.startDate}`,{responseType: 'json'})
         .then((resp) =>(this.response = resp.data))
         .catch((e) => {
           this.requestError = true;
           console.log(e);
         });
+    },
+    prepareSalesChartData() {
+      let salesPln = [];
+      let salesUsd = [];
+      let dates = [];
+      for (var i = 0; i < this.response.length; i++) {
+        dates.push(this.response[i].date) 
+        salesPln.push(this.response[i].pln.sale);
+        salesUsd.push(this.response[i].usd.sale);
+        this.chartdata = {
+          labels: dates,
+          datasets: [{
+              label: "Sales in Pln",
+              borderColor: '#f87979',
+              pointBackgroundColor: '#000000',
+              data: salesPln,
+              fill: false
+            },
+            {
+              label: "Sales in Usd",
+              borderColor: '#288a42',
+              pointBackgroundColor: '#000000',
+              data: salesUsd,
+              fill: false
+            }
+          ]
+        };
+        this.options.scales.yAxes[0].scaleLabel.labelString = "Sales value";
+        this.options.scales.xAxes[0].scaleLabel.labelString = "Date";
+      }
+    },
+    prepareRatesChartData() {
+      let dates = [];
+      let rates = [];
+      for (var i = 0; i < this.response.length; i++) {
+        dates.push(this.response[i].date)
+        rates.push(this.response[i].rate)
+      }
+        this.chartdata = {
+          labels: dates,
+          datasets: [{
+              label: "Exchange rates chart",
+              borderColor: '#f87979',
+              pointBackgroundColor: '#000000',
+              data: rates,
+              fill: false
+            }
+          ]
+        }
+        this.options.scales.yAxes[0].scaleLabel.labelString = "Exchange rate";
+        this.options.scales.xAxes[0].scaleLabel.labelString = "Date";
     },
     submitForm() {
       if (this.selectedEndpoint === 'Period')
