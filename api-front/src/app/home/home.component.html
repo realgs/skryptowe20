@@ -1,0 +1,44 @@
+<main>
+    <h2 class="section-title">Introduction</h2>
+    <section class="introduction">
+        <p>This API allows users users to query PLN exchange rates on specific days and periods. In addition it allows to
+            obtain information about sales on given days and periods, stored in database. Response contains sale in USD and
+            PLN, converted at the daily rate.</p>
+    </section>
+
+    <h2 class="section-title">Endpoints</h2>
+    <section class="endpoints grid">
+        <div class="flex-item">
+            <h3>GET</h3>
+            <code>/api/rates/date</code>
+            <ul>
+                <li><p><b>Description:</b> Returns dict containing currency code and rate for specified date. Interpolated value means whether rate was given by NBP API or taken from previous/next day.</p></li>
+                <li><p><b>Usage:</b><code> http://127.0.0.1:5000/api/rates/2003-01-01</code></li>
+            </ul>
+        </div>
+        <div class="flex-item">
+            <h3>GET</h3>
+            <code>/api/rates/date</code>
+            <ul>
+                <li><p><b>Description:</b> Returns dict containing currency code and table of rates for specified period.</p></li>
+                <li><p><b>Usage:</b><code> http://127.0.0.1:5000/api/rates/2003-01-01/2003-01-02</code></li>
+            </ul>
+        </div>
+        <div class="flex-item">
+            <h3>GET</h3>
+            <code>/api/rates/date</code>
+            <ul>
+                <li><p><b>Description:</b> Returns dict containing sale for specified date in USD and PLN.</p></li>
+                <li><p><b>Usage:</b><code> http://127.0.0.1:5000/api/sales/2003-01-06</code></li>
+            </ul>
+        </div>
+        <div class="flex-item">
+            <h3>GET</h3>
+            <code>/api/rates/date</code>
+            <ul>
+                <li><p><b>Description:</b> Returns dict containing sale for specified period in USD and PLN.</p></li>
+                <li><p><b>Usage:</b><code> http://127.0.0.1:5000/api/sales/2003-01-01/2003-01-09</code></li>
+            </ul>
+        </div>
+    </section>
+</main>

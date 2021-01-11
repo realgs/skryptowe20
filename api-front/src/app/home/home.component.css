@@ -1,0 +1,19 @@
+@media screen and (min-width: 768px) {
+    .endpoints {
+        grid-template-columns: repeat(2, 1fr);
+        align-items: center;
+    }
+}
+
+.introduction {
+    text-align: center;
+    margin-left: 30%;
+    margin-right: 30%;
+}
+
+.flex-item {
+    margin: .5rem;
+    border-radius: .5rem;
+    padding: 0 .5rem 1rem 1rem;
+    box-shadow: 0 4px 25px rgba(14, 46, 49, .15);
+}
