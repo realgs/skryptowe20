@@ -1,3 +1,6 @@
+# This file is only for init database
+# Please, don't run it
+
 from datetime import date, timedelta, datetime
 import requests
 from dbModels import *
