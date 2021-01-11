@@ -121,5 +121,15 @@ def fill_currency(currencies, start_date, end_date):
         conn.close()
 
 
-fill_currency(list(map(lambda c: c.value, constants.Currency)), constants.FIRST_DAY, constants.LAST_DAY)
-migrate_sales_stats()
+def get_last_day(currency):
+    if currency in constants.Currency._value2member_map_:
+        conn = sqlite3.connect('db.sqlite3')
+        c = conn.cursor()
+        c.execute('SELECT MAX(date) FROM sales_currency WHERE symbol=?', (currency, ))
+        max_date = c.fetchone()
+        conn.close()
+        return to_date(max_date[0])
+
+
+# fill_currency(list(map(lambda c: c.value, constants.Currency)), constants.FIRST_DAY, constants.LAST_DAY)
+# migrate_sales_stats()

@@ -6,7 +6,7 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-
+import grey from '@material-ui/core/colors/grey';
 
 const useStyles = makeStyles((theme) => ({
     heroContent: {
@@ -24,9 +24,22 @@ const useStyles = makeStyles((theme) => ({
         '&:link': {
             color: theme.palette.primary.light,
         }
+    },
+    codeSnippet: {
+        backgroundColor: grey[700],
+        borderRadius: "4px",
+        fontStyle: 'mono',
     }
 }));
 
+
+const Snippet = (props) => {
+    const classes = useStyles()
+
+    return (
+        <a className={classes.codeSnippet}>{props.snippet}</a>
+    )
+}
 
 const Home = () => {
     const classes = useStyles()
@@ -67,14 +80,15 @@ const Home = () => {
                             <br />
                             <ol>
                                 <li key="7"><b>Clone this repo:</b><br />
-                            git clone https://github.com/Rochala/skryptowe20.git</li>
+
+                            <Snippet snippet=" git clone https://github.com/Rochala/skryptowe20.git "/></li>
                                 <li key="8"><b>Install requirements</b><br />
-                            pip install -r requirements.txt</li>
+                            <Snippet snippet=" pip install -r requirements.txt "/></li>
                                 <li key="9"><b>Run initializing script</b><br />
-                            python3 init.py</li>
+                            <Snippet snippet=" python3 init.py "/></li>
                                 <li key="10"><b>Configure Django for your needs</b></li>
                                 <li key="11"><b>Start Django server</b><br />
-                            python3 manage.py runserver</li>
+                            <Snippet snippet=" python3 manage.py runserver "/></li>
                             </ol>
                         </Typography>
                         <hr />
@@ -85,10 +99,8 @@ const Home = () => {
                             <ol>
                                 <li key="12"><b>Make sure NBP api supports it</b></li>
                                 <li key="13"><b>Add new currency symbol to constants.py Currency enum</b></li>
-                                <li key="14"><b>Run init.py script:</b><br />
-                            python3 init.py</li>
-                                <li key="15"><b>Add new variable in models.py to SalesStats class:</b></li>
-                                {"{SYMBOL_LOWERCASE} = models.FloatField()"}<br />
+                                <li key="14"><b>Run init.py script to fetch data:</b><br />
+                            <Snippet snippet=" python3 init.py "/></li>
                             </ol>
                         </Typography>
                         <hr />
@@ -97,23 +109,28 @@ const Home = () => {
                         </Typography>
                         <Typography variant="h5" align="left" paragraph>
                             <div>
-                                {"Currency data range http://127.0.0.1:8000/CurrencyRange/?symbol={CURRENCY SYMBOL}start \
-                            ={DATE START}&end={DATE END} Example usage for USD between 2020-12-01 and 2020-12-16 \
-                                http://127.0.0.1:8000/CurrencyRange/?symbol=USD&start=2020-12-01&end=2020-12-16"}
+                                Currency data range <Snippet snippet=" http://127.0.0.1:8000/api/currency/?symbol={CURRENCY SYMBOL}start \
+                            ={DATE START}&end={DATE END} "/><br /> Example usage for USD between 2020-12-01 and 2020-12-16
+                                <Snippet snippet="http://127.0.0.1:8000/api/currency/?symbol=USD&start=2020-12-01&end=2020-12-16 "/>
                             </div>
                             <br />
                             <div>
-                                {"Sales statistics http://127.0.0.1:8000/SaleStats/?date={SELECTED DATE} \
-                                Example usage for fetching sales from 2005-05-17 \
-                                http://127.0.0.1:8000/SaleStats/?date=2005-05-17 You can also get whole \
-                                range by using http://127.0.0.1:8000/SaleStats/"}
+                                Sales statistics
+                               <Snippet snippet=" http://127.0.0.1:8000/api/sales/?start={START DATE}&end={END DATE}&symbol={CURRENCY SYMBOL} "/><br />
+                                Example usage for fetching sales from 2005-05-17 to 2006-05-17 in PLN
+                                <Snippet snippet=" http://127.0.0.1:8000/api/sales/?start=2005-05-17&end=2006-05-17 "/><br /> You can also get whole
+                                range by using <Snippet snippet=" http://127.0.0.1:8000/api/sales/ "/>
                             </div>
                         </Typography>
                         <hr />
                         <Typography id="paragraph4" variant="h4" component="h1" align="center" color="textPrimary" >
                             Limits
                         </Typography>
-                        <Table>
+                        <Typography variant="h5" align="left" paragraph>
+                            Minimum sales date = 2003-01-06<br />
+                            Minimum currency date = 2002-01-02
+                        </Typography>
+                        <Table stickyHeader>
                             <TableHead>
                                 <TableRow>
                                     <TableCell>User type</TableCell>
@@ -137,12 +154,16 @@ const Home = () => {
                         </Typography>
                         <Typography variant="h5" align="left" paragraph>
                             <ul>
-                                <li key="16"><a href="" className={classes.links}>Django</a></li>
-                                <li key="17"><a href="" className={classes.links}>Django REST Framework</a></li>
-                                <li key="18"><a href="" className={classes.links}>requests</a></li>
-                                <li key="19"><a href="" className={classes.links}>ReactJS</a></li>
-                                <li key="20"><a href="" className={classes.links}>MaterialUI</a></li>
-                                <li key="21"><a href="" className={classes.links}>React router</a></li>
+                                <li key="16"><a href="https://www.djangoproject.com/" className={classes.links}>Django</a></li>
+                                <li key="17"><a href="https://www.django-rest-framework.org/" className={classes.links}>Django REST Framework</a></li>
+                                <li key="17"><a href="https://github.com/adamchainz/django-cors-headers" className={classes.links}>Django corsheaders</a></li>
+                                <li key="18"><a href="https://github.com/psf/requests" className={classes.links}>requests</a></li>
+                                <li key="19"><a href="https://reactjs.org/" className={classes.links}>ReactJS</a></li>
+                                <li key="20"><a href="https://material-ui.com/" className={classes.links}>MaterialUI</a></li>
+                                <li key="210"><a href="https://github.com/reactchartjs/react-chartjs-2" className={classes.links}>react-chartjs-2</a></li>
+                                <li key="220"><a href="https://webpack.js.org/" className={classes.links}>webpack</a></li>
+                                <li key="230"><a href="https://babeljs.io/" className={classes.links}>babel</a></li>
+                                <li key="241"><a href="https://reactrouter.com/" className={classes.links}>React router</a></li>
                             </ul>
                         </Typography>
                         <hr />
@@ -151,8 +172,8 @@ const Home = () => {
                         </Typography>
                         <Typography variant="h5" align="left" paragraph>
                             <ul>
-                                <li key="22"><a href="" className={classes.links}>NBP</a> for sharing currency API</li>
-                                <li key="23"><a href="" className={classes.links}>Kaggle</a> for sharing database sample data</li>
+                                <li key="22"><a href="https://api.nbp.pl/en.html" className={classes.links}>NBP</a> for sharing currency API</li>
+                                <li key="23"><a href="https://www.kaggle.com/kyanyoga/sample-sales-data/?select=sales_data_sample.csv" className={classes.links}>Kaggle</a> for sharing database sample data</li>
                             </ul>
                         </Typography>
                     </Container>

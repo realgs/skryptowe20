@@ -5,17 +5,17 @@ import Sales from "./Sales";
 import Currency from "./Currency";
 
 const Main = () => {
-    return(
+    return (
         <main>
             <Switch>
                 <Route exact path='/'>
                     <Home />
                 </Route>
-                <Route path='/sales'>
-                    <Sales />
-                </Route>
                 <Route path='/currency'>
                     <Currency />
+                </Route>
+                <Route path='/sales'>
+                    <Sales />
                 </Route>
             </Switch>
         </main>

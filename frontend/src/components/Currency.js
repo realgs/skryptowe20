@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography, Container, Grid, Box, MenuItem, TextField, Button } from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
@@ -12,30 +12,37 @@ import TableRow from '@material-ui/core/TableRow';
 import { Line } from 'react-chartjs-2'
 import blue from '@material-ui/core/colors/blue';
 
+
 const useStyles = makeStyles(theme => ({
     heroContent: {
         backgroundColor: theme.palette.background.paper,
         padding: theme.spacing(8, 0, 6),
+    },
+    textField: {
+        "& .MuiFormLabel-root": {
+            color: "red",
+        },
+        "& .MuiInput-underline::before": {
+            borderColor: "red",
+        },
     }
+
 }));
 
 
 const Currency = () => {
-    const cache = useRef({});
     const [data, setData] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [symbol, setSymbol] = useState('USD');
     const [startDate, setStartDate] = useState('2020-01-01');
-    const current = new Date();
-    const [endDate, setEndDate] = useState(`${current.getFullYear() - 1}-` +
-        `${('0' + (current.getMonth() + 1)).slice(-2)}-${('0' + current.getDate()).slice(-2)}`);
+    const [endDate, setEndDate] = useState('2020-01-11');
 
     const chartData = {
         labels: data.map(row => row.date),
         datasets: [
             {
-                label: 'USD',
+                label: 'Currency',
                 data: data.map(row => row.value),
                 fill: false,
                 borderColor: blue[500],
@@ -56,22 +63,17 @@ const Currency = () => {
     }, []);
 
     const loadData = async (url) => {
-        if (cache.current[url]) {
-            const data = cache.current[url];
-            setData(data);
-        } else {
-            const response = await fetch(url, {
-                method: 'GET',
-                mode: 'cors',
-                credentials: 'same-origin',
-                headers: new Headers({
-                    'Authorization': 'Token 30ab088341086f247cfdf93375725a2c910b9cb5',
-                    'Content-Type': 'application/json'
-            })});
-            const data = await response.json()
-            cache.current[url] = data;
-            setData(data);
-        }
+        const response = await fetch(url, {
+            method: 'GET',
+            mode: 'cors',
+            credentials: 'same-origin',
+            headers: new Headers({
+                'Authorization': 'Token 30ab088341086f247cfdf93375725a2c910b9cb5',
+                'Content-Type': 'application/json'
+            })
+        });
+        const data = await response.json()
+        setData(data);
     }
 
     const handleChangePage = (event, newPage) => {
@@ -114,12 +116,15 @@ const Currency = () => {
                                     defaultValue="USD"
                                     value={symbol}
                                     onChange={handleChangeSymbol}
+                                    color="secondary"
                                     select>
                                     <MenuItem value="USD">USD</MenuItem>
                                     <MenuItem value="EUR">EUR</MenuItem>
                                     <MenuItem value="CHF">CHF</MenuItem>
                                 </TextField>
                                 <TextField
+                                    className={`${(new Date(startDate) < new Date("2002-01-02")) ? classes.textField : ''}`}
+                                    color={`${(new Date(startDate) < new Date("2002-01-02")) ? 'secondary' : 'primary'}`}
                                     id="startDate"
                                     label="Start date"
                                     type="date"
@@ -130,6 +135,8 @@ const Currency = () => {
                                     }}
                                 />
                                 <TextField
+                                    className={`${(new Date(endDate) < new Date(startDate)) ? classes.textField : ''}`}
+                                    color={`${(new Date(endDate) < new Date(startDate)) ? 'secondary' : 'primary'}`}
                                     id="endDate"
                                     label="End date"
                                     type="date"
@@ -140,7 +147,9 @@ const Currency = () => {
                                         shrink: true,
                                     }}
                                 />
-                                <Button onClick={() => { loadData(url); }}>Refresh</Button>
+                                <Button
+                                    disabled={(new Date(startDate) < new Date('2002-01-02')) || (new Date(endDate) < new Date(startDate))}
+                                    onClick={() => { loadData(url); }}>Refresh</Button>
                             </Grid>
                             <hr />
                         </Container>
@@ -196,7 +205,6 @@ const Currency = () => {
                         </Container>
                     </Box>
                 </div>
-
             </main>
 
 

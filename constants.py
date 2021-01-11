@@ -6,6 +6,7 @@ class Currency(Enum):
     USD = 'USD'
     EUR = 'EUR'
     CHF = 'CHF'
+    PLN = 'PLN'
 
 
 REQUEST_LIMIT = 366
