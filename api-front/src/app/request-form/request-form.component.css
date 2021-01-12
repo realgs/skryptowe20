@@ -1,0 +1,22 @@
+@media screen and (min-width: 768px) {
+    .usage {
+        grid-template-columns: repeat(2, 1fr);
+        align-items: center;
+    }
+}
+
+:host ::ng-deep .p-datepicker table td > span {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    transition: box-shadow 0.2s;
+    border: 1px solid transparent;
+}
+
+.button {
+    margin-left: 2rem;
+}
+
+.radio-button {
+    margin: .3rem;
+}

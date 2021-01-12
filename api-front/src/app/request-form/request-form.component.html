@@ -1,1 +1,92 @@
-<p>request-form works!</p>
+<main>
+    <h2 class="section-title">Usage</h2>
+    <section class="usage grid">
+        <div class="flex-item">
+            <div class="input-item">
+                <p-radioButton 
+                name="input-radio" 
+                value="rate" 
+                [(ngModel)]="selectedOption" 
+                label="Rate for given day"
+                class="radio-button"></p-radioButton>
+            </div>
+            <div class="input-item">
+                <p-radioButton 
+                name="input-radio" 
+                value="rates" 
+                [(ngModel)]="selectedOption" 
+                label="Rates for specified period"
+                class="radio-button"></p-radioButton>
+            </div>
+            <div class="input-item">
+                <p-radioButton 
+                name="input-radio" 
+                value="sale" 
+                [(ngModel)]="selectedOption" 
+                label="Sale for given day"
+                class="radio-button"></p-radioButton>
+            </div>
+            <div class="input-item">
+                <p-radioButton 
+                name="input-radio" 
+                value="sales" 
+                [(ngModel)]="selectedOption" 
+                label="Sales for specified period"
+                class="radio-button"></p-radioButton>
+            </div>
+        </div>
+
+        <div class="flex-item" [ngSwitch]="selectedOption">
+            <div *ngSwitchCase="'rate'">
+                <div>
+                    <h3>Pick a date</h3>
+                    <p-calendar 
+                    [(ngModel)]="date" 
+                    [showIcon]="true" 
+                    dateFormat="yy-mm-dd"
+                    [defaultDate]="defaultDate"></p-calendar>
+                    <p-button label="Submit" (click)="submitDate()" class="button"></p-button>
+                </div>
+            </div>
+            <div *ngSwitchCase="'rates'">
+                <div>
+                    <h3>Pick a range</h3>
+                    <p-calendar 
+                    selectionMode="range" 
+                    [(ngModel)]="dates" 
+                    [showIcon]="true" 
+                    dateFormat="yy-mm-dd"
+                    [defaultDate]="defaultDate"></p-calendar>
+                    <p-button label="Submit" (click)="submitRange()" class="button"></p-button>
+                </div>
+            </div>
+            <div *ngSwitchCase="'sale'">
+                <div>
+                    <h3>Pick a date</h3>
+                    <p-calendar 
+                    [(ngModel)]="date" 
+                    [showIcon]="true" 
+                    dateFormat="yy-mm-dd"
+                    [defaultDate]="defaultDate"></p-calendar>
+                    <p-button label="Submit" (click)="submitDate()" class="button"></p-button>
+                </div>
+            </div>
+            <div *ngSwitchCase="'sales'">
+                <div>
+                    <h3>Pick a range</h3>
+                    <p-calendar 
+                    selectionMode="range" 
+                    [(ngModel)]="rangeDates" 
+                    [showIcon]="true" 
+                    dateFormat="yy-mm-dd"
+                    [defaultDate]="defaultDate"></p-calendar>
+                    <p-button label="Submit" (click)="submitRange()" class="button"></p-button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <p-toast position="bottom-center"></p-toast>
+    <section>
+        <app-values [response]="response"></app-values>
+    </section>
+</main>
