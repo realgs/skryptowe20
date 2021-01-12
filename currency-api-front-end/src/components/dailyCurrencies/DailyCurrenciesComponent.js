@@ -2,7 +2,9 @@ import React, {Component} from 'react';
 import DatePicker from "react-date-picker";
 import axios from "axios";
 import ErrorModelComponent from "../backendModels/ErrorModelComponent";
-import DailyCurrencyDataComponent from "../backendModels/DailyCurrencyDataComponent";
+import CurrencyDataComponent from "../backendModels/CurrencyDataComponent";
+import CurrencyDataFunComponent from "../backendModels/CurrencyDataFunComponent";
+import CustomPaginationTable from "../backendModels/CurrencyDataFunComponent";
 
 class DailyCurrenciesComponent extends Component {
     state = {
@@ -11,7 +13,7 @@ class DailyCurrenciesComponent extends Component {
         errorMessage: null,
         errorCode: null,
         isDataPresent: false,
-        dataValue: null,
+        dataValue: [],
     }
 
     renderError = () => {
@@ -27,41 +29,41 @@ class DailyCurrenciesComponent extends Component {
     }
 
     renderData = () => {
-        const {dataValue} = this.state;
         return (
             <div>
                 {this.state.isDataPresent &&
-                <DailyCurrencyDataComponent
-                    date={dataValue['date']}
-                    interpolation={dataValue['interpolation']}
-                    price={dataValue['price']}
-                />}
+                    <CustomPaginationTable data={this.state.dataValue}/>
+                /*<CurrencyDataFunComponent
+                    data={this.state.dataValue}
+                />*/
+                }
             </div>
         )
     }
 
     onChange = (date) => {
-        // console.log('ONCHANGEVALUE', event)
         this.setState({date});
     }
-
-    onClick = (event) => {
+    createObject(date, price, interpolation) {
+        const interpolationValue = interpolation ? 'true' : 'false';
+        return {date, price, interpolationValue};
+    }
+    onClick = () => {
         const {date} = this.state;
         const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
         const month = date.getMonth() < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
         const year = date.getFullYear();
-        
+
         const dataString = year + '-' + month + '-' + day;
         this.setState({isError: false, isDataPresent: false});
-        console.log(dataString);
         axios.get('http://localhost:5000/api/rates/fordate?date=' + dataString)
             .then(res => {
+                    var valu = [];
+                    valu.push(this.createObject(res.data['date'], res.data['price'], res.data['interpolation']));
                     this.setState({
                         isDataPresent: true,
-                        dataValue: res.data
+                        dataValue: valu
                     });
-                    console.log(this.state.isDataPresent);
-                    console.log(this.state.dataValue['date']);
                 },
                 error => {
                     this.setState({
@@ -79,14 +81,13 @@ class DailyCurrenciesComponent extends Component {
                 <form>
                     <span><b>Please specify date in format: MM/DD/YYYY </b><br/></span>
                     <DatePicker
-                        id="datePicker"
                         value={this.state.date}
                         onChange={e => this.onChange(e)}
                         maxDate={new Date()}/>
                     <button
                         type="button"
                         className="btn btn-primary m-3"
-                        onClick={e => this.onClick(e)}
+                        onClick={this.onClick}
                     >
                         Submit
                     </button>

@@ -45,8 +45,8 @@ def getRateForDay():
     return jsonify(result), 200
 
 @app.route('/api/rates/fordatespan', methods=['GET'])
-@limiter.limit('5 per minute')
-@limiter.limit('70 per hour')
+#@limiter.limit('5 per minute')
+#@limiter.limit('70 per hour')
 def getRateForDateSpan():
     connection = sqlite3.connect(databaseFile)
     cursor = connection.cursor()
@@ -57,10 +57,10 @@ def getRateForDateSpan():
     else:
         dateFrom = str(request.args['from'])
         dateTo = str(request.args['to'])
-    cursor.execute(f'SELECT * FROM CurrencyQuotes WHERE date <= (?) AND date >= (?) ORDER BY date DESC', (dateFrom, dateTo))
+    cursor.execute(f'SELECT * FROM CurrencyQuotes WHERE date >= (?) AND date <= (?) ORDER BY date DESC', (dateFrom, dateTo))
     result = cursor.fetchall()
     connection.close()
-    if result is None:
+    if result is None or result == []:
         return 'ERROR: No data could be found for specified date span', 501
     quotes = []
     for element in result:

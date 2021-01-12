@@ -19,7 +19,7 @@ class RouterComponent extends Component {
                     <Route exact path="/">
                         <HomeComponent/>
                     </Route>
-                    <Route path="/dailyCurrencies">>
+                    <Route path="/dailyCurrencies">
                         <DailyCurrenciesComponent/>
                     </Route>
                     <Route path="/spanCurrencies">>
