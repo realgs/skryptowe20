@@ -45,8 +45,8 @@ def getRateForDay():
     return jsonify(result), 200
 
 @app.route('/api/rates/fordatespan', methods=['GET'])
-#@limiter.limit('5 per minute')
-#@limiter.limit('70 per hour')
+@limiter.limit('5 per minute')
+@limiter.limit('70 per hour')
 def getRateForDateSpan():
     connection = sqlite3.connect(databaseFile)
     cursor = connection.cursor()
@@ -67,7 +67,7 @@ def getRateForDateSpan():
         quotes.append(QuoteDataObject(element[0], element[1], bool(element[2])))
     return jsonify(quotes), 200
 
-@app.route('/api/sales/forday', methods=['GET'])
+@app.route('/api/sales/fordate', methods=['GET'])
 @limiter.limit('10 per minute')
 @limiter.limit('90 per hour')
 def getSalesForDay():
@@ -81,6 +81,26 @@ def getSalesForDay():
         return 'ERROR: You need to specify date to get the exchange rate', 401
     result = salesLocal.findSales(requestedDate)
     if result is None:
+        return 'ERROR: No data could be found for given date', 501
+    return jsonify(result), 200
+
+@app.route('/api/sales/fordatespan', methods=['GET'])
+@limiter.limit('5 per minute')
+@limiter.limit('60 per hour')
+def getSalesForDateSpan():
+    salesLocal = sales
+    timeDiff = time.time() - timeStart
+    if not salesLocal.salesArray or int(timeDiff) / 57600 >= 1:
+        salesLocal.calculateSales()
+    if 'from' not in request.args:
+        return 'ERROR: You need to specify date from which you want the results', 401
+    elif 'to' not in request.args:
+        return 'ERROR: You need to specify date to which you want the results', 401
+    else:
+        dateFrom = str(request.args['from'])
+        dateTo = str(request.args['to'])
+    result = salesLocal.findSalesForDates(dateFrom, dateTo)
+    if result is None or result == []:
         return 'ERROR: No data could be found for given date', 501
     return jsonify(result), 200
 

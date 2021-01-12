@@ -3,7 +3,6 @@ import DatePicker from "react-date-picker";
 import './SpanCurrencies.css'
 import axios from "axios";
 import ErrorModelComponent from "../backendModels/ErrorModelComponent";
-import CurrencyDataComponent from "../backendModels/CurrencyDataComponent";
 import CurrencyDataFunComponent from "../backendModels/CurrencyDataFunComponent";
 
 class SpanCurrenciesComponent extends Component {
@@ -34,26 +33,33 @@ class SpanCurrenciesComponent extends Component {
     }
     onClick = () => {
         const {dateFrom, dateTo} = this.state;
-        const startDate = this.getValidDateInputAsString(dateFrom);
-        const endDate = this.getValidDateInputAsString(dateTo);
+        this.setState({isError: false, isDataPresent: false});
 
-        this.setState({ isError: false, isDataPresent: false });
-        console.log(startDate);
-        console.log(endDate);
-        axios.get('http://localhost:5000/api/rates/fordatespan?from=' + startDate + '&to=' + endDate)
-            .then(res => {
-                    this.setState({
-                        isDataPresent: true,
-                        dataValue: res.data
+        if (dateFrom != null && dateTo != null) {
+            const startDate = this.getValidDateInputAsString(dateFrom);
+            const endDate = this.getValidDateInputAsString(dateTo);
+
+            axios.get('http://localhost:5000/api/rates/fordatespan?from=' + startDate + '&to=' + endDate)
+                .then(res => {
+                        this.setState({
+                            isDataPresent: true,
+                            dataValue: res.data
+                        });
+                    },
+                    error => {
+                        this.setState({
+                            isError: true,
+                            errorMessage: error.response.data,
+                            errorCode: error.response.status
+                        });
                     });
-            },
-                error => {
-                    this.setState({
-                        isError: true,
-                        errorMessage: error.response.data,
-                        errorCode: error.response.status
-                    });
-                });
+        } else {
+            this.setState({
+                isError: true,
+                errorMessage: 'Date cannot be null',
+                errorCode: -1
+            })
+        }
     }
     renderError = () => {
         return (
@@ -76,7 +82,6 @@ class SpanCurrenciesComponent extends Component {
             </div>
         );
     }
-
 
     render() {
         return (

@@ -36,8 +36,8 @@ const instruction =
                 Gdy mamy bazę danych należy uruchomić skrypt myAPI.py, który uruchomi serwer oczekujący na zapytania.
             </p>
             <p>
-                Następnie należy przejść do folderu currency-api-front-end i wykonać komendy: <b>npm
-                install</b> oraz <b>npm start</b>
+                Następnie należy przejść do folderu currency-api-front-end i wykonać komendy:
+                <b>npm install</b> oraz <b>npm start</b>
             </p>
             <p>
                 Aby korzystać z aplikacji bez interfejsu graficznego należy udać się na stronę http://127.0.0.1:5000/
@@ -72,7 +72,7 @@ const instruction =
                     </ul>
                 </li>
                 <li>
-                    <b>/api/sales/forday?date=value</b>
+                    <b>/api/sales/fordate?date=value</b>
                     <ul>
                         <li>
                             zapytanie GET zwraca łączną sumę sprzedaży w walucie PLN oraz USD dla dnia podanego jako
@@ -80,6 +80,16 @@ const instruction =
                         </li>
                     </ul>
                 </li>
+                <li>
+                    <b>/api/sales/fordatespan?from=value1&to=value2</b>
+                    <ul>
+                        <li>
+                            zapytanie GET zwraca łączną sumę sprzedaży walucie PLN oraz USD dla przedziału dni podanych w parametrach
+                            od value1 do value2
+                        </li>
+                    </ul>
+                </li>
+
             </ul>
             <h1>Zwracane kody</h1>
             <ul>

@@ -14,15 +14,20 @@ Należy udać się na stronę http://127.0.0.1:5000/ aby zacząć korzystać z A
  
  
 # Zaimplementowane endpointy:
-* <b>/api/rates/fordate?date=value<b>
+### <b>/api/rates/fordate?date=value<b>
     * zapytanie GET zwraca nam kurs waluty USD w przeliczeniu na PLN na dany dzień podany w parametrze value
 
-* <b>/api/rates/fordatespan?from=value1&to=value2</b>
-  * zapytanie GET zwraca kursy waluty US w przeliczeniu na PLN dla przedziału dni podanych w parametrach 
+### <b>/api/rates/fordatespan?from=value1&to=value2</b>
+    * zapytanie GET zwraca kursy waluty US w przeliczeniu na PLN dla przedziału dni podanych w parametrach 
+    od value1 do value2    
+### <b>/api/sales/fordate?date=value</b>
+    * zapytanie GET zwraca łączną sumę sprzedaży w walucie PLN oraz USD dla dnia podanego jako value
+
+### <b>/api/sales/fordatespan?from=value1&to=value2</b>
+  * zapytanie GET zwraca łączną sumę sprzedaży walucie PLN oraz USD dla przedziału dni podanych w parametrach 
     od value1 do value2
 
-* <b></api/sales/forday?date=value</b>
-    * zapytanie GET zwraca łączną sumę sprzedaży w walucie PLN oraz USD dla dnia podanego jako value
+
 
 # Zwracane kody:
  - 200 -> success

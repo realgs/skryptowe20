@@ -1,10 +1,11 @@
-import React, {Component} from 'react';
-import DatePicker from "react-date-picker";
-import axios from "axios";
+import React, {Component} from 'react'
 import ErrorModelComponent from "../backendModels/ErrorModelComponent";
-import CurrencyDataFunComponent from "../backendModels/CurrencyDataFunComponent";
+import SalesDataFunComponent from "../backendModels/SalesDataFunComponent";
+import axios from "axios";
+import DatePicker from "react-date-picker";
 
-class DailyCurrenciesComponent extends Component {
+
+class SalesComponent extends Component {
     state = {
         date: new Date(),
         isError: false,
@@ -25,26 +26,21 @@ class DailyCurrenciesComponent extends Component {
             </div>
         );
     }
-
     renderData = () => {
         return (
             <div>
                 {this.state.isDataPresent &&
-                <CurrencyDataFunComponent data={this.state.dataValue}/>
+                <SalesDataFunComponent data={this.state.dataValue}/>
                 }
             </div>
         )
     }
-
     onChange = (date) => {
         this.setState({date});
     }
-
-    createObject(date, price, interpolation) {
-        const interpolationValue = interpolation ? 'true' : 'false';
-        return {date, price, interpolationValue};
+    createObject(date, pln, usd) {
+        return {date, pln, usd};
     }
-
     onClick = () => {
         const {date} = this.state;
         this.setState({isError: false, isDataPresent: false});
@@ -55,10 +51,10 @@ class DailyCurrenciesComponent extends Component {
             const year = date.getFullYear();
             const dataString = year + '-' + month + '-' + day;
 
-            axios.get('http://localhost:5000/api/rates/fordate?date=' + dataString)
+            axios.get('http://localhost:5000/api/sales/fordate?date=' + dataString)
                 .then(res => {
                         var valu = [];
-                        valu.push(this.createObject(res.data['date'], res.data['price'], res.data['interpolation']));
+                        valu.push(this.createObject(res.data['date'], res.data['plnSalesValue'], res.data['usdSalesValue']));
                         this.setState({
                             isDataPresent: true,
                             dataValue: valu
@@ -104,4 +100,4 @@ class DailyCurrenciesComponent extends Component {
     }
 }
 
-export default DailyCurrenciesComponent;
+export default SalesComponent;

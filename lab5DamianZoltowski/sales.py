@@ -24,3 +24,10 @@ class Sales:
             if sale.date == date:
                 return sale
         return None
+
+    def findSalesForDates(self, dateFrom, dateTo):
+        sales = []
+        for sale in self.salesArray:
+            if dateFrom <= sale.date <= dateTo:
+                sales.append(sale)
+        return sales

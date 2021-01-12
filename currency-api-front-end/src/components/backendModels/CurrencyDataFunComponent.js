@@ -22,7 +22,7 @@ function createData(date, price, interpolation) {
     return {date, price, interpolationValue};
 }
 
-function TablePaginationActions(props) {
+export function TablePaginationActions(props) {
     const theme = useTheme();
     const {count, page, rowsPerPage, onChangePage} = props;
 
@@ -84,7 +84,7 @@ TablePaginationActions.propTypes = {
 };
 
 
-export default function CustomPaginationTable(props) {
+export default function CustomPaginationCurrencyTable(props) {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(3);
     const handleChangePage = (event, newPage) => {

@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 import HomeComponent from "../home/HomeComponent";
 import DailyCurrenciesComponent from "../dailyCurrencies/DailyCurrenciesComponent";
-import SalesComponent from "../sales/SalesComponent";
+import SalesComponent from "../sales/DailySalesComponent";
 import SpanCurrenciesComponent from "../spanCurrencies/SpanCurrenciesComponent";
 import NavBarComponent from "../navbar/NavBarComponent";
 
