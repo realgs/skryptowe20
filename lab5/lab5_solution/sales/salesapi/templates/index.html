@@ -70,13 +70,33 @@
                     <label for="sales">Daily sales in PLN</label>
                 </div>
             </div>
+            
             <div class="col-sm-6">
-                <div class="form-group">
-                    <input class="form-control" id="date1" placeholder="Od dnia (DD-MM-YYYY)" v-model="fromDate">
+                <ul class="nav nav-tabs nav-justified">
+                    <li class="nav-item">
+                        <a class="nav-link" v-on:click.prevent="setActive('one-date')" :class="{active: isActive('one-date')}" href="#one-date">One date</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" v-on:click.prevent="setActive('dates-range')" :class="{active: isActive('dates-range')}" href="#dates-range">Dates range</a>
+                    </li>
+                </ul>
+                <div class="tab-content py-3">
+                    <div class="tab-pane" :class="{ 'active show': isActive('one-date') }" id="one-date">
+                        <div class="form-group">
+                            <input class="form-control" id="date0" placeholder="Data (DD-MM-YYYY)" v-model="oneDate">
+                        </div>
+                    </div> 
+                    <div class="tab-pane" :class="{ 'active show': isActive('dates-range') }" id="dates-range">
+                        <div class="form-group">
+                            <input class="form-control" id="date1" placeholder="Od dnia (DD-MM-YYYY)" v-model="fromDate">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control" id="date2" placeholder="Do dnia (DD-MM-YYYY)" v-model="toDate">
+                        </div>
+                    </div>
+                    
                 </div>
-                <div class="form-group">
-                    <input class="form-control" id="date2" placeholder="Do dnia (DD-MM-YYYY)" v-model="toDate">
-                </div>
+                
                 <button class="btn btn-default" id="showButton">Show</button>
             </div>
         </form>
@@ -85,9 +105,6 @@
     <div class="container">
         <canvas id="myChart" width="600" height="300"></canvas>
     </div>
-
-    <script>
-    </script>
 
     <br />
     <div id="outputTable" class="container">
@@ -110,7 +127,7 @@
     </div>
 
     <script type="text/javascript">
-        let OutputTable = new Vue({
+        let Output = new Vue({
             el: '#outputTable',
             delimiters: ['[[', ']]'],
             data: {
@@ -122,12 +139,22 @@
                 records: []
             },
             methods: {
-                getResultsTable: function (dataURL, dataType) {
+                getResultsTable: function (dataURL, dataType, isReversed, oneDate) {
                     this.dataType = dataType;
                     this.setHeaders(dataType);
                     var self = this
                     $.getJSON(dataURL, function (data) {
-                        self.records = data;
+                        var singleObj = {};
+                        if (oneDate != '') {
+                            if (dataType == 'sale')
+                                singleObj[oneDate] = { pln_sales: data.pln_sales, usd_sales: data.usd_sales } ;
+                            else if (dataType == 'rate')
+                                singleObj[oneDate] = { value: data.value, isInterpolated: data.isInterpolated } ;
+                            self.records = singleObj;
+                        }
+                        else
+                            self.records = data;
+
                     });
                 },
                 setHeaders: function (dataType) {
@@ -149,12 +176,31 @@
                         this.col3 = '';
                     }
                 },
-                getResultsChart: function (dataURL, dataType) {
+                getResultsChart: function (dataURL, dataType, isReversed, oneDate) {
                     this
                     $.getJSON(dataURL, function (data) {
-                        let chartLabels = Object.keys(data);
-                        let chartValues = Object.values(data);
+                        var chartLabels;
+                        var chartValues;
+                        if (oneDate != '') {
+                            var singleObj = {};
+                            if (dataType == 'sale-pln' || dataType == 'sale-usd' || dataType == 'sale')
+                                singleObj[oneDate] = { pln_sales: data.pln_sales, usd_sales: data.usd_sales };
+                            else if (dataType == 'rate')
+                                singleObj[oneDate] = { value: data.value, isInterpolated: data.isInterpolated };
 
+                            chartLabels = Object.keys(singleObj);
+                            chartValues = Object.values(singleObj);
+                            
+                        }
+                        else {
+                            chartLabels = Object.keys(data);
+                            chartValues = Object.values(data);
+                        }
+
+                        if (isReversed) {
+                            chartValues.reverse();
+                            chartLabels.reverse();
+                        }
                         usdDataset = {
                             label: 'USD Sales',
                             data: chartValues.map(x => x.usd_sales),
@@ -202,23 +248,52 @@
             el: '#userInput',
             delimiters: ['[[', ']]'],
             data: {
+                oneDate: '',
                 fromDate: '',
                 toDate: '',
-                dataType: ''
+                dataType: '',
+                activeTab: 'dates-range'
             },
             methods: {
+                isActive(menuItem) {
+                    return this.activeTab === menuItem
+                },
+                setActive(menuItem) {
+                    this.activeTab = menuItem
+                },
                 processForm: function () {
                     var dataURL = 'http://localhost:8000/';
-                    if (this.dataType == 'sale-usd' || this.dataType == 'sale-pln') {
-                        dataURL = dataURL + 'sale/' + this.fromDate + '/' + this.toDate;
-                        OutputTable.getResultsTable(dataURL, 'sale');
+                    var dataTypeURL = '';
+                    var isReversed = false;
+                    var isOne = '';
+                    if (this.activeTab == 'dates-range') {
+                        if (this.dataType == 'sale-usd' || this.dataType == 'sale-pln'
+                            || this.dataType == 'sale') {
+                            dataURL = dataURL + 'sale/' + this.fromDate + '/' + this.toDate;
+                            dataTypeURL = 'sale';
+                        }
+                        else {
+                            dataURL = dataURL + this.dataType + '/' + this.fromDate + '/' + this.toDate;
+                            dataTypeURL = this.dataType;
+                            isReversed = true;
+                        }
                     }
-                    else {
-                        dataURL = dataURL + this.dataType + '/' + this.fromDate + '/' + this.toDate;
-                        OutputTable.getResultsTable(dataURL, this.dataType);
+                    else if (this.activeTab == 'one-date') {
+                        isOne = this.oneDate;
+                        if (this.dataType == 'sale-usd' || this.dataType == 'sale-pln'
+                            || this.dataType == 'sale') {
+                            dataURL = dataURL + 'sale/' + this.oneDate;
+                            dataTypeURL = 'sale';
+                        }
+                        else {
+                            dataURL = dataURL + this.dataType + '/' + this.oneDate;
+                            dataTypeURL = this.dataType;
+                            isReversed = true;
+                        }
                     }
 
-                    OutputTable.getResultsChart(dataURL, this.dataType);
+                    Output.getResultsTable(dataURL, dataTypeURL, isReversed, isOne);
+                    Output.getResultsChart(dataURL, this.dataType, isReversed, isOne);
 
                 }
             }
