@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <title>$Title$</title>
+</head>
+
+<body>
+<style type="text/css">
+ td { border: 2px solid black; }
+ .center {
+  margin-left: auto;
+  margin-right: auto;
+}
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-zif5{background-color:#3399cc;border-color:#003399;font-family:Arial, Helvetica, sans-serif !important;;font-size:16px;
+  text-align:left;vertical-align:middle}
+.tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
+.tg .tg-dhpq{background-color:#3399cc;border-color:#003399;font-size:16px;text-align:left;vertical-align:middle}
+</style>
+
+<div id="Home" class="tabcontent">
+  <h1 class="text-center" style="color:#003399">Welcome to home page of my API, where you can find two types of information - data in table or chart.</h1>
+<hr/>
+<h2 class="text-center">You can get information about<span style="color:#ff9933"> average rates of USD </span>and about <span style="color:#ff9933">sales of some products</span>, both from dates from 2014 to 2016.</h2>
+    <hr/>
+    <h2 class="text-center">You can enter one date to get information about <span style="color:#ff9933">usd rate or sales from this date in table</span> or you can enter a time period to get <span style="color:#ff9933">chart of usd rate or sales</span> from that period.</h2>
+</div >
+<table class="center" cellpadding="50" border="6">
+    <tr>
+        <td>
+            <div id="USD"  >
+            <h3>USD Rates</h3>
+            <form method="get">
+            <a style="font-weight:bold; font-size:2vw">Enter date: </a> <input type="date" name="dateusd" style="width:200px; height:40px" class="form-control">
+            <br/>
+            <input  type="submit" value="Submit" style="background:#ff9933; color:white; border:2px solid transparent; height:30px; width:80px"  >
+            </form>
+            <br/>
+            </div>
+<table class="tg" >
+<thead>
+  <tr>
+    <th class="tg-zif5"><span style="font-weight:bold">Id</span></th>
+    <th class="tg-0pky">{{Id}}</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-zif5"><span style="font-weight:bold">Date</span></td>
+    <td class="tg-0pky">{{Date}}</td>
+  </tr>
+  <tr>
+    <td class="tg-dhpq"><span style="font-weight:bold">Rate of USD</span></td>
+    <td class="tg-0pky">{{Rate}}</td>
+  </tr>
+  <tr>
+    <td class="tg-dhpq"><span style="font-weight:bold">Interpolated</span></td>
+    <td class="tg-0pky">{{Interpolated}}</td>
+  </tr>
+</tbody>
+</table>
+        </td>
+        <td>
+        <h3>USD Rates Chart</h3>
+        <form method="get">
+        <a style="font-weight:bold; font-size:2vw">Enter start date: </a> <input type="date" name="dateusdstart" style="width:200px; height:40px" class="form-control">
+        <a style="font-weight:bold; font-size:2vw">Enter end date: </a> <input type="date" name="dateusdend" style="width:200px; height:40px" class="form-control">
+        <br/>
+        <input type="submit" value="Submit" style="background:#ff9933; color:white; border:2px solid transparent; height:30px; width:80px" >
+        </form>
+        <h1>{{message}}</h1>
+        <img src="static/images/USD_Chart2.png">
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div id="Sales" >
+            <h3>Sales</h3>
+            <form method="get">
+             <a style="font-weight:bold; font-size:2vw">Enter date: </a><input type="date" name="salesusd" style="width: 200px; height: 40px" class="form-control">
+            <br/>
+                <input type="submit" value="Submit" style="background:#ff9933; color:white; border:2px solid transparent; height:30px; width:80px" >
+            </form>
+            </div>
+            <br/>
+            <table class="tg" >
+<thead>
+  <tr>
+    <th class="tg-zif5"><span style="font-weight:bold">Id</span></th>
+    <th class="tg-0pky">{{Id2}}</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-zif5"><span style="font-weight:bold">Date</span></td>
+    <td class="tg-0pky">{{Date2}}</td>
+  </tr>
+  <tr>
+    <td class="tg-dhpq"><span style="font-weight:bold">Sales in PLN</span></td>
+    <td class="tg-0pky">{{PLN}}</td>
+  </tr>
+  <tr>
+    <td class="tg-dhpq"><span style="font-weight:bold">Sales in USD</span></td>
+    <td class="tg-0pky">{{USD}}</td>
+  </tr>
+</tbody>
+</table>
+        </td>
+        <td>
+    <h3>Sales chart</h3>
+    <form method="get">
+        <a style="font-weight:bold; font-size:2vw">Enter start date: </a> <input type="date" name="datesalesstart" style="width:200px; height:40px" class="form-control">
+        <a style="font-weight:bold; font-size:2vw">Enter end date: </a> <input type="date" name="datesalesend" style="width:200px; height:40px" class="form-control">
+        <br/>
+        <input  type="submit" value="Submit" style="background:#ff9933; color:white; border:2px solid transparent; height:30px; width:80px" >
+    </form>
+     <h1>{{message2}}</h1>
+    <img src="static/images/Sales_Chart2.png">
+        </td>
+    </tr>
+</table>
+</body>
+</html>
