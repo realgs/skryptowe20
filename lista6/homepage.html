@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <title>HomePage</title>
+
+    <style>
+
+    </style>
+</head>
+<body>
+
+
+<!-- Tab content -->
+<div id="Home" class="tabcontent">
+  <h1 class="text-center"  > Home page of API app by Aleksandra Raszewska</h1>
+    <h2 class="text-center"> You can find here daily sales rates regarding a given date. </h2>
+       <h2 class="text-center">  You can type in the range of days in order to generate the sales chart.</h2>
+    <h2 class="text-center"> You can find here daily USD rates regarding a given date.  </h2>
+    <h2 class="text-center"> You can type in the range of days in order to generate the USD chart.</h2>
+</div>
+
+<div class="text-center">
+<br>
+    <table style="border: white" align="center" BORDER CELLSPACING=20 CELLPADDING=30>
+        <tr>
+            <td>
+                <h3>Sales</h3>
+    <form method="get">
+        <center>
+            <div class="div">
+        Write date: <input type="date" name="salesdata" style="width: 200px; height: 50px" class="form-control">
+                <br>
+            <input type="submit" value="Submit">
+                </div>
+            </center>
+
+    </form>
+    <br>
+                </td>
+            <td>
+    <center>
+    <table bgcolor="#FF9900" BORDER CELLSPACING=5 CELLPADDING=15 >
+
+        <tr>
+    <td><b>Id:</b> </td><td>{{Id2}}</td>
+            </tr>
+        <tr>
+    <td><b>Date: </b></td><td>{{Date2}}</td>
+        </tr>
+        <tr>
+    <td><b>PLN: </b></td><td>{{Rate2}}</td>
+        </tr>
+        <tr>
+    <td><b>USD: </b></td><td>{{Interpolated2}}</td>
+        </tr>
+        </table>
+
+</center>
+            </td>
+        </tr>
+
+        </table>
+    <table style="border: white" align="center">
+        <tr>
+            <td>
+ <h3>Sales chart</h3>
+
+    <form method="get">
+        <center>
+        Write first date: <input type="date" name="datafirst2" style="width: 200px; height: 50px" class="form-control">
+            Write second date: <input type="date" name="datasecond2" style="width: 200px; height: 50px" class="form-control">
+            </center>
+        <center>
+            <br>
+        <input type="submit" value="Submit">
+        </center>
+    </form>
+
+</td>
+<td>
+<center>
+{% load static %}
+<img src="{% static 'images/chartsales2.png'%}">
+    </center>
+            </td>
+        </tr>
+        </table>
+    <hr style="background: blue;">
+    <table style="border: white" align="center" BORDER CELLSPACING=20 CELLPADDING=30>
+        <tr>
+            <td>
+  <h3>USD Rates</h3>
+
+    <form method="get">
+        <center>
+        Write date: <input type="date" name="dateusd" style="width: 200px; height: 50px" class="form-control">
+        </center>
+        <center>
+            <br>
+        <input type="submit" value="Submit">
+            </center>
+    </form>
+        </td>
+            <td>
+
+    <center>
+    <table bgcolor="#FF9900" BORDER CELLSPACING=5 CELLPADDING=15>
+        <tr>
+    <td><b>Id: </b></td><td>{{Id}}</td>
+            </tr>
+        <tr>
+    <td><b>Date: </b></td><td>{{Date}}</td>
+        </tr>
+        <tr>
+    <td><b>Rate: </b></td><td>{{Rate}}</td>
+        </tr>
+        <tr>
+    <td><b>Interpolated: </b></td><td>{{Interpolated}}</td>
+        </tr>
+        </table>
+</center>
+            </td>
+        </tr>
+        </table>
+    <table style="border: white" align="center">
+        <tr>
+            <td>
+    <h3>USD chart</h3>
+
+    <form method="get">
+        <center>
+        Write first date: <input type="date"  name="datafirst" style="width: 200px; height: 50px" class="form-control">
+            Write second date: <input type="date" name="datasecond" style="width: 200px; height: 50px" class="form-control">
+            </center>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+</td>
+            <td>
+<center>
+
+
+{% load static %}
+<img src="{% static 'images/chartRate2.png'%}">
+    </center>
+            </td>
+        </tr>
+</table>
+<br>
+<br>
+<br>
+<br>
+    </div>
+</div>
+</body>
+</html>
