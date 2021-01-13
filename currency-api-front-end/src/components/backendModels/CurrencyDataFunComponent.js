@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import TableContainer from "@material-ui/core/TableContainer";
 import Table from "@material-ui/core/Table";
@@ -22,7 +22,7 @@ function createData(date, price, interpolation) {
     return {date, price, interpolationValue};
 }
 
-export function TablePaginationActions(props) {
+function TablePaginationActions(props) {
     const theme = useTheme();
     const {count, page, rowsPerPage, onChangePage} = props;
 
@@ -83,7 +83,6 @@ TablePaginationActions.propTypes = {
     rowsPerPage: PropTypes.number.isRequired
 };
 
-
 export default function CustomPaginationCurrencyTable(props) {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(3);
@@ -96,10 +95,8 @@ export default function CustomPaginationCurrencyTable(props) {
         setPage(0);
     };
 
-
     const currencies =
         props.data.map((item) => createData(item['date'], item['price'], item['interpolation']));
-    console.log(currencies);
 
     return (
         <TableContainer component={Paper}>
@@ -113,9 +110,9 @@ export default function CustomPaginationCurrencyTable(props) {
                 </TableHead>
                 <TableBody>
                     {(rowsPerPage > 0
-                        ? currencies.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                        : currencies
-                        ).map((currency) => (
+                            ? currencies.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                            : currencies
+                    ).map((currency) => (
                         <TableRow key={currency.date}>
                             <TableCell component="th" scope="row">
                                 {currency.date}
@@ -141,4 +138,3 @@ export default function CustomPaginationCurrencyTable(props) {
         </TableContainer>
     );
 }
-

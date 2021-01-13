@@ -1,13 +1,12 @@
-import React, {Component} from 'react';
-import DatePicker from "react-date-picker";
-import './SpanCurrencies.css'
-import axios from "axios";
+import React, {Component} from 'react'
 import ErrorModelComponent from "../backendModels/ErrorModelComponent";
-import CurrencyDataFunComponent from "../backendModels/CurrencyDataFunComponent";
+import SalesDataFunComponent from "../backendModels/SalesDataFunComponent";
+import axios from "axios";
+import DatePicker from "react-date-picker";
 import {Line, LineChart, XAxis, YAxis} from "recharts";
 
 
-class SpanCurrenciesComponent extends Component {
+class SpanSalesComponent extends Component {
     state = {
         dateFrom: new Date(),
         dateTo: new Date(),
@@ -41,7 +40,7 @@ class SpanCurrenciesComponent extends Component {
             const startDate = this.getValidDateInputAsString(dateFrom);
             const endDate = this.getValidDateInputAsString(dateTo);
 
-            axios.get('http://localhost:5000/api/rates/fordatespan?from=' + startDate + '&to=' + endDate)
+            axios.get('http://localhost:5000/api/sales/fordatespan?from=' + startDate + '&to=' + endDate)
                 .then(res => {
                         this.setState({
                             isDataPresent: true,
@@ -79,7 +78,7 @@ class SpanCurrenciesComponent extends Component {
             <div>
                 {this.state.isDataPresent &&
                 <React.Fragment>
-                    <CurrencyDataFunComponent
+                    <SalesDataFunComponent
                         data={this.state.dataValue}
                     />
                     <div style={{height: 400, width: 400}}>
@@ -96,7 +95,7 @@ class SpanCurrenciesComponent extends Component {
                         >
                             <Line
                                 type="monotone"
-                                dataKey="price"
+                                dataKey="usdSalesValue"
                                 stroke="#8884d8"
                                 dot={false}
                             />
@@ -149,4 +148,4 @@ class SpanCurrenciesComponent extends Component {
     }
 }
 
-export default SpanCurrenciesComponent;
+export default SpanSalesComponent;

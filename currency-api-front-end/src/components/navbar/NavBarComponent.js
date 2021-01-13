@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {Link} from "react-router-dom";
 import './NavBar.css'
 
+
 class NavBarComponent extends Component {
     render() {
         return (
@@ -13,7 +14,8 @@ class NavBarComponent extends Component {
                             <Link to='/' className="myLink">Home </Link>
                             <Link to="/dailyCurrencies" className="myLink">DailyCurrencies</Link>
                             <Link to="/spanCurrencies" className="myLink">SpanCurrencies</Link>
-                            <Link to="/sales" className="myLink">Sales</Link>
+                            <Link to="/dailySales" className="myLink">DailySales</Link>
+                            <Link to="/spanSales" className="myLink">SpanSales</Link>
                         </div>
                     </div>
                 </div>
@@ -21,6 +23,5 @@ class NavBarComponent extends Component {
         );
     }
 }
-
 
 export default NavBarComponent;

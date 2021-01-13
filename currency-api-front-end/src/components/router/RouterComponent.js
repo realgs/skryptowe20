@@ -1,20 +1,18 @@
 import React, {Component} from 'react';
-import {
-    BrowserRouter as Router,
-    Route,
-    Switch
-} from "react-router-dom";
+import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import HomeComponent from "../home/HomeComponent";
 import DailyCurrenciesComponent from "../dailyCurrencies/DailyCurrenciesComponent";
-import SalesComponent from "../sales/DailySalesComponent";
+import DailySalesComponent from "../dailySales/DailySalesComponent";
 import SpanCurrenciesComponent from "../spanCurrencies/SpanCurrenciesComponent";
 import NavBarComponent from "../navbar/NavBarComponent";
+import SpanSalesComponent from "../spanSales/SpanSalesComponent";
+
 
 class RouterComponent extends Component {
     render() {
         return (
             <Router>
-                <NavBarComponent />
+                <NavBarComponent/>
                 <Switch>
                     <Route exact path="/">
                         <HomeComponent/>
@@ -25,8 +23,11 @@ class RouterComponent extends Component {
                     <Route path="/spanCurrencies">>
                         <SpanCurrenciesComponent/>
                     </Route>
-                    <Route path="/sales">>
-                        <SalesComponent/>
+                    <Route path="/dailySales">
+                        <DailySalesComponent/>
+                    </Route>
+                    <Route path="/spanSales">
+                        <SpanSalesComponent/>
                     </Route>
                     <Route path="*">
                         <HomeComponent/>

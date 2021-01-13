@@ -84,7 +84,8 @@ const instruction =
                     <b>/api/sales/fordatespan?from=value1&to=value2</b>
                     <ul>
                         <li>
-                            zapytanie GET zwraca łączną sumę sprzedaży walucie PLN oraz USD dla przedziału dni podanych w parametrach
+                            zapytanie GET zwraca łączną sumę sprzedaży walucie PLN oraz USD dla przedziału dni podanych
+                            w parametrach
                             od value1 do value2
                         </li>
                     </ul>
@@ -107,13 +108,11 @@ const instruction =
                 </li>
                 <li>
                     Zapytanie o wartość dolara w PLN dla konkretnego dnia możemy wykonać nie częściej niż 15 razy na
-                    minutę
-                    i nie częściej niż 100 razy na godzinę.
+                    minutę i nie częściej niż 100 razy na godzinę.
                 </li>
                 <li>
                     Zapytanie o wartości dolara w PLN dla przedziału dat możemy wykonać nie częściej niż 5 razy na
-                    minutę
-                    i nie częściej niż 70 razy na godzinę.
+                    minutę i nie częściej niż 70 razy na godzinę.
                 </li>
                 <li>
                     Zapytanie o wartości sprzedaży w PLN i USD w danym dniu możemy wykonać nie częściej niż 10 razy na

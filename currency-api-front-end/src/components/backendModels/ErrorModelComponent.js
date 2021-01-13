@@ -11,7 +11,6 @@ class ErrorModelComponent extends Component {
             </React.Fragment>
         );
     }
-
 }
 
 export default ErrorModelComponent;

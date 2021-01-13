@@ -13,7 +13,6 @@ class DailyCurrenciesComponent extends Component {
         isDataPresent: false,
         dataValue: [],
     }
-
     renderError = () => {
         return (
             <div>
@@ -25,7 +24,6 @@ class DailyCurrenciesComponent extends Component {
             </div>
         );
     }
-
     renderData = () => {
         return (
             <div>
@@ -35,16 +33,9 @@ class DailyCurrenciesComponent extends Component {
             </div>
         )
     }
-
     onChange = (date) => {
         this.setState({date});
     }
-
-    createObject(date, price, interpolation) {
-        const interpolationValue = interpolation ? 'true' : 'false';
-        return {date, price, interpolationValue};
-    }
-
     onClick = () => {
         const {date} = this.state;
         this.setState({isError: false, isDataPresent: false});
@@ -57,11 +48,13 @@ class DailyCurrenciesComponent extends Component {
 
             axios.get('http://localhost:5000/api/rates/fordate?date=' + dataString)
                 .then(res => {
-                        var valu = [];
-                        valu.push(this.createObject(res.data['date'], res.data['price'], res.data['interpolation']));
                         this.setState({
                             isDataPresent: true,
-                            dataValue: valu
+                            dataValue: [{
+                                date: res.data['date'],
+                                price: res.data['price'],
+                                interpolation: res.data['interpolation'] ? 'true' : false
+                            }]
                         });
                     },
                     error => {

@@ -5,7 +5,7 @@ import axios from "axios";
 import DatePicker from "react-date-picker";
 
 
-class SalesComponent extends Component {
+class DailySalesComponent extends Component {
     state = {
         date: new Date(),
         isError: false,
@@ -38,9 +38,6 @@ class SalesComponent extends Component {
     onChange = (date) => {
         this.setState({date});
     }
-    createObject(date, pln, usd) {
-        return {date, pln, usd};
-    }
     onClick = () => {
         const {date} = this.state;
         this.setState({isError: false, isDataPresent: false});
@@ -53,11 +50,13 @@ class SalesComponent extends Component {
 
             axios.get('http://localhost:5000/api/sales/fordate?date=' + dataString)
                 .then(res => {
-                        var valu = [];
-                        valu.push(this.createObject(res.data['date'], res.data['plnSalesValue'], res.data['usdSalesValue']));
                         this.setState({
                             isDataPresent: true,
-                            dataValue: valu
+                            dataValue: [{
+                                date: res.data['date'],
+                                plnSalesValue: res.data['plnSalesValue'],
+                                usdSalesValue: res.data['usdSalesValue']
+                            }]
                         });
                     },
                     error => {
@@ -100,4 +99,4 @@ class SalesComponent extends Component {
     }
 }
 
-export default SalesComponent;
+export default DailySalesComponent;
