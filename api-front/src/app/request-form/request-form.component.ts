@@ -15,7 +15,7 @@ export class RequestFormComponent implements OnInit {
   BASE_REQUEST_URL = 'http://127.0.0.1:5000/api/';
   defaultDate: Date = new Date(2003, 0, 1);
 
-  selectedOption = "";
+  selectedOption = "rate";
 
   date: any;
   parsedDate = "";
@@ -34,17 +34,29 @@ export class RequestFormComponent implements OnInit {
     const parsedDate = this.datePipe.transform(this.date, this.DATE_FORMAT);
     if (parsedDate !== null) {
       this.parsedDate = parsedDate;
+      this.makeRequest();
+    } else {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Please select date/dates from calendar'
+      });
     }
-    this.makeRequest();
   }
 
   submitRange(): void {
     this.rangeDates = [];
+    if (this.dates === undefined) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Please select date/dates from calendar'
+      });
+      return;
+    }
     this.dates.forEach((date: Date) => {
       const parsedDate = this.datePipe.transform(date, this.DATE_FORMAT);
       if (parsedDate !== null) {
         this.rangeDates.push(parsedDate)
-      }
+      } 
     });
     this.makeRequest();
   }

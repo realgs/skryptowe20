@@ -1,3 +1,14 @@
+h3 { 
+    font-size: 1.5rem;
+}
+
+.p-container {
+    text-align: center;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    /* border-bottom: 1px solid #ddd; */
+}
+
 @media screen and (min-width: 768px) {
     .usage {
         grid-template-columns: repeat(2, 1fr);

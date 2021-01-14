@@ -1,5 +1,8 @@
 <main>
     <h2 class="section-title">Usage</h2>
+    <div class="p-container">
+        <p>Please select type of a request and then pick dates from callendar. Results will be displayed below.</p>
+    </div>
     <section class="usage grid">
         <div class="flex-item">
             <div class="input-item">
@@ -8,7 +11,8 @@
                 value="rate" 
                 [(ngModel)]="selectedOption" 
                 label="Rate for given day"
-                class="radio-button"></p-radioButton>
+                class="radio-button"
+                ></p-radioButton>
             </div>
             <div class="input-item">
                 <p-radioButton 
@@ -39,7 +43,7 @@
         <div class="flex-item" [ngSwitch]="selectedOption">
             <div *ngSwitchCase="'rate'">
                 <div>
-                    <h3 style="font-size: 1.25rem;">Choose a date</h3>
+                    <h3>Select a date</h3>
                     <p-calendar 
                     [(ngModel)]="date" 
                     [showIcon]="true" 
@@ -62,13 +66,13 @@
             </div>
             <div *ngSwitchCase="'sale'">
                 <div>
-                    <h3>Choose a date</h3>
+                    <h3>Select a date</h3>
                     <p-calendar 
                     [(ngModel)]="date" 
                     [showIcon]="true" 
                     dateFormat="yy-mm-dd"
                     [defaultDate]="defaultDate"></p-calendar>
-                    <p-button label="Submit" (click)="submitDate()" class="button"></p-button>
+                    <p-button label="Submit" disabled="true" (click)="submitDate()" class="button"></p-button>
                 </div>
             </div>
             <div *ngSwitchCase="'sales'">
