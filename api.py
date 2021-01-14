@@ -151,7 +151,7 @@ def get_sales_from_to(date_from, date_to):
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
-limiter = Limiter(app, key_func=get_remote_address)
+limiter = Limiter(app, key_func=None)
 
 cache = Cache(config={'CACHE_TYPE': 'simple'})
 cache.init_app(app)
