@@ -13,8 +13,23 @@
     border: 1px solid transparent;
 }
 
+.usage {
+    margin-bottom: 2rem;
+}
+
+.flex-item {
+    text-align: center;
+}
+
+.input-item {
+    margin-left: 34%;
+    text-align: left;
+    font-size: 1.25rem;
+}
+
 .button {
-    margin-left: 2rem;
+    display: block;
+    margin-top: 1.5rem;
 }
 
 .radio-button {

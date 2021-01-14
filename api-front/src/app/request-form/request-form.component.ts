@@ -14,7 +14,6 @@ export class RequestFormComponent implements OnInit {
   DATE_FORMAT = 'yyyy-MM-dd';
   BASE_REQUEST_URL = 'http://127.0.0.1:5000/api/';
   defaultDate: Date = new Date(2003, 0, 1);
-  requestError = false;
 
   selectedOption = "";
 
@@ -35,12 +34,12 @@ export class RequestFormComponent implements OnInit {
     const parsedDate = this.datePipe.transform(this.date, this.DATE_FORMAT);
     if (parsedDate !== null) {
       this.parsedDate = parsedDate;
-      console.log(this.parsedDate);
     }
     this.makeRequest();
   }
 
   submitRange(): void {
+    this.rangeDates = [];
     this.dates.forEach((date: Date) => {
       const parsedDate = this.datePipe.transform(date, this.DATE_FORMAT);
       if (parsedDate !== null) {
@@ -66,17 +65,18 @@ export class RequestFormComponent implements OnInit {
         break;
       }
       case 'sales': {
-        requestURL = this.BASE_REQUEST_URL.concat('sales', '/',  this.rangeDates[0], '/', this.rangeDates[1]);
+        requestURL = this.BASE_REQUEST_URL.concat('sales', '/', this.rangeDates[0], '/', this.rangeDates[1]);
         break;
       }
     }
 
-      this.apiService.getData(requestURL).then((data: any) => {
-        this.response = data;
-        console.log(this.response);
-      }).catch((err) => {
-        this.requestError = true;
-        this.messageService.add({severity: 'error', summary: err['error']['error']})
-      });
+    this.apiService.getData(requestURL).then((data: any) => {
+      this.response = data;
+    }).catch((err) => {
+      this.messageService.add({
+        severity: 'error',
+        summary: err['error']['error'] != null ? err['error']['error'] : 'Backend error occured. Please try again later'
+      })
+    });
   }
 }

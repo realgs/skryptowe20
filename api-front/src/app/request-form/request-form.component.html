@@ -39,7 +39,7 @@
         <div class="flex-item" [ngSwitch]="selectedOption">
             <div *ngSwitchCase="'rate'">
                 <div>
-                    <h3>Pick a date</h3>
+                    <h3 style="font-size: 1.25rem;">Choose a date</h3>
                     <p-calendar 
                     [(ngModel)]="date" 
                     [showIcon]="true" 
@@ -62,7 +62,7 @@
             </div>
             <div *ngSwitchCase="'sale'">
                 <div>
-                    <h3>Pick a date</h3>
+                    <h3>Choose a date</h3>
                     <p-calendar 
                     [(ngModel)]="date" 
                     [showIcon]="true" 
@@ -76,7 +76,7 @@
                     <h3>Pick a range</h3>
                     <p-calendar 
                     selectionMode="range" 
-                    [(ngModel)]="rangeDates" 
+                    [(ngModel)]="dates" 
                     [showIcon]="true" 
                     dateFormat="yy-mm-dd"
                     [defaultDate]="defaultDate"></p-calendar>
@@ -87,6 +87,6 @@
     </section>
     <p-toast position="bottom-center"></p-toast>
     <section>
-        <app-values [response]="response"></app-values>
+        <app-values [response]="response" [requestType]="selectedOption"></app-values>
     </section>
 </main>
