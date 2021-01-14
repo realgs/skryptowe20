@@ -1,4 +1,4 @@
-<div *ngIf="response !== undefined">
-    <p>It works</p>
-    <h1 *ngIf="response.error">{{response.error}}</h1>
+<div *ngIf="response !== undefined" class="grid">
+    <h2 class="section-title">Result</h2>
+    <p-chart *ngIf="chartData" type="line" [data]="chartData"></p-chart>
 </div>

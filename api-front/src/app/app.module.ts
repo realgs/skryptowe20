@@ -6,6 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { HttpClientModule } from '@angular/common/http';
 import { ToastModule } from 'primeng/toast';
+import {ChartModule} from 'primeng/chart';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -28,7 +29,8 @@ import { ValuesComponent } from './values/values.component';
     BrowserAnimationsModule,
     RadioButtonModule,
     HttpClientModule,
-    ToastModule
+    ToastModule,
+    ChartModule
   ],
   providers: [],
   bootstrap: [AppComponent]

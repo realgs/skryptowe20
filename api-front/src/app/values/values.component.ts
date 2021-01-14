@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-values',
@@ -7,15 +7,79 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class ValuesComponent implements OnInit {
 
-  @Input()
-  response: any;
+  @Input() response: any;
 
-  @Input()
-  requestType = "";
+  @Input() requestType = "";
+
+  chartData: any;
 
   constructor() { }
 
   ngOnInit(): void {
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (!changes['response']) {
+      return;
+    }
+
+    if (this.response !== undefined) {
+      let labels: string[] = [];
+      let dataset: number[] = [];
+      if (this.requestType === "rates" || this.requestType === "rate") {
+        for (let i = 0; i < this.response.rates.length; i++) {
+          labels.push(this.response.rates[i]["date"]);
+          dataset.push(this.response.rates[i]["rate"]);
+        }
+        if (this.response.rates.length > 1) {
+          this.buildRatesChart(labels, dataset);
+        }
+      } 
+      else {
+        let secondDataset: number[] = [];
+        for (let i = 0; i < this.response.sale.length; i++) {
+          labels.push(this.response.sale[i]["date"]);
+          dataset.push(this.response.sale[i]["usd_sale"]);
+          secondDataset.push(this.response.sale[i]["pln_sale"]);
+        }
+        if (this.response.sale.length > 1) {
+          this.buildSalesChart(labels, dataset, secondDataset);
+        }
+      }
+    }
+  }
+
+  buildRatesChart(labels: string[], dataset: number[]) {
+    this.chartData = {
+      labels: labels,
+      datasets: [
+        {
+          label: 'USD',
+          data: dataset,
+          fill: false,
+          borderColor: '#2196F3'
+        }
+      ]
+    }
+  }
+
+  buildSalesChart(labels: string[], firstDataset: number[], secondDataset: number[]) {
+    this.chartData = {
+      labels: labels,
+      datasets: [
+          {
+              label: 'USD',
+              data: firstDataset,
+              fill: false,
+              borderColor: '#2196F3'
+          },
+          {
+              label: 'PLN',
+              data: secondDataset,
+              fill: false,
+              borderColor: '#FFD700'
+          }
+      ]
+  }
+  }
 }
