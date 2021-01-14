@@ -24,11 +24,10 @@ def add_rates_to_db(currency_code, date_from, date_to):
 
 
 if __name__ == '__main__':
+    # add_rates_to_db(CURRENCIES[0], '2009-01-02', '2014-12-31')
+
     for currency in CURRENCIES:
         print(get_rates(currency, YEAR // 2))
 
     plot_rates(CURRENCIES, YEAR // 2)
-
-    # add_rates_to_db(CURRENCIES[0], '2009-01-02', '2014-12-31')
-
     plot_sales('USD', '2011-01-01', '2011-12-31')

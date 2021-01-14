@@ -1,10 +1,13 @@
 from datetime import datetime
+import pathlib
+import os
 import sqlite3
 import matplotlib.pyplot as plt
 from matplotlib import cycler
 import matplotlib.dates as mdates
 
-DB_FILE = '/Users/limi/Desktop/INF/5 JS/L/skryptowe20/L5_API/sales.db'
+BASE_DIR = pathlib.Path(__file__).parent.absolute()
+DB_FILE = os.path.join(BASE_DIR, 'sales.db')
 PLOT_SIZE_X = 14
 PLOT_SIZE_Y = 7
 PLOT_LEFT_POS = 0.07

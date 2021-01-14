@@ -1,9 +1,9 @@
 import unittest
 from datetime import datetime
 
-from .db_handler import get_sales, get_total_sale, get_rate, get_sales_and_dates, get_rates_and_dates, data_to_plot, \
-    add_rate_entry, delete_rate_entry
-from .api_handler import currency_rates_and_dates, get_table, currency_rates_and_dates_time_frame
+from L4_API.db_handler import get_sales, get_total_sale, get_rate, get_sales_and_dates, get_rates_and_dates, \
+    data_to_plot, add_rate_entry, delete_rate_entry
+from L4_API.api_handler import currency_rates_and_dates, get_table, currency_rates_and_dates_time_frame
 
 
 class TestApiMethods(unittest.TestCase):

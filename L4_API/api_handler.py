@@ -12,8 +12,8 @@ PLOT_BOTTOM_POS = 0.2
 PLOT_MARGIN = 0.01
 PLOT_TICKS_DAY_INTERVAL = 10
 PLOT_TICKS_MINOR_X_INTERVAL = 180
-PLOT_TICKS_Y_INTERVAL = 0.1
-PLOT_TICKS_MINOR_Y_INTERVAL = 0.1
+PLOT_TICKS_Y_INTERVAL = 10
+PLOT_TICKS_MINOR_Y_INTERVAL = 100
 PLOT_GRID_LW = 0.25
 PLOT_SAVE = False
 
@@ -132,6 +132,7 @@ def plot(currencies, days):
 
     x_min = '9999-99-99'
     x_max = '0000-00-00'
+    y_ticks = {}
 
     for currency in currencies:
         rates, rate_dates = currency_rates_and_dates(currency, days)
@@ -140,13 +141,16 @@ def plot(currencies, days):
 
         if dates and rates:
             plt.plot(dates, rates, label=code)
+            y_ticks[currency] = rates[0]
 
             if rate_dates[0] < x_min:
                 x_min = rate_dates[0]
             if rate_dates[-1] > x_max:
                 x_max = rate_dates[-1]
-        else:
-            currencies.remove(currency)
+
+    y_min = min(y_ticks.items(), key=lambda x: x[1])
+    y_max = max(y_ticks.items(), key=lambda x: x[1])
+    delta_y = y_max[1] - y_min[1]
 
     plt.title("Kursy średnie walut {} w dniach od {} do {}".format(
         ', '.join([str(code) for code in currencies]),
@@ -164,8 +168,8 @@ def plot(currencies, days):
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
     ax.xaxis.set_major_locator(mdates.DayLocator(interval=delta_days // PLOT_TICKS_DAY_INTERVAL))
     ax.xaxis.set_minor_locator(mdates.DayLocator(interval=delta_days // PLOT_TICKS_MINOR_X_INTERVAL))
-    ax.yaxis.set_major_locator(ticker.MultipleLocator(PLOT_TICKS_Y_INTERVAL))
-    ax.yaxis.set_minor_locator(ticker.MultipleLocator(PLOT_TICKS_MINOR_Y_INTERVAL))
+    ax.yaxis.set_major_locator(ticker.MultipleLocator(round(delta_y / PLOT_TICKS_Y_INTERVAL, 2)))
+    ax.yaxis.set_minor_locator(ticker.MultipleLocator(delta_y / PLOT_TICKS_MINOR_Y_INTERVAL))
     fig.autofmt_xdate()
 
     plt.show()
