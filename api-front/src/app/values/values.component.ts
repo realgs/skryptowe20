@@ -12,6 +12,7 @@ export class ValuesComponent implements OnInit {
   @Input() requestType = "";
 
   chartData: any;
+  tableData: any;
 
   constructor() { }
 
@@ -26,7 +27,9 @@ export class ValuesComponent implements OnInit {
     if (this.response !== undefined) {
       let labels: string[] = [];
       let dataset: number[] = [];
+      this.chartData = null;
       if (this.requestType === "rates" || this.requestType === "rate") {
+        this.tableData = this.response.rates;
         for (let i = 0; i < this.response.rates.length; i++) {
           labels.push(this.response.rates[i]["date"]);
           dataset.push(this.response.rates[i]["rate"]);
@@ -36,6 +39,7 @@ export class ValuesComponent implements OnInit {
         }
       } 
       else {
+        this.tableData = this.response.sale;
         let secondDataset: number[] = [];
         for (let i = 0; i < this.response.sale.length; i++) {
           labels.push(this.response.sale[i]["date"]);

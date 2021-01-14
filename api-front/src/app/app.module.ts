@@ -13,13 +13,15 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { RequestFormComponent } from './request-form/request-form.component';
 import { ValuesComponent } from './values/values.component';
+import { TableComponent } from './table/table.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     RequestFormComponent,
-    ValuesComponent
+    ValuesComponent,
+    TableComponent
   ],
   imports: [
     BrowserModule,
