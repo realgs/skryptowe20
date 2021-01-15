@@ -296,7 +296,7 @@ export default {
               borderColor: '#04661b',
               lineTension: 0,
               pointBackgroundColor: '#000000',
-              pointBorderColor: '#FF0000',
+              pointBorderColor: '#11DD00',
               data: sales_PLN,
               fill: false
             },
@@ -305,14 +305,13 @@ export default {
               borderColor: '#492cf2',
               lineTension: 0,
               pointBackgroundColor: '#000000',
-              pointBorderColor: '#FF0000',
+              pointBorderColor: '#00D0D0',
               data: sales_USD,
               fill: true
             }
           ]
         }
         this.options.scales.yAxes[0].scaleLabel.labelString = "Sales values";
-
       }
     },
     datesValid() {
