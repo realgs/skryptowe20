@@ -199,6 +199,11 @@ export default {
         {text:'USD rate', value: 'usd_rate'},  
       ],
       options: {
+         title: {
+            display: true,
+            text: '',
+            fontSize: 20
+        },
           responsive: true,
           maintainAspectRatio: false,
           scales: {
@@ -273,12 +278,14 @@ export default {
               label: "USD Exchange Rates",
               borderColor: '#492cf2',
               pointBackgroundColor: '#000000',
+              pointBorderColor: '#00D0D0',
               data: rates,
               fill: true
             }
           ]
         }
         this.options.scales.yAxes[0].scaleLabel.labelString = "USD Exchange Rate Value";
+        this.options.title.text=" Rates Data Chart";
     },
     renderSalesChart() {
       let sales_PLN = [];
@@ -311,6 +318,8 @@ export default {
           ]
         }
         this.options.scales.yAxes[0].scaleLabel.labelString = "Sales values";
+        this.options.title.text="Sales Data Chart";
+
       }
     },
     datesValid() {

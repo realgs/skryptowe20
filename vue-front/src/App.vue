@@ -183,7 +183,6 @@ export default {
           { desc: 'Get sales values in USD and PLN from specified day', url: "http://127.0.0.1:5000/sales/{date}",color: "transparent"},
           { desc: 'Get sales values in USD and PLN from specified date range', url: "http://127.0.0.1:5000/sales/{start_date}/{end_date}",color:"grey lighten-2"}
         ]
-    //
   }),
 };
 </script>
