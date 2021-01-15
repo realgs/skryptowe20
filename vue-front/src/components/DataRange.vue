@@ -285,7 +285,7 @@ export default {
           ]
         }
         this.options.scales.yAxes[0].scaleLabel.labelString = "USD Exchange Rate Value";
-        this.options.title.text=" Rates Data Chart";
+        this.options.title.text="Rates Data Chart";
     },
     renderSalesChart() {
       let sales_PLN = [];
