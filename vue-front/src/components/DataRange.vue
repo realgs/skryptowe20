@@ -169,7 +169,6 @@ export default {
       let vals = [];
       for(var key in this.response)
         vals.push(this.response[key]);
-      console.log(vals); 
       return vals;  
     }
   },
@@ -186,7 +185,7 @@ export default {
       chartdata:null,
       options:null,
       headers:null,
-      title:"",
+      title:'',
       sales_headers:[
         {text:'Date', value: 'date'},
         {text:'USD rate', value: 'usd_rate'},
