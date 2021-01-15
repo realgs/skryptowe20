@@ -237,7 +237,6 @@ export default {
           this.error_msg = e.response.status + ":   " + e.response.data;
 
         });
-        console.log(this.response);
         this.active=true;
         if (this.url == 'rates'){
           this.renderRatesChart();

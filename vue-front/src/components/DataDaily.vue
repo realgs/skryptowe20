@@ -132,7 +132,6 @@ import axios from "axios";
           
         });
         this.active="active";
-        console.log(this.response);
         if (this.url == 'rates'){
           this.headers= this.rates_headers;
           this.title="Rates Data";
