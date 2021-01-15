@@ -3,7 +3,6 @@ from flask import jsonify
 from server.app_config import *
 from server.db_models import *
 from server.api_exceptions import *
-import os
 
 dateFormat = '%Y-%m-%d'
 
@@ -77,5 +76,4 @@ def handle_invalid_usage(error):
 
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 8000))
-    app.run(host='0.0.0.0', port=port)
+    app.run()

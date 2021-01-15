@@ -9,7 +9,7 @@ load_dotenv()
 
 db = MongoEngine()
 
-app = Flask(__name__,static_folder='../client/public/',    static_url_path='/')
+app = Flask(__name__,static_folder='../client/dist/',    static_url_path='/')
 config = {
     "CACHE_TYPE": "simple",
     "CACHE_DEFAULT_TIMEOUT": 300
