@@ -1,0 +1,36 @@
+.title {
+    color: black;
+    font-weight: bold;
+}
+
+.subtitle {
+    font-weight: bold;
+}
+
+.header {
+    color: #000;
+    font-weight: bold;
+}
+
+#url {
+    color: black;
+    font-size: large;
+}
+
+.type {
+    color: orangered;
+}
+
+.param {
+    color: red
+}
+
+.datePick {
+    font-size: 20px;
+    text-align: center;
+}
+
+.error {
+    color: red;
+    text-align: center;
+}
