@@ -1,9 +1,9 @@
 import csv
 import datetime as dt
 import sqlite3 as sql
-from src.currency_data import get_currency_rates
 from typing import List
 from src import config
+from src.currency_data import get_currency_rates
 
 
 def create_default_database(conn: sql.Connection):
@@ -168,7 +168,6 @@ def fill_currency_table(con: sql.Connection):
         full_rates[0] = (full_rates[0][0], rates[0], True)
 
     for i in range(len(full_rates)):
-        print(full_rates[i])
         if full_rates[i][1] is None:
             full_rates[i] = (full_rates[i][0], full_rates[i - 1][1], True)
 

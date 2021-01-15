@@ -3,7 +3,9 @@ from flask_caching import Cache
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from datetime import datetime as dt
-from src import config, database_collector as db
+
+from src import config
+from src import database_collector as db
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
