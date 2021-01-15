@@ -175,16 +175,16 @@ export default {
   },
     data: () => ({
       start_picker: false,
-      search: '',
-      chartdata:null,
-      options:null,
       end_picker: false,
+      date_end: null,
+      date_start: null,
+      search: '',
       response:null,
       errored:false,
       active:false,
       error_msg:"",
-      date_end: null,
-      date_start: null,
+      chartdata:null,
+      options:null,
       headers:null,
       title:"",
       sales_headers:[
@@ -206,20 +206,22 @@ export default {
               yAxes: [{
                   scaleLabel: {
                       display: true,
-                      labelString: ""
+                      labelString: ''
                   },
                   ticks: {
                     maxTicksLimit: 15,
+                    minTicksLimit: 5,
                     autoSkip: true
                   }
               }],
               xAxes: [{
                   scaleLabel: {
                       display: true,
-                      label: "",
+                      labelString: "Date",
                   },
                   ticks: {
                     maxTicksLimit: 15,
+                    minTicksLimit: 5,
                     autoSkip: true
                   }
               }]
@@ -269,7 +271,7 @@ export default {
         this.chartdata = {
           labels: dates,
           datasets: [{
-              label: "USD Exchange Rates Chart",
+              label: "USD Exchange Rates",
               borderColor: '#492cf2',
               pointBackgroundColor: '#000000',
               data: rates,
@@ -277,8 +279,7 @@ export default {
             }
           ]
         }
-        this.options.scales.yAxes[0].scaleLabel.labelString = "USD Exchange rate";
-        this.options.scales.xAxes[0].scaleLabel.labelString = "Date";
+        this.options.scales.yAxes[0].scaleLabel.labelString = "USD Exchange Rate Value";
     },
     renderSalesChart() {
       let sales_PLN = [];
@@ -293,21 +294,25 @@ export default {
           datasets: [{
               label: "Sale Values in PLN",
               borderColor: '#04661b',
+              lineTension: 0,
               pointBackgroundColor: '#000000',
+              pointBorderColor: '#FF0000',
               data: sales_PLN,
               fill: false
             },
             {
               label: "Sale  Values in USD",
               borderColor: '#492cf2',
+              lineTension: 0,
               pointBackgroundColor: '#000000',
+              pointBorderColor: '#FF0000',
               data: sales_USD,
               fill: true
             }
           ]
-        };
-        this.options.scales.yAxes[0].scaleLabel.labelString = "Sales value";
-        this.options.scales.xAxes[0].scaleLabel.labelString = "Date";
+        }
+        this.options.scales.yAxes[0].scaleLabel.labelString = "Sales values";
+
       }
     },
     datesValid() {
