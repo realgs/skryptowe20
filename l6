@@ -1,0 +1,16 @@
+OSTATNIA LISTA 
+
+Sugerowany termin oddania listy 17.01.2021. Ostateczny termin oddania listy 24.01.2021. Łączna liczba punktów (20pkt)
+
+Bazując na poprzedniej liście stworzyć interfejs do interakcji z API. Chcemy by stworzone w ramach poprzedniej listy README z opisem Waszego API nabrało życia! Do realizacji listy możecie użyć dowolnej biblioteki, polecam Vue, Reacta w tej kolejności. Można skorzystać z pomocy - automatycznych konfiguracji dla prostych projektów i w kilka komend stworzyć nowy front projektu.
+
+https://cli.vuejs.org/guide/creating-a-project.html#vue-create
+https://reactjs.org/docs/create-a-new-react-app.html
+
+1. Stwórz szkielet strony, która pojawia się pod głównym adresem Waszego API (dla URLa bez parametrów). Wrzuć tam podstawowe informacje o API (te o które prosiłem w readme) o tym jak dostać się do kursów walut oraz sprzedaży wyrażonej w dwóch walutach w czasie (2 pkt).
+
+2. Na stronie dodaj elementy html, która pozwolą użytkownikowi w łatwy i szybki sposób wyklikać te informacje. Może to być zestaw buttonów i list, może to być zbiór selectów (dropdownów), może to być suwak do przesuwania po zakresie dat. Przykładowo - użytkownik dwoma buttonami / togglem przełącza pomiędzy tym czy interesuje go sprzedaż czy notowania kursów walut. Następnie wybiera parę walutową i / lub zakres dat. Dane wyświetlamy w postaci tekstu / tabeli -> proszę o względną czytelność. (8pkt)
+
+3. Korzystając z dowolnej biblioteki wyświetlić wybrane przez użytkownika dane w postaci wykresu. Przykładowo po wybraniu sprzedaży wyrażonej w dolarach i przedziału czasu wyświetlić wykres sprzedaży w dolarach w wybranym przedziale czasu. Po wybraniu kursu dolara i zakresu czasu wyświetlić wykres notowań dolara w wybranym czasie (10pkt)
+
+(*) mile widziane wystawienie na zewnętrzny serwer, jednak rozwiązanie na local będzie równie akceptowalne.
