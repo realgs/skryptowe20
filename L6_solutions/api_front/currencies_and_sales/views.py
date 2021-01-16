@@ -55,3 +55,35 @@ def rates_date_range(request):
         context["table"] = table_html
 
     return render(request, "date_range.html", context=context)
+
+
+def sales_single_date(request):
+    context = {
+        'title': "Sales",
+        'heading': "Single date sales"
+    }
+
+    if request.method == "POST":
+        date = request.POST.get("date")
+        endpoint = f"{BASE_URL}/sales/{date}"
+
+        table_html = get_table(endpoint)
+        context["table"] = table_html
+
+    return render(request, "single_date.html", context=context)
+
+
+def sales_date_range(request):
+    context = {
+        'title': "Sales",
+        'heading': "Sales from date range"
+    }
+    if request.method == "POST":
+        start = request.POST.get("start")
+        end = request.POST.get("end")
+        endpoint = f"{BASE_URL}/sales/{start}/{end}"
+
+        table_html = get_table(endpoint)
+        context["table"] = table_html
+
+    return render(request, "date_range.html", context=context)
