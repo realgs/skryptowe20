@@ -19,8 +19,8 @@ def get_endpoint(request, root_url, date_range=False):
 
     if date_range:
         end = request.POST.get("end")
-        return f"{root_url}/{start}/{end}"
-    return f"{root_url}/{start}"
+        return f"{root_url}/{start}/{end}", start, end
+    return f"{root_url}/{start}", start
 
 
 def get_error_msg(status_code):
@@ -57,11 +57,12 @@ def rates_single_date(request):
     }
 
     if request.method == "POST":
-        endpoint = get_endpoint(request, BASE_URL_RATES)
+        endpoint, desired_date = get_endpoint(request, BASE_URL_RATES)
 
         data = get_data(endpoint)
         if not type(data) is int:
             context["table"] = get_html_table(data)
+            context["table_heading"] = f"USD rate from {desired_date}"
         else:
             context["error_msg"] = get_error_msg(data)
 
@@ -75,7 +76,7 @@ def rates_date_range(request):
     }
 
     if request.method == "POST":
-        endpoint = get_endpoint(request, BASE_URL_RATES, date_range=True)
+        endpoint, start_date, end_date = get_endpoint(request, BASE_URL_RATES, date_range=True)
 
         data = get_data(endpoint)
         if not type(data) is int:
@@ -83,6 +84,8 @@ def rates_date_range(request):
             context["label"] = "USD rate"
             context["data"] = pd.DataFrame(data)['USD'].to_list()
             context["labels"] = pd.DataFrame(data)['effectiveDate'].to_list()
+            context["table_heading"] = f"USD rates from {start_date} to {end_date}"
+
         else:
             context["error_msg"] = get_error_msg(data)
 
@@ -96,11 +99,13 @@ def sales_single_date(request):
     }
 
     if request.method == "POST":
-        endpoint = get_endpoint(request, BASE_URL_SALES)
+        endpoint, desired_date = get_endpoint(request, BASE_URL_SALES)
 
         data = get_data(endpoint)
         if not type(data) is int:
             context["table"] = get_html_table(data)
+            context["table_heading"] = f"Sales from {desired_date}"
+
         else:
             context["error_msg"] = get_error_msg(data)
 
@@ -114,7 +119,7 @@ def sales_date_range(request):
         'available_currencies': ['USD', 'PLN']
     }
     if request.method == "POST":
-        endpoint = get_endpoint(request, BASE_URL_SALES, date_range=True)
+        endpoint, start_date, end_date = get_endpoint(request, BASE_URL_SALES, date_range=True)
         ccy = request.POST.get("ccy")
 
         data = get_data(endpoint)
@@ -124,6 +129,8 @@ def sales_date_range(request):
             context["label"] = f"Sales in {ccy}"
             context["data"] = ccy_data[ccy].to_list()
             context["labels"] = ccy_data['DATE'].to_list()
+            context["table_heading"] = f"Sales from {start_date} to {end_date} in {ccy}"
+
         else:
             context["error_msg"] = get_error_msg(data)
 

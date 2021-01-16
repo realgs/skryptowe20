@@ -9,10 +9,10 @@
         <div class="alert alert-danger" role="alert">{{ error_msg }}</div>
     {% endif %}
 
-    {% block user_choice %}
+    {% block range_specific_data %}
 
         <section class="jumbotron text-center">
-            <div class="container">
+            <div class="container w-50">
                 <form method="POST">
                     {% csrf_token %}
 
@@ -29,7 +29,9 @@
             </div>
         </section>
     {% endblock %}
-
+    <div class="row justify-content-center">
+        <h1>{{ table_heading }}</h1>
+    </div>
     <div class="container my-4">
         {% if table %}
             {{ table | safe }}
