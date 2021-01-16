@@ -23,6 +23,29 @@ def get_endpoint(request, root_url, date_range=False):
     return f"{root_url}/{start}"
 
 
+def get_error_msg(status_code):
+    if status_code == 404:
+        return f"No data found. Note that data is available only for date range {DATE_START} - {DATE_END}"
+    if status_code == 400:
+        return "End date cannot be earlier than start date."
+    return "Unknown error occurred"
+
+
+def get_html_table(data):
+    return json2html.convert(data, table_attributes="class=\"table table-hover\"")
+
+
+def get_data(endpoint):
+    logging.info(f"Requesting data from {endpoint}")
+
+    response = requests.get(endpoint)
+    logging.info(response.status_code)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        return response.status_code
+
+
 def index(request):
     return render(request, "index.html")
 
@@ -84,14 +107,6 @@ def sales_single_date(request):
     return render(request, "single_date.html", context=context)
 
 
-def get_error_msg(status_code):
-    if status_code == 404:
-        return f"No data found. Note that data is available only for date range {DATE_START} - {DATE_END}"
-    if status_code == 400:
-        return "End date cannot be earlier than start date."
-    return "Unknown error occurred"
-
-
 def sales_date_range(request):
     context = {
         'title': "Sales",
@@ -113,18 +128,3 @@ def sales_date_range(request):
             context["error_msg"] = get_error_msg(data)
 
     return render(request, "date_range.html", context=context)
-
-
-def get_html_table(data):
-    return json2html.convert(data, table_attributes="class=\"table table-hover\"")
-
-
-def get_data(endpoint):
-    logging.info(f"Requesting data from {endpoint}")
-
-    response = requests.get(endpoint)
-    logging.info(response.status_code)
-    if response.status_code == 200:
-        return response.json()
-    else:
-        return response.status_code
