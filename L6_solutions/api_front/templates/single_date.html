@@ -6,7 +6,7 @@
 
 {% block content %}
     {% if error_msg %}
-        <h1>{{ error_msg }}</h1>
+        <div class="alert alert-danger" role="alert">{{ error_msg }}</div>
     {% endif %}
 
     {% block user_choice %}
@@ -19,8 +19,8 @@
                     <h1 class="jumbotron-heading">{{ heading }}</h1>
                     <p class="lead text-muted">Select desired date.</p>
 
-                    <label for="start">Start date:</label>
-                    <input class="form-control" type="date" id="date" name="date" required
+                    <label for="start">Desired date:</label>
+                    <input class="form-control" type="start" id="date" name="start" required
                            min="2013-01-01" max="2014-12-31">
 
                     <br>
