@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 BASE_URL = "http://127.0.0.1:5000"
 BASE_URL_SALES = f"{BASE_URL}/sales"
-BASE_URL_RATES = f"{BASE_URL_SALES}/rates"
+BASE_URL_RATES = f"{BASE_URL}/rates/usd"
 DATE_START = "2013-01-01"
 DATE_END = "2014-12-31"
 
@@ -20,7 +20,6 @@ def get_endpoint(request, root_url, date_range=False):
     if date_range:
         end = request.POST.get("end")
         return f"{root_url}/{start}/{end}"
-
     return f"{root_url}/{start}"
 
 
@@ -37,9 +36,11 @@ def rates_single_date(request):
     if request.method == "POST":
         endpoint = get_endpoint(request, BASE_URL_RATES)
 
-        data_json = get_data(endpoint)
-        if data_json:
-            context["table"] = get_html_table(data_json)
+        data = get_data(endpoint)
+        if not type(data) is int:
+            context["table"] = get_html_table(data)
+        else:
+            context["error_msg"] = get_error_msg(data)
 
     return render(request, "single_date.html", context=context)
 
@@ -53,12 +54,14 @@ def rates_date_range(request):
     if request.method == "POST":
         endpoint = get_endpoint(request, BASE_URL_RATES, date_range=True)
 
-        data_json = get_data(endpoint)
-        if data_json:
-            context["table"] = get_html_table(data_json)
+        data = get_data(endpoint)
+        if not type(data) is int:
+            context["table"] = get_html_table(data)
             context["label"] = "USD rate"
-            context["data"] = pd.DataFrame(data_json)['USD'].to_list()
-            context["labels"] = pd.DataFrame(data_json)['effectiveDate'].to_list()
+            context["data"] = pd.DataFrame(data)['USD'].to_list()
+            context["labels"] = pd.DataFrame(data)['effectiveDate'].to_list()
+        else:
+            context["error_msg"] = get_error_msg(data)
 
     return render(request, "date_range.html", context=context)
 
@@ -72,9 +75,11 @@ def sales_single_date(request):
     if request.method == "POST":
         endpoint = get_endpoint(request, BASE_URL_SALES)
 
-        data_json = get_data(endpoint)
-        if data_json:
-            context["table"] = get_html_table(data_json)
+        data = get_data(endpoint)
+        if not type(data) is int:
+            context["table"] = get_html_table(data)
+        else:
+            context["error_msg"] = get_error_msg(data)
 
     return render(request, "single_date.html", context=context)
 
@@ -110,15 +115,15 @@ def sales_date_range(request):
     return render(request, "date_range.html", context=context)
 
 
-def get_html_table(data_json):
-    return json2html.convert(data_json, table_attributes="class=\"table table-hover\"")
+def get_html_table(data):
+    return json2html.convert(data, table_attributes="class=\"table table-hover\"")
 
 
 def get_data(endpoint):
     logging.info(f"Requesting data from {endpoint}")
 
     response = requests.get(endpoint)
-
+    logging.info(response.status_code)
     if response.status_code == 200:
         return response.json()
     else:
