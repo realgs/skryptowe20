@@ -7,6 +7,7 @@ API_URL = 'http://api.nbp.pl/api/exchangerates/rates/a/'
 API_HEADERS = { 'Accept' : 'application/json' }
 REQUEST_TIMEOUT = 30
 DEFAULT_MAX_HOPS = 7
+MAX_REQUEST_PERIOD = 93
 
 # def string_to_datetime(date_string):
 #     return datetime.datetime(int(date_string[0:4]), int(date_string[5:7]), int(date_string[8:10]))
@@ -74,13 +75,13 @@ def get_currency_markings_from_date_range(currency_code, date_from, date_to):
     start_date = date_from
     days = (date_to - date_from).days
 
-    while days > 93:
+    while days > MAX_REQUEST_PERIOD:
         date_from = end_date - datetime.timedelta(days)
-        date_to = date_from + datetime.timedelta(92)
+        date_to = date_from + datetime.timedelta(MAX_REQUEST_PERIOD - 1)
         print(date_from.strftime("%Y-%m-%d"))
         print(date_to.strftime("%Y-%m-%d"))
         markings.update(get_currency_markings(currency_code, date_from, date_to))
-        days -= 93
+        days -= MAX_REQUEST_PERIOD
 
     date_from = end_date - datetime.timedelta(days)
     date_to = end_date

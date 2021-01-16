@@ -20,6 +20,7 @@ CACHE_LIFETIME = 120 # seconds
 sales_cache = {}
 
 app = flask.Flask(__name__)
+app.config["DEBUG"] = True
 limiter = Limiter(
     app,
     key_func = get_remote_address,
@@ -62,12 +63,10 @@ def ping():
 @app.route('/', methods=['GET'])
 def home():
     return render_template("public/index.html")
-    #
-    # '''
-    #     <h1>Forex&Sales API</h1>
-    #     <p>More to see @ <a href="https://github.com/japko-7/skryptowe20/tree/L5">GitHub</a>.</p>
-    # '''
 
+@app.route('/demo', methods=['GET'])
+def demo():
+    return render_template("public/demo.html")
 
 @app.errorhandler(400)
 def bad_request(e):

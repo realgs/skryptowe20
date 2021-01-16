@@ -35,7 +35,7 @@ There are actually 2 ways of using it.
 Apart from that you can also visit homepage (`/`) or ping (`/ping`) the API to check if it's responding.
 
 ### Request parameters
-- `{top_count}` is an *integer* value, **greater or equal to 0**; it is the number of pieces of data provided in the response ;if  the value exceeds number of available items of request, a maximum amount is returned as the first item
+- `{top_count}` is an *integer* value, **greater or equal to 0**; it is the number of pieces of data provided in the response; if  the value exceeds number of available items of request, a maximum amount is returned as the first item
 - `{date}`, `{start_date}`, `{end_date}` are dates of the `YYYY-MM-DD` format defined by the [ISO 8601](http://pl.wikipedia.org/wiki/ISO_8601) standard; in addition, {start_date} should be greater or equal to {end_date}; a single `{date}` is the day of data to be requested, while `{start_date}` and `{end_date}` define respectively the start and the end of the requested period of time
 - `{currency_code}` - a **3-letter** code uniquely representing the currency, defined by standard [ISO 4217](http://pl.wikipedia.org/wiki/ISO_4217)
 
