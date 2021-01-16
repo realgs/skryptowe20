@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{% block title %}{% endblock %}</title>
+    <title>API Front - {% block title %}{% endblock %}</title>
     <link href="https://fonts.googleapis.com/css?family=Clicker+Script" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -31,18 +31,22 @@
                     Rates
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{% url 'currencies_and_sales:single_date_rates' %}">Rates single date</a>
-                    <a class="dropdown-item" href="{% url 'currencies_and_sales:date_range_rates' %}">Rates date range</a>
+                    <a class="dropdown-item" href="{% url 'currencies_and_sales:single_date_rates' %}">Rates single
+                        date</a>
+                    <a class="dropdown-item" href="{% url 'currencies_and_sales:date_range_rates' %}">Rates date
+                        range</a>
                 </div>
             </li>
-             <li class="nav-item dropdown">
+            <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
                    aria-haspopup="true" aria-expanded="false">
                     Sales
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="{% url 'currencies_and_sales:single_date_sales' %}">Sales single date</a>
-                    <a class="dropdown-item" href="{% url 'currencies_and_sales:date_range_sales' %}">Sales date range</a>
+                    <a class="dropdown-item" href="{% url 'currencies_and_sales:single_date_sales' %}">Sales single
+                        date</a>
+                    <a class="dropdown-item" href="{% url 'currencies_and_sales:date_range_sales' %}">Sales date
+                        range</a>
                 </div>
             </li>
         </ul>

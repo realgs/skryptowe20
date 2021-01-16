@@ -1,5 +1,6 @@
 import logging
 
+import pandas as pd
 import requests
 from django.shortcuts import render
 from json2html import json2html
@@ -13,15 +14,17 @@ def index(request):
     return render(request, "index.html")
 
 
-def get_table(endpoint):
+def get_table(data_json):
+    return json2html.convert(data_json, table_attributes="class=\"table table-hover\"")
+
+
+def get_json(endpoint):
     logging.info(f"Requesting data from {endpoint}")
 
     response = requests.get(endpoint)
 
     if response.status_code == 200:
-        return json2html.convert(response.json(), table_attributes="class=\"table table-hover\"")
-    else:
-        return "<h1>No data found</>"
+        return response.json()
 
 
 def rates_single_date(request):
@@ -34,8 +37,9 @@ def rates_single_date(request):
         date = request.POST.get("date")
         endpoint = f"{BASE_URL}/rates/usd/{date}"
 
-        table_html = get_table(endpoint)
-        context["table"] = table_html
+        data_json = get_json(endpoint)
+        if data_json:
+            context["table"] = get_table(data_json)
 
     return render(request, "single_date.html", context=context)
 
@@ -43,7 +47,7 @@ def rates_single_date(request):
 def rates_date_range(request):
     context = {
         'title': "USD rates",
-        'heading': "USD rates from date range"
+        'heading': "USD rates from date range",
     }
 
     if request.method == "POST":
@@ -51,8 +55,12 @@ def rates_date_range(request):
         end = request.POST.get("end")
         endpoint = f"{BASE_URL}/rates/usd/{start}/{end}"
 
-        table_html = get_table(endpoint)
-        context["table"] = table_html
+        data_json = get_json(endpoint)
+        if data_json:
+            context["table"] = get_table(data_json)
+            context["label"] = "USD rate"
+            context["data"] = pd.DataFrame(data_json)['USD'].to_list()
+            context["labels"] = pd.DataFrame(data_json)['effectiveDate'].to_list()
 
     return render(request, "date_range.html", context=context)
 
@@ -67,8 +75,9 @@ def sales_single_date(request):
         date = request.POST.get("date")
         endpoint = f"{BASE_URL}/sales/{date}"
 
-        table_html = get_table(endpoint)
-        context["table"] = table_html
+        data_json = get_json(endpoint)
+        if data_json:
+            context["table"] = get_table(data_json)
 
     return render(request, "single_date.html", context=context)
 
@@ -83,7 +92,12 @@ def sales_date_range(request):
         end = request.POST.get("end")
         endpoint = f"{BASE_URL}/sales/{start}/{end}"
 
-        table_html = get_table(endpoint)
-        context["table"] = table_html
+        data_json = get_json(endpoint)
+        logging.info(data_json)
+        if data_json:
+            context["table"] = get_table(data_json)
+            context["label"] = "Sales"
+            context["data"] = pd.DataFrame(data_json)['USD'].to_list()
+            context["labels"] = pd.DataFrame(data_json)['DATE'].to_list()
 
     return render(request, "date_range.html", context=context)

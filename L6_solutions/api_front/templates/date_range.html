@@ -13,7 +13,7 @@
                     {% csrf_token %}
 
                     <h1 class="jumbotron-heading">{{ heading }}</h1>
-                    <p class="lead text-muted">Select desired date range.</p>
+                    <p class="lead text-muted">Select desired date range:</p>
 
                     <label for="start">Start date:</label>
                     <input class="form-control" type="date" id="start" name="start"
@@ -29,9 +29,45 @@
         </section>
     {% endblock %}
 
+     {% if data %}
+        <div class="container my-4">
+            <canvas id="line-chart"></canvas>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+        <script>
+            var config = {
+                type: 'line',
+                data: {
+                    datasets: [{
+                        data: {{ data|safe }},
+                        backgroundColor: [
+                            '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
+                        ],
+                        label: '{{ label }}'
+                    }],
+                    labels: {{ labels|safe }}
+                },
+                options: {
+                    responsive: true
+                }
+            };
+
+            window.onload = function () {
+                var ctx = document.getElementById('line-chart').getContext('2d');
+                window.myChart = new Chart(ctx, config);
+            };
+
+        </script>
+
+    {% endif %}
+
     <div class="container my-4">
         {% if table %}
             {{ table | safe }}
         {% endif %}
     </div>
+
+
+
 {% endblock %}
