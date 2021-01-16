@@ -2,9 +2,10 @@
 
 import datetime
 import flask
-from flask import request, jsonify, make_response
+from flask import request, jsonify, make_response, render_template
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+
 
 import database
 
@@ -60,11 +61,12 @@ def ping():
 
 @app.route('/', methods=['GET'])
 def home():
-    return
-    '''
-        <h1>Forex&Sales API</h1>
-        <p>More to see @ <a href="https://github.com/japko-7/skryptowe20/tree/L5">GitHub</a>.</p>
-    '''
+    return render_template("public/index.html")
+    #
+    # '''
+    #     <h1>Forex&Sales API</h1>
+    #     <p>More to see @ <a href="https://github.com/japko-7/skryptowe20/tree/L5">GitHub</a>.</p>
+    # '''
 
 
 @app.errorhandler(400)
