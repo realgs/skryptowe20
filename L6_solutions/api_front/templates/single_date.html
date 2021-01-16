@@ -5,7 +5,11 @@
 {% endblock %}
 
 {% block content %}
-    {% block date_pickers %}
+    {% if error_msg %}
+        <h1>{{ error_msg }}</h1>
+    {% endif %}
+
+    {% block user_choice %}
 
         <section class="jumbotron text-center">
             <div class="container">
