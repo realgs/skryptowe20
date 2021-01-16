@@ -14,17 +14,17 @@
                 <p class="lead text-muted">Select desired date range:</p>
 
                 <label for="start">Start date:</label>
-                <input class="form-control" type="date" id="start" name="start"
+                <input class="form-control" type="date" id="start" name="start" required
                        min="2013-01-01" max="2014-12-31">
 
                 <label for="start">End date:</label>
-                <input class="form-control" type="date" id="end" name="end"
+                <input class="form-control" type="date" id="end" name="end" required
                        min="2013-01-01" max="2014-12-31">
 
                 {% if available_currencies %}
                     <label for="ccy">Currency:</label>
                     <div class="form-group">
-                        <select class="form-control" id="ccy" name="ccy">
+                        <select class="form-control" id="ccy" name="ccy" required>
                             {% for ccy in  available_currencies %}
                                 <option>{{ ccy }}</option>
                             {% endfor %}
@@ -38,12 +38,6 @@
             </form>
         </div>
     </section>
-
-
-
-
-
-
 
 
     {% if data %}
