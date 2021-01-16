@@ -68,7 +68,7 @@ def rates_date_range(request):
 def sales_single_date(request):
     context = {
         'title': "Sales",
-        'heading': "Single date sales"
+        'heading': "Single date sales",
     }
 
     if request.method == "POST":
@@ -85,19 +85,21 @@ def sales_single_date(request):
 def sales_date_range(request):
     context = {
         'title': "Sales",
-        'heading': "Sales from date range"
+        'heading': "Sales from date range",
+        'available_currencies': ['USD', 'PLN']
     }
     if request.method == "POST":
         start = request.POST.get("start")
         end = request.POST.get("end")
+        ccy = request.POST.get("ccy")
+        logging.debug(ccy)
         endpoint = f"{BASE_URL}/sales/{start}/{end}"
 
         data_json = get_json(endpoint)
-        logging.info(data_json)
         if data_json:
             context["table"] = get_table(data_json)
-            context["label"] = "Sales"
-            context["data"] = pd.DataFrame(data_json)['USD'].to_list()
+            context["label"] = f"Sales in {ccy}"
+            context["data"] = pd.DataFrame(data_json)[ccy].to_list()
             context["labels"] = pd.DataFrame(data_json)['DATE'].to_list()
 
     return render(request, "date_range.html", context=context)

@@ -5,31 +5,48 @@
 {% endblock %}
 
 {% block content %}
-    {% block date_pickers %}
+    <section class="jumbotron text-center">
+        <div class="container">
+            <form method="POST">
+                {% csrf_token %}
 
-        <section class="jumbotron text-center">
-            <div class="container">
-                <form method="POST">
-                    {% csrf_token %}
+                <h1 class="jumbotron-heading">{{ heading }}</h1>
+                <p class="lead text-muted">Select desired date range:</p>
 
-                    <h1 class="jumbotron-heading">{{ heading }}</h1>
-                    <p class="lead text-muted">Select desired date range:</p>
+                <label for="start">Start date:</label>
+                <input class="form-control" type="date" id="start" name="start"
+                       min="2013-01-01" max="2014-12-31">
 
-                    <label for="start">Start date:</label>
-                    <input class="form-control" type="date" id="start" name="start"
-                           min="2013-01-01" max="2014-12-31">
+                <label for="start">End date:</label>
+                <input class="form-control" type="date" id="end" name="end"
+                       min="2013-01-01" max="2014-12-31">
 
-                    <label for="start">End date:</label>
-                    <input class="form-control" type="date" id="end" name="end"
-                           min="2013-01-01" max="2014-12-31">
-                    <br>
-                    <button type="submit" class="btn btn-primary">Get data</button>
-                </form>
-            </div>
-        </section>
-    {% endblock %}
+                {% if available_currencies %}
+                    <label for="ccy">Currency:</label>
+                    <div class="form-group">
+                        <select class="form-control" id="ccy" name="ccy">
+                            {% for ccy in  available_currencies %}
+                                <option>{{ ccy }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                {% endif %}
 
-     {% if data %}
+                <br>
+
+                <button type="submit" class="btn btn-primary">Get data</button>
+            </form>
+        </div>
+    </section>
+
+
+
+
+
+
+
+
+    {% if data %}
         <div class="container my-4">
             <canvas id="line-chart"></canvas>
         </div>
