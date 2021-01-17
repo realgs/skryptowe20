@@ -1,8 +1,9 @@
 #!/bin/python3
 
-from flask import Flask, request
+from flask import Flask, request, redirect
 from flask.json import jsonify
 from flask_caching import Cache
+from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from werkzeug.exceptions import InternalServerError
@@ -99,6 +100,9 @@ app = Flask(__name__)
 app.config.from_mapping(config)
 cache = Cache(app)
 
+# enable CORS
+CORS(app, resources={r'/*': {'origins': '*'}})
+
 limiter = Limiter(app, key_func=get_remote_address, enabled=ENABLE_LIMITER)
 
 
@@ -178,7 +182,7 @@ def handle_500(error):
 @app.route('/', methods=['GET'])
 @limiter.limit(INDEX_LIMIT)
 def index():
-    return '<h1>Exchange rates and sales API</h1>'
+    return redirect(f'http://{FRONT_ADDRESS}:8080')
 
 
 @app.route('/api/v1/rates/<currency_code>/all', methods=['GET'])
