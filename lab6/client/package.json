@@ -11,8 +11,10 @@
     "axios": "^0.21.1",
     "bootstrap": "^4.5.3",
     "core-js": "^3.6.5",
+    "vselect-component": "^1.0.2",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
+    "vue-select": "^3.11.2",
     "vue-slider-component": "^3.2.11"
   },
   "devDependencies": {
