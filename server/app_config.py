@@ -4,6 +4,8 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_caching import Cache
 from dotenv import load_dotenv
+from flask_cors import CORS
+
 
 load_dotenv()
 
@@ -27,3 +29,4 @@ limiter = Limiter(
 )
 db.init_app(app)
 cache = Cache(app)
+CORS(app)

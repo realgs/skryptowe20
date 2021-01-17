@@ -21,7 +21,7 @@ def rateInDate(code, dateStr):
     exchangeRate = Exchange.objects(code=code.upper(), dateStr=dateStr)
     if len(exchangeRate) == 0:
         raise NoDataFound('No data found with code: {} and date: {}'.format(code.upper(), dateStr))
-    return jsonify(exchangeRate[0])
+    return jsonify(exchangeRate)
 
 
 @app.route('/rates/<code>/<startDateStr>/<endDateStr>', methods=['GET'])
@@ -34,7 +34,8 @@ def ratesBetweenDates(code, startDateStr, endDateStr):
         raise BadRequest()
     if startDate > endDate:
         raise BadRequest()
-    exchangeRates = Exchange.objects(code=code.upper()).filter((Q(date__gte=startDate) & Q(date__lte=endDate)))
+    exchangeRates = Exchange.objects(code=code.upper()).filter((Q(date__gte=startDate) & Q(date__lte=endDate))) \
+        .order_by('date')
     if len(exchangeRates) == 0:
         raise NoDataFound(
             'No data found with code: {} and date range: <{}, {}>'.format(code.upper(), startDateStr, endDateStr))
@@ -50,7 +51,7 @@ def saleInDate(dateStr):
     sale = SalesResult.objects(dateStr=dateStr)
     if len(sale) == 0:
         raise NoDataFound('No data found with date: {}'.format(dateStr))
-    return jsonify(sale[0])
+    return jsonify(sale)
 
 
 @app.route('/sales/<startDateStr>/<endDateStr>', methods=['GET'])
@@ -63,7 +64,7 @@ def salesBetweenDates(startDateStr, endDateStr):
         raise BadRequest()
     if startDate > endDate:
         raise BadRequest()
-    sales = SalesResult.objects().filter((Q(date__gte=startDate) & Q(date__lte=endDate)))
+    sales = SalesResult.objects().filter((Q(date__gte=startDate) & Q(date__lte=endDate))).order_by('date')
     if len(sales) == 0:
         raise NoDataFound(
             'No data found in date range: <{}, {}>'.format(startDateStr, endDateStr))
