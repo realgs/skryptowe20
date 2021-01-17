@@ -4,47 +4,29 @@
     {{ title }}
 {% endblock %}
 
+
 {% block range_specific_data %}
-    <section class="jumbotron text-center">
-        <div class="container w-50">
-            <form method="POST">
-                {% csrf_token %}
 
-                <h1 class="jumbotron-heading">{{ heading }}</h1>
-                <p class="lead text-muted">Select desired date range:</p>
+    <p class="lead text-muted">Select desired date range:</p>
 
-                <label for="start">Start date:</label>
-                <input class="form-control" type="date" id="start" name="start" required
-                       min="2013-01-01" max="2014-12-31">
+    <label for="start">Start date:</label>
+    <input class="form-control" type="date" id="start" name="start" required
+           min="2013-01-01" max="2014-12-31">
 
-                <label for="end">End date:</label>
-                <input class="form-control" type="date" id="end" name="end" required
-                       min="2013-01-01" max="2014-12-31">
+    <label for="end">End date:</label>
+    <input class="form-control" type="date" id="end" name="end" required
+           min="2013-01-01" max="2014-12-31">
+{% endblock %}
 
-                {% if available_currencies %}
-                    <label for="ccy">Currency:</label>
-                    <div class="form-group">
-                        <select class="form-control" id="ccy" name="ccy" required>
-                            {% for ccy in  available_currencies %}
-                                <option>{{ ccy }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                {% endif %}
-
-                <br>
-
-                <button type="submit" class="btn btn-primary">Get data</button>
-            </form>
-        </div>
-    </section>
-
-
-    {% if data %}
-          <div class="row justify-content-center">
+{% block chart %}
+    {% if datasets %}
+        <div class="row justify-content-center">
             <h1 class="">{{ table_heading }}</h1>
-          </div>
-
+        </div>
+{#{% for ds in datasets %}#}
+{#    <h1>{{ ds.data }}</h1>#}
+{#    <h1>{{ ds.label }}</h1>#}
+{#        {% endfor %}#}
         <div class="container my-4">
             <canvas id="line-chart"></canvas>
         </div>
@@ -54,13 +36,16 @@
             var config = {
                 type: 'line',
                 data: {
-                    datasets: [{
-                        data: {{ data|safe }},
-                        backgroundColor: [
-                            '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
-                        ],
-                        label: '{{ label }}'
-                    }],
+                    datasets: [
+                        {% for ds in datasets %}
+                            {
+                                data: {{ ds.data }},
+                                fill: false,
+                                borderColor: '{{ ds.color }}',
+                                label: '{{ ds.label }}'
+                            },
+                        {% endfor %}
+                    ],
                     labels: {{ labels|safe }}
                 },
                 options: {
@@ -76,5 +61,4 @@
         </script>
 
     {% endif %}
-
 {% endblock %}

@@ -13,6 +13,8 @@ BASE_URL_RATES = f"{BASE_URL}/rates/usd"
 DATE_START = "2013-01-01"
 DATE_END = "2014-12-31"
 
+CCY_COLORS = {'PLN': 'grey', 'USD': 'blue'}
+
 
 def get_endpoint(request, root_url, date_range=False):
     start = request.POST.get("start")
@@ -82,7 +84,10 @@ def rates_date_range(request):
         if not type(data) is int:
             context["table"] = get_html_table(data)
             context["label"] = "USD rate"
-            context["data"] = pd.DataFrame(data)['USD'].to_list()
+            context["datasets"] = [
+                {"label": "USD rate", "data": pd.DataFrame(data)['USD'].to_list(), "color": CCY_COLORS['USD']}]
+
+            # context["data"] = pd.DataFrame(data)['USD'].to_list()
             context["labels"] = pd.DataFrame(data)['effectiveDate'].to_list()
             context["table_heading"] = f"USD rates from {start_date} to {end_date}"
 
@@ -96,6 +101,8 @@ def sales_single_date(request):
     context = {
         'title': "Sales",
         'heading': "Single date sales",
+        'available_currencies': ['USD', 'PLN']
+
     }
 
     if request.method == "POST":
@@ -120,18 +127,27 @@ def sales_date_range(request):
     }
     if request.method == "POST":
         endpoint, start_date, end_date = get_endpoint(request, BASE_URL_SALES, date_range=True)
-        ccy = request.POST.get("ccy")
+        currencies = request.POST.getlist("ccy")
+
+        df_columns = currencies.copy()
+        df_columns.append('DATE')
+        df_columns.reverse()
 
         data = get_data(endpoint)
         if not type(data) is int:
-            ccy_data = pd.DataFrame(data)[['DATE', ccy]]
-            context["table"] = get_html_table(ccy_data.to_json(orient="records"))
-            context["label"] = f"Sales in {ccy}"
-            context["data"] = ccy_data[ccy].to_list()
-            context["labels"] = ccy_data['DATE'].to_list()
-            context["table_heading"] = f"Sales from {start_date} to {end_date} in {ccy}"
+            table_data = pd.DataFrame(data)[df_columns]
+            context["table"] = get_html_table(table_data.to_json(orient="records"))
+            context["datasets"] = []
+            for ccy in currencies:
+                context["datasets"].append({"label": f"Sales in {ccy}", "data": table_data[ccy].to_list(), "color":
+                    CCY_COLORS[ccy]})
+                logging.info(context["datasets"])
+                # context["label"] = f"Sales in {ccy}"
+                # context["data"] = ccy_data[ccy].to_list()
+                context["labels"] = table_data['DATE'].to_list()
+                context["table_heading"] = f"Sales from {start_date} to {end_date}"
 
         else:
             context["error_msg"] = get_error_msg(data)
 
-    return render(request, "date_range.html", context=context)
+        return render(request, "date_range.html", context=context)
