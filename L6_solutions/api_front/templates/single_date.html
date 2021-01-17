@@ -9,8 +9,6 @@
         <div class="alert alert-danger" role="alert">{{ error_msg }}</div>
     {% endif %}
 
-
-
     <section class="jumbotron text-center">
         <div class="container w-50">
             <form method="POST">
@@ -29,14 +27,6 @@
 
                 {% endblock %}
                 {% if available_currencies %}
-                    {#                    <label for="ccy">Currency:</label>#}
-                    {#                    <div class="form-group">#}
-                    {#                        <select class="form-control" id="ccy" name="ccy" required>#}
-                    {#                            {% for ccy in  available_currencies %}#}
-                    {#                                <option>{{ ccy }}</option>#}
-                    {#                            {% endfor %}#}
-                    {#                        </select>#}
-                    {#                    </div>#}
 
                     <script>
                         $(document).ready(function () {
