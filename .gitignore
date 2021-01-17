@@ -1,1 +1,4 @@
 .DS_Store
+.idea
+ConnectionString.txt
+__pycache__
