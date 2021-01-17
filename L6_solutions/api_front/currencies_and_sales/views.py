@@ -143,8 +143,12 @@ def sales_date_range(request):
             context["table"] = get_html_table(table_data.to_json(orient="records"))
             context["datasets"] = []
             for ccy in currencies:
-                context["datasets"].append({"label": f"Sales in {ccy}", "data": table_data[ccy].to_list(), "color":
-                    CCY_COLORS[ccy]})
+                # noinspection PyTypeChecker
+                context["datasets"].append(
+                    {
+                        "label": f"Sales in {ccy}",
+                        "data": table_data[ccy].to_list(),
+                        "color": CCY_COLORS[ccy]})
             logging.info(context["datasets"])
             context["labels"] = table_data['DATE'].to_list()
             context["table_heading"] = f"Sales from {start_date} to {end_date}"
