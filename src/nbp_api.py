@@ -1,108 +1,80 @@
 from datetime import datetime
 from datetime import timedelta
-import requests
 import json
-from keys import *
+import requests
 
-__MAX_DAYS_IN_RANGE = 365
 
-def __generate_url(table, currency, prev_date, today):
-    return f'http://api.nbp.pl/api/exchangerates/rates/{table}/{currency}/{prev_date}/{today}'
+class currency_info:
 
-def __delta_to_ranges(delta):
-    today = datetime.date(datetime.now())
-    previous_date = today - timedelta(days=delta)
-    date_ranges = []
+    COURSE_KEY = 'mid'
+    DATE_KET = 'effectiveDate'
 
-    while (today - previous_date).days > __MAX_DAYS_IN_RANGE:
-        prev = previous_date
-        next_item = previous_date + timedelta(days=__MAX_DAYS_IN_RANGE)
-        date_ranges.append((prev, next_item))
-        previous_date = next_item + timedelta(days=1)
+    def __init__(self, currency: str, nbp_api_dictionary: dict):
+        self.currency = currency
+        self.exchange_rate = nbp_api_dictionary[self.COURSE_KEY]
+        self.date = datetime.strptime(nbp_api_dictionary[self.DATE_KET], nbp_api.DATE_FORMAT)
 
-    date_ranges.append((previous_date, today))
-    return date_ranges
-
-def __convert_array_of_responses(responses):
-    rates = []
-    for response in responses:
-        rates.extend(response[NBP_RATES_OBJECT_KEY])
+    def __str__(self):
+        return f'{self.currency}, {self.date.strftime(nbp_api.DATE_FORMAT)}, {self.exchange_rate}'
     
-    return list(map(lambda elem: {
-            DATE_KEY: datetime.strptime(elem[NBP_DATE_KEY], NBP_DATE_FORMAT),
-            RATE_KEY: elem[NBP_RATE_KEY],
-            INTERPOLATED_KEY: False
-        }, rates))
+    def __repr__(self):
+        return str(self)
 
-def __append_missing_dates(rates, today):
-    i = 0
-    while i < len(rates) :
-        current = rates[i]
-        if i < len(rates) - 1:
-            next_item = rates[i + 1]
+    def toJSON(self):
+        self_json = self.__dict__
+        self_json['date'] = self_json['date'].strftime(nbp_api.DATE_FORMAT)
+        return self_json
 
-            delta = next_item[DATE_KEY] - current[DATE_KEY]
 
-            if delta.days > 1:
-                rates.insert(i + 1, {
-                    DATE_KEY: current[DATE_KEY] + timedelta(days=1),
-                    RATE_KEY: current[RATE_KEY],
-                    INTERPOLATED_KEY: True
-                })
-        elif (today - current[DATE_KEY]).days > 0:
-            rates.append({
-                DATE_KEY: current[DATE_KEY] + timedelta(days=1),
-                RATE_KEY: current[RATE_KEY],
-                INTERPOLATED_KEY: True
-            })
+class nbp_api:
 
-        i += 1
+    DATE_FORMAT = '%Y-%m-%d'
+    MAX_DAYS_IN_RANGE = 365
+    TABLES = ('a', 'b')
 
-    return rates
+    def get_currency_delta(self, currency: str, delta: int, date_to = None):
+        if date_to is None:
+            date_to = datetime.now()
+        delta -= 1
+        date_from = date_to - timedelta(days=delta)
+        return self.get_currency(currency, date_from, date_to)
 
-def __convert_dates_to_string(rates):
-    converted = []
-    for rate in rates:
-        converted.append({
-            DATE_KEY: rate[DATE_KEY].strftime(DATE_FORMAT),
-            RATE_KEY: rate[RATE_KEY],
-            INTERPOLATED_KEY: rate['interpolated']
-        })
-    return converted
+    def get_currency(self, currency: str, date_from, date_to):
+        if(date_from <= date_to):
+            date_ranges = self.date_to_ranges(date_from, date_to)
+            responses = []
+            for date_range in date_ranges:
+                d_from, d_to = date_range
+                for table in self.TABLES:
+                    url = self.generate_url(table, currency, d_from, d_to)
+                    response = requests.get(url)
+                    if response.status_code == 200:
+                        responses.extend(self.parse_response(currency, response))
+            return responses
+        return []
 
-def get_rete_of_currency(currency, delta):
-    if not isinstance(currency, str) or not isinstance(delta, int):
-        raise TypeError('At least one parameter had wrong type')
+    def generate_url(self, table: str, currency: str, date_from: str, date_to: str):
+        return f'http://api.nbp.pl/api/exchangerates/rates/{table}/{currency}/{date_from.strftime(self.DATE_FORMAT)}/{date_to.strftime(self.DATE_FORMAT)}'
 
-    if delta <= 0:
-        raise ValueError('Delta must be posivite')
+    def date_to_ranges(self, date_from, date_to):
+        date_ranges = []
+        while (date_to - date_from).days > self.MAX_DAYS_IN_RANGE:
+            next_item = date_from + timedelta(days=self.MAX_DAYS_IN_RANGE)
+            date_ranges.append((date_from, next_item))
+            date_from = next_item + timedelta(days=1)
+        date_ranges.append((date_from, date_to))
+        return date_ranges
 
-    date_ranges = __delta_to_ranges(delta - 1)
-    responses = []
+    def parse_response(self, currency: str, response):
+        response_json = response.json()
+        return [ currency_info(currency, response_dict) for response_dict in  response_json['rates']]
 
-    for date_range in date_ranges:
-        url_table_a = __generate_url('a', currency, date_range[0], date_range[1])
-        url_table_b = __generate_url('b', currency, date_range[0], date_range[1])
-
-        ra = requests.get(url_table_a)
-        rb = requests.get(url_table_b)
-
-        if ra.status_code == 200:
-            responses.append(json.loads(ra.text))
-        elif rb.status_code == 200:
-            responses.append(json.loads(rb.text))
-
-    final_result = __convert_array_of_responses(responses)
-    __append_missing_dates(final_result, datetime.today())
-    final_result = __convert_dates_to_string(final_result)
-
-    return final_result
 
 if __name__ == '__main__':
-    eur = get_rete_of_currency('eur', 30)
-    usd = get_rete_of_currency('usd', 30)
-    print(len(eur))
-    print(len(usd))
+    api = nbp_api()
+    eur_range = api.get_currency('eur', datetime(2020, 12, 18), datetime(2021, 1, 17))
+    print(eur_range)
+    eur_delta = api.get_currency_delta('eur', 7300)
+    print(eur_delta)
+    # usd = api.get_currency_delta('usd', 30)
 
-    print(json.dumps(eur, indent=4))
-    print(json.dumps(usd, indent=4))

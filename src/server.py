@@ -2,14 +2,17 @@ from flask import Flask, jsonify, abort
 from flask_caching import Cache
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from database import datetime, NoSuchTableError
+from datetime import datetime
 import argparse
+import sqlite3
 
-import database as db
-from keys import *
+from database import database
+from nbp_api import nbp_api
 
-time = 365 * 20
-currencies = ['eur', 'usd', 'gbp']
+TIME = 365 * 20
+
+CURRENCIES = ['eur', 'usd', 'gbp']
+DATE_FORMAT = nbp_api.DATE_FORMAT
 
 app = Flask(__name__)
 config = {
@@ -21,71 +24,71 @@ app.config.from_mapping(config)
 limiter = Limiter(app,key_func=get_remote_address,default_limits=["200 per day", "50 per hour"])
 cache = Cache(app)
 
-def __get_rates_between_handler(currency, begin, end):
-    res = db.get_rates_between(currency, begin, end)
-    if(len(res) > 0):
-        return jsonify(res)
-    else:
-        abort(400, 'Could not find anything in given period')
 
-def __get_rates_last_handler(currency, delta):
-    res = db.get_rates_last(currency, delta)
-    if(len(res) > 0):
-        return jsonify(res)
-    else:
-        abort(500, 'No records in database, sorry for the inconvenience')
+@app.errorhandler(sqlite3.OperationalError)
+def handle_exception(e):
+    return jsonify({'error': 'unsupported currency'}), 400
 
-def __get_sales_between_handler(currency, begin, end):
-    res = db.get_sales_between(currency, begin, end)
-    if(len(res) > 0):
-        return jsonify(res)
-    else:
-        abort(400, 'Could not find anything in given period')
 
-def __error_handler(function, *args):
-    try:
-        return function(*args)
-    except TypeError:
-        abort(400, 'Wrong types of paramters')
-    except ValueError:
-        abort(400, 'Invalid value of parameters')
-    except NoSuchTableError:
-        abort(400, 'Unsupported currency')
+@app.errorhandler(ValueError)
+def handle_exception(e):
+    return jsonify({'error': 'check your input, probably date is in wrong format'}), 400
+
 
 @app.route('/currency/<currency>/time/today')
 @cache.memoize()
 def get_retes_of_currency_from_today(currency):
-    today = datetime.today().strftime(DATE_FORMAT)
-    return __error_handler(__get_rates_between_handler, currency, today, today)
+    today = datetime.today()
+    db = database()
+    return jsonify(db.get_currency_between(currency, today, today))
+
 
 @app.route('/currency/<currency>/time/<day>')
 @cache.cached()
 def get_retes_of_currency_from_given_day(currency, day):
-    return __error_handler(__get_rates_between_handler, currency, day, day)
+    db = database()
+    day_parsed = datetime.strptime(day, DATE_FORMAT)
+    return jsonify(db.get_currency_between(currency, day_parsed, day_parsed))
+
 
 @app.route('/currency/<currency>/time/<begin>/<end>')
 @cache.cached()
 def get_retes_of_currency_between(currency, begin, end):
-    return __error_handler(__get_rates_between_handler, currency, begin, end)
+    db = database()
+    begin_parsed = datetime.strptime(begin, DATE_FORMAT)
+    end_parsed = datetime.strptime(end, DATE_FORMAT)
+    return jsonify(db.get_currency_between(currency, begin_parsed, end_parsed))
+
 
 @app.route('/currency/<currency>/last/<int:days>')
 @cache.cached()
 def get_retes_of_currency_last_days(currency, days):
-    return __error_handler(__get_rates_last_handler, currency, days)
+    db = database()
+    return jsonify(db.get_currency(currency, days))
+
 
 @app.route('/sales/<currency>/time/<day>')
 @cache.cached()
 def get_sales_from_given_day(currency, day):
-    return __error_handler(__get_sales_between_handler, currency, day, day)
+    db = database()
+    day_parsed = datetime.strptime(day, DATE_FORMAT)
+    return jsonify(db.get_sales_between(currency, day_parsed, day_parsed))
+
 
 @app.route('/sales/<currency>/time/<begin>/<end>')
 @cache.cached()
 def get_sales_between(currency, begin, end):
-    return __error_handler(__get_sales_between_handler, currency, begin, end)
+    db = database()
+    begin_parsed = datetime.strptime(begin, DATE_FORMAT)
+    end_parsed = datetime.strptime(end, DATE_FORMAT)
+    return jsonify(db.get_sales_between(currency, begin_parsed, end_parsed))
+
 
 def init_server_database():
-    for currency in currencies:
-        db.create_and_fill_rates_table(currency, time)
+    db = database()
+    for currency in CURRENCIES:
+        db.create_currency_table(currency, TIME)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
