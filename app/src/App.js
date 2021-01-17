@@ -5,12 +5,8 @@ import CardInfo from "./components/cardInfo";
 import CardTable from "./components/cardTable";
 
 function App() {
-  const styles = {
-    paddingTop: "20px",
-  };
-
   return (
-    <body className="body">
+    <div className="body">
       <MyNavBar />
       <div className="container">
         <div className="row">
@@ -24,7 +20,7 @@ function App() {
           </div>
         </div>
       </div>
-    </body>
+    </div>
   );
 }
 

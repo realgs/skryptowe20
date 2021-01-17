@@ -155,13 +155,13 @@ class CardInfo extends Component {
       <div className="card mb-5">
         <div className="card-body">
           {this.mainTitle()}
-          <p className="card-text">
+          <div className="card-text">
             {this.mainGoal()}
             {this.divider()}
             {this.howToUseRates()}
             {this.divider()}
             {this.howToUseSales()}
-          </p>
+          </div>
         </div>
         {this.myFooter()}
       </div>
