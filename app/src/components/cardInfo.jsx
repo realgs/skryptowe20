@@ -15,6 +15,7 @@ class CardInfo extends Component {
       "BOB",
       "KWD",
     ],
+    github: "https://github.com/wasyl078/skryptowe20/tree/L5",
   };
 
   getCurrencies = () => {
@@ -49,11 +50,8 @@ class CardInfo extends Component {
         <br />
         <ol>
           <li>
-            Clone repo from my{" "}
-            <a href="https://github.com/wasyl078/skryptowe20/tree/L5">
-              github page
-            </a>{" "}
-            to your hard drive. <br />
+            Clone repo from my <a href={this.state.github}>github page</a> to
+            your hard drive. <br />
           </li>
           <li>
             {" "}
@@ -82,11 +80,10 @@ class CardInfo extends Component {
         <h4>Exchange Rates API</h4>
         Actually available currencies: {this.getCurrencies()}. These are also
         codes that you are supposed to put as {this.boldIt("code")} argument.
-        Arguments marked as {this.boldIt("single_date")} /{" "}
-        {this.boldIt("from_date")} / {this.boldIt("till_date")} must be
-        formatted as: {this.boldIt("YYYY-MM-DD")} . Data is taken from{" "}
-        <a href="http://api.nbp.pl">NBP Api</a>, so you can request data from{" "}
-        {this.boldIt("2002-01-02")} till today. <br />
+        Arguments marked as {this.boldIt("single_date/from_date/till_date ")}
+        must be formatted as: {this.boldIt("YYYY-MM-DD")}. Data is taken from
+        <a href="http://api.nbp.pl"> NBP Api</a>, so you can request data from
+        {this.boldIt(" 2002-01-02")} till today. <br />
         <br />
         <ul>
           <li>
@@ -141,6 +138,14 @@ class CardInfo extends Component {
     );
   };
 
+  myFooter = () => {
+    return (
+      <div className="card-footer text-muted">
+        More info at my <a href={this.state.github}>github page</a>
+      </div>
+    );
+  };
+
   divider = () => {
     return <hr />;
   };
@@ -158,12 +163,7 @@ class CardInfo extends Component {
             {this.howToUseSales()}
           </p>
         </div>
-        <div className="card-footer text-muted">
-          More info at my{" "}
-          <a href="https://github.com/wasyl078/skryptowe20/tree/L5">
-            github page
-          </a>
-        </div>
+        {this.myFooter()}
       </div>
     );
   }
