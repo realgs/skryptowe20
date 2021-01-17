@@ -1,0 +1,32 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+	</head>
+	<body>
+		<div class="menu">
+			<a class="menu-link" href="#"><div class="menu-item active"><span>Home</span><img src="images/menu/home_enable.png"></div></a>
+			<a class="menu-link" href="#"><div class="menu-item">Sales data<img src="images/menu/sales_disable.png"></div></a>
+			<a class="menu-link" href="#"><div class="menu-item">Exchange rates<img src="images/menu/currency_disable.png"></div></a>
+		</div>
+		<div class="content">
+			<h1>Home</h1>
+			<div class="box">
+				<h2>Store database API support</h2>
+				<span>An application that allows you to download currency rates and the total daily turnover from the store database using the API</span><br><br>
+				<h3>Installation</h3>
+				<h4>Required for the project to run</h4>
+				<span>pyodbc=4.0.30 request=2.25.1 Flask=1.1.2 Flask-RESTful=0.3.8 Flask-Limiter=1.4</span>
+				<h4>Where can I find the source code?</h4>
+				<span>https://github.com/kogol99/skryptowe20/tree/L5/lab5</span><br><br>
+				<h3>Usage</h3>
+				<h4>Useful information</h4>
+				<span>By default, the application starts at: http://127.0.0.1:5000/ Default port: 5000 Date format: YYYY-MM-DD (e.g. 2020-01-01) Currency format: XXX (e.g. USD)</span>
+				<h4>Available API functionalities</h4>
+				<span>Retrieving the exchange rate for a date range<br>
+				.../rates//<date_from>/<date_to><br><br>
+				Daily turnover data download<br>
+				<span>.../turnover//</span>
+			</div>
+		</div>
+	</body>
+</html>
