@@ -13,7 +13,7 @@ BASE_URL_RATES = f"{BASE_URL}/rates/usd"
 DATE_START = "2013-01-01"
 DATE_END = "2014-12-31"
 
-CCY_COLORS = {'PLN': 'grey', 'USD': 'blue'}
+CCY_COLORS = {'PLN': '#a84432', 'USD': '#32a852'}
 
 
 def get_endpoint(request, root_url, date_range=False):
