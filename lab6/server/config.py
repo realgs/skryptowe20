@@ -1,5 +1,5 @@
 DATABASE_FILE_PATH = 'database.sqlite'
-DEBUG_MODE = False  # [True | False]
+DEBUG_MODE = True  # [True | False]
 
 ######## LIMITER #####################
 ENABLE_LIMITER = True  # [True | False]
