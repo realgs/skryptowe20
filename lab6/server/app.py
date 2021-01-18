@@ -10,7 +10,7 @@ from werkzeug.exceptions import InternalServerError
 from sqlite3 import DatabaseError
 
 import datetime as dt
-from typing import Dict, Tuple
+from typing import Any, Dict, List, Tuple
 
 import caching
 import dbhandler
@@ -41,11 +41,6 @@ class NoCurrencyError(Exception):
 
 class InterpolatedParamError(Exception):
     pass
-
-
-class NoSalesError(Exception):
-    pass
-
 
 ############    MISC    ##############
 
@@ -87,6 +82,25 @@ def get_interpolated_param() -> bool:
     except ValueError:
         raise InterpolatedParamError
     return interpolated
+
+
+def get_sales_day(date: dt.date) -> Dict[str, Any]:
+    sales_data: Dict[str, Any] = {}
+
+    if date in precached_sales_sum_org():
+        sales_sum_org = precached_sales_sum_org()[date]
+        sales_sum_exch = precached_sales_sum_exch()[date]['sum']
+        sales_sum_exch_rate = precached_sales_sum_exch()[date]['rate']
+    else:
+        sales_sum_org = 0
+        sales_sum_exch = 0
+        sales_sum_exch_rate = 'N/A'
+
+    sales_data = {'date': date.strftime(DATE_FORMAT),
+                  'original_value': sales_sum_org, 'exchanged_value': sales_sum_exch,
+                  'exchange_rate': sales_sum_exch_rate}
+
+    return sales_data
 
 
 ############    API   #################
@@ -162,11 +176,6 @@ def date_exception_handler(error):
     return {'error': type(error).__name__, 'message': 'Invalid argument value - interpolated should be set as 0 or 1'}, 422
 
 
-@app.errorhandler(NoSalesError)
-def date_exception_handler(error):
-    return {'error': type(error).__name__, 'message': 'There were no sales on given day'}, 422
-
-
 @app.errorhandler(RangeOrderError)
 def date_exception_handler(error):
     return {'error': type(error).__name__, 'message': 'Dates are in wrong order. End date must be after/equal start date.'}, 422
@@ -222,16 +231,27 @@ def get_rates_range(currency_code: str, start_date: str, end_date: str):
 @limiter.limit(GET_SALES_SUM_DAY_LIMIT)
 def get_sales_sum_day(date: str):
     date_obj = convert_to_date(date)
-    if date_obj in precached_sales_sum_org():
-        sales_sum_org = precached_sales_sum_org()[date_obj]
-        sales_sum_exch = precached_sales_sum_exch()[date_obj]['sum']
-        sales_sum_exch_rate = precached_sales_sum_exch()[date_obj]['rate']
+    return jsonify(get_sales_day(date_obj))
 
-        return jsonify({'date': date_obj.strftime(DATE_FORMAT),
-                        'original_value': sales_sum_org, 'exchanged_value': sales_sum_exch,
-                        'exchange_rate': sales_sum_exch_rate})
+
+@app.route('/api/v1/sales/sum/range/<start_date>/<end_date>', methods=['GET'])
+@limiter.limit(GET_SALES_SUM_DAY_LIMIT)
+def get_sales_sum_range(start_date: str, end_date: str):
+    start_date_obj = convert_to_date(start_date)
+    end_date_obj = convert_to_date(end_date)
+    sales: List[Dict[str, Any]] = []
+
+    if end_date_obj < start_date_obj:
+        raise RangeOrderError
+
+    if start_date_obj == end_date_obj:
+        sales.append(get_sales_day(start_date_obj))
     else:
-        raise NoSalesError
+        for x in range((end_date_obj - start_date_obj).days + 1):
+            tmp_date = start_date_obj + dt.timedelta(days=x)
+            sales.append(get_sales_day(tmp_date))
+
+    return jsonify(sales)
 
 
 if __name__ == '__main__':

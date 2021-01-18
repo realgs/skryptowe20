@@ -14,40 +14,50 @@
     />
     <br />
     <br />
-    <h5>3. Potwierdź swój wybór</h5>
+    <h5>2. Potwierdź swój wybór</h5>
     <button type="button" class="btn btn-primary" @click="onApply">
       Potwierdź
     </button>
     <br />
-    <br />
-    <table v-if="showTable" class="table table-hover">
-      <thead>
-        <tr>
-          <th scope="col">Data</th>
-          <th scope="col">Wartość sprzedaży oryginalna [w USD]</th>
-          <th scope="col">Wartość sprzedaży po przeliczeniu [w PLN]</th>
-          <th scope="col">Przelicznik</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(sale, index) in sales" :key="index">
-          <td>{{ sale.date }}</td>
-          <td>{{ sale.original_value }}</td>
-          <td>{{ sale.exchanged_value }}</td>
-          <td>{{ sale.exchange_rate }}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div v-if="showTable" class="chart">
+      <line-chart
+        :chart-data="datacollection"
+        :options="chartOptions"
+      ></line-chart>
+    </div>
+    <div>
+      <table id="table" v-if="showTable" class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Data</th>
+            <th scope="col">Wartość sprzedaży oryginalna [w USD]</th>
+            <th scope="col">Wartość sprzedaży po przeliczeniu [w PLN]</th>
+            <th scope="col">Przelicznik</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(sale, index) in sales" :key="index">
+            <td>{{ sale.date }}</td>
+            <td>{{ sale.original_value }}</td>
+            <td>{{ sale.exchanged_value }}</td>
+            <td>{{ sale.exchange_rate }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <hr />
   </div>
 </template>
 
 <script>
 import VueSlider from 'vue-slider-component';
 import axios from 'axios';
+import LineChart from './LineChart';
 
 export default {
   components: {
     VueSlider,
+    LineChart,
   },
   data() {
     return {
@@ -62,36 +72,44 @@ export default {
       },
       showTable: false,
       sales: [],
+      datacollection: null,
+      chartOptions: {
+        responsive: true,
+        maintainAspectRatio: false,
+      },
     };
   },
   methods: {
-    onApply() {
-      this.getSales(this.value[0], this.value[1]);
+    async onApply() {
+      await this.getSales(this.value[0], this.value[1]);
       this.showTable = true;
+      this.fillData();
+    },
+    fillData() {
+      this.datacollection = {
+        labels: this.sales.map((a) => a.date),
+        datasets: [
+          {
+            label: 'Sprzedaż w USD',
+            backgroundColor: '#f87900',
+            data: this.sales.map((a) => a.original_value),
+          },
+          {
+            label: 'Sprzedaż w PLN',
+            backgroundColor: '#f87979',
+            data: this.sales.map((a) => a.exchanged_value),
+          },
+        ],
+      };
     },
     getSales(firstDay, lastDay) {
-      this.sales = [];
-      for (let i = firstDay - 1; i < lastDay; i += 1) {
-        const datetime = `2017-10-${i + 1}`;
-        const path = `http://localhost:5000/api/v1/sales/sum/${datetime}`;
-        axios
-          .get(path)
-          .then((res) => {
-            this.sales.push(res.data);
-          })
-          .catch((error) => {
-            this.sales.push({
-              date: datetime,
-              original_value: 'NO SALES',
-              exchanged_value: 'NO SALES',
-              exchange_rate: '',
-            });
-            // eslint-disable-next-line
-            console.error(error);
-          });
-        // eslint-disable-next-line
-        console.info(this.sales);
-      }
+      const startDate = `2017-10-${firstDay}`;
+      const endDate = `2017-10-${lastDay}`;
+
+      const path = `http://localhost:5000/api/v1/sales/sum/range/${startDate}/${endDate}`;
+      return axios.get(path).then((res) => {
+        this.sales = res.data;
+      });
     },
   },
 };
