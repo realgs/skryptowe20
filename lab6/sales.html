@@ -7,17 +7,37 @@
 	<body>
 		<div class="menu">
 			<a class="menu-link" href="index.html"><div class="menu-item"><span>Home</span><img src="images/menu/home_disable.png"></div></a>
-			<a class="menu-link" href="sales.html"><div class="menu-item">Sales data<img src="images/menu/sales_disable.png"></div></a>
-			<a class="menu-link" href="rates.html"><div class="menu-item active">Exchange rates<img src="images/menu/currency_enable.png"></div></a>
+			<a class="menu-link" href="sales.html"><div class="menu-item active">Sales data<img src="images/menu/sales_enable.png"></div></a>
+			<a class="menu-link" href="rates.html"><div class="menu-item">Exchange rates<img src="images/menu/currency_disable.png"></div></a>
 		</div>
 		<div class="content">
-			<h1>Exchange rates</h1>
+			<h1>Sales data</h1>
 			<div class="box">
-				<a class="section-title">Generating USD -> PLN rates data</a>
-				<a class="input-signature">Date from</a>
-				<input type="date" id="date_start" name="date_from" min="2011-10-01" max="2014-05-28">
-				<a class="input-signature">Date to</a>
-				<input type="date" id="date_stop" name="date_to" min="2011-10-01" max="2014-05-28">
+				<a class="section-title">Sales values expressed in two currencies</a>
+				<a class="input-signature">Date</a>
+				<input type="date" id="date_start" name="date" min="2011-10-01" max="2014-05-28">
+				<a class="input-signature">Currency</a>
+				<select name="currency" id="idCurrency">
+				  <option value="AUD">AUD</option>
+				  <option value="BYN">BYN</option>
+				  <option value="BGN">BGN</option>
+				  <option value="HRK">HRK</option>
+				  <option value="DKK">DKK</option>
+				  <option value="JPY">JPY</option>
+				  <option value="CAD">CAD</option>
+				  <option value="NOK">NOK</option>
+				  <option value="CZK">CZK</option>
+				  <option value="RUB">RUB</option>
+				  <option value="RON">RON</option>
+				  <option value="PLN">PLN</option>
+				  <option value="CHF">CHF</option>
+				  <option value="SEK">SEK</option>
+				  <option value="TRY">TRY</option>
+				  <option value="EUR">EUR</option>
+				  <option value="UAH">UAH</option>
+				  <option value="HUF">HUF</option>
+				  <option value="GBP">GBP</option>
+				</select>
 				<input type="submit" id="sub" name="submit_button" class="date-button" value="Generate">
 				<div id="error_message"></div>
 			</div>
@@ -39,24 +59,17 @@
 		}
 
 		function generateData() {
-			var date_from = document.getElementById("date_start").value;
-			var date_to = document.getElementById("date_stop").value;
+			var date = document.getElementById("date_start").value;
+			var currency = document.getElementById("idCurrency").value;
 			var data_is_correct = true;
 			document.getElementById("error_message").innerHTML = ""
-			if (date_from == "") {
+			if (date == "") {
 				data_is_correct = false;
 				showErrorMessage('Enter a valid start date.<br>', "error_message")
 			}
-			if (date_to == "") {
-				data_is_correct = false;
-				showErrorMessage('Enter a valid stop date.<br>', "error_message")
-			}
-			if (date_to < date_from && date_from != "" && date_to != "") {
-				data_is_correct = false;
-				showErrorMessage('"date from" must be earlier than "date to"<br>', "error_message")
-			}
 			if (data_is_correct) {
-				var api_url = "http://127.0.0.1:5000/rates/pln/" + date_from + "/" + date_to; 
+			http://127.0.0.1:5000/turnover/2011-11-01/pln
+				var api_url = "http://127.0.0.1:5000/turnover/" + date + "/" + currency; 
 				var apiData = getapi(api_url); 
 				
 				left_div = document.createElement("div");
@@ -72,7 +85,7 @@
 				right_div = document.createElement("div");
 				right_div.setAttribute("class", "box-right");
 				right_div.setAttribute("id", "box-right");
-				right_div.innerHTML = '<canvas id="myChart" width="400" height="400"></canvas>';
+				right_div.innerHTML = '<canvas id="myChart" width="400" height="200"></canvas>';
 				document.getElementById("data").appendChild(right_div);
 				
 				document.getElementById("error_message").innerHTML = ""
@@ -88,10 +101,10 @@
 		}
 
 		function show(data) { 
-			let tab =  "<thead><tr><th>Date</th><th>Middle rate</th><th>Is interpolated</th></tr></thead>";
+			let tab =  "<thead><tr><th>Currency</th><th>Value</th></tr></thead>";
 			var mid_rates_tab_two = [];
-			for (let r of data["result"]["rates"]) {
-				tab += '<tr><td>' + r["date"] + '</td><td>' + r["mid_rate"] + '</td><td>' + r["is_interpolated"] + '</td></tr>'; 
+			for (let r of data["result"]["turnover"]) {
+				tab += '<tr><td>' + r["currency"] + '</td><td>' + r["value"] + '</td></tr>'; 
 				mid_rates_tab_two.push(r["mid_rate"]);
 			}
 			document.getElementById("rates_table").innerHTML = tab; 
@@ -108,12 +121,10 @@
 					datasets: [{
 						label: 'Exchange rate',
 						data: dataFromChart[1],
-						backgroundColor: function(context) {
-							var index = context.dataIndex;
-							var value = dataFromChart[2][index]
-							return value == true ? '#FC6749' :
-								'#0c9';
-						}
+						backgroundColor: [
+							'rgba(255, 99, 132, 0.2)',
+							'rgba(54, 162, 235, 0.2)'
+						]
 					}]
 				},
 				options: {
@@ -130,29 +141,25 @@
 					
 		
 		function saveToChart(data) {
-			var date = [];
-			for (let r of data["result"]["rates"]) {
-				date.push(r["date"]);
+			var currency = [];
+			for (let r of data["result"]["turnover"]) {
+				currency.push(r["currency"]);
 			}
-			var mid_rates = [];
-			for (let r of data["result"]["rates"]) {
-				mid_rates.push(r["mid_rate"]);
-			}
-			var is_interpolated = [];
-			for (let r of data["result"]["rates"]) {
-				is_interpolated.push(r["is_interpolated"]);
+			var value = [];
+			for (let r of data["result"]["turnover"]) {
+				value.push(r["value"]);
 			}
 			
-			var table = [date, mid_rates, is_interpolated]
+			var table = [currency, value]
 			return table;
 		}
 		
 		function getApiDate(data) {
-			var dates = [];
-			for (let r of data["result"]["rates"]) {
-				dates.push(r["date"]);
+			var turnovers = [];
+			for (let r of data["result"]["turnover"]) {
+				turnovers.push(r["date"]);
 			}
-			return dates;
+			return turnovers;
 		}
 		</script>
 	</body>
