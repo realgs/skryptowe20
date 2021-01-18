@@ -19,7 +19,7 @@
       Potwierdź
     </button>
     <br />
-    <div v-if="showTable" class="chart">
+    <div v-if="showChart" class="chart">
       <line-chart
         :chart-data="datacollection"
         :options="chartOptions"
@@ -71,6 +71,7 @@ export default {
         31: '2017-10-31',
       },
       showTable: false,
+      showChart: false,
       sales: [],
       datacollection: null,
       chartOptions: {
@@ -82,8 +83,9 @@ export default {
   methods: {
     async onApply() {
       await this.getSales(this.value[0], this.value[1]);
-      this.showTable = true;
       this.fillData();
+      this.showChart = this.sales.length > 1;
+      this.showTable = true;
     },
     fillData() {
       this.datacollection = {
@@ -91,12 +93,12 @@ export default {
         datasets: [
           {
             label: 'Sprzedaż w USD',
-            backgroundColor: '#f87900',
+            backgroundColor: '#3f9ecc',
             data: this.sales.map((a) => a.original_value),
           },
           {
             label: 'Sprzedaż w PLN',
-            backgroundColor: '#f87979',
+            backgroundColor: '#7fc8eb',
             data: this.sales.map((a) => a.exchanged_value),
           },
         ],
@@ -118,5 +120,8 @@ export default {
 <style scoped>
 #currencySelect {
   max-width: 15em;
+}
+#table {
+  margin-top: 10px;
 }
 </style>

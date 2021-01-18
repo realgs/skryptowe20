@@ -30,6 +30,12 @@
     </button>
     <br />
     <br />
+    <div v-if="showChart" class="chart">
+      <line-chart
+        :chart-data="datacollection"
+        :options="chartOptions"
+      ></line-chart>
+    </div>
     <table v-if="showTable" class="table table-hover">
       <thead>
         <tr>
@@ -54,11 +60,13 @@
 import VueSlider from 'vue-slider-component';
 import vSelect from 'vue-select';
 import axios from 'axios';
+import LineChart from './LineChart';
 
 export default {
   components: {
     VueSlider,
     vSelect,
+    LineChart,
   },
   data() {
     return {
@@ -72,6 +80,7 @@ export default {
         31: '2020-10-31',
       },
       showTable: false,
+      showChart: false,
       currencies: [
         { code: 'USD', name: 'Dolar amerykański' },
         { code: 'EUR', name: 'Euro' },
@@ -85,16 +94,23 @@ export default {
       ],
       selectedCurr: 'USD',
       rates: [],
+      datacollection: null,
+      chartOptions: {
+        responsive: true,
+        maintainAspectRatio: false,
+      },
     };
   },
   methods: {
-    onApply() {
-      this.getRates(this.value[0], this.value[1], this.selectedCurr);
+    async onApply() {
+      await this.getRates(this.value[0], this.value[1], this.selectedCurr);
+      this.fillData();
+      this.showChart = this.rates.length > 1;
       this.showTable = true;
     },
     getRates(firstDay, lastDay, code) {
       const path = `http://localhost:5000/api/v1/rates/${code}/range/2020-10-${firstDay}/2020-10-${lastDay}?interpolated=1`;
-      axios
+      return axios
         .get(path)
         .then((res) => {
           this.rates = res.data;
@@ -103,6 +119,18 @@ export default {
           // eslint-disable-next-line
           console.error(error);
         });
+    },
+    fillData() {
+      this.datacollection = {
+        labels: this.rates.map((a) => a.date),
+        datasets: [
+          {
+            label: `Notowania ${this.selectedCurr}`,
+            backgroundColor: '#3f9ecc',
+            data: this.rates.map((a) => a.rate),
+          },
+        ],
+      };
     },
   },
 };
