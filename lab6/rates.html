@@ -24,7 +24,6 @@
 		</div>
 		<div class="content" id="data">
 		</div>
-		<script src="script.js"></script> 
 		<script>
 		document.getElementById("sub").onclick = function() {generateData()};
 		 
@@ -33,40 +32,42 @@
 			  .then(response => response.json())
 			  .then(data => run(data));
 		}
+		
+		function run(data) {
+			show(data);
+			createChart(data);
+		}
 
 		function generateData() {
 			var date_from = document.getElementById("date_start").value;
-			console.log(date_from);
 			var date_to = document.getElementById("date_stop").value;
-			console.log(date_to);
 			var data_is_correct = true;
+			document.getElementById("error_message").innerHTML = ""
 			if (date_from == "") {
 				data_is_correct = false;
-				theKid = document.createElement("a");
-				theKid.style.color = "#FC6749";
-				theKid.innerHTML = 'Enter a valid start date.<br>';
-				document.getElementById("error_message").appendChild(theKid);
+				showErrorMessage('Enter a valid start date.<br>', "error_message")
 			}
 			if (date_to == "") {
 				data_is_correct = false;
-				theKid = document.createElement("a");
-				theKid.style.color = "#FC6749";
-				theKid.innerHTML = 'Enter a valid stop date.<br>';
-				document.getElementById("error_message").appendChild(theKid);
+				showErrorMessage('Enter a valid stop date.<br>', "error_message")
+			}
+			if (date_to < date_from && date_from != "" && date_to != "") {
+				data_is_correct = false;
+				showErrorMessage('"date from" must be earlier than "date to"<br>', "error_message")
 			}
 			if (data_is_correct) {
 				var api_url = "http://127.0.0.1:5000/rates/pln/" + date_from + "/" + date_to; 
 				var apiData = getapi(api_url); 
+				
 				left_div = document.createElement("div");
 				left_div.setAttribute("class", "box-left");
 				left_div.setAttribute("id", "box-left");
-				console.log(left_div);
 				currency_data_table = document.createElement("table");
 				currency_data_table.setAttribute("id", "rates_table");
-				console.log(left_div);
 				document.getElementById("data").innerHTML = "";
 				document.getElementById("data").appendChild(left_div);
 				document.getElementById("box-left").appendChild(currency_data_table);
+				document.getElementById("rates_table").innerHTML = apiData["result"];	
 				
 				right_div = document.createElement("div");
 				right_div.setAttribute("class", "box-right");
@@ -74,16 +75,18 @@
 				right_div.innerHTML = '<canvas id="myChart" width="400" height="400"></canvas>';
 				document.getElementById("data").appendChild(right_div);
 				
-				document.getElementById("rates_table").innerHTML = apiData["result"];	
 				document.getElementById("error_message").innerHTML = ""
 			}
 		}
 		
-		function run(data) {
-			show(data);
-			createChart(data);
+		function showErrorMessage(content_to_display, who_display) {
+			new_element = document.createElement("a");
+			new_element.style.color = "#FC6749";
+			new_element.innerHTML = content_to_display;
+			document.getElementById(who_display).appendChild(new_element);
+			document.getElementById("data").innerHTML = "";
 		}
-		
+
 		function show(data) { 
 			let tab =  "<thead><tr><th>Date</th><th>Middle rate</th><th>Is interpolated</th></tr></thead>";
 			var mid_rates_tab_two = [];
@@ -101,13 +104,13 @@
 			var myChart = new Chart(ctx, {
 				type: 'bar',
 				data: {
-					labels: dateDataFromChart,
+					labels: dataFromChart[0],
 					datasets: [{
 						label: 'Exchange rate',
-						data: dataFromChart[0],
+						data: dataFromChart[1],
 						backgroundColor: function(context) {
 							var index = context.dataIndex;
-							var value = dataFromChart[1][index]
+							var value = dataFromChart[2][index]
 							return value == true ? '#FC6749' :
 								'#0c9';
 						}
@@ -127,6 +130,10 @@
 					
 		
 		function saveToChart(data) {
+			var date = [];
+			for (let r of data["result"]["rates"]) {
+				date.push(r["date"]);
+			}
 			var mid_rates = [];
 			for (let r of data["result"]["rates"]) {
 				mid_rates.push(r["mid_rate"]);
@@ -135,7 +142,8 @@
 			for (let r of data["result"]["rates"]) {
 				is_interpolated.push(r["is_interpolated"]);
 			}
-			var table = [mid_rates, is_interpolated]
+			
+			var table = [date, mid_rates, is_interpolated]
 			return table;
 		}
 		
