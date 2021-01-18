@@ -53,6 +53,7 @@
 import VueSlider from 'vue-slider-component';
 import axios from 'axios';
 import LineChart from './LineChart';
+import config from '../config';
 
 export default {
   components: {
@@ -108,7 +109,7 @@ export default {
       const startDate = `2017-10-${firstDay}`;
       const endDate = `2017-10-${lastDay}`;
 
-      const path = `http://localhost:5000/api/v1/sales/sum/range/${startDate}/${endDate}`;
+      const path = `http://${config.backendAddress}:5000/api/v1/sales/sum/range/${startDate}/${endDate}`;
       return axios.get(path).then((res) => {
         this.sales = res.data;
       });

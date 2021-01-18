@@ -1,6 +1,6 @@
 DATABASE_FILE_PATH = 'database.sqlite'
 DEBUG_MODE = True  # [True | False]
-FRONT_ADDRESS = '127.0.0.1'
+FRONT_ADDRESS = 'localhost'
 
 ######## LIMITER #####################
 ENABLE_LIMITER = True  # [True | False]

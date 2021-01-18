@@ -61,6 +61,7 @@ import VueSlider from 'vue-slider-component';
 import vSelect from 'vue-select';
 import axios from 'axios';
 import LineChart from './LineChart';
+import config from '../config';
 
 export default {
   components: {
@@ -109,7 +110,7 @@ export default {
       this.showTable = true;
     },
     getRates(firstDay, lastDay, code) {
-      const path = `http://localhost:5000/api/v1/rates/${code}/range/2020-10-${firstDay}/2020-10-${lastDay}?interpolated=1`;
+      const path = `http://${config.backendAddress}:5000/api/v1/rates/${code}/range/2020-10-${firstDay}/2020-10-${lastDay}?interpolated=1`;
       return axios
         .get(path)
         .then((res) => {
