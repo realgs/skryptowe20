@@ -11,19 +11,19 @@ Zanim uruchomi się aplikację powinno się ją najpierw skonfigurować. Aby to 
 1. W terminalu przejdź do folderu projektu:
 
 ```
-$ cd lab6-api/
+$ cd lab6/
 ```
 
 2. Uruchom serwer frontendu:
 
 ```
-$ cd client
+$ cd client/
 $ npm run serve
 ```
 
 3. Uruchom serwer backendu:
 
 ```
- $ cd server
+ $ cd server/
  $ flask run
 ```

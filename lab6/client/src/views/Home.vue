@@ -396,7 +396,7 @@
         <tr>
           <th>Nazwa <code>error</code></th>
           <th style="text-align: left">Wiadomość <code>message</code></th>
-          <th style="text-align: right">Kod HTML</th>
+          <th style="text-align: right">Kod HTTP</th>
         </tr>
       </thead>
       <tbody>
