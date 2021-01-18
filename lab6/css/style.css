@@ -145,7 +145,6 @@ body {
     box-shadow: 0 25px 50px rgba(8,21,66,.06);
 	width: 46%;
 	display: inline-block;
-	margin-top: 50px;
 }
 
 .content .box-right {
@@ -163,7 +162,7 @@ body {
 	width: 46%;
 	display: inline-block;
 	float: right;
-	margin-top: 50px;
+	margin-bottom: 50px;
 }
 
 .content .box-left table {

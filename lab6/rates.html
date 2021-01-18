@@ -12,7 +12,6 @@
 		</div>
 		<div class="content">
 			<h1>Sales data</h1>
-			<table id="employees"></table> 
 			<div class="box">
 				<a class="section-title">Generating USD -> PLN rates data</a>
 				<a class="input-signature">Date from</a>
@@ -22,121 +21,131 @@
 				<input type="submit" id="sub" name="submit_button" class="date-button" value="Generate">
 				<div id="error_message"></div>
 			</div>
-			<div class="box-left">
-				<table id = "rates_table"></table>
-			</div>
-			<div class="box-right">
-
-				<canvas id="myChart" width="400" height="400"></canvas>
-				<script src="script.js"></script> 
-				<script>
-				document.getElementById("sub").onclick = function() {generateData()};
-				 
-				async function getapi(url) { 
-					fetch(url)
-					  .then(response => response.json())
-					  .then(data => run(data));
-				}
-
-				function generateData() {
-					var date_from = document.getElementById("date_start").value;
-					console.log(date_from);
-					var date_to = document.getElementById("date_stop").value;
-					console.log(date_to);
-					var data_is_correct = true;
-					if (date_from == "") {
-						data_is_correct = false;
-						theKid = document.createElement("a");
-						theKid.style.color = "#FC6749";
-						theKid.innerHTML = 'Enter a valid start date.<br>';
-						document.getElementById("error_message").appendChild(theKid);
-					}
-					if (date_to == "") {
-						data_is_correct = false;
-						theKid = document.createElement("a");
-						theKid.style.color = "#FC6749";
-						theKid.innerHTML = 'Enter a valid stop date.<br>';
-						document.getElementById("error_message").appendChild(theKid);
-					}
-					if (data_is_correct) {
-						var api_url = "http://127.0.0.1:5000/rates/pln/" + date_from + "/" + date_to; 
-						var apiData = getapi(api_url); 
-						document.getElementById("rates_table").innerHTML = apiData["result"];	
-						document.getElementById("error_message").innerHTML = ""
-					}
-				}
-				
-				function run(data) {
-					show(data);
-					createChart(data);
-				}
-				
-				function show(data) { 
-					let tab =  "<thead><tr><th>Date</th><th>Middle rate</th><th>Is interpolated</th></tr></thead>";
-					var mid_rates_tab_two = [];
-					for (let r of data["result"]["rates"]) {
-						tab += '<tr><td>' + r["date"] + '</td><td>' + r["mid_rate"] + '</td><td>' + r["is_interpolated"] + '</td></tr>'; 
-						mid_rates_tab_two.push(r["mid_rate"]);
-					}
-					document.getElementById("rates_table").innerHTML = tab; 
-				}
-				
-				function createChart(data) {
-					var dataFromChart = saveToChart(data);
-					var dateDataFromChart = getApiDate(data);
-					var ctx = document.getElementById('myChart').getContext('2d');
-					var myChart = new Chart(ctx, {
-						type: 'bar',
-						data: {
-							labels: dateDataFromChart,
-							datasets: [{
-								label: 'Exchange rate',
-								data: dataFromChart[0],
-								backgroundColor: function(context) {
-									var index = context.dataIndex;
-									var value = dataFromChart[1][index]
-									return value == true ? '#FC6749' :
-										'#0c9';
-								}
-							}]
-						},
-						options: {
-							scales: {
-								yAxes: [{
-									ticks: {
-										beginAtZero: false
-									}
-								}]
-							}
-						}
-					})
-				}
-							
-				
-				function saveToChart(data) {
-					var mid_rates = [];
-					for (let r of data["result"]["rates"]) {
-						mid_rates.push(r["mid_rate"]);
-					}
-					var is_interpolated = [];
-					for (let r of data["result"]["rates"]) {
-						is_interpolated.push(r["is_interpolated"]);
-					}
-					var table = [mid_rates, is_interpolated]
-					return table;
-				}
-				
-				function getApiDate(data) {
-					var dates = [];
-					for (let r of data["result"]["rates"]) {
-						dates.push(r["date"]);
-					}
-					return dates;
-				}
-				</script>
-				
-
-			</div>
 		</div>
+		<div class="content" id="data">
+		</div>
+		<script src="script.js"></script> 
+		<script>
+		document.getElementById("sub").onclick = function() {generateData()};
+		 
+		async function getapi(url) { 
+			fetch(url)
+			  .then(response => response.json())
+			  .then(data => run(data));
+		}
+
+		function generateData() {
+			var date_from = document.getElementById("date_start").value;
+			console.log(date_from);
+			var date_to = document.getElementById("date_stop").value;
+			console.log(date_to);
+			var data_is_correct = true;
+			if (date_from == "") {
+				data_is_correct = false;
+				theKid = document.createElement("a");
+				theKid.style.color = "#FC6749";
+				theKid.innerHTML = 'Enter a valid start date.<br>';
+				document.getElementById("error_message").appendChild(theKid);
+			}
+			if (date_to == "") {
+				data_is_correct = false;
+				theKid = document.createElement("a");
+				theKid.style.color = "#FC6749";
+				theKid.innerHTML = 'Enter a valid stop date.<br>';
+				document.getElementById("error_message").appendChild(theKid);
+			}
+			if (data_is_correct) {
+				var api_url = "http://127.0.0.1:5000/rates/pln/" + date_from + "/" + date_to; 
+				var apiData = getapi(api_url); 
+				left_div = document.createElement("div");
+				left_div.setAttribute("class", "box-left");
+				left_div.setAttribute("id", "box-left");
+				console.log(left_div);
+				currency_data_table = document.createElement("table");
+				currency_data_table.setAttribute("id", "rates_table");
+				console.log(left_div);
+				document.getElementById("data").innerHTML = "";
+				document.getElementById("data").appendChild(left_div);
+				document.getElementById("box-left").appendChild(currency_data_table);
+				
+				right_div = document.createElement("div");
+				right_div.setAttribute("class", "box-right");
+				right_div.setAttribute("id", "box-right");
+				right_div.innerHTML = '<canvas id="myChart" width="400" height="400"></canvas>';
+				document.getElementById("data").appendChild(right_div);
+				
+				document.getElementById("rates_table").innerHTML = apiData["result"];	
+				document.getElementById("error_message").innerHTML = ""
+			}
+		}
+		
+		function run(data) {
+			show(data);
+			createChart(data);
+		}
+		
+		function show(data) { 
+			let tab =  "<thead><tr><th>Date</th><th>Middle rate</th><th>Is interpolated</th></tr></thead>";
+			var mid_rates_tab_two = [];
+			for (let r of data["result"]["rates"]) {
+				tab += '<tr><td>' + r["date"] + '</td><td>' + r["mid_rate"] + '</td><td>' + r["is_interpolated"] + '</td></tr>'; 
+				mid_rates_tab_two.push(r["mid_rate"]);
+			}
+			document.getElementById("rates_table").innerHTML = tab; 
+		}
+		
+		function createChart(data) {
+			var dataFromChart = saveToChart(data);
+			var dateDataFromChart = getApiDate(data);
+			var ctx = document.getElementById('myChart').getContext('2d');
+			var myChart = new Chart(ctx, {
+				type: 'bar',
+				data: {
+					labels: dateDataFromChart,
+					datasets: [{
+						label: 'Exchange rate',
+						data: dataFromChart[0],
+						backgroundColor: function(context) {
+							var index = context.dataIndex;
+							var value = dataFromChart[1][index]
+							return value == true ? '#FC6749' :
+								'#0c9';
+						}
+					}]
+				},
+				options: {
+					scales: {
+						yAxes: [{
+							ticks: {
+								beginAtZero: false
+							}
+						}]
+					}
+				}
+			})
+		}
+					
+		
+		function saveToChart(data) {
+			var mid_rates = [];
+			for (let r of data["result"]["rates"]) {
+				mid_rates.push(r["mid_rate"]);
+			}
+			var is_interpolated = [];
+			for (let r of data["result"]["rates"]) {
+				is_interpolated.push(r["is_interpolated"]);
+			}
+			var table = [mid_rates, is_interpolated]
+			return table;
+		}
+		
+		function getApiDate(data) {
+			var dates = [];
+			for (let r of data["result"]["rates"]) {
+				dates.push(r["date"]);
+			}
+			return dates;
+		}
+		</script>
 	</body>
 </html>
