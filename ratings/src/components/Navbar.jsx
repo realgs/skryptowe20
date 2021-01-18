@@ -182,9 +182,7 @@ const Navbar = () => {
   return (
     <StyledHeader id="navbar">
       <StyledNav>
-        <HomeLink to="/" className="home-link">
-          Website Name
-        </HomeLink>
+        <HomeLink to="/">Website Name</HomeLink>
         <StyledButton
           type="button"
           className="navbar-toggle"
@@ -196,17 +194,17 @@ const Navbar = () => {
         </StyledButton>
         <NavbarMenu className="navbar-menu">
           <NavbarLinks className="navbar-links">
-            <NavbarItem className="navbar-item">
+            <NavbarItem>
               <NavbarLink className="navbar-link" to="/">
                 Home
               </NavbarLink>
             </NavbarItem>
-            <NavbarItem className="navbar-item">
+            <NavbarItem>
               <NavbarLink className="navbar-link" to="/about">
                 About
               </NavbarLink>
             </NavbarItem>
-            <NavbarItem className="navbar-item">
+            <NavbarItem>
               <NavbarLink className="navbar-link" to="/users">
                 Users
               </NavbarLink>
