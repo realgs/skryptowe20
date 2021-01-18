@@ -220,8 +220,3 @@ def plot_sale_time_frame(currency_code, date_from, date_to):
     plt.show()
     if PLOT_SAVE:
         plt.savefig('sales.svg')
-
-
-if __name__ == '__main__':
-    # create_rates_table()
-    pass

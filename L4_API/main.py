@@ -1,7 +1,7 @@
 import L4_API.api_handler as api_hdl
 import L4_API.db_handler as db_hdl
 
-CURRENCIES = ['USD', 'EUR']
+CURRENCIES = ['USD', 'EUR', 'GBP', 'CHF']
 YEAR = 365
 
 
@@ -34,13 +34,5 @@ def add_rates_to_db(currency_code, date_from, date_to):
 
 
 if __name__ == '__main__':
-    rates, dates = get_rates_from_last_days('USD', 1)
-    print(rates)
-    print(dates)
-
-    # add_rates_to_db(CURRENCIES[0], '2009-01-02', '2014-12-31')
-    # for currency in CURRENCIES:
-    #     print(get_rates(currency, YEAR // 2))
-    #
-    # plot_rates(CURRENCIES, YEAR // 2)
-    # plot_sales('USD', '2011-01-01', '2011-12-31')
+    plot_rates(CURRENCIES, YEAR // 2)
+    plot_sales('USD', '2011-01-01', '2011-12-31')

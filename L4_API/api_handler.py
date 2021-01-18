@@ -63,7 +63,7 @@ def currency_rates_and_dates_time_frame(currency_code, date_from, date_to):
 
         _fill_in_missing_rates(rates, dates)
 
-        return rates, dates
+    return rates, dates
 
 
 def currency_rates_and_dates_from_last_days(currency_code, days):
@@ -95,19 +95,6 @@ def _currency_get_last_known_rate(currency_code, table, date):
         date = date - timedelta(days=1)
 
     return rate
-
-
-def _are_dates(date_from, date_to):
-    try:
-        datetime.strptime(date_from, '%Y-%m-%d')
-        datetime.strptime(date_to, '%Y-%m-%d')
-    except ValueError:
-        return False
-
-    if date_from > date_to:
-        return False
-
-    return True
 
 
 def _split_time_frame(date_from, date_to):
@@ -171,6 +158,19 @@ def _check_table(currency_code, table):
             return True
 
     return False
+
+
+def _are_dates(date_from, date_to):
+    try:
+        datetime.strptime(date_from, '%Y-%m-%d')
+        datetime.strptime(date_to, '%Y-%m-%d')
+    except ValueError:
+        return False
+
+    if date_from > date_to:
+        return False
+
+    return True
 
 
 def plot(currencies, days):
