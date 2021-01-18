@@ -14,8 +14,11 @@
 			<h1>Sales data</h1>
 			<div class="box">
 				<a class="section-title">Sales value in USD and the selected currency</a>
-				<a class="input-signature">Date</a>
+				<a style="padding-bottom:10px;display:block;">If you would like to know the currency rate from one day, just enter "date from"</a>
+				<a class="input-signature">Date from</a>
 				<input type="date" id="date_start" name="date" min="2011-10-01" max="2014-05-28">
+				<a class="input-signature">Date to</a>
+				<input type="date" id="date_stop" name="date" min="2011-10-01" max="2014-05-28">
 				<a class="input-signature">Currency</a>
 				<select name="currency" id="idCurrency">
 				  <option value="AUD">AUD</option>
@@ -59,17 +62,24 @@
 		}
 
 		function generateData() {
-			var date = document.getElementById("date_start").value;
+			var date_start = document.getElementById("date_start").value;
+			var date_stop = document.getElementById("date_stop").value;
 			var currency = document.getElementById("idCurrency").value;
 			var data_is_correct = true;
 			document.getElementById("error_message").innerHTML = ""
-			if (date == "") {
+			if (date_start == "") {
 				data_is_correct = false;
 				showErrorMessage('Enter a valid start date.<br>', "error_message")
 			}
+			if (date_stop == "") {
+				date_stop = date_start
+			}
+			if (date_stop < date_start && date_start != "" && date_stop != "") {
+				data_is_correct = false;
+				showErrorMessage('"date from" must be earlier than "date to"<br>', "error_message")
+			}
 			if (data_is_correct) {
-			http://127.0.0.1:5000/turnover/2011-11-01/pln
-				var api_url = "http://127.0.0.1:5000/turnover/" + date + "/" + currency; 
+				var api_url = "http://127.0.0.1:5000/turnover/" + currency + "/" + date_start + "/" + date_stop; 
 				var apiData = getapi(api_url); 
 				
 				left_div = document.createElement("div");
@@ -101,37 +111,39 @@
 		}
 
 		function show(data) { 
-			let tab =  "<thead><tr><th>Currency</th><th>Value</th></tr></thead>";
-			var mid_rates_tab_two = [];
-			for (let r of data["result"]["turnover"]) {
-				tab += '<tr><td>' + r["currency"] + '</td><td>' + r["value"] + '</td></tr>'; 
-				mid_rates_tab_two.push(r["mid_rate"]);
+			let tab =  "<thead><tr><th>Date</th><th>USD</th></th><th>" + document.getElementById("idCurrency").value + "</th></tr></thead>";
+			var dataFromChart = saveToChart(data);
+			var i;
+			for (i = 0; i < dataFromChart[0].length; i++) {
+				tab += '<tr><td>' + dataFromChart[2][i] + '</td><td>' + dataFromChart[0][i] + '</td><td>' + dataFromChart[1][i] + '</td></tr>'; 
 			}
 			document.getElementById("rates_table").innerHTML = tab; 
 		}
 		
 		function createChart(data) {
 			var dataFromChart = saveToChart(data);
-			var dateDataFromChart = getApiDate(data);
 			var ctx = document.getElementById('myChart').getContext('2d');
+			var other_currency = document.getElementById("idCurrency").value;
 			var myChart = new Chart(ctx, {
 				type: 'bar',
 				data: {
-					labels: dataFromChart[0],
+					labels: dataFromChart[2],
 					datasets: [{
-						label: 'Total turnover',
+						label: 'USD',
+						data: dataFromChart[0],
+						backgroundColor: 'rgba(255, 99, 132, 0.8)'
+					},{
+						label: other_currency,
+						
 						data: dataFromChart[1],
-						backgroundColor: [
-							'rgba(255, 99, 132, 0.2)',
-							'rgba(54, 162, 235, 0.2)'
-						]
+						backgroundColor: 'rgba(54, 162, 235, 0.8)'
 					}]
 				},
 				options: {
 					scales: {
 						yAxes: [{
 							ticks: {
-								beginAtZero: false
+								beginAtZero: true
 							}
 						}]
 					}
@@ -141,25 +153,22 @@
 					
 		
 		function saveToChart(data) {
-			var currency = [];
+			var usdValue = [];
 			for (let r of data["result"]["turnover"]) {
-				currency.push(r["currency"]);
+				usdValue.push(r[0]["value"]);
 			}
-			var value = [];
+			var otherCurrenctValue = [];
 			for (let r of data["result"]["turnover"]) {
-				value.push(r["value"]);
+				otherCurrenctValue.push(r[1]["value"]);
 			}
 			
-			var table = [currency, value]
-			return table;
-		}
-		
-		function getApiDate(data) {
-			var turnovers = [];
+			var dateTable = [];
 			for (let r of data["result"]["turnover"]) {
-				turnovers.push(r["date"]);
+				dateTable.push(r[0]["date"]);
 			}
-			return turnovers;
+			
+			var table = [usdValue, otherCurrenctValue, dateTable]
+			return table;
 		}
 		</script>
 	</body>

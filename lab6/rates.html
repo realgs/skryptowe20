@@ -14,6 +14,7 @@
 			<h1>Exchange rates</h1>
 			<div class="box">
 				<a class="section-title">Generating USD -> PLN rates data</a>
+				<a style="padding-bottom:10px;display:block;">If you would like to know the currency rate from one day, just enter "date from"</a>
 				<a class="input-signature">Date from</a>
 				<input type="date" id="date_start" name="date_from" min="2011-10-01" max="2014-05-28">
 				<a class="input-signature">Date to</a>
@@ -48,14 +49,14 @@
 				showErrorMessage('Enter a valid start date.<br>', "error_message")
 			}
 			if (date_to == "") {
-				data_is_correct = false;
-				showErrorMessage('Enter a valid stop date.<br>', "error_message")
+				date_to = date_from
 			}
 			if (date_to < date_from && date_from != "" && date_to != "") {
 				data_is_correct = false;
 				showErrorMessage('"date from" must be earlier than "date to"<br>', "error_message")
 			}
 			if (data_is_correct) {
+				console.log()
 				var api_url = "http://127.0.0.1:5000/rates/pln/" + date_from + "/" + date_to; 
 				var apiData = getapi(api_url); 
 				
@@ -112,7 +113,7 @@
 							var index = context.dataIndex;
 							var value = dataFromChart[2][index]
 							return value == true ? '#FC6749' :
-								'#0c9';
+								'#0C9';
 						}
 					}]
 				},
@@ -120,7 +121,7 @@
 					scales: {
 						yAxes: [{
 							ticks: {
-								beginAtZero: false
+								beginAtZero: true
 							}
 						}]
 					}
