@@ -13,7 +13,7 @@
 		<div class="content">
 			<h1>Sales data</h1>
 			<div class="box">
-				<a class="section-title">Sales values expressed in two currencies</a>
+				<a class="section-title">Sales value in USD and the selected currency</a>
 				<a class="input-signature">Date</a>
 				<input type="date" id="date_start" name="date" min="2011-10-01" max="2014-05-28">
 				<a class="input-signature">Currency</a>
@@ -119,7 +119,7 @@
 				data: {
 					labels: dataFromChart[0],
 					datasets: [{
-						label: 'Exchange rate',
+						label: 'Total turnover',
 						data: dataFromChart[1],
 						backgroundColor: [
 							'rgba(255, 99, 132, 0.2)',
