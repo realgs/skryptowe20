@@ -1,0 +1,175 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<script src="dist/Chart.js"></script>
+
+	</head>
+	<body>
+		<div class="menu">
+			<a class="menu-link" href="index.html"><div class="menu-item"><span>Home</span><img src="images/menu/home_disable.png"></div></a>
+			<a class="menu-link" href="sales.html"><div class="menu-item active">Sales data<img src="images/menu/sales_enable.png"></div></a>
+			<a class="menu-link" href="rates.html"><div class="menu-item">Exchange rates<img src="images/menu/currency_disable.png"></div></a>
+		</div>
+		<div class="content">
+			<h1>Sales data</h1>
+			<div class="box">
+				<a class="section-title">Sales value in USD and the selected currency</a>
+				<a style="padding-bottom:10px;display:block;">If you would like to know the currency rate from one day, just enter "date from"</a>
+				<a class="input-signature">Date from</a>
+				<input type="date" id="date_start" name="date" min="2011-10-01" max="2014-05-28">
+				<a class="input-signature">Date to</a>
+				<input type="date" id="date_stop" name="date" min="2011-10-01" max="2014-05-28">
+				<a class="input-signature">Currency</a>
+				<select name="currency" id="idCurrency">
+				  <option value="AUD">AUD</option>
+				  <option value="BYN">BYN</option>
+				  <option value="BGN">BGN</option>
+				  <option value="HRK">HRK</option>
+				  <option value="DKK">DKK</option>
+				  <option value="JPY">JPY</option>
+				  <option value="CAD">CAD</option>
+				  <option value="NOK">NOK</option>
+				  <option value="CZK">CZK</option>
+				  <option value="RUB">RUB</option>
+				  <option value="RON">RON</option>
+				  <option value="PLN">PLN</option>
+				  <option value="CHF">CHF</option>
+				  <option value="SEK">SEK</option>
+				  <option value="TRY">TRY</option>
+				  <option value="EUR">EUR</option>
+				  <option value="UAH">UAH</option>
+				  <option value="HUF">HUF</option>
+				  <option value="GBP">GBP</option>
+				</select>
+				<input type="submit" id="sub" name="submit_button" class="date-button" value="Generate">
+				<div id="error_message"></div>
+			</div>
+		</div>
+		<div class="content" id="data">
+		</div>
+		<script>
+		document.getElementById("sub").onclick = function() {generateData()};
+		 
+		async function getapi(url) { 
+			fetch(url)
+			  .then(response => response.json())
+			  .then(data => run(data));
+		}
+		
+		function run(data) {
+			show(data);
+			createChart(data);
+		}
+
+		function generateData() {
+			var date_start = document.getElementById("date_start").value;
+			var date_stop = document.getElementById("date_stop").value;
+			var currency = document.getElementById("idCurrency").value;
+			var data_is_correct = true;
+			document.getElementById("error_message").innerHTML = ""
+			if (date_start == "") {
+				data_is_correct = false;
+				showErrorMessage('Enter a valid start date.<br>', "error_message")
+			}
+			if (date_stop == "") {
+				date_stop = date_start
+			}
+			if (date_stop < date_start && date_start != "" && date_stop != "") {
+				data_is_correct = false;
+				showErrorMessage('"date from" must be earlier than "date to"<br>', "error_message")
+			}
+			if (data_is_correct) {
+				var api_url = "http://127.0.0.1:5000/turnover/" + currency + "/" + date_start + "/" + date_stop; 
+				var apiData = getapi(api_url); 
+				
+				left_div = document.createElement("div");
+				left_div.setAttribute("class", "box-left");
+				left_div.setAttribute("id", "box-left");
+				currency_data_table = document.createElement("table");
+				currency_data_table.setAttribute("id", "rates_table");
+				document.getElementById("data").innerHTML = "";
+				document.getElementById("data").appendChild(left_div);
+				document.getElementById("box-left").appendChild(currency_data_table);
+				document.getElementById("rates_table").innerHTML = apiData["result"];	
+				
+				right_div = document.createElement("div");
+				right_div.setAttribute("class", "box-right");
+				right_div.setAttribute("id", "box-right");
+				right_div.innerHTML = '<canvas id="myChart" width="400" height="200"></canvas>';
+				document.getElementById("data").appendChild(right_div);
+				
+				document.getElementById("error_message").innerHTML = ""
+			}
+		}
+		
+		function showErrorMessage(content_to_display, who_display) {
+			new_element = document.createElement("a");
+			new_element.style.color = "#FC6749";
+			new_element.innerHTML = content_to_display;
+			document.getElementById(who_display).appendChild(new_element);
+			document.getElementById("data").innerHTML = "";
+		}
+
+		function show(data) { 
+			let tab =  "<thead><tr><th>Date</th><th>USD</th></th><th>" + document.getElementById("idCurrency").value + "</th></tr></thead>";
+			var dataFromChart = saveToChart(data);
+			var i;
+			for (i = 0; i < dataFromChart[0].length; i++) {
+				tab += '<tr><td>' + dataFromChart[2][i] + '</td><td>' + dataFromChart[0][i] + '</td><td>' + dataFromChart[1][i] + '</td></tr>'; 
+			}
+			document.getElementById("rates_table").innerHTML = tab; 
+		}
+		
+		function createChart(data) {
+			var dataFromChart = saveToChart(data);
+			var ctx = document.getElementById('myChart').getContext('2d');
+			var other_currency = document.getElementById("idCurrency").value;
+			var myChart = new Chart(ctx, {
+				type: 'bar',
+				data: {
+					labels: dataFromChart[2],
+					datasets: [{
+						label: 'USD',
+						data: dataFromChart[0],
+						backgroundColor: 'rgba(255, 99, 132, 0.8)'
+					},{
+						label: other_currency,
+						
+						data: dataFromChart[1],
+						backgroundColor: 'rgba(54, 162, 235, 0.8)'
+					}]
+				},
+				options: {
+					scales: {
+						yAxes: [{
+							ticks: {
+								beginAtZero: true
+							}
+						}]
+					}
+				}
+			})
+		}
+					
+		
+		function saveToChart(data) {
+			var usdValue = [];
+			for (let r of data["result"]["turnover"]) {
+				usdValue.push(r[0]["value"]);
+			}
+			var otherCurrenctValue = [];
+			for (let r of data["result"]["turnover"]) {
+				otherCurrenctValue.push(r[1]["value"]);
+			}
+			
+			var dateTable = [];
+			for (let r of data["result"]["turnover"]) {
+				dateTable.push(r[0]["date"]);
+			}
+			
+			var table = [usdValue, otherCurrenctValue, dateTable]
+			return table;
+		}
+		</script>
+	</body>
+</html>
