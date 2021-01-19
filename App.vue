@@ -43,11 +43,10 @@
 
 <script>
 
+
 export default {
   name: 'App',
-  components: {
-
-  }
+  components: {}
 }
 
 </script>
@@ -58,8 +57,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 20px;
+  color: #e7e7e7;
 }
 
 .menu {
@@ -68,21 +66,21 @@ export default {
   justify-content: space-around;
 }
 
-.menu-item{
+.menu-item {
   flex: 1;
   text-align: center;
 }
 
-.menu-text{
-  color: #373737;
+.menu-text {
+  color: #c1c1c1;
   font-size: 21px;
   padding: 10px;
-  border-bottom: 7px solid #eeeeee;
+  border-bottom: 7px solid #5d5d5d;
   width: fit-content;
 }
 
 .menu-text:hover {
-  border-bottom: 7px solid #737373;
+  border-bottom: 7px solid #dedede;
 }
 
 .routerlink {
@@ -92,7 +90,74 @@ export default {
 .siteContent {
   background-color: #f3f3f3;
   margin: 20px;
-
 }
+
+.searchButton {
+  background-color: transparent;
+  color: #e3e3e3;
+  font-size: 20px;
+  border: 2px solid #e7e7e7;
+}
+
+.searchButton:hover {
+  background-color: #e3e3e3;
+  color: #232323;
+  border: 2px solid #e7e7e7;
+  cursor: pointer;
+}
+
+.searchButton:focus {
+  outline: 0;
+}
+
+tr:hover {
+  background-color: #3b3b3b;
+}
+
+.dataTable {
+  background-color: #232323;
+  margin: 20px;
+  table-layout: fixed;
+  width: 40%;
+  border: 1px #1e1e1e;
+}
+
+tr td {
+  padding: 3%;
+  width: 27%;
+  display: inline-block;
+}
+
+tr {
+  width: 100%;
+  display: inline-block;
+}
+
+select {
+  background: #232323;
+  font-size: 21px;
+  color: #e7e7e7;
+  border: 2px solid #e7e7e7;
+}
+
+select:focus {
+  outline: 0;
+}
+
+input[type="date"] {
+  background: #232323;
+  font-size: 18px;
+  color: #e7e7e7;
+  border: 2px solid;
+}
+
+input[type="date"]:focus {
+  outline: 0;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  background-color: #e7e7e7;
+}
+
 
 </style>
