@@ -63,9 +63,6 @@ export default {
       list: undefined
     }
   },
-  mounted() {
-    document.getElementById("currencyDate").value
-  },
   methods: {
     searchApiRate: function () {
       const selectedDate = document.getElementById("currencyDate").value;

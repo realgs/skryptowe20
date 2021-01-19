@@ -54,8 +54,43 @@
 </template>
 
 <script>
+import Vue from "vue";
+
 export default {
-name: "Rates"
+  name: "Rates",
+  data() {
+    return {
+      list: undefined
+    }
+  },
+  methods: {
+    searchApiRate: function () {
+      const selectedDateFrom = document.getElementById("currencyDateFrom").value;
+      const selectedDateTo = document.getElementById("currencyDateTo").value;
+      const selectElement = document.getElementById("currency");
+      const selectedCurrency = selectElement.options[selectElement.selectedIndex].text;
+
+      if (selectedDateFrom !== "" && selectedDateTo !== "") {
+        Vue.axios.get('http://127.0.0.1:5000/currency-rates/' +
+            selectedCurrency + '/' + selectedDateFrom + '/' + selectedDateTo)
+            .then((resp) => {
+              this.list = resp.data.rates
+              this.changeErrorText('')
+            })
+            .catch(error => {
+              this.list = undefined
+              this.changeErrorText(error.response.data.message)
+            })
+      } else {
+        this.changeErrorText('Please select a date')
+      }
+    },
+
+    changeErrorText: function (text) {
+      const errorText = document.getElementById("errorLabel");
+      errorText.innerText = text
+    }
+  }
 }
 </script>
 

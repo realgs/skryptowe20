@@ -80,7 +80,7 @@ export default {
 }
 
 .menu-text:hover {
-  border-bottom: 7px solid #dedede;
+  border-bottom: 7px solid #f1f1f1;
 }
 
 .routerlink {
@@ -110,16 +110,12 @@ export default {
   outline: 0;
 }
 
-tr:hover {
-  background-color: #3b3b3b;
-}
-
 .dataTable {
   background-color: #232323;
   margin: 20px;
   table-layout: fixed;
   width: 40%;
-  border: 1px #1e1e1e;
+  border: 0;
 }
 
 tr td {
@@ -133,11 +129,16 @@ tr {
   display: inline-block;
 }
 
+tr:hover {
+  background-color: #3b3b3b;
+}
+
 select {
   background: #232323;
   font-size: 21px;
   color: #e7e7e7;
   border: 2px solid #e7e7e7;
+  cursor: pointer;
 }
 
 select:focus {
