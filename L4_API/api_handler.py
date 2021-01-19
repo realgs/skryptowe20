@@ -13,8 +13,8 @@ PLOT_BOTTOM_POS = 0.2
 PLOT_MARGIN = 0.01
 PLOT_TICKS_DAY_INTERVAL = 10
 PLOT_TICKS_MINOR_X_INTERVAL = 180
-PLOT_TICKS_Y_INTERVAL = 10
-PLOT_TICKS_MINOR_Y_INTERVAL = 100
+PLOT_TICKS_Y_INTERVAL = 0.1
+PLOT_TICKS_MINOR_Y_INTERVAL = 0.01
 PLOT_GRID_LW = 0.25
 PLOT_SAVE = False
 
@@ -34,6 +34,8 @@ def currency_rates_and_dates_time_frame(currency_code, date_from, date_to):
     time_frames = _split_time_frame(date_from, date_to)
 
     for frame in time_frames:
+        frame_dates = []
+        frame_rates = []
         date_from, date_to = frame
         request = _get_rates_request(currency_code, table, date_from, date_to)
 
@@ -41,27 +43,22 @@ def currency_rates_and_dates_time_frame(currency_code, date_from, date_to):
             data = request.json()['rates']
             n = len(data)
 
-            if data[0]['effectiveDate'] != date_from:
-                rates.append(_currency_get_last_known_rate(currency_code, table, date_from))
-                dates.append(date_from)
-
             for i in range(n):
-                rates.append(float(data[i]['mid']))
-                dates.append(data[i]['effectiveDate'])
+                frame_rates.append(float(data[i]['mid']))
+                frame_dates.append(data[i]['effectiveDate'])
 
-            if dates[-1] != date_to:
-                rates.append(_currency_get_last_known_rate(currency_code, table, date_to))
-                dates.append(date_to)
+        if not frame_dates or frame_dates[0] != date_from:
+            frame_rates.insert(0, _currency_get_last_known_rate(currency_code, table, date_from))
+            frame_dates.insert(0, date_from)
 
-        else:
-            rates.append(_currency_get_last_known_rate(currency_code, table, date_from))
-            dates.append(date_from)
+        if date_from != date_to and frame_dates[-1] != date_to:
+            frame_rates.append(_currency_get_last_known_rate(currency_code, table, date_to))
+            frame_dates.append(date_to)
 
-            if date_from != date_to:
-                rates.append(_currency_get_last_known_rate(currency_code, table, date_to))
-                dates.append(date_to)
+        _fill_in_missing_rates(frame_rates, frame_dates)
 
-        _fill_in_missing_rates(rates, dates)
+        rates += frame_rates
+        dates += frame_dates
 
     return rates, dates
 
@@ -219,8 +216,8 @@ def plot(currencies, days):
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
     ax.xaxis.set_major_locator(mdates.DayLocator(interval=delta_days // min(PLOT_TICKS_DAY_INTERVAL, delta_days)))
     ax.xaxis.set_minor_locator(mdates.DayLocator(interval=delta_days // min(PLOT_TICKS_MINOR_X_INTERVAL, delta_days)))
-    ax.yaxis.set_major_locator(ticker.MultipleLocator(round(delta_y / PLOT_TICKS_Y_INTERVAL, 1)))
-    ax.yaxis.set_minor_locator(ticker.MultipleLocator(delta_y / PLOT_TICKS_MINOR_Y_INTERVAL))
+    ax.yaxis.set_major_locator(ticker.MultipleLocator(PLOT_TICKS_Y_INTERVAL))
+    ax.yaxis.set_minor_locator(ticker.MultipleLocator(PLOT_TICKS_MINOR_Y_INTERVAL))
     fig.autofmt_xdate()
 
     plt.show()

@@ -73,6 +73,21 @@ class TestApiMethods(unittest.TestCase):
         self.assertEqual(len(rates), 1)
         self.assertEqual(len(dates), 1)
 
+    def test_one_day_interpolated(self):
+        rates, dates = currency_rates_and_dates_time_frame('USD', '2020-01-01', '2020-01-01')
+        self.assertEqual(len(rates), 1)
+        self.assertEqual(dates, ['2020-01-01'])
+
+    def test_weekend_interpolated(self):
+        rates, dates = currency_rates_and_dates_time_frame('USD', '2020-01-09', '2020-01-10')
+        self.assertEqual(len(rates), 2)
+        self.assertEqual(dates, ['2020-01-09', '2020-01-10'])
+
+    def test_one_day(self):
+        rates, dates = currency_rates_and_dates_time_frame('USD', '2020-01-12', '2020-01-12')
+        self.assertEqual(len(rates), 1)
+        self.assertEqual(dates, ['2020-01-12'])
+
 
 class TestDbMethods(unittest.TestCase):
 

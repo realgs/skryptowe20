@@ -1,7 +1,7 @@
 import L4_API.api_handler as api_hdl
 import L4_API.db_handler as db_hdl
 
-CURRENCIES = ['USD', 'EUR', 'GBP', 'CHF']
+CURRENCIES = ['USD', 'EUR', 'CHF']
 YEAR = 365
 
 
