@@ -9,6 +9,7 @@ import InfoModal from "./Common/InfoModal";
 class App extends Component {
   state = {
     showModal: false,
+    label: "",
     labels: [],
     data: [],
     modalTitle: "",
@@ -88,7 +89,8 @@ class App extends Component {
     if (result !== undefined) {
       const labels = result.map((e) => e.date);
       const data = result.map((e) => e.exchange_rate);
-      this.setState({ labels, data });
+      console.log(labels, data);
+      this.setState({ labels, data, label: "Exchange rates" });
     }
   };
 
@@ -96,6 +98,9 @@ class App extends Component {
     const result = await this.fetchApi("sales", currency, from, to);
     if (result !== undefined) {
       console.log(result);
+      const labels = result.map((e) => e.date);
+      const data = result.map((e) => e.requested);
+      this.setState({ labels, data, label: "Sales" });
     }
   };
 
@@ -120,6 +125,7 @@ class App extends Component {
                   data={this.state.data}
                   fetchCurrency={this.fetchCurrency}
                   fetchSales={this.fetchSales}
+                  label={this.state.label}
                 />
               )}
             />
@@ -131,6 +137,7 @@ class App extends Component {
                   data={this.state.data}
                   fetchCurrency={this.fetchCurrency}
                   fetchSales={this.fetchSales}
+                  label={this.state.label}
                 />
               )}
             />

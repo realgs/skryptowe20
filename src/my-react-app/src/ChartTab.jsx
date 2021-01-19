@@ -3,6 +3,17 @@ import ApiForm from "./Common/ApiForm";
 import Chart from "./Chart/Chart";
 
 class ChartsTab extends Component {
+  optionalChart() {
+    if (this.props.data.length > 0) {
+      return (
+        <Chart
+          labels={this.props.labels}
+          label={this.props.label}
+          data={this.props.data}
+        />
+      );
+    }
+  }
   render() {
     return (
       <React.Fragment>
@@ -10,7 +21,7 @@ class ChartsTab extends Component {
           fetchSales={this.props.fetchSales}
           fetchCurrency={this.props.fetchCurrency}
         />
-        <Chart labels={this.props.labels} data={this.props.data} />
+        {this.optionalChart()}
       </React.Fragment>
     );
   }

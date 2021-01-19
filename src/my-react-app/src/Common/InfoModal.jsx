@@ -3,7 +3,6 @@ import { Modal, Button } from "react-bootstrap";
 
 class InfoModal extends Component {
   render() {
-    console.log(this.props.text, this.props.title);
     return (
       <Modal show={this.props.show} onHide={this.props.closeModal}>
         <Modal.Header closeButton>

@@ -21,6 +21,7 @@ class ApiForm extends Component {
       this.props.fetchSales(currency, from, to);
     }
 
+    event.stopPropagation();
     event.preventDefault();
   };
 
@@ -28,6 +29,7 @@ class ApiForm extends Component {
     return (
       <React.Fragment>
         <Form
+          className="mb-5"
           noValidate
           validated={this.state.validated}
           onSubmit={this.handleSubmit}
