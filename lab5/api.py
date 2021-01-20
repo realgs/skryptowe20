@@ -1,13 +1,16 @@
 import flask
-from flask import jsonify
+from flask import render_template, request, json
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from datetime import datetime, timedelta
+
 import db
 
 DATABASE = r"C:\Users\Patrycja\Desktop\5 semestr\Języki skryptowe\salesData.db"
 MINDATE = '2013-01-04'
 MAXDATE = '2016-12-29'
+CURRENCIES = ["USD", "PLN"]
+DATA_TYPES = ["Rates", "Sales"]
 SALES_LAST_CACHED = datetime.now()
 
 app = flask.Flask(__name__)
@@ -24,9 +27,36 @@ SALES = []
 
 @app.route('/', methods=['GET'])
 def home():
-    return "<h1>Lab 5</h1>" \
-           "<p>This site is an API for getting historical currency ratings from NBP API " \
-           "completed with data for missing ratings. You can also access total sales data from my database</p>"
+    return render_template("main-page.html")
+
+
+@app.route('/select', methods=['GET'])
+def select_gui():
+    context = {'min_date': MINDATE, 'max_date': MAXDATE, 'currencies': CURRENCIES,
+               'data_types': DATA_TYPES}
+    return render_template("select-page.html", data=context)
+
+
+@app.route('/select/data', methods=['get'])
+def return_data():
+    args = request.args
+    data_type = args['dataType']
+    currency = args['currency']
+    start_date = args['startDate']
+    end_date = args['endDate']
+    missing_data, result_data = process_data(data_type, currency, start_date, end_date)
+    if data_type == 'Rates':
+        if len(end_date) != 0 and not missing_data:
+            chart_data = get_rates_chart_data(result_data)
+            return render_template("rates-page.html", missing_data=missing_data, currency=currency, data=result_data,
+                                   chart_data=chart_data)
+        return render_template("rates-page.html", missing_data=missing_data, currency=currency, data=result_data)
+    else:
+        if len(end_date) != 0 and not missing_data:
+            chart_data = get_sales_chart_data(result_data, currency, start_date, end_date)
+            return render_template("sales-page.html", missing_data=missing_data, currency=currency, data=result_data,
+                                   chart_data=chart_data)
+        return render_template("sales-page.html", missing_data=missing_data, currency=currency, data=result_data)
 
 
 @app.route('/api/rates/USD/<date>', methods=['GET'])
@@ -39,7 +69,7 @@ def api_rates_usd_date(date):
         result = db.get_rate(conn, date)
     if len(result) == 0:
         return 'ERROR: No data found'
-    return jsonify(result)
+    return json.dumps(result)
 
 
 @app.route('/api/rates/PLN/<date>', methods=['GET'])
@@ -55,7 +85,7 @@ def api_rates_pln_date(date):
         elem['Value'] = val
     if len(result) == 0:
         return 'ERROR: No data found'
-    return jsonify(result)
+    return json.dumps(result)
 
 
 @app.route('/api/rates/USD/<startdate>/<enddate>', methods=['GET'])
@@ -72,7 +102,7 @@ def api_rates_usd_timespan(startdate, enddate):
     conn = db.create_connection()
     with conn:
         result = db.get_multiple_rates(conn, startdate, enddate)
-    return jsonify(result)
+    return json.dumps(result)
 
 
 @app.route('/api/rates/PLN/<startdate>/<enddate>', methods=['GET'])
@@ -92,7 +122,7 @@ def api_rates_pln_timespan(startdate, enddate):
     for elem in result:
         val = 1 / elem['Value']
         elem['Value'] = val
-    return jsonify(result)
+    return json.dumps(result)
 
 
 @app.route('/api/sales/<date>', methods=['GET'])
@@ -101,7 +131,7 @@ def api_sales(date):
     if date < MINDATE or date > MAXDATE:
         return 'ERROR: Given date is outside of supported range. ' \
                'Supported dates are from {} to {}'.format(MINDATE, MAXDATE)
-    if len(SALES) == 0 or SALES_LAST_CACHED <= datetime.now()-timedelta(hours=24):
+    if len(SALES) == 0 or SALES_LAST_CACHED <= datetime.now() - timedelta(hours=24):
         SALES.clear()
         print('Fetching sales data...')
         conn = db.create_connection()
@@ -117,7 +147,7 @@ def api_sales(date):
             result.append(elem)
     if len(result) == 0:
         return 'ERROR: No data found. Sales on given day totalled 0'
-    return jsonify(result)
+    return json.dumps(result)
 
 
 @app.route('/api/sales/<startdate>/<enddate>', methods=['GET'])
@@ -132,7 +162,7 @@ def api_sales_timespan(startdate, enddate):
         startdate = MINDATE
     if enddate > MAXDATE:
         enddate = MAXDATE
-    if len(SALES) == 0 or SALES_LAST_CACHED <= datetime.now()-timedelta(hours=24):
+    if len(SALES) == 0 or SALES_LAST_CACHED <= datetime.now() - timedelta(hours=24):
         SALES.clear()
         print('Fetching sales data...')
         conn = db.create_connection()
@@ -148,7 +178,72 @@ def api_sales_timespan(startdate, enddate):
             result.append(elem)
     if len(result) == 0:
         return 'ERROR: No data found. Sales on given days totalled 0'
-    return jsonify(result)
+    return json.dumps(result)
+
+
+def process_data(data_type, currency, start_date, end_date):
+    missing_data = False
+    if data_type == 'Rates':
+        if len(end_date) == 0:
+            if currency == 'USD':
+                temp_result = api_rates_usd_date(start_date)
+            else:
+                temp_result = api_rates_pln_date(start_date)
+        else:
+            if currency == 'USD':
+                temp_result = api_rates_usd_timespan(start_date, end_date)
+            else:
+                temp_result = api_rates_pln_timespan(start_date, end_date)
+        if temp_result.find("ERROR") != -1:
+            result_data = []
+            missing_data = True
+        else:
+            result_data = json.loads(temp_result)
+    else:
+        if len(end_date) == 0:
+            temp_result = api_sales(start_date)
+        else:
+            temp_result = api_sales_timespan(start_date, end_date)
+        if temp_result.find("ERROR") != -1:
+            result_data = []
+            missing_data = True
+        else:
+            result_data = json.loads(temp_result)
+    return missing_data, result_data
+
+
+def get_rates_chart_data(result_data):
+    dates = []
+    values = []
+    for item in result_data:
+        dates.append(item["Date"])
+        values.append(item["Value"])
+    return dates, values
+
+
+def get_sales_chart_data(result_data, currency, start_date, end_date):
+    dates = []
+    values = []
+    temp_data = {}
+    sdate = datetime.strptime(start_date, '%Y-%m-%d')
+    edate = datetime.strptime(end_date, '%Y-%m-%d')
+    delta = edate - sdate
+    for i in range(delta.days + 1):
+        dates.append(datetime.strftime(sdate + timedelta(days=i), '%Y-%m-%d'))
+
+    for item in result_data:
+        if currency == 'USD':
+            temp_data[item["Date"]] = item["Sales"]
+        else:
+            temp_data[item["Date"]] = item["SalesPLN"]
+
+    for singe_date in dates:
+        temp_val = temp_data.get(singe_date)
+        if temp_val is None:
+            values.append(0)
+        else:
+            values.append(temp_val)
+    return dates, values
 
 
 app.run()
