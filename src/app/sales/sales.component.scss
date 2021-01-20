@@ -1,0 +1,30 @@
+.place-items {
+    display: flex;
+    background-color: white;
+    justify-content: center;
+    padding-top: 20px;
+}
+
+th{
+    background-color: black;
+    color: white;
+}
+
+.center{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-content: space-between;
+    color: black;
+    font-weight: 500;
+}
+
+P{
+    width: 100px;
+    text-align: center;
+}
+
+.chart-container{
+    width: 1000px !important;
+    height: 600px !important;
+}

@@ -1,0 +1,48 @@
+<div class="place-items">
+    <mat-form-field appearance="fill">
+        <mat-label>Choose a date</mat-label>
+        <input  matInput [formControl]="date" [matDatepickerFilter]="myFilter" [matDatepicker]="picker"  [min]="MIN_START_DATE"  [max]="MAX_END_DATE">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker [startAt]="MIN_START_DATE"></mat-datepicker>
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="getSaleData()" [disabled]="date.invalid" style="height: 51px; margin-left: 30px;">Submit</button> 
+    </div>
+    
+<mat-card *ngIf="saleData != undefined " style="    border: 1px solid black; margin-top: 20px;">
+ <div class="center">
+<p>
+Date
+</p>
+<p>
+Usd amount 
+</p>
+<p>
+Pln amount
+</p>
+ </div>
+ <div class="center">
+  <p>
+  {{saleData.date}}
+  </p>
+  <p>
+    {{saleData.usdAmount}}
+  </p>
+  <p>
+    {{saleData.plnAmount}}
+  </p>
+   </div>
+
+  </mat-card>
+
+<div  class="chart-container" *ngIf="saleData != undefined ">
+  <canvas baseChart 
+  [datasets]="barChartData"
+  [labels]="barChartLabels"
+  [options]="barChartOptions"
+  [plugins]="barChartPlugins"
+  [legend]="barChartLegend"
+  [chartType]="barChartType">
+</canvas>
+</div>
+
+
