@@ -11,8 +11,11 @@ def home(request):
 
 
 def request_builder(request):
-    return show_exchange_rates(request, datetime.date(year=2009, month=2, day=2),
-                               datetime.date(year=2009, month=5, day=24), 'USD')
+    return show_sales(request, datetime.date(year=2009, month=10, day=10), datetime.date(year=2010, month=1, day=10))
+
+
+# return show_exchange_rates(request, datetime.date(year=2009, month=2, day=2),
+#                          datetime.date(year=2009, month=5, day=24), 'USD')
 
 
 def show_exchange_rates(request, start_date, end_date, currency_code):
@@ -28,6 +31,18 @@ def show_exchange_rates(request, start_date, end_date, currency_code):
                            'other_currency_code': other_currency_code,
                            'start_date': start_date_string,
                            'end_date': end_date_string,
+                           })
+
+
+def show_sales(request, start_date, end_date):
+    start_date_string = __format_date(start_date)
+    end_date_string = __format_date(end_date)
+    request_url = 'http://127.0.0.1:5000/api/sales/{0}/{1}/'.format(start_date_string, end_date_string)
+    response = requests.get(request_url)
+    return render(request, "interface_app/display_sales.html",
+                  context={'sales_json': response.json(),
+                           'start_date': start_date_string,
+                           'end_date': end_date_string
                            })
 
 

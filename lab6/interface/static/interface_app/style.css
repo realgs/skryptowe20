@@ -7,18 +7,6 @@ table {
     font-size: 40px;
 }
 
-thead th:nth-child(1) {
-    width: 35%;
-}
-
-thead th:nth-child(2) {
-    width: 35%;
-}
-
-thead th:nth-child(3) {
-    width: 30%;
-}
-
 tbody td {
     text-align: center;
 }
