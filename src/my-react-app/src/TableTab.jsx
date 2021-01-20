@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import ApiForm from "./Common/ApiForm";
 import { Table } from "react-bootstrap";
 
 class TableTab extends Component {
@@ -30,10 +29,6 @@ class TableTab extends Component {
     console.log(this.props.data, this.props.labels);
     return (
       <React.Fragment>
-        <ApiForm
-          fetchSales={this.props.fetchSales}
-          fetchCurrency={this.props.fetchCurrency}
-        />
         {this.optionalTable()}
       </React.Fragment>
     );

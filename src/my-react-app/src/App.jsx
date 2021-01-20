@@ -1,10 +1,11 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import WebsiteNavigation from "./WebsiteNavigation";
 import AboutTab from "./AboutTab";
 import ChartTab from "./ChartTab";
 import TableTab from "./TableTab";
 import InfoModal from "./Common/InfoModal";
+import ApiForm from "./Common/ApiForm";
 
 class App extends Component {
   state = {
@@ -16,20 +17,23 @@ class App extends Component {
     modalText: "",
   };
 
-  editModal = (show, title, text) => {
+  showError = (show, title, text) => {
     this.setState({
       showModal: show,
       modalTitle: title,
       modalText: text,
+      labels: [],
+      data: [],
+      label: "",
     });
   };
 
   closeModal = () => {
-    this.editModal(false, "", "");
+    this.showError(false, "", "");
   };
 
   handleBadInput = () => {
-    this.editModal(
+    this.showError(
       true,
       "Not enought parameter",
       "You forgot to fill all form inputs, try again!"
@@ -37,7 +41,7 @@ class App extends Component {
   };
 
   handleBadRequest = () => {
-    this.editModal(
+    this.showError(
       true,
       "Wrong parameters",
       "You probably picked an unsupported currency, try again!"
@@ -45,7 +49,7 @@ class App extends Component {
   };
 
   handleNoData = () => {
-    this.editModal(
+    this.showError(
       true,
       "No data to display",
       "No data in given time period, try with a different one!"
@@ -53,7 +57,7 @@ class App extends Component {
   };
 
   handleWrongDateOrder = () => {
-    this.editModal(
+    this.showError(
       true,
       "Wrong date order",
       "Your dates are in the wrong order, fix it and try again!"
@@ -115,33 +119,32 @@ class App extends Component {
             title={this.state.modalTitle}
             text={this.state.modalText}
           />
-          <Switch>
-            <Route path="/" exact component={() => <AboutTab />} />
-            <Route
-              path="/table"
-              component={() => (
-                <TableTab
-                  labels={this.state.labels}
-                  data={this.state.data}
-                  fetchCurrency={this.fetchCurrency}
-                  fetchSales={this.fetchSales}
-                  label={this.state.label}
-                />
-              )}
-            />
-            <Route
-              path="/chart"
-              component={() => (
-                <ChartTab
-                  labels={this.state.labels}
-                  data={this.state.data}
-                  fetchCurrency={this.fetchCurrency}
-                  fetchSales={this.fetchSales}
-                  label={this.state.label}
-                />
-              )}
-            />
-          </Switch>
+          <Route path="/" exact component={() => <AboutTab />} />
+          <ApiForm
+            path="/form"
+            fetchSales={this.fetchSales}
+            fetchCurrency={this.fetchCurrency}
+          />
+          <Route
+            path="/form/table"
+            component={() => (
+              <TableTab
+                labels={this.state.labels}
+                data={this.state.data}
+                label={this.state.label}
+              />
+            )}
+          />
+          <Route
+            path="/form/chart"
+            component={() => (
+              <ChartTab
+                labels={this.state.labels}
+                data={this.state.data}
+                label={this.state.label}
+              />
+            )}
+          />
         </main>
       </Router>
     );

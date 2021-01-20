@@ -19,12 +19,12 @@ class WebsiteNavigation extends Component {
               </Link>
             </Nav.Item>
             <Nav.Item>
-              <Link to="/chart" className="nav-link">
+              <Link to="/form/chart" className="nav-link">
                 Charts
               </Link>
             </Nav.Item>
             <Nav.Item>
-              <Link to="/table" className="nav-link">
+              <Link to="/form/table" className="nav-link">
                 Table
               </Link>
             </Nav.Item>
