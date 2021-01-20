@@ -5,6 +5,84 @@
     <title>Request builder</title>
 </head>
 <body>
-    Tutaj będzie request builder
+<form method="POST">
+    {% csrf_token %}
+    <div id="select-values">
+        <div id="exchange-rates-div">
+            <input id="exchange-rates" type="radio" name="select-value" value="exchange-rates" required
+                   onclick="disableSelectValues()">
+            <label for="exchange-rates">Kursy wymiany</label>
+
+            <div id="exchange-rates-additional-inputs">
+                <label for="currencies">Waluta wymiany</label>
+                <select id="currencies" name = "currencies" disabled="true">
+                    <option value="PLN">USD -> PLN</option>
+                    <option value="USD">PLN -> USD</option>
+                </select><br>
+            </div>
+        </div>
+
+        <div id="sales-div">
+            <input id="sales" type="radio" name="select-value" value="sales" required onclick="disableSelectValues()">
+            <label for="sales">Podsumowanie sprzedaży</label><br>
+
+            <br><br>
+        </div>
+    </div>
+
+    <div id="select-dates">
+        <div id="single-date-div">
+
+            <input id="single-date" type="radio" name="select-date" value="single-date" required
+                   onclick="disableSelectDates()">
+            <label for="single-date">Z danego dnia</label><br>
+
+            <div id="single-date-additional-inputs">
+                <label for="single-date-input">Wybrany dzień:</label>
+                <input type="date" id="single-date-input" name="single-date-input" min="2009-01-01" max="2010-12-31" value="2009-01-01" required>
+                <br>
+            </div>
+        </div>
+
+        <div id="date-range-div">
+            <input id="date-range" type="radio" name="select-date" value="date-range" required
+                   onclick="disableSelectDates()">
+            <label for="date-range">Zakres dni</label><br>
+
+            <div id="date-range-additional-inputs">
+                <label for="date-range-start">Początek zakresu:</label>
+                <input type="date" id="date-range-start" name="date-range-start" min="2009-01-01" max="2010-12-31" value="2009-01-01" required>
+                <label for="date-range-end">Koniec zakresu:</label>
+                <input id='date-range-end' type="date" name="date-range-end" min="2009-01-01" max="2010-12-31" value="2009-01-01" required>
+                <br>
+            </div>
+        </div>
+    </div>
+    <input type="submit" value="Zatwierdź">
+</form>
+
+
+<script>
+    function disableSelectValues() {
+        if (document.getElementById('exchange-rates').checked) {
+            document.getElementById('currencies').disabled = false;
+        } else {
+            document.getElementById('currencies').disabled = true;
+        }
+    }
+
+    function disableSelectDates() {
+        if (document.getElementById('single-date').checked) {
+            document.getElementById('single-date-input').disabled = false;
+            document.getElementById('date-range-start').disabled = true;
+            document.getElementById('date-range-end').disabled = true;
+        } else {
+            document.getElementById('single-date-input').disabled = true;
+            document.getElementById('date-range-start').disabled = false;
+            document.getElementById('date-range-end').disabled = false;
+        }
+    }
+</script>
+
 </body>
 </html>

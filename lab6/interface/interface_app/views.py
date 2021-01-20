@@ -11,40 +11,46 @@ def home(request):
 
 
 def request_builder(request):
-    return show_sales(request, datetime.date(year=2009, month=10, day=10), datetime.date(year=2010, month=1, day=10))
+    if request.method == 'POST':
+        if request.POST['select-value'] == 'exchange-rates':
+            #użytkownik chce kurs walut
+            if request.POST['select-date'] == 'date-range':
+                start_date = request.POST['date-range-start']
+                end_date = request.POST['date-range-end']
+            else:
+                start_date = end_date = request.POST['single-date-input']
+            return show_exchange_rates(request, start_date, end_date, request.POST['currencies'])
+        else:
+            # użytkownik chce podsumowanie sprzedaży
+            if request.POST['select-date'] == 'date-range':
+                start_date = request.POST['date-range-start']
+                end_date = request.POST['date-range-end']
+            else:
+                start_date = end_date = request.POST['single-date-input']
+            return show_sales(request, start_date, end_date)
 
-
-# return show_exchange_rates(request, datetime.date(year=2009, month=2, day=2),
-#                          datetime.date(year=2009, month=5, day=24), 'USD')
+    return render(request, "interface_app/request_builder.html")
 
 
 def show_exchange_rates(request, start_date, end_date, currency_code):
-    start_date_string = __format_date(start_date)
-    end_date_string = __format_date(end_date)
-    request_url = 'http://127.0.0.1:5000/api/exchangerate/{0}/{1}/{2}'.format(currency_code, start_date_string,
-                                                                              end_date_string)
+    request_url = 'http://127.0.0.1:5000/api/exchangerate/{0}/{1}/{2}'.format(currency_code, start_date,
+                                                                              end_date)
     response = requests.get(request_url)
     other_currency_code = 'PLN' if currency_code == 'USD' else 'USD'
 
     return render(request, "interface_app/display_exchange_rates.html",
                   context={'exchange_rates_json': response.json(),
                            'other_currency_code': other_currency_code,
-                           'start_date': start_date_string,
-                           'end_date': end_date_string,
+                           'start_date': start_date,
+                           'end_date': end_date,
                            })
 
 
 def show_sales(request, start_date, end_date):
-    start_date_string = __format_date(start_date)
-    end_date_string = __format_date(end_date)
-    request_url = 'http://127.0.0.1:5000/api/sales/{0}/{1}/'.format(start_date_string, end_date_string)
+    request_url = 'http://127.0.0.1:5000/api/sales/{0}/{1}/'.format(start_date, end_date)
     response = requests.get(request_url)
     return render(request, "interface_app/display_sales.html",
                   context={'sales_json': response.json(),
-                           'start_date': start_date_string,
-                           'end_date': end_date_string
+                           'start_date': start_date,
+                           'end_date': end_date
                            })
-
-
-def __format_date(date):
-    return date.strftime('%Y-%m-%d')
