@@ -12,7 +12,7 @@ def home(request):
 
 def request_builder(request):
     return show_exchange_rates(request, datetime.date(year=2009, month=2, day=2),
-                        datetime.date(year=2009, month=5, day=24), 'USD')
+                               datetime.date(year=2009, month=5, day=24), 'USD')
 
 
 def show_exchange_rates(request, start_date, end_date, currency_code):

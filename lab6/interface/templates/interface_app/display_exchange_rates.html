@@ -1,77 +1,47 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link
+            rel="stylesheet"
+            href="{% static 'interface_app/style.css' %}"
+            type="text/css"
+    />
     <title>Title</title>
-
-    <style>
-        table {
-            background-color: #b1aea7;
-            table-layout: fixed;
-            width: 850px;
-            border-collapse: collapse;
-            border: 3px solid purple;
-            font-size: 40px;
-        }
-
-        thead th:nth-child(1) {
-            width: 35%;
-        }
-
-        thead th:nth-child(2) {
-            width: 35%;
-        }
-
-        thead th:nth-child(3) {
-            width: 30%;
-        }
-
-        tbody td {
-            text-align: center;
-        }
-
-        tbody tr:nth-child(odd) {
-            background-color: #dcd9d1;
-        }
-        tbody tr:nth-child(even) {
-            background-color: #fff1f1;
-        }
-
-    </style>
-
 </head>
 <body>
-    {% if exchange_rates_json %}
-        <h1>Kurs wymiany {{ currency_code }} na {{ exchange_rates_json.code }} z dni {{ start_date }} - {{ end_date }}</h1>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Exchange rate</th>
-                    <th>Interpolated</th>
-                </tr>
-            </thead>
+{% if exchange_rates_json %}
+    <h1>Kurs wymiany {{ currency_code }} na {{ exchange_rates_json.code }} z dni {{ start_date }} - {{ end_date }}</h1>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Exchange rate</th>
+            <th>Interpolated</th>
+        </tr>
+        </thead>
 
-            <tbody>
-                {% for exchange_rate_json in exchange_rates_json.result %}
-                    <tr>
-                        <th>{{ exchange_rate_json.day }}</th>
-                        <td>{{ exchange_rate_json.rate }} {{ currency_code }}</td>
-                        <td>
-                            {% if exchange_rate_json.interpolated == True %}
-                                Yes
-                            {% else %}
-                                No
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <tbody>
+        {% for exchange_rate_json in exchange_rates_json.result %}
+            <tr>
+                <th>{{ exchange_rate_json.day }}</th>
+                <td>{{ exchange_rate_json.rate }} {{ currency_code }}</td>
+                <td>
+                    {% if exchange_rate_json.interpolated == True %}
+                        Yes
+                    {% else %}
+                        No
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 
-    {% else %}
-        <h2>Nie ma nic do wyświetlenia!</h2>
-    {% endif %}
+{% else %}
+    <h2>Nie ma nic do wyświetlenia!</h2>
+{% endif %}
 
 </body>
 </html>
