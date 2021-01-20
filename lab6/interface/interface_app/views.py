@@ -8,4 +8,4 @@ def home(request):
 
 
 def request_builder(request):
-    return HttpResponse("Hello, World!")
+    return render(request, "interface_app/request_builder.html")
