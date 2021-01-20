@@ -5,7 +5,7 @@
     <title>Request builder</title>
 </head>
 <body>
-<form method="POST">
+<form method="POST" onsubmit="return validateForm()">
     {% csrf_token %}
     <div id="select-values">
         <div id="exchange-rates-div">
@@ -81,6 +81,15 @@
             document.getElementById('date-range-start').disabled = false;
             document.getElementById('date-range-end').disabled = false;
         }
+    }
+
+    function validateForm() {
+        if(document.getElementById('date-range').checked) {
+            const startDate = document.getElementById('date-range-start').value;
+            const endDate = document.getElementById('date-range-end').value;
+            return startDate <= endDate;
+        }
+        return true;
     }
 </script>
 
