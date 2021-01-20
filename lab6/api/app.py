@@ -91,7 +91,7 @@ def get_exchange_rate_of_range(currency, year_from, month_from, day_from, year_t
     for (date, price, interpolated) in query_result:
         rate = __convert_exchange_rate(price, currency)
         result.append({'day': date, 'rate': rate, 'interpolated': True if interpolated == 1 else False})
-    return {'code': 'USD', 'result': result}
+    return {'code': currency, 'result': result}
 
 
 @app.route('/api/sales/<int:year>-<int:month>-<int:day>', methods=['GET'])
