@@ -4,6 +4,11 @@
     <head>
       <meta charset="utf-8">
       <title>WebApi</title>
+        <style>
+            h2 em {
+                color: #ff0000;
+            }
+        </style>
     </head>
 
     <body>
@@ -20,6 +25,9 @@
         <h2>Jak to uruchomić?</h2>
         <p>Przejdź do folderu lab5 w projekcie i uruchom w nim konsolę i wpisz "python app.py". Jeśli wszystko poszło dobrze, powinieneś zobaczyć w konsoli komunikat "Running on http://127.0.0.1:5000/". Aby przetestować działanie, przejdź na stronę <a href="http://127.0.0.1:5000/api/exchangerate/usd/2010-01-01/">http://127.0.0.1:5000/api/exchangerate/usd/2010-01-01/</a>. Powinna się tam wyświetlić odpowiedź w postaci JSONa.</p>
         <h2>Jakie zapytania mogę tworzyć?</h2>
+
+        <h2>Kreator zapytań - <em>NOWOŚĆ!</em></h2>
+        <p>Czy masz już dosyć ręcznego pisania URL do zapytania? Czy chciałbyś zobaczyć wyniki w ładniejszej postaci niż zwykły JSON? Jeśli tak, skorzystaj już teraz z <strong><a href="http://127.0.0.1:8000/request_builder">KREATORA ZAPYTAŃ</a></strong>!</p>
 
         <h3>1. /api/exchangerate/{waluta}/{data}</h3>
         <p>Zwraca kurs waluty z danej daty w formacje JSON.</p>

@@ -21,5 +21,6 @@ from interface_app import views
 
 urlpatterns = [
     path('', views.home),
+    path('request_builder', views.request_builder),
     path('admin/', admin.site.urls),
 ]
