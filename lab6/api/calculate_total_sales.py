@@ -8,7 +8,7 @@ def __get_total_sales(sales, exchange_rates):
     for (date, rate) in exchange_rates:
         if sales_index < len(sales) and date == sales[sales_index][0]:
             total_sales_usd = sales[sales_index][1]
-            total_sales_pln = round(total_sales_usd * rate, 4)
+            total_sales_pln = round(total_sales_usd * rate, 2)
             sales_count = sales[sales_index][2]
 
             records.append((date, total_sales_usd, total_sales_pln, sales_count))
