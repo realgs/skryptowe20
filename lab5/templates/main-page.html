@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My First Api</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-light bg-warning">
+        <div class="container-fluid justify-content-center">
+            <a class="navbar-brand text-light fs-2" href="/">Lab 6 My first API with GUI</a>
+        </div>
+    </nav>
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-md-7">
+                <br>
+                <p class="text-center">This is an API for getting historical currency ratings from NBP API completed with data for missing ratings.
+                You can also access total sales data from provided database using this api.</p>
+                <br>
+                <div class="d-grid col-6 mx-auto">
+                    <a class="btn btn-outline-warning" href="/select">Start exploring!</a>
+                </div>
+                <hr/>
+                <strong>Quickstart</strong>
+                <hr/>
+                <ol>
+                    <li> Install Python 3.7 or up on your computer: get it <a href="https://www.python.org/downloads/">here</a></li>
+                    <li> Go to the downloaded project directory by running cd repo_address</li>
+                    <li>python -m pip install flask </li>
+                    <li> python -m pip install Flask-Limiter</li>
+                    <li> Run python api.py to start the API</li>
+                </ol>
+                <hr/>
+                <strong>User manual</strong>
+                <hr/>
+                <p>API requests return data in JSON format. Data is available for dates between 2013-01-04 and 2016-12-29.</p>
+                <p>Supported currencies:</p>
+                <ul>
+                    <li>USD</li>
+                    <li>PLN</li>
+                </ul>
+                <p>API uses rate limiting: 300 request per day, 20 requests per minute.
+                    After the limit has been surpassed new request will result in 429 Too Many Requests error.</p>
+                <p>Request parameters:</p>
+                <ul>
+                    <li><i>{code}</i> - three-letter currency code (ISO 4217 standard)</li>
+                    <li><i>{date}</i>, <i>{startDate}</i>, <i>{endDate}</i> - date in YYYY-MM-DD format (ISO 8601 standard)</li>
+                </ul>
+                <hr/>
+                <strong>Possible requests:</strong>
+                <hr/>
+                <ul>
+                    <li>/api/rates/<i>{code}</i>/<i>{date}</i><br/> returns specified currency rate from given day with
+                        'Interpolated' parameter. That parameter is true if the currency rate was not available on NBP
+                        API and has been substituted with currency rate from previous day. Otherwise it is false.</li>
+                    <li>/api/rates/<i>{code}</i>/<i>{startDate}</i>/<i>{endDate}</i><br/>  returns specified currency
+                        rates in given time span with 'Interpolated' parameter. If <i>{startDate}</i> or <i>{endDate}</i>
+                        is outside the supported range result contains rates from days within the supported range.</li>
+                    <li>/api/sales/<i>{date}</i><br/> returns sales from given day in USD and PLN and currency rate from given
+                        day. If no sales occurred on given day 'ERROR: No data found. Sales on given day totalled 0' is returned.</li>
+                    <li>/api/sales/<i>{startDate}</i>/<i>{endDate}</i><br/> returns nonzero sales from given time span in
+                        USD and PLN and currency rate from given time span. If no sales occurred in given time span
+                        'ERROR: No data found. Sales on given days totalled 0' is returned.</li>
+                </ul>
+                <hr/>
+                <strong>Request examples:</strong>
+                <hr/>
+                <ul>
+                    <li><a href="http://127.0.0.1:5000/api/rates/USD/2014-03-01">http://127.0.0.1:5000/api/rates/USD/2014-03-01</a>
+                        <br/>returns USD exchange rate from 1st March 2014.</li>
+                    <li><a href="http://127.0.0.1:5000/api/rates/PLN/2014-03-01/2014-03-30">http://127.0.0.1:5000/api/rates/PLN/2014-03-01/2014-03-30</a>
+                        <br/>returns PLN exchange rates from 1st March 2014 to 30th March 2014.</li>
+                    <li><a href="http://127.0.0.1:5000/api/sales/2015-10-01 ">http://127.0.0.1:5000/api/sales/2015-10-01</a>
+                        <br/>returns sales from 1st October 2015 in USD and PLN and currency rate from that day.</li>
+                    <li><a href="http://127.0.0.1:5000/api/sales/2015-10-01/2015-11-01">http://127.0.0.1:5000/api/sales/2015-10-01/2015-11-01</a>
+                        <br/>returns nonzero sales from 1st October 2015 to 1st November 2015
+                        in USD and PLN and currency rate from given time span.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<footer class="text-sm-start bg-warning p-1">
+    <div class="text-center p-1">
+        <p>Patrycja Zmilczak - © 2021</p>
+    </div>
+</footer>
+</body>
+</html>
