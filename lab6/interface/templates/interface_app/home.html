@@ -7,6 +7,124 @@
     </head>
 
     <body>
-        To jest strona główna
+        <h1>My Web Api</h1>
+        <h2>Co to?</h2>
+        <p>MyWebAPI to API pozwalające na dostęp do kursów dolara i złotówek oraz podsumowań sprzedaży z przykładowej bazy transakcji. Kursy pochodzą z <a href="http://api.nbp.pl/">API NBP</a> , a baza danych z <a href="https://www.sqlitetutorial.net/sqlite-sample-database/">www.sqlitetutorial.net</a></p>
+        <h2>Czego potrzebujemy żeby uruchomić API?</h2>
+        <ul>
+            <li>Python</li>
+            <li>pip (<a href="https://pip.pypa.io/en/stable/installing/">Instrukcja instalacji</a>)</li>
+            <li>Flask (pip install Flask)</li>
+            <li>Flask-Limiter (pip install Flask-Limiter)</li>
+        </ul>
+        <h2>Jak to uruchomić?</h2>
+        <p>Przejdź do folderu lab5 w projekcie i uruchom w nim konsolę i wpisz "python app.py". Jeśli wszystko poszło dobrze, powinieneś zobaczyć w konsoli komunikat "Running on http://127.0.0.1:5000/". Aby przetestować działanie, przejdź na stronę <a href="http://127.0.0.1:5000/api/exchangerate/usd/2010-01-01/">http://127.0.0.1:5000/api/exchangerate/usd/2010-01-01/</a>. Powinna się tam wyświetlić odpowiedź w postaci JSONa.</p>
+        <h2>Jakie zapytania mogę tworzyć?</h2>
+
+        <h3>1. /api/exchangerate/{waluta}/{data}</h3>
+        <p>Zwraca kurs waluty z danej daty w formacje JSON.</p>
+        <p><strong>Pola w zapytaniu:</strong></p>
+        <ul>
+            <li><p>waluta - PLN lub USD. Wielkość liter nie ma znaczenia. Jeśli wybierzemy PLN, wynikiem będzie cena 1 złotówki w dolarach. Jeśli wybierzemy USD, wynikiem będzie cena 1 dolara w złotówkach.</p></li>
+            <li><p>data - w formacie rok-miesiąc-dzień (np. 2010-01-15, 2009-10-02, 2009-06-07). Data musi być pomiędzy 1 stycznia 2009 a 31 grudnia 2010 (włącznie).</p></li>
+        </ul>
+        <p><strong>Pola w odpowiedzi:</strong></p>
+        <ul>
+            <li><p>code - trzyliterowy kod waluty</p></li>
+            <li><p>day - dzień którego dotyczy żądanie</p></li>
+            <li><p>interpolated - przyjmuje wartość false jeśli kurs został tego dnia opublikowany przez NBP, a wartośc true jeśli kurs został wyznaczony na podstawie kursu z poprzedniego dnia.</p></li>
+            <li><p>rate - kurs wymiany</p></li>
+        </ul>
+        <p><strong>Komunikaty o błędach:</strong></p>
+        <ul>
+            <li><p>400:BadRequest. UnknownCurrency - podano nieprawidłowy kod waluty. Kodem waluty może być jedynie USD albo PLN (wielkośc liter nie ma znaczenia).</p></li>
+            <li><p>400:BadRequest. Date out of range - podano nieprawidłową datę. Data musi być pomiędzy 1 stycznia 2009 a 31 grudnia 2010 (włącznie).</p></li>
+        </ul>
+
+        <h3>2. /api/exchangerate/{waluta}/{data_od}/{data_do}</h3>
+        <p>Zwraca kurs waluty w dniach pomiędzy data_od a data_do (włącznie) w formacje JSON.</p>
+        <p><strong>Pola w zapytaniu:</strong></p>
+        <ul>
+            <li><p>waluta - PLN lub USD. Wielkość liter nie ma znaczenia. Jeśli wybierzemy PLN, wynikiem będzie cena 1 złotówki w dolarach. Jeślii wybierzemy USD, wynikiem będzie cena 1 dolara w złotówkach.</p></li>
+            <li><p>data_od, data_do - w formacie rok-miesiąc-dzień (np. 2010-01-15, 2009-10-02, 2009-06-07) data_od musi być równa lub wcześniejsza niż data_do.</p></li>
+        </ul>
+        <p><strong>Pola w odpowiedzi:</strong></p>
+        <ul>
+            <li><p>code - trzyliterowy kod waluty</p></li>
+        </ul>
+        <p>W kolejnych rekordach:</p>
+        <ul>
+            <li><p>day - dzień którego dotyczy rekord</p></li>
+            <li><p>interpolated - przyjmuje wartość false jeśli kurs został tego dnia opublikowany przez NBP, a wartośc true jeśli kurs został wyznaczony na podstawie kursu z poprzedniego dnia.</p></li>
+            <li><p>rate - kurs wymiany</p></li>
+        </ul>
+        <p><strong>Komunikaty o błędach</strong></p>
+        <ul>
+            <li><p>400: BadRequest. UnknownCurrency - podano nieprawidłowy kod waluty. Kodem waluty może być jedynie USD albo PLN (wielkośc liter nie ma znaczenia).</p></li>
+            <li><p>400: BadRequest. Date out of range - podano nieprawidłową datę. data_od musi być równa lub wcześniejsza niż data_do.</p></li>
+        </ul>
+        <p><strong>Uwagi: </strong>Jeśli data_od jest wcześniejsza niż 1 stycznia 2009, program przyjmie że data_od to 1 stycznia 2009. Jesli data_do jest późniejsza niż 31 grudnia 2010, program przyjmie że data_do to 31 grudnia 2010. Sprawia to że zapytanie o kursy pomiędzy 10 kwietnia 2008 a 6 stycznia 2009 zwróci kursy pomiędzy 1 stycznia 2009 a 6 stycznia 2009.</p>
+
+        <h3>/api/sales/{data}</h3>
+        <p>Zwraca podsumowanie sprzedaży z danej daty w formacie JSON</p>
+        <p><strong>Pola w zapytaniu</strong></p>
+        <ul>
+            <li><p>data - w formacie rok-miesiąc-dzień (np. 2010-01-15, 2009-10-02, 2009-06-07). Data musi być pomiędzy 1 stycznia 2009 a 31 grudnia 2010.</p></li>
+        </ul>
+        <p><strong>Pola w odpowiedzi</strong></p>
+        <ul>
+            <li><p>day - dzień którego dotyczy żądanie</p></li>
+            <li><p>number of sales - łączna liczba transakcji do których doszło danego dnia</p></li>
+            <li><p>sales_pln - suma kwót transakcji w złotówkach przeliczonych po kursie NBP z danego dnia</p></li>
+            <li><p>sales_usd - suma kwót transakcji w dolarach</p></li>
+        </ul>
+        <p><strong>Komunikaty o błędach:</strong></p>
+        <ul>
+            <li><p>400: BadRequest. Date out of range - podano nieprawidłową datę. data musi być pomiędzy 1 stycznia 2009 a 31 grudnia 2010.</p></li>
+        </ul>
+        <p><strong>Uwagi:</strong>Uwagi: Jeśli zapytanie zwróci 0 jako liczbę transakcji i sumy kwót oznacza to, że danego dnia nie została zawarta żadna transakcja.</p>
+
+        <h3>4. /api/sales/{data_od}/{data_do}</h3>
+        <p>Zwraca podsumowanie sprzedaży w dniach pomiędzy data_od a data_do w formacie JSON</p>
+        <p><strong>Pola w zapytaniu:</strong></p>
+        <ul>
+            <li><p>data_od, data_do - w formacie rok-miesiąc-dzień (np. 2010-01-15, 2009-10-02, 2009-06-07). data_od musi być równa lub wcześniejsza niż data_do.</p></li>
+        </ul>
+        <p><strong>Pola w odpowiedzi:</strong></p>
+        <p>W kolejnych rzędach:</p>
+        <ul>
+            <li><p>day - dzień którego dotyczy rekord</p></li>
+            <li><p>number of sales - łączna liczba transakcji do których doszło danego dnia</p></li>
+            <li><p>sales_pln - suma kwót transakcji w złotówkach przeliczonych po kursie NBP z danego dnia</p></li>
+            <li><p>sales_usd - suma kwót transakcji w dolarach</p></li>
+        </ul>
+        <p><strong>Komunikaty o błędach:</strong></p>
+        <ul>
+            <li><p>400: BadRequest. Date out of range - podano nieprawidłową datę. data_od musi być równa lub wcześniejsza niż data_do.</p></li>
+        </ul>
+        <p><strong>Uwagi: </strong>Jeśli zapytanie dla któregoś dnia zwróci 0 jako liczbę transakcji i sumy kwót oznacza to, że danego dnia nie została zawarta żadna transakcja. Jeśli data_od jest wcześniejsza niż 1 stycznia 2009, program przyjmie że data_od to 1 stycznia 2009. Jesli data_do jest późniejsza niż 31 grudnia 2010, program przyjmie że data_do to 31 grudnia 2010. Sprawia to że zapytanie o podsumowanie sprzedaży w dniach od 10 listopada 2010 a 12 stycznia 2011 zwróci podsumowanie z dni od 10 listopada 2010 do 31 grudnia 2010.</p>
+
+        <h1>Przykładowe zapytania:</h1>
+        <ul>
+            <li><p><strong><a href="http://127.0.0.1:5000/api/exchangerate/USD/2009-06-05/">/api/exchangerate/USD/2009-06-05</a> </strong>- kurs wymiany złotówek na dolary z 5 czerwca 2009.</p></li>
+            <li><p><strong><a href="http://127.0.0.1:5000/api/exchangerate/PLN/2010-10-21/">/api/exchangerate/PLN/2010-10-21</a> </strong>- kurs wymiany dolara na złotówki z 21 października 2010.</p></li>
+            <li><p><strong><a href="http://127.0.0.1:5000/api/exchangerate/USD/2009-02-04/2009-05-24/">/api/exchangerate/USD/2009-02-04/2009-05-24</a> </strong>- kursy wymiany złotówek na dolary pomiędzy 2 lutego 2009 a 24 maja 2009 (włącznie).</p></li>
+            <li><p><strong><a href="http://127.0.0.1:5000/api/exchangerate/PLN/2009-12-13/2010-12-13/">/api/exchangerate/PLN/2009-12-13/2010-12-13</a> </strong>- kursy wymiany dolarów na złotówki pomiędzy 13 grudnia 2009 a 13 grudnia 2010 (włącznie).</p></li>
+            <li><p><strong><a href="http://127.0.0.1:5000/api/sales/2009-12-24/">/api/sales/2009-12-24</a> </strong>- podsumowanie sprzedaży z dnia 24 grudnia 2010 roku.</p></li>
+            <li><p><strong><a href="http://127.0.0.1:5000/api/sales/2009-01-02/">/api/sales/2009-01-02</a> </strong>- podsumowanie sprzedaży z 2 stycznia 2009 roku</p></li>
+            <li><p><strong><a href="http://127.0.0.1:5000/api/sales/2010-01-01/2010-01-31/">/api/sales/2010-01-01/2010-01-31</a> </strong>- podsumowania sprzedaży pomiędzy 1 stycznia 2010 a 31 stycznia 2010 (włącznie).</p></li>
+            <li><p><strong><a href="http://127.0.0.1:5000/api/sales/2009-10-10/2010-01-10/">/api/sales/2009-10-10/2010-01-10</a> </strong>- podsumowania sprzedaży pomiędzy 10 października 2009 a 10 stycznia 2010 (włącznie)</p></li>
+        </ul>
+
+        <h1>Jakie pliki znajdują się w projekcie?</h1>
+        <ul>
+            <li><p><strong>app.py </strong>- główny plik programu, to on odpowiada za wystawianie danych użytkownikowi i pobieranie ich z bazy</p></li>
+            <li><p><strong>create_exchange_rates_in_table.py </strong>- dodaje do bazy danych 'chinook.db' do tabeli 'exchange_rates' kursy walut pomiędzy 1 stycznia 2009 a 31 stycznia 2010 pobierane z api NBP.</p></li>
+            <li><p><strong>calculate_total_sales.py </strong>- dodaje do bazy danych 'chinook.db' do tabeli 'total_sales' podsumowanie sprzedaży z tej bazy danych.</p></li>
+            <li><p><strong>chinook.db </strong>- baza danych wykorzystywana w ćwiczeniu. Pochodzi z https://www.sqlitetutorial.net/sqlite-sample-database/ i została uzupełniona przez wykonanie skryptów 'create_exchange_rates_in_table.py' oraz 'calculate_total_sales.py'</p></li>
+        </ul>
+
+        <h1>Coś jeszcze?</h1>
+        <p>Korzytanie z API jest objęte limitem czasowym. Kazdy użytkownik może wykonać maksymalnie 10 zapytań na minutę. Kolejne zapytania będą odrzucane, a użytkownik otrzyma komunikat 429: TooManyRequests. Limity zapytań można zmienić w pliku app.py.</p>
     </body>
 </html>
