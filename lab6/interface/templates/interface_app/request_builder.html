@@ -1,41 +1,65 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Request builder</title>
+    <link
+            rel="stylesheet"
+            href="{% static 'interface_app/style.css' %}"
+            type="text/css"
+    />
+    <style>
+        input {
+            font-size: 18px;
+        }
+        label {
+            font-size: 18px;
+        }
+        p {
+            font-size: 20px;
+        }
+        .submit-button {
+            font-size: 40px;
+        }
+    </style>
+
 </head>
 <body>
+<h1>Kreator zapytań</h1>
+<p>Stwórz swoje zapytanie marzeń w dwóch prostych krokach! Wybierz co chcesz sprawdzić a potem z których dni i wciśnij "Zatwierdź", aby błyskawicznie otrzymać wynik!</p>
+<p>Pamiętaj, że daty mogą być tylko z zakresu pomiędzy 1 stycznia 2009 a 31 grudnia 2010 roku!</p>
 <form method="POST" onsubmit="return validateForm()">
     {% csrf_token %}
+    <h2>1. Wybierz czy chcesz sprawdzić kursy wymiany czy podsumowania sprzedaży</h2>
     <div id="select-values">
         <div id="exchange-rates-div">
             <input id="exchange-rates" type="radio" name="select-value" value="exchange-rates" required
                    onclick="disableSelectValues()">
-            <label for="exchange-rates">Kursy wymiany</label>
+            <label for="exchange-rates"><strong>Kursy wymiany</strong></label>
 
             <div id="exchange-rates-additional-inputs">
-                <label for="currencies">Waluta wymiany</label>
+                <label for="currencies">Waluta wymiany:</label>
                 <select id="currencies" name = "currencies" disabled="true">
                     <option value="PLN">USD -> PLN</option>
                     <option value="USD">PLN -> USD</option>
-                </select><br>
+                </select>
             </div>
         </div>
-
+        <br>
         <div id="sales-div">
             <input id="sales" type="radio" name="select-value" value="sales" required onclick="disableSelectValues()">
-            <label for="sales">Podsumowanie sprzedaży</label><br>
-
-            <br><br>
+            <label for="sales"><strong>Podsumowanie sprzedaży</strong></label><br>
         </div>
     </div>
 
+    <h2>2. Wybierz czy chcesz sprawdzić dane z jednego dnia czy zakresu dat</h2>
     <div id="select-dates">
         <div id="single-date-div">
 
             <input id="single-date" type="radio" name="select-date" value="single-date" required
                    onclick="disableSelectDates()">
-            <label for="single-date">Z danego dnia</label><br>
+            <label for="single-date"><strong>Z danego dnia</strong></label><br>
 
             <div id="single-date-additional-inputs">
                 <label for="single-date-input">Wybrany dzień:</label>
@@ -43,11 +67,11 @@
                 <br>
             </div>
         </div>
-
+        <br>
         <div id="date-range-div">
             <input id="date-range" type="radio" name="select-date" value="date-range" required
                    onclick="disableSelectDates()">
-            <label for="date-range">Zakres dni</label><br>
+            <label for="date-range"><strong>Zakres dni</strong></label><br>
 
             <div id="date-range-additional-inputs">
                 <label for="date-range-start">Początek zakresu:</label>
@@ -58,7 +82,9 @@
             </div>
         </div>
     </div>
-    <input type="submit" value="Zatwierdź">
+    <br>
+    <input class ="submit-button" type="submit" value="Zatwierdź">
+    <p id="wrong-data-range" style="color: red" hidden>Początek zakresu nie może być późniejszy niż koniec zakresu!</p>
 </form>
 
 
@@ -87,7 +113,10 @@
         if(document.getElementById('date-range').checked) {
             const startDate = document.getElementById('date-range-start').value;
             const endDate = document.getElementById('date-range-end').value;
-            return startDate <= endDate;
+            if(startDate > endDate) {
+                document.getElementById('wrong-data-range').hidden = false;
+                return false;
+            }
         }
         return true;
     }
