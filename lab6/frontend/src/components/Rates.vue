@@ -138,7 +138,8 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           this.results = data.rates;
-          this.renderChart();
+          if (this.chart != null) this.chart.destroy();
+          if (this.results.length > 1) this.renderChart();
         });
     },
     isCorrectOrder() {
@@ -158,8 +159,6 @@ export default {
       this.endingValid = order && this.isBetweenConstraints(this.form.end);
     },
     async renderChart() {
-      if (this.chart != null) this.chart.destroy();
-
       const chartData = {
         labels: [],
         datasets: [
