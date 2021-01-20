@@ -155,7 +155,7 @@ def get_sales_and_dates(date_from, date_to):
     return sales_usd, sales_pln, dates
 
 
-def get_sales_and_date(date):
+def get_sale_and_date(date):
     return get_sales_and_dates(date, date)
 
 

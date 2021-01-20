@@ -15,3 +15,6 @@ DB_LIMITS = {'USD': {'date_min': '2009-01-01', 'date_max': '2021-01-19'},
 
 HOUR_LIMIT = '100 per hour'
 DAY_LIMIT = '1000 per day'
+APP_LIMIT = '1 per second'
+
+CACHE_TIMEOUT = 86400

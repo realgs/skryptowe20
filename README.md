@@ -180,7 +180,6 @@ In the case of an enquiry covering more than 365 days, the service returns the m
 * [Flask](https://flask.palletsprojects.com/en/1.1.x/)
 * [FlaskRESTful](https://flask-restful.readthedocs.io/en/latest/)
 * [FlaskLimiter](https://flask-limiter.readthedocs.io/en/stable/)
-* [SQLAlchemy](https://www.sqlalchemy.org/)
 
 #### Sources
 * [NBP API](http://api.nbp.pl)
