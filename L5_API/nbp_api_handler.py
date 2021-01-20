@@ -1,8 +1,7 @@
 import requests
 from datetime import datetime, timedelta
 
-MAX_TRIES = 10
-MAX_TIME_FRAME = 365
+from L5_API.constants import DATE_FORMAT, MAX_TRIES, DATA_LIMIT
 
 
 def _url(path):
@@ -21,6 +20,9 @@ def currency_rates_dates_interpolated_time_frame(currency_code, date_from, date_
     time_frames = _split_time_frame(date_from, date_to)
 
     for frame in time_frames:
+        frame_dates = []
+        frame_rates = []
+        frame_interpolated = []
         date_from, date_to = frame
         request = _get_rates_request(currency_code, table, date_from, date_to)
 
@@ -28,39 +30,33 @@ def currency_rates_dates_interpolated_time_frame(currency_code, date_from, date_
             data = request.json()['rates']
             n = len(data)
 
-            if data[0]['effectiveDate'] != date_from:
-                rates.append(_currency_get_last_known_rate(currency_code, table, date_from))
-                dates.append(date_from)
-                interpolated.append(1)
-
             for i in range(n):
-                rates.append(float(data[i]['mid']))
-                dates.append(data[i]['effectiveDate'])
-                interpolated.append(0)
+                frame_rates.append(float(data[i]['mid']))
+                frame_dates.append(data[i]['effectiveDate'])
+                frame_interpolated.append(0)
 
-            if dates[-1] != date_to:
-                rates.append(_currency_get_last_known_rate(currency_code, table, date_to))
-                dates.append(date_to)
-                interpolated.append(1)
+        if not frame_dates or frame_dates[0] != date_from:
+            frame_rates.insert(0, _currency_get_last_known_rate(currency_code, table, date_from))
+            frame_dates.insert(0, date_from)
+            frame_interpolated.insert(0, 1)
 
-        else:
-            rates.append(_currency_get_last_known_rate(currency_code, table, date_from))
-            dates.append(date_from)
-            interpolated.append(1)
+        if date_from != date_to and frame_dates[-1] != date_to:
+            frame_rates.append(_currency_get_last_known_rate(currency_code, table, date_to))
+            frame_dates.append(date_to)
+            frame_interpolated.append(1)
 
-            if date_from != date_to:
-                rates.append(_currency_get_last_known_rate(currency_code, table, date_to))
-                dates.append(date_to)
-                interpolated.append(1)
+        _fill_in_missing_rates(frame_rates, frame_dates, frame_interpolated)
 
-        rates, dates, interpolated = _fill_in_missing_rates(rates, dates, interpolated)
+        rates += frame_rates
+        dates += frame_dates
+        interpolated += frame_interpolated
 
     return rates, dates, interpolated
 
 
 def currency_rates_dates_interpolated(currency_code, days):
-    date_from = (datetime.today() - timedelta(days=days)).strftime('%Y-%m-%d')
-    date_to = datetime.today().strftime('%Y-%m-%d')
+    date_from = (datetime.today() - timedelta(days=days)).strftime(DATE_FORMAT)
+    date_to = datetime.today().strftime(DATE_FORMAT)
 
     rates, dates, interpolated = currency_rates_dates_interpolated_time_frame(currency_code, date_from, date_to)
 
@@ -69,7 +65,7 @@ def currency_rates_dates_interpolated(currency_code, days):
 
 def _currency_get_last_known_rate(currency_code, table, date):
     rate = 0.0
-    date = datetime.strptime(date, '%Y-%m-%d')
+    date = datetime.strptime(date, DATE_FORMAT)
     request_code = 0
     tries_left = MAX_TRIES
 
@@ -89,30 +85,30 @@ def _currency_get_last_known_rate(currency_code, table, date):
 def _split_time_frame(date_from, date_to):
     date_frames = []
 
-    date_from_obj = datetime.strptime(date_from, '%Y-%m-%d')
-    date_to_obj = datetime.strptime(date_to, '%Y-%m-%d')
+    date_from_obj = datetime.strptime(date_from, DATE_FORMAT)
+    date_to_obj = datetime.strptime(date_to, DATE_FORMAT)
     temp_date_obj = date_from_obj
 
     while temp_date_obj <= date_to_obj:
         new_from = temp_date_obj
-        new_to = new_from + timedelta(days=MAX_TIME_FRAME)
+        new_to = new_from + timedelta(days=DATA_LIMIT)
 
         if new_to > date_to_obj:
             new_to = date_to_obj
 
-        date_frames.append((new_from.strftime('%Y-%m-%d'), new_to.strftime('%Y-%m-%d')))
+        date_frames.append((new_from.strftime(DATE_FORMAT), new_to.strftime(DATE_FORMAT)))
         temp_date_obj = new_to + timedelta(days=1)
 
     return date_frames
 
 
 def _fill_in_missing_rates(rates, dates, interpolated):
-    first_day = datetime.strptime(dates[0], '%Y-%m-%d')
-    last_day = datetime.strptime(dates[len(dates) - 1], '%Y-%m-%d')
+    first_day = datetime.strptime(dates[0], DATE_FORMAT)
+    last_day = datetime.strptime(dates[len(dates) - 1], DATE_FORMAT)
     delta = (last_day - first_day).days
 
     for i in range(delta):
-        date = (first_day + timedelta(days=i)).strftime('%Y-%m-%d')
+        date = (first_day + timedelta(days=i)).strftime(DATE_FORMAT)
 
         if dates[i] != date:
             dates.insert(i, date)
@@ -152,8 +148,8 @@ def _check_table(currency_code, table):
 
 def _are_dates(date_from, date_to):
     try:
-        datetime.strptime(date_from, '%Y-%m-%d')
-        datetime.strptime(date_to, '%Y-%m-%d')
+        datetime.strptime(date_from, DATE_FORMAT)
+        datetime.strptime(date_to, DATE_FORMAT)
     except ValueError:
         return False
 

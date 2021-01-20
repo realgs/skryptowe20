@@ -13,10 +13,11 @@ limiter = Limiter(app,
 
 app.add_url_rule('/rates/<code>', view_func=views.get_last_rate)
 app.add_url_rule('/rates/<code>/limits', view_func=views.get_rates_limits)
+app.add_url_rule('/rates/<code>/<date>', view_func=views.get_rate)
 app.add_url_rule('/rates/<code>/<date_from>/<date_to>', view_func=views.get_rates)
 app.add_url_rule('/sales/<date>', view_func=views.get_sale)
-app.add_url_rule('/sales/limits', view_func=views.get_sales_limits)
 app.add_url_rule('/sales/<date_from>/<date_to>', view_func=views.get_sales)
+app.add_url_rule('/sales/limits', view_func=views.get_sales_limits)
 
 
 if __name__ == "__main__":

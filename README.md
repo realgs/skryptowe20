@@ -14,9 +14,9 @@ Available historic data:
 | Data              | First entry   |  Last entry   |
 | ----------------- | ------------- | ------------- |
 | Sales | 2009-01-01 | 2013-12-22 |
-| USD exchange rates | 2009-01-01 | 2020-12-18 |
-| EUR exchange rates | 2009-01-02 | 2020-12-17 |
-| GBP exchange rates | 2009-01-02 | 2020-12-17 |
+| USD exchange rates | 2009-01-01 | 2021-01-19 |
+| EUR exchange rates | 2009-01-01 | 2021-01-19 |
+| GBP exchange rates | 2009-01-01 | 2021-01-19 |
 
 Single enquirey cannot cover a period longer than 365 days.
 
@@ -46,18 +46,23 @@ Run the application with the command:
 python3 L5_API/app.py
 ```
 Then use one of the enquires
-* Latest value of exchange rate of currency `{currency_code}`
+* Latest value of exchange rate of currency `{currencyCode}`
     ```bash
-    http://localhost:5000/rates/{currency_code}
+    http://localhost:5000/rates/{currencyCode}
     ```
-* Date limits of exchange rate of currency `{currency_code}` in the database
+* Date limits of exchange rate of currency `{currencyCode}` in the database
     ```bash
-    http://localhost:5000/rates/{currency_code}/limits
+    http://localhost:5000/rates/{currencyCode}/limits
     ```
-* Exchange rate of currency `{currency_code}` published from `{startDate}` to `{endDate}` 
+* Exchange rate of currency `{currencyCode}` published on `{date}`
   (if the `Interpolated` field is `true` the exchange rate is interpolated from nearest previous historic exchange rate)
     ```bash
-    http://localhost:5000/rates/{currency_code}
+    http://localhost:5000/rates/{currencyCode}/{date}
+    ```  
+* Exchange rate of currency `{currencyCode}` published from `{startDate}` to `{endDate}` 
+  (if the `Interpolated` field is `true` the exchange rate is interpolated from nearest previous historic exchange rate)
+    ```bash
+    http://localhost:5000/rates/{currencyCode}/{startDate}/{endDate}
     ```
 * Total sales in USD and PLN on `{date}`
     ```bash
@@ -69,11 +74,11 @@ Then use one of the enquires
     ```
 * Total sales from `{startDate}` to `{endDate}` 
     ```bash
-    http://localhost:5000/sales/{currency_code}
+    http://localhost:5000/sales/{currencyCode}
     ```
 #### Query string parameters
-* `{currency_code}` – a three- letter currency code (ISO 4217 standard)
-* `{date}`, `{startDate}`, `{endDate}` – a date in the YYYY-MM-DD format (ISO 8601 standard)
+* `{currencyCode}` – a three- letter currency code (ISO 4217 standard)
+* `{date}`, `{startDate}`, `{endDate}` – a date in the YYYY-MM-dd format (ISO 8601 standard)
 
 ## Limits
 There are limits for requests per user:
@@ -107,7 +112,7 @@ There are limits for requests per user:
     "Currency Code": "USD", 
     "Limits": {
       "Lower date limit": "2009-01-01", 
-      "Upper date limit": "2020-12-18"
+      "Upper date limit": "2021-01-19"
     }
   }
   ```
@@ -135,14 +140,14 @@ There are limits for requests per user:
 
 * Total sales in USD and PLN on 2013-01-28
     ```bash
-    http://localhost:5000/sales/2013-01-28/2013-01-28
+    http://localhost:5000/sales/2013-01-28
     ```
     ```text
     {
       "Sales": {
         "1": {
           "Date": "2013-01-28", 
-          "PLN Total": 12.14, 
+          "PLN Total": 12.3, 
           "USD Total": 3.96
         }
       }

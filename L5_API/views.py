@@ -1,29 +1,21 @@
 from datetime import datetime
 from L5_API import db_app
+from L5_API.cache import RatesCache
 from L5_API.constants import CURRENCIES, DATE_FORMAT, DATA_LIMIT
 
-
-def __get_last_date(code):
-    return {"Date": db_app.get_last_date(code)}
+cache = RatesCache()
+print(cache)
 
 
 def get_last_rate(code):
     if not __is_code(code):
         return '404 - Currency Code not found', 404
 
-    date = db_app.get_last_date(code)
-    rate, ipd = db_app.get_rate(code, date)
+    date = db_app.get_rates_limits(code)[1]
+    data = db_app.get_rates_ipd(code, date, date)
 
-    return {"Currency Code": code, "Rates": {"Rate": {"Date": date, "Rate": rate, "Interpolated": ipd}}}
-
-
-def get_sale(date):
-    is_date_valid = __validate_date(date)
-    if not is_date_valid[0]:
-        return is_date_valid[1], is_date_valid[2]
-
-    sales = db_app.get_sales(date, date)
-    return __sales_serializer(sales)
+    return {"Currency Code": code,
+            "Rates": {"Rate": {"Date": date, "Rate": data[0]['rate'], "Interpolated": data[0]['ipd']}}}
 
 
 def get_rates(code, date_from, date_to):
@@ -34,8 +26,16 @@ def get_rates(code, date_from, date_to):
     if not are_dates_valid[0]:
         return are_dates_valid[1], are_dates_valid[2]
 
-    rates = db_app.get_rates_ipd(code, date_from, date_to)
-    return __rates_serializer(code, rates)
+    if cache.is_cached_time_frame(code, date_from, date_to):
+        data = cache.get_cached(code, date_from, date_to)
+    else:
+        data = db_app.get_rates_ipd(code, date_from, date_to)
+        cache.cache(code, data)
+    return __rates_serializer(code, data)
+
+
+def get_rate(code, date):
+    return get_rates(code, date, date)
 
 
 def get_sales(date_from, date_to):
@@ -45,6 +45,10 @@ def get_sales(date_from, date_to):
 
     sales = db_app.get_sales(date_from, date_to)
     return __sales_serializer(sales)
+
+
+def get_sale(date):
+    return get_sales(date, date)
 
 
 def get_rates_limits(code):
@@ -80,17 +84,6 @@ def __is_code(code):
     return code.upper() in CURRENCIES
 
 
-def __is_date(date):
-    is_date = True
-
-    try:
-        datetime.strptime(date, DATE_FORMAT)
-    except ValueError:
-        is_date = False
-
-    return is_date
-
-
 def __are_dates(date_from, date_to):
     are_dates = True
 
@@ -101,6 +94,10 @@ def __are_dates(date_from, date_to):
         are_dates = False
 
     return are_dates
+
+
+def __is_date(date):
+    return __are_dates(date, date)
 
 
 def __are_dates_chronological(date_from, date_to):
@@ -123,18 +120,6 @@ def __are_in_range(date_from, date_to):
     return (date_to - date_from).days < DATA_LIMIT
 
 
-def __validate_date(date, code='NONE'):
-    if not __is_date(date):
-        return False, '400 BadRequest - Wrong format of date - should be 0000-00-00', 400
-
-    date = datetime.strptime(date, DATE_FORMAT).date()
-
-    if not __are_in_limit(date, date, code):
-        return False, '400 BadRequest - Invalid date range - date outside the database limit', 400
-
-    return True, '', 200
-
-
 def __validate_dates(date_from, date_to, code='NONE'):
     if not __are_dates(date_from, date_to):
         return False, '400 BadRequest - Wrong format of dates - should be 0000-00-00', 400
@@ -152,3 +137,7 @@ def __validate_dates(date_from, date_to, code='NONE'):
         return False, '400 BadRequest - Limit of {} days has been exceeded'.format(DATA_LIMIT), 400
 
     return True, '', 200
+
+
+def __validate_date(date, code='NONE'):
+    return __validate_dates(date, date, code)

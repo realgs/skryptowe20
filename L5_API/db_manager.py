@@ -1,9 +1,8 @@
 import sqlite3
-import L5_API.nbp_api_handler as api_hdl
 from L5_API.constants import DB_PATH
 
 
-def __connect_db():
+def _connect_db():
     conn = None
 
     try:
@@ -14,8 +13,8 @@ def __connect_db():
     return conn
 
 
-def __drop_rates_table():
-    conn = __connect_db()
+def _drop_rates_table():
+    conn = _connect_db()
     cursor = conn.cursor()
 
     cursor.execute("""DROP TABLE rates;""")
@@ -24,8 +23,8 @@ def __drop_rates_table():
     conn.close()
 
 
-def __create_rates_table():
-    conn = __connect_db()
+def _create_rates_table():
+    conn = _connect_db()
     cursor = conn.cursor()
 
     cursor.execute("""CREATE TABLE rates (
@@ -40,8 +39,8 @@ def __create_rates_table():
     conn.close()
 
 
-def __get_invoices():
-    conn = __connect_db()
+def _get_invoices():
+    conn = _connect_db()
     cursor = conn.cursor()
     data = []
 
@@ -56,8 +55,8 @@ def __get_invoices():
     return data
 
 
-def __add_total_pln_sales_column():
-    conn = __connect_db()
+def _add_total_pln_sales_column():
+    conn = _connect_db()
     cursor = conn.cursor()
 
     cursor.execute("""ALTER TABLE invoices ADD Total_pln NUMERIC(10,2) DEFAULT 0.00;""")
@@ -66,8 +65,8 @@ def __add_total_pln_sales_column():
     conn.close()
 
 
-def __add_total_pln_sales():
-    conn = __connect_db()
+def _add_total_pln_sales():
+    conn = _connect_db()
     cursor = conn.cursor()
     dates = []
     rate = 0.0
@@ -89,64 +88,23 @@ def __add_total_pln_sales():
 
         try:
             cursor.execute("""SELECT Total FROM invoices 
-                              WHERE InvoiceDate == '{}'""".format('{} 00:00:00'.format(date)))
+                              WHERE InvoiceDate == '{}';""".format('{} 00:00:00'.format(date)))
             sale = float(cursor.fetchone()[0])
         except sqlite3.Error as e:
             print('db_handler: __add_total_pln_sales(): SELECT Total FROM invoices ' + str(e))
 
         try:
-            cursor.execute("""UPDATE invoices SET Total_pln = {};""".format(round(rate * sale, 2)))
+            cursor.execute("""UPDATE invoices SET Total_pln = {}
+                              WHERE InvoiceDate == '{}';""".format(round(rate * sale, 2), '{} 00:00:00'.format(date)))
         except sqlite3.Error as e:
             print('db_handler: __add_total_pln_sales(): UPDATE invoices ' + str(e))
 
     conn.commit()
     conn.close()
 
-    return dates
-
-
-def get_sales(date):
-    conn = __connect_db()
-    cursor = conn.cursor()
-
-    sales = []
-
-    try:
-        cursor.execute("""SELECT Total FROM invoices
-                          WHERE InvoiceDate = '{} 00:00:00'""".format(date))
-        sales = [float(x[0]) for x in cursor.fetchall()]
-    except sqlite3.Error as e:
-        print('db_handler: get_sales ' + str(e))
-
-    conn.close()
-
-    return sales
-
-
-def get_total_sale(date):
-    return sum(get_sales(date))
-
-
-def get_rate(currency_code, date):
-    conn = __connect_db()
-    cursor = conn.cursor()
-    rate = 0.0
-
-    try:
-        cursor.execute("""SELECT Rate FROM rates
-                            WHERE RateDate = '{}'
-                            AND Code = '{}';""".format(date, currency_code))
-        rate = float(cursor.fetchone()[0])
-    except sqlite3.Error as e:
-        print('db_handler: get_rate(' + date + ', ' + currency_code + ') ' + str(e))
-
-    conn.close()
-
-    return rate
-
 
 def get_rates_dates_interpolated(currency_code, date_from, date_to):
-    conn = __connect_db()
+    conn = _connect_db()
     cursor = conn.cursor()
     rates = []
     dates = []
@@ -168,45 +126,41 @@ def get_rates_dates_interpolated(currency_code, date_from, date_to):
     return rates, dates, interpolated
 
 
+def get_rate_interpolated(currency_code, date):
+    return get_rates_dates_interpolated(currency_code, date, date)
+
+
 def get_sales_and_dates(date_from, date_to):
-    conn = __connect_db()
+    conn = _connect_db()
     cursor = conn.cursor()
 
-    sales = []
+    sales_usd = []
+    sales_pln = []
     dates = []
 
     try:
-        cursor.execute("""SELECT SUM(Total), InvoiceDate FROM invoices
+        cursor.execute("""SELECT SUM(Total), SUM(Total_pln), InvoiceDate FROM invoices
                                 WHERE InvoiceDate BETWEEN '{}' AND '{}'
                                 GROUP BY InvoiceDate""".format('{} 00:00:00'.format(date_from),
                                                                '{} 00:00:00'.format(date_to)))
-        for sale, date in cursor.fetchall():
-            sales.append(float(sale))
+        for sale_usd, sale_pln, date in cursor.fetchall():
+            sales_usd.append(float(sale_usd))
+            sales_pln.append(float(sale_pln))
             dates.append(date[:10])
     except sqlite3.Error as e:
         print('db_handler: get_sales' + str(e))
 
     conn.close()
 
-    return sales, dates
+    return sales_usd, sales_pln, dates
 
 
-def add_rate_entry(currency_code, date, rate, interpolated):
-    conn = __connect_db()
-    cursor = conn.cursor()
-
-    try:
-        cursor.execute("""INSERT INTO rates VALUES (:RateDate, :Rate, :Code, :Interpolated)""",
-                       {'RateDate': date, 'Rate': rate, 'Code': currency_code, 'Interpolated': interpolated})
-        conn.commit()
-    except sqlite3.Error as e:
-        print('db_handler: add_rate_entry ' + str(e))
-
-    conn.close()
+def get_sales_and_date(date):
+    return get_sales_and_dates(date, date)
 
 
 def delete_rate_entry(currency_code, date):
-    conn = __connect_db()
+    conn = _connect_db()
     cursor = conn.cursor()
 
     try:
@@ -221,7 +175,7 @@ def delete_rate_entry(currency_code, date):
 
 
 def add_rate_entries(currency_code, dates, rates, interpolated):
-    conn = __connect_db()
+    conn = _connect_db()
     cursor = conn.cursor()
 
     try:
@@ -238,19 +192,5 @@ def add_rate_entries(currency_code, dates, rates, interpolated):
     conn.close()
 
 
-if __name__ == '__main__':
-    date_from = '2009-01-01'
-    date_to = '2020-12-17'
-
-    # __drop_rates_table()
-    # __create_rates_table()
-    #
-    # for currency in CURRENCIES:
-    #     rates, dates, interpolated = api_hdl.currency_rates_dates_interpolated_time_frame(currency,
-    #                                                                                       date_from,
-    #                                                                                       date_to)
-    #     add_rate_entries(dates, rates, interpolated, currency)
-
-    # __add_total_pln_sales_column()
-    # __add_total_pln_sales()
-    # print(__get_invoices())
+def add_rate_entry(currency_code, date, rate, interpolated):
+    return add_rate_entries(currency_code, [date], [rate], [interpolated])
