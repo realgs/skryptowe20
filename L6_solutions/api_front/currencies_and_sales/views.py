@@ -91,6 +91,10 @@ def rates_date_range(request):
 
         data = get_data(endpoint)
         if not type(data) is int:
+            if start_date == end_date:
+                context["error_msg"] = "Select a date range, not a single date."
+                return render(request, "date_range.html", context=context)
+
             context["table"] = get_html_table(data)
             context["datasets"] = [
                 {"label": "USD rate", "data": pd.DataFrame(data)['USD'].to_list(), "color": CCY_COLORS['USD']}]
@@ -139,6 +143,10 @@ def sales_date_range(request):
 
         data = get_data(endpoint)
         if not type(data) is int:
+            if start_date == end_date:
+                context["error_msg"] = "Select a date range, not a single date."
+                return render(request, "date_range.html", context=context)
+
             table_data = get_sales_data_subset(data, currencies.copy())
             context["table"] = get_html_table(table_data.to_json(orient="records"))
             context["datasets"] = []

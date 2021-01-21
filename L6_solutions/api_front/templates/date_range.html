@@ -37,9 +37,11 @@
                         {% for ds in datasets %}
                             {
                                 data: {{ ds.data }},
+                                pointRadius: 0,
                                 fill: false,
                                 borderColor: '{{ ds.color }}',
-                                label: '{{ ds.label }}'
+                                label: '{{ ds.label }}',
+                                lineTension: 0
                             },
                         {% endfor %}
                     ],
