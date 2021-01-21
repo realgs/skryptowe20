@@ -2,7 +2,8 @@ import React from 'react'
 import './App.css';
 import RatesTable from './RatesTable'
 import { Layout, Button, Typography, DatePicker, Select } from 'antd';
-
+import { Menu, Dropdown } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const { Title, Text } = Typography;
@@ -40,6 +41,7 @@ function convertDate(date) {
 
 class App extends React.Component {
     state = {
+        content:0,
         currency:"",
         rates:[]
     }
@@ -61,7 +63,7 @@ class App extends React.Component {
 
         fetchRates(this.selector_currency.currency, start_date , end_date).then(result => result.json())
                        .then(json => {
-                           var error = json['error'];
+                           let error = json['error'];
                            if(error != null) {
                                 this.setState({
                                     currency: error,
@@ -84,11 +86,83 @@ class App extends React.Component {
     }
 
     setCurrency = currency => {
-        console.log(currency)
         this.selector_currency.currency = currency;
     }
 
+    setDefaultContent = () => {
+        this.setState({
+            content:0
+        })
+    }
+
+    setRatesContent = () => {
+        this.setState({
+            content:1
+        })
+    }
+
+    setSummaryContent = () => {
+        this.setState({
+            content:2
+        })
+    }
+
     render() {
+
+        const menu = (
+            <Menu>
+              <Menu.Item onClick={ this.setDefaultContent }>
+                  API Reference
+              </Menu.Item>
+              <Menu.Item onClick={ this.setRatesContent }>
+                  Rates exchange
+              </Menu.Item>
+              <Menu.Item onClick={ this.setSummaryContent }>
+                  Transactions summary
+              </Menu.Item>
+            </Menu>
+          );
+
+
+        const display_content = this.state.content;
+        let content;
+        let options;
+
+        if (display_content == 1) {
+            content =
+            <>
+                <Title level={4}>Rezultat</Title>
+                <RatesTable data={ {currency:this.state.currency,
+                                    rates:this.state.rates} }/>
+            </>
+            options =
+            <>
+                <RangePicker onChange={ this.setDateRange } />
+                <Select defaultValue="USD" style={{ width: 80 }} onChange={this.setCurrency}>
+                    <Option value="USD">USD</Option>
+                    <Option value="EUR">EUR</Option>
+                    <Option value="AUD">AUD</Option>
+                </Select>
+                <Button type="primary" onClick={ this.registerButtonClick }>Przycisk</Button>
+            </>
+        } else if (display_content == 2) {
+            content =
+            <>
+            Kaczka
+            </>
+            options =
+            <>
+            </>
+        } else {
+            content =
+            <>
+            Index
+            </>
+            options =
+            <>
+            </>
+        }
+
         return (
             <div className="App">
                 <Layout>
@@ -101,18 +175,16 @@ class App extends React.Component {
 
                     <Sider>
                         <Title level={4}>Opcje</Title>
-                        <RangePicker onChange={ this.setDateRange } />
-                        <Select defaultValue="USD" style={{ width: 80 }} onChange={this.setCurrency}>
-                            <Option value="USD">USD</Option>
-                            <Option value="EUR">EUR</Option>
-                            <Option value="AUD">AUD</Option>
-                        </Select>
-                       <Button type="primary" onClick={ this.registerButtonClick }>Przycisk</Button>
+                        <Dropdown overlay={menu}>
+                            <a className="ant-dropdown-link">
+                            Menu <DownOutlined />
+                            </a>
+                        </Dropdown>
+                        { options }
                     </Sider>
 
                     <Content>
-                      <Title level={4}>Rezultat</Title>
-                      <RatesTable data={ this.state }/>
+                        {content}
                     </Content>
 
                     </Layout>
