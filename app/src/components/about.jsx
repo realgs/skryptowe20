@@ -1,25 +1,8 @@
 import React, { Component } from "react";
-import "./../App.css";
 
-class CardInfo extends Component {
-  state = {
-    currencies: [
-      "USD",
-      "EUR",
-      "HUF",
-      "CHF",
-      "GBP",
-      "JPY",
-      "CZK",
-      "AED",
-      "BOB",
-      "KWD",
-    ],
-    github: "https://github.com/wasyl078/skryptowe20/tree/L5",
-  };
-
+export default class About extends Component {
   getCurrencies = () => {
-    return this.state.currencies.join(", ");
+    return this.props.currencies.join(", ");
   };
 
   boldIt = (text) => {
@@ -28,14 +11,14 @@ class CardInfo extends Component {
 
   mainTitle = () => {
     return (
-      <h2 className="card-title">
+      <div className="card-title">
         What is
         <span style={{ color: "#2E3F7F", fontStyle: "italic" }}>
           {" "}
           NBP Api by Maciej Wasilewski
         </span>
         ?
-      </h2>
+      </div>
     );
   };
 
@@ -50,17 +33,13 @@ class CardInfo extends Component {
         <br />
         <ol>
           <li>
-            Clone repo from my <a href={this.state.github}>github page</a> to
+            Clone repo from my <a href={this.props.github}>github page</a> to
             your hard drive. <br />
           </li>
           <li>
             {" "}
-            Go to{" "}
-            <a href="https://data.world/state-of-connecticut/5mzw-sjtu">
-              this link
-            </a>{" "}
-            and download the .csv file. Save it in the same location as the
-            repo.
+            Go to <a href={this.props.sales}>this link</a> and download the .csv
+            file. Save it in the same location as the repo.
           </li>
           <li>
             Open windows console and navigate to cloned directory and run
@@ -140,8 +119,8 @@ class CardInfo extends Component {
 
   myFooter = () => {
     return (
-      <div className="card-footer text-muted">
-        More info at my <a href={this.state.github}>github page</a>
+      <div className="card-footer text-muted border-primary">
+        More info at my <a href={this.props.github}>github page</a>
       </div>
     );
   };
@@ -149,24 +128,19 @@ class CardInfo extends Component {
   divider = () => {
     return <hr />;
   };
-
   render() {
     return (
-      <div className="card mb-5">
+      <div className="card border-primary mb-5">
+        <h3 className="card-header border-primary">{this.mainTitle()}</h3>
         <div className="card-body">
-          {this.mainTitle()}
-          <div className="card-text">
-            {this.mainGoal()}
-            {this.divider()}
-            {this.howToUseRates()}
-            {this.divider()}
-            {this.howToUseSales()}
-          </div>
+          {this.mainGoal()}
+          {this.divider()}
+          {this.howToUseRates()}
+          {this.divider()}
+          {this.howToUseSales()}
         </div>
-        {this.myFooter()}
+        <div>{this.myFooter()}</div>
       </div>
     );
   }
 }
-
-export default CardInfo;

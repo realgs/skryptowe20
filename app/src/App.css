@@ -1,5 +1,5 @@
 .column {
-  width: 100%;
+  width: 40%;
 }
 
 .body {
@@ -8,4 +8,8 @@
 
 .my-nav-bar {
   padding-top: 56px;
+}
+
+.my-link {
+  color: white
 }
