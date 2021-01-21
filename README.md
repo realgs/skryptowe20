@@ -47,11 +47,11 @@ Cache odświeża się co ok. **12 godzin** aby zapobiec przepełnieniu pamięci
 
 Notowanie waluty USD z konkretnego dnia razemz informacją 'interpolated':
 ```
-GET http://127.0.0.1:5000/USD/<ratingDate>
+GET http://127.0.0.1:5000/rates/USD/<ratingDate>
 ```
 Notowanie waluty USD z zakresu dat razem z informacją 'interpolated':
 ```
-GET http://127.0.0.1:5000/USD/<dateFrom>/<dateTo> 
+GET http://127.0.0.1:5000/rates/USD/<dateFrom>/<dateTo> 
 ```
 Suma sprzedaży z konkretnego dnia w walutach PLN i USD (sumy te są podane w polach "sumPLN" i "sumUSD" zwracanego pliku JSON):
 ```
