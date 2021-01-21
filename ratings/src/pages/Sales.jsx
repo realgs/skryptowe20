@@ -1,11 +1,11 @@
 import { MainContent, Body } from "../layout/Layout";
 
-const Home = () => {
+const Sales = () => {
   return (
     <Body>
-      <MainContent>Home</MainContent>
+      <MainContent>Sales</MainContent>
     </Body>
   );
 };
 
-export default Home;
+export default Sales;

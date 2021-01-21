@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import { MainContent, Body } from "./layout/Layout";
 import Home from "./pages/Home";
+import Sales from "./pages/Sales";
+import Ratings from "./pages/Ratings";
 
 const Main = styled.main`
   min-height: 100%;
@@ -43,19 +45,3 @@ function App() {
 }
 
 export default App;
-
-function Ratings() {
-  return (
-    <Body>
-      <MainContent>Ratings</MainContent>
-    </Body>
-  );
-}
-
-function Sales() {
-  return (
-    <Body>
-      <MainContent>Sales</MainContent>
-    </Body>
-  );
-}

@@ -1,11 +1,11 @@
 import { MainContent, Body } from "../layout/Layout";
 
-const Home = () => {
+const Ratings = () => {
   return (
     <Body>
-      <MainContent>Home</MainContent>
+      <MainContent>Ratings</MainContent>
     </Body>
   );
 };
 
-export default Home;
+export default Ratings;
