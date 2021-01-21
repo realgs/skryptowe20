@@ -25,7 +25,7 @@
     <li>Flask-Limiter (pip install Flask-Limiter)</li>
 </ul>
 <h2>Jak to uruchomić?</h2>
-<p>Przejdź do folderu lab5 w projekcie i uruchom w nim konsolę i wpisz "python app.py". Jeśli wszystko poszło dobrze,
+<p>Przejdź do folderu lab6/api w projekcie, uruchom w nim konsolę i wpisz "python app.py". Jeśli wszystko poszło dobrze,
     powinieneś zobaczyć w konsoli komunikat "Running on http://127.0.0.1:5000/". Aby przetestować działanie, przejdź na
     stronę <a href="http://127.0.0.1:5000/api/exchangerate/usd/2010-01-01/">http://127.0.0.1:5000/api/exchangerate/usd/2010-01-01/</a>.
     Powinna się tam wyświetlić odpowiedź w postaci JSONa.</p>
@@ -162,6 +162,7 @@
 </ul>
 
 <h1>Jakie pliki znajdują się w projekcie?</h1>
+W folderze "api" odpowiadającym za API:
 <ul>
     <li><p><strong>app.py </strong>- główny plik programu, to on odpowiada za wystawianie danych użytkownikowi i
         pobieranie ich z bazy</p></li>
@@ -170,9 +171,10 @@
     <li><p><strong>calculate_total_sales.py </strong>- dodaje do bazy danych 'chinook.db' do tabeli 'total_sales'
         podsumowanie sprzedaży z tej bazy danych.</p></li>
     <li><p><strong>chinook.db </strong>- baza danych wykorzystywana w ćwiczeniu. Pochodzi z
-        https://www.sqlitetutorial.net/sqlite-sample-database/ i została uzupełniona przez wykonanie skryptów
+        <a href="https://www.sqlitetutorial.net/sqlite-sample-database/">www.sqlitetutorial.net</a> i została uzupełniona przez wykonanie skryptów
         'create_exchange_rates_in_table.py' oraz 'calculate_total_sales.py'</p></li>
 </ul>
+Folder "interface" odpowiada za interfejs graficzny w Django który właśnie przeglądasz
 
 <h1>Coś jeszcze?</h1>
 <p>Korzytanie z API jest objęte limitem czasowym. Kazdy użytkownik może wykonać maksymalnie 10 zapytań na minutę.
