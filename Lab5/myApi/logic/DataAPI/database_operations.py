@@ -103,6 +103,23 @@ def get_summary(currency, date):
     conn.close()
     return output
 
+def get_summaries(currency, start_date, end_date):
+    validate_currency(currency)
+    is_date_valid(start_date)
+    is_date_valid(end_date)
+
+    c, conn = connect_to_database()
+    querry = f"""
+    SELECT *
+    FROM [{currency}Summary]
+    WHERE Date BETWEEN '{start_date}' AND '{end_date}'
+    """
+    c.execute(querry)
+    output = c.fetchall()
+
+    conn.close()
+    return output
+
 def add_table_summary(wrapper):
     c, conn = connect_to_database()
 
