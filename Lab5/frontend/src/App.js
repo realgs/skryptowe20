@@ -2,6 +2,7 @@ import './App.css';
 import React from 'react'
 import RatesTable from './RatesTable'
 import Readme from './Readme'
+import LineChart from './LineChart'
 
 import { Menu, Dropdown, Layout, Button, Typography,
          DatePicker, Select, Space } from 'antd';
@@ -108,9 +109,21 @@ class App extends React.Component {
         })
     }
 
-    setSummaryContent = () => {
+    setRatesChartContent = () => {
         this.setState({
             content:2
+        })
+    }
+
+    setSummaryContent = () => {
+        this.setState({
+            content:3
+        })
+    }
+
+    setSummaryChartContent = () => {
+        this.setState({
+            content:4
         })
     }
 
@@ -124,8 +137,14 @@ class App extends React.Component {
               <Menu.Item onClick={ this.setRatesContent }>
                   Rates exchange
               </Menu.Item>
+              <Menu.Item onClick={ this.setRatesChartContent }>
+                Rates exchange chart
+              </Menu.Item>
               <Menu.Item onClick={ this.setSummaryContent }>
                   Transactions summary
+              </Menu.Item>
+              <Menu.Item onClick={ this.setSummaryChartContent }>
+                  Transactions summary chart
               </Menu.Item>
             </Menu>
           );
@@ -138,7 +157,7 @@ class App extends React.Component {
         if (display_content == 1) {
             content =
             <>
-                <Title level={4}>Rezultat</Title>
+                <Title level={4}>Results</Title>
                 <RatesTable data={ {currency:this.state.currency,
                                     rates:this.state.rates} }/>
             </>
@@ -154,18 +173,32 @@ class App extends React.Component {
                             <Option value="EUR">EUR</Option>
                             <Option value="AUD">AUD</Option>
                         </Select>
-                        <Button type="primary" onClick={ this.registerButtonClick }>Wyświel</Button>
+                        <Button type="primary" onClick={ this.registerButtonClick }>Show</Button>
                     </Space>
                 </Space>
             </div >
         } else if (display_content == 2) {
             content =
             <>
-            Kaczka
+                <Title level={4}>Results</Title>
+                <LineChart data={this.state.rates} title={this.state.currency} color="#B08EA2"/>
             </>
             options =
-            <>
-            </>
+            <div
+             style={{ margin: '24px 16px 0'}}>
+                <Space direction="vertical">
+                <RangePicker onChange={ this.setDateRange } />
+
+                    <Space>
+                        <Select defaultValue="USD" style={{ width: 80 }} onChange={this.setCurrency}>
+                            <Option value="USD">USD</Option>
+                            <Option value="EUR">EUR</Option>
+                            <Option value="AUD">AUD</Option>
+                        </Select>
+                        <Button type="primary" onClick={ this.registerButtonClick }>Show</Button>
+                    </Space>
+                </Space>
+            </div >
         } else {
             content = <Readme />
             options = <></>
@@ -176,13 +209,13 @@ class App extends React.Component {
                 <Layout>
 
                     <Header>
-                      <Title>Moja super webapp</Title>
+                      <Title>Exchange rates API frontend</Title>
                     </Header>
 
                     <Layout>
 
                     <Sider width={250}>
-                            <Title level={4}>Opcje</Title>
+                            <Title level={4}>Options</Title>
                             <Dropdown overlay={menu}>
                                 <Button className="ant-dropdown-link">
                                 Menu <DownOutlined />
