@@ -35,8 +35,9 @@
 </head>
 <body>
 {% if sales_json %}
-    <h1>Wartość sprzedaży z dni {{ start_date }} - {{ end_date }}</h1>
     <a href="http://127.0.0.1:8000">Wróć do strony głównej</a>
+    <a href="http://127.0.0.1:8000/request_builder">Wróć do kreatora zapytań</a>
+    <h1>Wartość sprzedaży z dni {{ start_date }} - {{ end_date }}</h1>
     <table>
         <thead>
         <tr>
@@ -65,6 +66,7 @@
 {% else %}
     <h1>Brak danych do wyświetlenia!</h1>
     <a href="http://127.0.0.1:8000">Wróć do strony głównej</a>
+    <a href="http://127.0.0.1:8000/request_builder">Wróć do kreatora zapytań</a>
 {% endif %}
 
 </body>
