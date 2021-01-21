@@ -2,3 +2,9 @@
 .idea/
 venv
 lab4/__pycache__/
+Django_API/__pycache__/manage.cpython-37.pyc
+lab4/usd_euro_to_pln_chart.svg
+Django_API/db.sqlite3
+lab4/
+Django_API/api_exchange/__pycache__/
+Django_API/api_exchange/migrations/

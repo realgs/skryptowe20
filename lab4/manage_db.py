@@ -28,5 +28,5 @@ def main():
     plot_data.plot()
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main()
