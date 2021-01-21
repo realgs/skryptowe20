@@ -12,23 +12,18 @@ def home(request):
 
 def request_builder(request):
     if request.method == 'POST':
-        if request.POST['select-value'] == 'exchange-rates':
-            # użytkownik chce kurs walut
-            if request.POST['select-date'] == 'date-range':
-                start_date = request.POST['date-range-start']
-                end_date = request.POST['date-range-end']
-            else:
-                start_date = end_date = request.POST['single-date-input']
-            return show_exchange_rates(request, start_date, end_date, request.POST['currencies'], True)
+        if request.POST['select-date'] == 'date-range':
+            start_date = request.POST['date-range-start']
+            end_date = request.POST['date-range-end']
         else:
-            # użytkownik chce podsumowanie sprzedaży
-            if request.POST['select-date'] == 'date-range':
-                start_date = request.POST['date-range-start']
-                end_date = request.POST['date-range-end']
-            else:
-                start_date = end_date = request.POST['single-date-input']
-            return show_sales(request, start_date, end_date, True)
+            start_date = end_date = request.POST['single-date-input']
+        is_chart = (request.POST['select-type'] == 'type-chart')
 
+        if request.POST['select-value'] == 'exchange-rates':
+            currency_code = request.POST['currencies']
+            return show_exchange_rates(request, start_date, end_date, currency_code, is_chart)
+        else:
+            return show_sales(request, start_date, end_date, is_chart)
     return render(request, "interface_app/request_builder.html")
 
 
