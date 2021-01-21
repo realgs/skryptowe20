@@ -16,8 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from logic import views
+from logic.DataAPI import data_setup
 
 urlpatterns = [
     path('rates/<str:currency_code>/<slug:start_date>/<slug:end_date>/', views.history, name='history'),
     path('summary/<str:currency_code>/<slug:date>/', views.summary, name='summary'),
 ]
+
+data_setup.setup()

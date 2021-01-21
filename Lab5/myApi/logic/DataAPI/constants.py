@@ -16,7 +16,8 @@ DATE_FORMAT = "%Y-%m-%d"
 DEFAULT_TABLE = "A"
 
 SUMMARY_SUPPORTED_CURRENCIES = {
-    "USD", "EUR", "AUD"
+   # "USD", "EUR", "AUD"
+    "USD"
 }
 
 AVAIL_CURRENCIES = {
@@ -38,4 +39,4 @@ MSG_ERROR_INVALID_CURRENCY = f"Currency must be one of available values: \n{AVAI
 MSG_ERROR_INVALID_DAYS = f"Days have to be greater than {MIN_DAYS} and less than 18 years ({MAX_DAYS} days)!"
 MSG_ERROR_FAILED_TO_FETCH = "Error fetching data!"
 
-DATABASE_PATH = "Lab5/myApi/logic/DataAPI/Northwind.sqlite"
+DATABASE_PATH = "Northwind.sqlite"

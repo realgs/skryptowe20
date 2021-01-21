@@ -90,14 +90,16 @@ def validate_currency(currency):
 def get_summary(currency, date):
     validate_currency(currency)
     is_date_valid(date)
+
     c, conn = connect_to_database()
     querry = f"""
     SELECT *
     FROM [{currency}Summary]
-    WHERE Date = {date};
+    WHERE Date = '{date}';
     """
     c.execute(querry)
     output = c.fetchall()
+
     conn.close()
     return output
 

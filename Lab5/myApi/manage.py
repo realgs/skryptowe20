@@ -3,11 +3,8 @@
 import os
 import sys
 
-from logic.DataAPI import data_setup
-
 def main():
     """Run administrative tasks."""
-    data_setup.setup()
 
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myApi.settings')
     try:
