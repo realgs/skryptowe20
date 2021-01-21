@@ -61,7 +61,7 @@ Currently, there are three endpoints you can use:
 
 #### /rates/\<date_start>/\<date_end>
 
-Provides PLN to USD exchange rate for the time period between `date_start` and `date_end` (inclusive)
+Provides PLN to USD exchange rate for the time period between `date_start` and `date_end` (inclusive).
 
 The responses will be cached for 5 minutes.
 
@@ -91,15 +91,15 @@ The API server can respond with:
 
 Redirects to `/rates/<date>/<date>`
 
-#### /sales/\<date>
+#### /sales/\<date_start>/\<date_end>
 
-Provides the total sales value for a given day.
+Provides the total sales value for the time period between `date_start` and `date_end` (inclusive).
 
 The responses will be cached for 10 minutes.
 
-The server can respond with:
+The API server can respond with:
 
-* A dictionary with one key `sales`, containing another dictionary with three keys:
+* A dictionary with one key `sales`, containing an ordered list of dictionaries for every day of the time period specified in the request. The dictionary for a single day contains three keys:
 
   * `date`: *string of format YYYY-MM-DD* - date on which the sales were recorded
   * `original_sales`: *double* - value of total sales made on a given day in USD
@@ -107,12 +107,20 @@ The server can respond with:
 
 * Bad request if the date format is invalid
 
+* Bad request if the `date_start` is earlier than `date_end`
+
+* Bad request if the time period is longer than 366 days
+
 * Too many requests if the user made more requests than:
 
   * 1 per second
   * 10 per minute
 
 * Message stating that the data was not found if the time period starts before 2016-01-01 or ends after 2018-12-28.
+
+#### /sales/\<date>
+
+Redirects to `/sales/<date>/<date>`
 
 ### Examples
 

@@ -12,7 +12,7 @@ from .database import (
     check_if_database_file_exists,
     update_data,
     get_rates_for_dates,
-    get_sales_for_date,
+    get_sales_for_dates,
 )
 
 
@@ -22,6 +22,7 @@ cache = Cache(app, config={"CACHE_TYPE": "simple"})
 date_limits = DatabaseLimits()
 HOST = "0.0.0.0"
 DATE_FORMAT = "%Y-%m-%d"
+MAX_DAYS = 366
 
 
 def get_database():
@@ -38,6 +39,19 @@ def close_connection(exception):
         db.close()
 
 
+def check_date(from_date, to_date, min_date, max_date):
+    if to_date < from_date:
+        return "date_start cannot be earlier than date_end"
+
+    if (to_date - from_date).days > MAX_DAYS:
+        return f"You can only get data for maximum {MAX_DAYS} days at once."
+
+    if from_date < min_date or to_date > max_date:
+        return "No data for this period of time."
+
+    return None
+
+
 @app.route("/api/rates/<string:from_date>/<string:to_date>")
 @limiter.limit("100/hour;10/minute/1/second")
 @cache.memoize(timeout=300)
@@ -48,17 +62,12 @@ def get_rates(from_date, to_date):
     except ValueError:
         return jsonify(message="Invalid date format"), 400
 
-    if to_date < from_date:
-        return jsonify(message="date_start cannot be earlier than date_end"), 400
+    message = check_date(
+        from_date, to_date, date_limits.min_rates_date, date_limits.max_rates_date
+    )
 
-    if (to_date - from_date).days > 366:
-        return (
-            jsonify(message="You can only get data for maximum 366 days at once."),
-            400,
-        )
-
-    if from_date < date_limits.min_rates_date or to_date > date_limits.max_rates_date:
-        return jsonify(message="No data for this period of time.")
+    if message is not None:
+        return jsonify(message=message), 400
 
     connection = get_database()
     rates = get_rates_for_dates(connection, from_date, to_date)
@@ -74,25 +83,28 @@ def get_single_rate(date):
     return redirect(url_for("get_rates", from_date=date, to_date=date))
 
 
-@app.route("/api/sales/<string:date>", methods=["GET"])
+@app.route("/api/sales/<string:from_date>/<string:to_date>", methods=["GET"])
 @cache.memoize(timeout=600)
-def get_sales(date):
+def get_sales(from_date, to_date):
     try:
-        date = datetime.strptime(date, DATE_FORMAT).date()
+        from_date = datetime.strptime(from_date, DATE_FORMAT).date()
+        to_date = datetime.strptime(to_date, DATE_FORMAT).date()
     except ValueError:
         return jsonify(message="Invalid date format"), 400
 
-    if date < date_limits.min_sales_date or date > date_limits.max_sales_date:
-        return jsonify(message="No data for this date.")
-
     connection = get_database()
-    sales = get_sales_for_date(connection, date)
+    sales = get_sales_for_dates(connection, from_date, to_date)
 
-    if not sales:
-        sales = {"date": date, "original_total": 0, "exchanged_total": 0}
+    for entry in sales:
+        entry["date"] = entry["date"].strftime(DATE_FORMAT)
 
-    sales["date"] = sales["date"].strftime(DATE_FORMAT)
     return jsonify(sales=sales)
+
+
+@app.route("/api/sales/<string:date>", methods=["GET"])
+@cache.memoize(timeout=600)
+def get_single_sale(date):
+    return redirect(url_for("get_sales", from_date=date, to_date=date))
 
 
 def run(args):

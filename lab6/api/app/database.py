@@ -1,6 +1,6 @@
 from enum import Enum
 from os.path import isfile, dirname, join
-from datetime import datetime
+from datetime import datetime, timedelta
 import sqlite3
 
 from .data_creation import (
@@ -85,24 +85,55 @@ def get_rates_for_dates(connection, from_date, to_date):
     return rates
 
 
-def get_sales_for_date(connection, date):
+def add_day_with_no_sales(sales, date):
+    sales.append(
+        {
+            "date": date,
+            "original_total": 0,
+            "exchanged_total": 0,
+        }
+    )
+
+
+def add_days_until(sales, from_date, to_date):
+    while from_date != to_date:
+        add_day_with_no_sales(sales, from_date)
+        from_date = from_date + timedelta(days=1)
+    return from_date
+
+
+def get_sales_for_dates(connection, from_date, to_date):
     cursor = connection.cursor()
 
-    sale = cursor.execute(
+    cursor.execute(
         """
         SELECT date, original_sales, exchanged_sales
         FROM total_sales
-        WHERE date = ?
+        WHERE date BETWEEN ? AND ?
+        ORDER BY date
         """,
-        (date.strftime(DB_CUSTOM_DATE_FORMAT),),
-    ).fetchone()
+        (
+            from_date.strftime(DB_CUSTOM_DATE_FORMAT),
+            to_date.strftime(DB_CUSTOM_DATE_FORMAT),
+        ),
+    )
 
-    if sale:
-        date, original, exchanged = sale
-        sale = {
-            "date": datetime.strptime(date.split(" ")[0], DB_CUSTOM_DATE_FORMAT).date(),
-            "original_total": original,
-            "exchanged_total": exchanged,
-        }
+    sales = []
+    for date, original, exchanged in cursor:
+        date = datetime.strptime(date.split(" ")[0], DB_CUSTOM_DATE_FORMAT).date()
 
-    return sale
+        from_date = add_days_until(sales, from_date, date)
+
+        from_date = from_date + timedelta(days=1)
+        sales.append(
+            {
+                "date": date,
+                "original_total": original,
+                "exchanged_total": exchanged,
+            }
+        )
+
+    if not sales:
+        add_days_until(sales, from_date, to_date)
+
+    return sales

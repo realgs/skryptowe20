@@ -23,7 +23,7 @@
       <h4>/api/rates/&lt;date_start&gt;/&lt;date_end&gt;</h4>
       <p>
         Provides PLN to USD exchange rate for the time period between
-        <code>date_start</code> and <code>date_end</code> (inclusive) The
+        <code>date_start</code> and <code>date_end</code> (inclusive). The
         responses will be cached for <span class="oneline">5 minutes.</span>
       </p>
       The API server can respond with:
@@ -68,18 +68,20 @@
       </ul>
 
       <h4>/api/rates/&lt;date&gt;</h4>
-      Redirects to <em>/api/rates/&lt;date&gt;/&lt;date&gt;</em>
+      <p>Redirects to <em>/api/rates/&lt;date&gt;/&lt;date&gt;</em></p>
 
-      <h4>/api/sales/&lt;date&gt;</h4>
+      <h4>/api/sales/&lt;date_start&gt;/&lt;date_end&gt;</h4>
       <p>
-        Provides the total sales value for a given day. The responses will be
-        cached for 10 minutes.
+        Provides PLN to USD exchange rate for the time period between
+        <code>date_start</code> and <code>date_end</code> (inclusive). The
+        responses will be cached for 10 minutes.
       </p>
-      The server can respond with:
+      The API server can respond with:
       <ul>
         <li>
-          A dictionary with one key <code>sales</code>, containing another
-          dictionary with three keys:
+          A dictionary with one key <code>sales</code>, containing an ordered
+          list of dictionaries for every day of the time period specified in the
+          request. The dictionary for a single day contains three keys:
         </li>
         <ul>
           <li>
@@ -98,7 +100,11 @@
           </li>
         </ul>
         <li>Bad request if the date format is invalid</li>
-
+        <li>
+          Bad request if the <code>date_start</code> is earlier than
+          <code>date_end</code>
+        </li>
+        <li>Bad request if the time period is longer than 366 days</li>
         <li>Too many requests if the user made more requests than:</li>
         <ul>
           <li>1 per second</li>
@@ -110,6 +116,9 @@
           <span class="oneline">2018-12-28</span>.
         </li>
       </ul>
+
+      <h4>/api/sales/&lt;date&gt;</h4>
+      <p>Redirects to <em>/api/sales/&lt;date&gt;/&lt;date&gt;</em></p>
     </div>
   </div>
 </template>
