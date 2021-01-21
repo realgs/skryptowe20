@@ -81,5 +81,5 @@ def _rates_serializer(code, data):
     for d in data:
         output["Rates"].append({"Date": d["date"],
                                 "Rate": d["rate"],
-                                "Interpolated": d["ipd"]})
+                                "Interpolated": bool(d["ipd"])})
     return output

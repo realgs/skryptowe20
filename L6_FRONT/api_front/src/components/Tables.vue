@@ -30,17 +30,18 @@
 
     <div class="tables__table__sales">
       <TableSales
-          :data="sales"
+          :data="this.sales"
           :currencies="this.currencies"
           :top-bar="['Date'].concat(currencies)"
       />
     </div>
 
     <div class="tables__chart__sales">
-      <bar-chart
-          :chartData="this.sales"
-          :label="this.currencies"
-      />
+      <div v-if="this.sales.length > 0">
+        <bar-chart
+            :chartData="this.sales"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -108,8 +109,6 @@ export default {
 
       const request = await axios.get(this.ratesUrl);
       const rates_data = request.data
-
-      console.log(rates_data)
 
       rates_data.Rates.forEach(d => {
         this.rates.push({

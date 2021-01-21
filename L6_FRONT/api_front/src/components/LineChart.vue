@@ -61,6 +61,7 @@ export default {
         pointBackgroundColor: "#2c3e50",
         pointHoverBackgroundColor: "#55bae7",
         pointHoverBorderColor: "#55bae7",
+        lineTension: 0.1,
       }],
     }, this.options);
   }

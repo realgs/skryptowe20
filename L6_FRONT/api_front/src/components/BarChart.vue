@@ -1,5 +1,5 @@
 <script>
-import {Bar} from 'vue-chartjs';
+import { Bar } from 'vue-chartjs';
 
 export default {
   extends: Bar,
@@ -9,9 +9,8 @@ export default {
       required: true
     },
     label: {
-      type: String,
-      required: true,
-    },
+      type: String
+    }
   },
   data() {
     return {
@@ -21,10 +20,10 @@ export default {
         scales: {
           xAxes: [{
             stacked: true,
+            gridLines: {
+              display: false,
+            }
           }],
-          yAxes: [{
-            stacked: true
-          }]
         }
       }
     }
@@ -36,14 +35,15 @@ export default {
 
     this.renderChart({
           labels: dates,
-          datasets: [{
-            label: 'total in USD',
-            data: sales_usd,
-            backgroundColor: '#f87979',
-            barPercentage: 1,
-          },
+          datasets: [
             {
-              label: 'total in PLN',
+              label: 'Total in USD',
+              data: sales_usd,
+              backgroundColor: '#f87979',
+              barPercentage: 1,
+            },
+            {
+              label: 'Total in PLN',
               data: sales_pln,
               backgroundColor: '#3D5B96',
               barPercentage: 1,
