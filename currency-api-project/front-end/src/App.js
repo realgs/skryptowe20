@@ -22,7 +22,7 @@ function App() {
       <Router>
         <Switch>
         <Route path='/' exact component={ApiInfo} />
-        <Route path='/rates'component={Rates} />
+        <Route path='/rates' component={Rates} />
         <Route path='/income' component={Income} />
         <Route path='/' component={Error} />
         </Switch>

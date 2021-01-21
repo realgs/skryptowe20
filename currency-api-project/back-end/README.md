@@ -38,7 +38,7 @@ rate : float                   --> Kurs PLN-USD
 interpolated : bool            --> Czy wartość została przeniesiona z poprzedniego dnia z powodu braku danych  
 
 ### Zadanie 3
-### GET /profits/day/<summary_date>
+### GET /profits/day/<date_from>/to/<date_to>
 Gdzie <summary_date> to data w formacie RRRR-MM-DD  
 Status 200: Zwraca listę profit_dto  
 Status 400: Dla niepoprawnie sformatowanych dat  
