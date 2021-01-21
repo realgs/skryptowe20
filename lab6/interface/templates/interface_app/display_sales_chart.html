@@ -7,42 +7,51 @@
     <title>Title</title>
 </head>
 <body>
-
+Hello, World!
 <canvas id="chartjs-0" class="chartjs" style="width: 100%;"></canvas>
-
 <script> new Chart(document.getElementById("chartjs-0"), {
     "type": "line",
     "data": {
         "labels":
             [
-                {% for record in exchange_rates_json.result %}
+                {% for record in sales_json.result %}
                     "{{ record.day }}",
                 {% endfor %}
             ],
         "datasets": [{
-            "label": "Kurs wymiany",
+            "label": "Sprzedaż w złotówkach",
             "data":
                 [
-                    {% for record in exchange_rates_json.result %}
-                        {{ record.rate }},
+                    {% for record in sales_json.result %}
+                        {{ record.sales_pln }},
                     {% endfor %}
                 ],
             "fill": false,
-            "borderColor": "rgb(75, 192, 192)",
+            "borderColor": "rgb(40, 68, 210)",
             "lineTension": 0.1
+        }, {
+            "label": "Sprzedaż w dolarach",
+            "data": [
+                {% for record in sales_json.result %}
+                    {{ record.sales_usd }},
+                {% endfor %}
+                ],
+            "fill": false,
+            "borderColor": "rgb(205, 113, 33)",
+            lineTension: 0.1
         }]
     },
     "options": {
         title: {
             display: true,
             fontSize: 60,
-            text: "Kurs wymiany {{ other_currency_code }} na {{ exchange_rates_json.code }} z dni {{ start_date }} do {{ end_date }}"
+            text: "Podsumowanie sprzedaży z dni {{ start_date }} do {{ end_date }}"
         },
         scales: {
             yAxes: [{
                 scaleLabel: {
                     display: true,
-                    labelString: 'Cena ({{ other_currency_code }})'
+                    labelString: 'Sprzedaż'
                 }
             }],
             xAxes: [{
@@ -55,7 +64,6 @@
     }
 });
 </script>
-
 
 </body>
 </html>

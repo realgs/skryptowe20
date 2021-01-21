@@ -27,7 +27,7 @@ def request_builder(request):
                 end_date = request.POST['date-range-end']
             else:
                 start_date = end_date = request.POST['single-date-input']
-            return show_sales(request, start_date, end_date)
+            return show_sales(request, start_date, end_date, True)
 
     return render(request, "interface_app/request_builder.html")
 
@@ -51,10 +51,16 @@ def show_exchange_rates(request, start_date, end_date, currency_code, is_chart):
                            })
 
 
-def show_sales(request, start_date, end_date):
+def show_sales(request, start_date, end_date, is_chart):
     request_url = 'http://127.0.0.1:5000/api/sales/{0}/{1}/'.format(start_date, end_date)
     response = requests.get(request_url)
-    return render(request, "interface_app/display_sales.html",
+
+    if is_chart:
+        template_name = "interface_app/display_sales_chart.html"
+    else:
+        template_name = "interface_app/display_sales.html"
+
+    return render(request, template_name,
                   context={'sales_json': response.json(),
                            'start_date': start_date,
                            'end_date': end_date
