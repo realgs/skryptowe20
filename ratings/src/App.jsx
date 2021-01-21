@@ -1,7 +1,8 @@
 import styled from "styled-components";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import { MainContent, Body, Sidebar } from "./layout/Layout";
+import { MainContent, Body } from "./layout/Layout";
+import Home from "./pages/Home";
 
 const Main = styled.main`
   min-height: 100%;
@@ -28,11 +29,11 @@ function App() {
             <Route exact path="/">
               <Home />
             </Route>
-            <Route path="/about">
-              <About />
+            <Route path="/ratings">
+              <Ratings />
             </Route>
-            <Route path="/users">
-              <Users />
+            <Route path="/sales">
+              <Sales />
             </Route>
           </StyledContainer>
         </Switch>
@@ -43,27 +44,18 @@ function App() {
 
 export default App;
 
-function Home() {
+function Ratings() {
   return (
     <Body>
-      <MainContent>ELo</MainContent>
-      <Sidebar>Elo</Sidebar>
+      <MainContent>Ratings</MainContent>
     </Body>
   );
 }
 
-function About() {
+function Sales() {
   return (
     <Body>
-      <MainContent>About</MainContent>
-    </Body>
-  );
-}
-
-function Users() {
-  return (
-    <Body>
-      <MainContent>Users</MainContent>
+      <MainContent>Sales</MainContent>
     </Body>
   );
 }

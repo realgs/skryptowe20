@@ -18,11 +18,3 @@ export const MainContent = styled(Section)`
   flex-grow: 1;
   min-width: 200px;
 `;
-
-export const Sidebar = styled(Section)`
-  min-width: 300px;
-
-  @media (max-width: 768px) {
-    display: none;
-  }
-`;

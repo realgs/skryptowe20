@@ -200,13 +200,13 @@ const Navbar = () => {
               </NavbarLink>
             </NavbarItem>
             <NavbarItem>
-              <NavbarLink className="navbar-link" to="/about">
-                About
+              <NavbarLink className="navbar-link" to="/ratings">
+                Ratings
               </NavbarLink>
             </NavbarItem>
             <NavbarItem>
-              <NavbarLink className="navbar-link" to="/users">
-                Users
+              <NavbarLink className="navbar-link" to="/sales">
+                Sales
               </NavbarLink>
             </NavbarItem>
           </NavbarLinks>
