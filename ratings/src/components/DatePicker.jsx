@@ -6,6 +6,8 @@ import styled from "styled-components";
 import "react-dates/lib/css/_datepicker.css";
 import { colors } from "../consts/colors";
 
+const falseFunc = () => false;
+
 const StyledDatePickerWrapper = styled.div`
   & .SingleDatePicker,
   .SingleDatePickerInput {
@@ -48,6 +50,7 @@ const DatePicker = () => {
   return (
     <StyledDatePickerWrapper>
       <SingleDatePicker
+        isOutsideRange={falseFunc}
         numberOfMonths={1}
         onDateChange={(date) => {
           console.log(date);
