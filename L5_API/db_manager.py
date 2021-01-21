@@ -113,7 +113,7 @@ def get_rates_dates_interpolated(currency_code, date_from, date_to):
     try:
         cursor.execute("""SELECT Rate, RateDate, Interpolated FROM rates
                             WHERE RateDate BETWEEN '{}' AND '{}'
-                            AND Code = '{}';""".format(date_from, date_to, currency_code))
+                            AND Code = '{}';""".format(date_from, date_to, currency_code.upper()))
         for rate, date, ipd in cursor.fetchall():
             rates.append(float(rate))
             dates.append(date)
