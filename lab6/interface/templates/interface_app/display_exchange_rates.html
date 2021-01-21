@@ -28,6 +28,7 @@
 <body>
 {% if exchange_rates_json %}
     <h1>Kurs wymiany {{ currency_code }} na {{ exchange_rates_json.code }} z dni {{ start_date }} - {{ end_date }}</h1>
+    <a href="http://127.0.0.1:8000">Wróć do strony głównej</a>
     <table class="table">
         <thead>
         <tr>
@@ -56,6 +57,7 @@
 
 {% else %}
     <h2>Nie ma nic do wyświetlenia!</h2>
+    <a href="http://127.0.0.1:8000">Wróć do strony głównej</a>
 {% endif %}
 
 </body>
