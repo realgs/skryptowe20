@@ -1,9 +1,12 @@
-import React from 'react'
 import './App.css';
+import React from 'react'
 import RatesTable from './RatesTable'
-import { Layout, Button, Typography, DatePicker, Select } from 'antd';
-import { Menu, Dropdown } from 'antd';
+import Readme from './Readme'
+
+import { Menu, Dropdown, Layout, Button, Typography,
+         DatePicker, Select, Space } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
+
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const { Title, Text } = Typography;
@@ -11,6 +14,10 @@ const { Header, Footer, Sider, Content } = Layout;
 
 function fetchRates(currency, start_date, end_date) {
     return fetch("http://127.0.0.1:8000/rates/" + currency + "/" +  start_date + "/" + end_date + "/")
+}
+
+function fetchSummary(currency, start_date, end_date) {
+    return fetch("http://127.0.0.1:8000/summary/" + currency + "/" +  start_date + "/" + end_date + "/")
 }
 
 function convertDate(date) {
@@ -136,15 +143,21 @@ class App extends React.Component {
                                     rates:this.state.rates} }/>
             </>
             options =
-            <>
+            <div
+             style={{ margin: '24px 16px 0'}}>
+                <Space direction="vertical">
                 <RangePicker onChange={ this.setDateRange } />
-                <Select defaultValue="USD" style={{ width: 80 }} onChange={this.setCurrency}>
-                    <Option value="USD">USD</Option>
-                    <Option value="EUR">EUR</Option>
-                    <Option value="AUD">AUD</Option>
-                </Select>
-                <Button type="primary" onClick={ this.registerButtonClick }>Przycisk</Button>
-            </>
+
+                    <Space>
+                        <Select defaultValue="USD" style={{ width: 80 }} onChange={this.setCurrency}>
+                            <Option value="USD">USD</Option>
+                            <Option value="EUR">EUR</Option>
+                            <Option value="AUD">AUD</Option>
+                        </Select>
+                        <Button type="primary" onClick={ this.registerButtonClick }>Wyświel</Button>
+                    </Space>
+                </Space>
+            </div >
         } else if (display_content == 2) {
             content =
             <>
@@ -156,7 +169,7 @@ class App extends React.Component {
         } else {
             content =
             <>
-            Index
+                <Readme />
             </>
             options =
             <>
@@ -173,26 +186,21 @@ class App extends React.Component {
 
                     <Layout>
 
-                    <Sider>
-                        <Title level={4}>Opcje</Title>
-                        <Dropdown overlay={menu}>
-                            <a className="ant-dropdown-link">
-                            Menu <DownOutlined />
-                            </a>
-                        </Dropdown>
-                        { options }
+                    <Sider width={250}>
+                            <Title level={4}>Opcje</Title>
+                            <Dropdown overlay={menu}>
+                                <Button className="ant-dropdown-link">
+                                Menu <DownOutlined />
+                                </Button>
+                            </Dropdown>
+                            { options }
                     </Sider>
 
-                    <Content>
+                    <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
                         {content}
                     </Content>
 
                     </Layout>
-
-                    <Footer>
-                    <Text>All rights reserved C</Text>
-                    </Footer>
-
                 </Layout>
             </div>
         )

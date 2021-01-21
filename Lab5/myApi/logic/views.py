@@ -42,7 +42,6 @@ def summary(request, currency_code, date):
                 "}")
     try:
         summary = get_summary(currency_code, date)
-        print(f"TEST: {currency_code}, {date}, {summary}")
     except OperationalError:
         return HttpResponseNotFound("{"
                        '"error":"Internal database error"'
