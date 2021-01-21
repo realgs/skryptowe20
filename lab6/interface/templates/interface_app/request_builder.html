@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Request builder</title>
+    <title>MyWebApi - Request builder</title>
     <link
             rel="stylesheet"
             href="{% static 'interface_app/style.css' %}"
@@ -31,7 +31,7 @@
 <p>Pamiętaj, że daty mogą być tylko z zakresu pomiędzy 1 stycznia 2009 a 31 grudnia 2010 roku!</p>
 <form method="POST" onsubmit="return validateForm()">
     {% csrf_token %}
-    <h2>1. Wybierz czy chcesz sprawdzić kursy wymiany czy podsumowania sprzedaży</h2>
+    <h2>1. Wybierz czy chcesz sprawdzić kursy wymiany czy podsumowania sprzedaży:</h2>
     <div id="select-values">
         <div id="exchange-rates-div">
             <input id="exchange-rates" type="radio" name="select-value" value="exchange-rates" required
@@ -53,7 +53,7 @@
         </div>
     </div>
 
-    <h2>2. Wybierz czy chcesz sprawdzić dane z jednego dnia czy zakresu dat</h2>
+    <h2>2. Wybierz czy chcesz sprawdzić dane z jednego dnia czy zakresu dat:</h2>
     <div id="select-dates">
         <div id="single-date-div">
 
@@ -83,7 +83,7 @@
         </div>
     </div>
 
-    <h2>3. Wybierz w jakiej postaci chcesz wyświetlić wynik zapytania</h2>
+    <h2>3. Wybierz w jakiej postaci chcesz wyświetlić wynik zapytania:</h2>
     <div id="select-types">
         <div id="type-table-div">
             <input id="type-table" type="radio" name="select-type" value="type-table" required/>

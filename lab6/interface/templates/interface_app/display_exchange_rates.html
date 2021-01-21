@@ -23,13 +23,17 @@
         }
     </style>
 
-    <title>Title</title>
+    <title>MyWebApi - kursy wymian</title>
 </head>
 <body>
 {% if exchange_rates_json %}
     <a href="http://127.0.0.1:8000">Wróć do strony głównej</a>
     <a href="http://127.0.0.1:8000/request_builder">Wróć do kreatora zapytań</a>
-    <h1>Kurs wymiany {{ currency_code }} na {{ exchange_rates_json.code }} z dni {{ start_date }} - {{ end_date }}</h1>
+    {% if start_date != end_date %}
+        <h1>Kurs wymiany {{ currency_code }} na {{ exchange_rates_json.code }} z dni {{ start_date }} - {{ end_date }}</h1>
+    {% else %}
+        <h1>Kurs wymiany {{ currency_code }} na {{ exchange_rates_json.code }} z dnia {{ start_date }}</h1>
+    {% endif %}
     <table class="table">
         <thead>
         <tr>
