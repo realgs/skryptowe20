@@ -9,8 +9,8 @@ import { DownOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;
-const { Title, Text } = Typography;
-const { Header, Footer, Sider, Content } = Layout;
+const { Title } = Typography;
+const { Header, Sider, Content } = Layout;
 
 function fetchRates(currency, start_date, end_date) {
     return fetch("http://127.0.0.1:8000/rates/" + currency + "/" +  start_date + "/" + end_date + "/")
@@ -167,13 +167,8 @@ class App extends React.Component {
             <>
             </>
         } else {
-            content =
-            <>
-                <Readme />
-            </>
-            options =
-            <>
-            </>
+            content = <Readme />
+            options = <></>
         }
 
         return (

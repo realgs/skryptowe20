@@ -5,7 +5,7 @@ const { Title, Text, Paragraph } = Typography;
 
 export default function Readme() {
     const sample_rates_output =
-    "\{ \"currency\":\"USD\", \"rates\":[\{\"date\":\"2020-12-01\",\"value\":\"3.736\",\"interpolated\":\"false\"\},\{\"date\":\"2020-12-02\",\"value\":\"3.87\",\"interpoalted\":\"false\"\}]}"
+    "{ \"currency\":\"USD\", \"rates\":[{\"date\":\"2020-12-01\",\"value\":\"3.736\",\"interpolated\":\"false\"},{\"date\":\"2020-12-02\",\"value\":\"3.87\",\"interpoalted\":\"false\"}]}"
 
     //TODO change to real output
     const sample_summary_output = "ELO DODAJ MNIE"

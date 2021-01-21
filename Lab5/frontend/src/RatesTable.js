@@ -1,6 +1,6 @@
 import React from 'react'
-import { Table } from 'antd';
-import { Typography } from 'antd';
+import { Table, Typography } from 'antd';
+import LineChart from './LineChart'
 
 const { Title } = Typography;
 const columns = [
@@ -23,7 +23,8 @@ export default function RatesTable({ data }) {
     return (
         <>
             <Title level={5}>{data.currency}</Title>
-            <Table columns={columns} dataSource={data.rates} pagination={{ pageSize: 50 }} scroll={{ y: 500 }} />
+            <Table columns={columns} dataSource={data.rates} scroll={{ y: 500 }} />
+            <LineChart data={data.rates} title={data.currency} color="#B08EA2"/>
         </>
     )
 }
