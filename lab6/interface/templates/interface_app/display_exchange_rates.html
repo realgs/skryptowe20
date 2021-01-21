@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link
+            rel="stylesheet"
+            href="{% static 'interface_app/style.css' %}"
+            type="text/css"
+    />
+
+    <style>
+        thead th:nth-child(1) {
+            width: 35%;
+        }
+
+        thead th:nth-child(2) {
+            width: 35%;
+        }
+
+        thead th:nth-child(3) {
+            width: 30%;
+        }
+    </style>
+
+    <title>MyWebApi - kursy wymian</title>
+</head>
+<body>
+{% if exchange_rates_json %}
+    <a href="http://127.0.0.1:8000">Wróć do strony głównej</a>
+    <a href="http://127.0.0.1:8000/request_builder">Wróć do kreatora zapytań</a>
+    {% if start_date != end_date %}
+        <h1>Kurs wymiany {{ currency_code }} na {{ exchange_rates_json.code }} z dni {{ start_date }} - {{ end_date }}</h1>
+    {% else %}
+        <h1>Kurs wymiany {{ currency_code }} na {{ exchange_rates_json.code }} z dnia {{ start_date }}</h1>
+    {% endif %}
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Exchange rate</th>
+            <th>Interpolated</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        {% for exchange_rate_json in exchange_rates_json.result %}
+            <tr>
+                <th>{{ exchange_rate_json.day }}</th>
+                <td>{{ exchange_rate_json.rate }} {{ currency_code }}</td>
+                <td>
+                    {% if exchange_rate_json.interpolated == True %}
+                        Yes
+                    {% else %}
+                        No
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% else %}
+    <h2>Nie ma nic do wyświetlenia!</h2>
+    <a href="http://127.0.0.1:8000">Wróć do strony głównej</a>
+    <a href="http://127.0.0.1:8000/request_builder">Wróć do kreatora zapytań</a>
+{% endif %}
+
+</body>
+</html>
