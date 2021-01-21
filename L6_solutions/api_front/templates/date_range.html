@@ -1,0 +1,63 @@
+{% extends 'single_date.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+
+{% block range_specific_data %}
+
+    <p class="lead text-muted">Select desired date range:</p>
+
+    <label for="start">Start date:</label>
+    <input class="form-control" type="date" id="start" name="start" required
+           min="2013-01-01" max="2014-12-31">
+
+    <label for="end">End date:</label>
+    <input class="form-control" type="date" id="end" name="end" required
+           min="2013-01-01" max="2014-12-31">
+{% endblock %}
+
+{% block chart %}
+    {% if datasets %}
+        <div class="row justify-content-center">
+            <h1 class="">{{ table_heading }}</h1>
+        </div>
+
+        <div class="container my-4">
+            <canvas id="line-chart"></canvas>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+        <script>
+            var config = {
+                type: 'line',
+                data: {
+                    datasets: [
+                        {% for ds in datasets %}
+                            {
+                                data: {{ ds.data }},
+                                pointRadius: 0,
+                                fill: false,
+                                borderColor: '{{ ds.color }}',
+                                label: '{{ ds.label }}',
+                                lineTension: 0
+                            },
+                        {% endfor %}
+                    ],
+                    labels: {{ labels|safe }}
+                },
+                options: {
+                    responsive: true
+                }
+            };
+
+            window.onload = function () {
+                var ctx = document.getElementById('line-chart').getContext('2d');
+                window.myChart = new Chart(ctx, config);
+            };
+
+        </script>
+
+    {% endif %}
+{% endblock %}

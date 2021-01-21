@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block content %}
+    {% if error_msg %}
+        <div class="alert alert-danger" role="alert">{{ error_msg }}</div>
+    {% endif %}
+
+    <section class="jumbotron text-center">
+        <div class="container w-50">
+            <form method="POST">
+                {% csrf_token %}
+
+                <h1 class="jumbotron-heading">{{ heading }}</h1>
+
+                {% block range_specific_data %}
+
+                    <p class="lead text-muted">Select desired date.</p>
+
+
+                    <label for="start">Desired date:</label>
+                    <input class="form-control" type="date" id="start" name="start" required
+                           min="2013-01-01" max="2014-12-31">
+
+                {% endblock %}
+                {% if available_currencies %}
+
+                    <script>
+                        $(document).ready(function () {
+
+                            var multipleCancelButton = new Choices('#ccy', {
+                                removeItemButton: true,
+                                maxItemCount: 5,
+                                searchResultLimit: 5,
+                                renderChoiceLimit: 5
+                            });
+
+
+                        });
+                    </script>
+
+                    <link rel="stylesheet"
+                          href="https://res.cloudinary.com/dxfq3iotg/raw/upload/v1569006288/BBBootstrap/choices.min.css?version=7.0.0">
+                    <script src="https://res.cloudinary.com/dxfq3iotg/raw/upload/v1569006273/BBBootstrap/choices.min.js?version=7.0.0"></script>
+
+                    <label for="ccy">Currency:</label>
+                    <select id="ccy" name="ccy" placeholder="Select upto 5 currencies" multiple required>
+                        {% for ccy in  available_currencies %}
+                            <option>{{ ccy }}</option>
+                        {% endfor %}
+
+                    </select>
+
+                {% endif %}
+
+                <br>
+                <button type="submit" class="btn btn-primary">Get data</button>
+            </form>
+        </div>
+    </section>
+
+    {% block chart %}
+    {% endblock %}
+
+
+    <div class="row justify-content-center">
+        <h1>{{ table_heading }}</h1>
+    </div>
+    <div class="container my-4">
+        {% if table %}
+            {{ table | safe }}
+        {% endif %}
+    </div>
+{% endblock %}

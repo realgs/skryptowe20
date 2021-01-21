@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+
+{% block title %}Info{% endblock %}
+
+{% block content %}
+
+    <section class="jumbotron text-center">
+        <div class="container">
+            <h1 class="jumbotron-heading">USD rates and sales data</h1>
+            <h3>This website gives an easy access to USD rates and sales data available via API
+                from previous laboratory. Use Rates and Sales dropdowns in navigation to access desired data.</h3>
+            <br>
+            <p class="lead text-muted">API is available for date range: <strong>2013-01-01 - 2014-12-31</strong></p>
+            <p class="lead text-muted">Cache timeout is set to <strong>100</strong>.</p>
+            <p class="lead text-muted">Requests limit is set to <strong>10/s per user</strong> .</p>
+            <br>
+            <p class="lead text-muted">API is available at <strong>http://127.0.0.1:5000/</strong></p>
+            <p class="lead text-muted">To access USD to PLN rate for single date use: <strong>http://127.0.0.1:5000/rates/usd/{date}</strong></p>
+            <p class="lead text-muted">To access USD to PLN rate for date range use: <strong>http://127.0.0.1:5000/rates/usd/{start_date}/{end_date}</strong></p>
+            <p class="lead text-muted">To access sales for single date use: <strong>http://127.0.0.1:5000/sales/{date}</strong></p>
+            <p class="lead text-muted">To access sales for date range use: <strong>http://127.0.0.1:5000/sales/{start_date}/{end_date}</strong></p>
+            <br>
+            <p class="lead text-muted">For full documentation visit my github <strong><a href="https://github.com/kamilagalka/skryptowe20/tree/L6/L5_solutions_flask">here</a></strong></p>
+
+        </div>
+    </section>
+
+{% endblock %}
