@@ -1,11 +1,9 @@
 import React from 'react'
 import './App.css';
 import RatesTable from './RatesTable'
-import { Layout } from 'antd';
-import { Button } from 'antd';
-import { Typography } from 'antd';
-import { DatePicker} from 'antd';
+import { Layout, Button, Typography, DatePicker, Select } from 'antd';
 
+const { Option } = Select;
 const { RangePicker } = DatePicker;
 const { Title, Text } = Typography;
 const { Header, Footer, Sider, Content } = Layout;
@@ -51,13 +49,17 @@ class App extends React.Component {
         end_date:null
     }
 
+    selector_currency = {
+        currency:"USD"
+    }
+
     registerButtonClick = () => {
         var start_date = convertDate(this.range_dates.start_date);
         var end_date = convertDate(this.range_dates.end_date);
 
         if(start_date == null || end_date == null) return;
 
-        fetchRates("USD", start_date , end_date).then(result => result.json())
+        fetchRates(this.selector_currency.currency, start_date , end_date).then(result => result.json())
                        .then(json => {
                            var error = json['error'];
                            if(error != null) {
@@ -81,6 +83,11 @@ class App extends React.Component {
         this.range_dates.end_date = dates[1];
     }
 
+    setCurrency = currency => {
+        console.log(currency)
+        this.selector_currency.currency = currency;
+    }
+
     render() {
         return (
             <div className="App">
@@ -93,9 +100,13 @@ class App extends React.Component {
                     <Layout>
 
                     <Sider>
-                       <Title level={4}>Opcje</Title>
-                       <RangePicker onChange={ this.setDateRange } />
-
+                        <Title level={4}>Opcje</Title>
+                        <RangePicker onChange={ this.setDateRange } />
+                        <Select defaultValue="USD" style={{ width: 80 }} onChange={this.setCurrency}>
+                            <Option value="USD">USD</Option>
+                            <Option value="EUR">EUR</Option>
+                            <Option value="AUD">AUD</Option>
+                        </Select>
                        <Button type="primary" onClick={ this.registerButtonClick }>Przycisk</Button>
                     </Sider>
 
