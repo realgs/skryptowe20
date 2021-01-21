@@ -2,7 +2,6 @@ from L5_API import db_app
 from L5_API.cache import RatesCache, SalesCache
 from L5_API.validators import is_code, validate_dates
 
-
 ratesCache = RatesCache()
 salesCache = SalesCache()
 
@@ -69,16 +68,18 @@ def get_sales_limits():
 
 
 def _sales_serializer(data):
-    output = {"Sales": {}}
+    output = {"Sales": []}
     for index, d in enumerate(data, start=1):
-        output["Sales"][index] = {"Date": d["date"],
-                                  "USD Total": d["total_usd"],
-                                  "PLN Total": d["total_pln"]}
+        output["Sales"].append({"Date": d["date"],
+                                "USD Total": d["total_usd"],
+                                "PLN Total": d["total_pln"]})
     return output
 
 
 def _rates_serializer(code, data):
-    output = {"Currency Code": code.upper(), "Rates": {}}
-    for index, d in enumerate(data, start=1):
-        output["Rates"][index] = {"Date": d["date"], "Rate": d["rate"], "Interpolated": d["ipd"]}
+    output = {"Currency Code": code.upper(), "Rates": []}
+    for d in data:
+        output["Rates"].append({"Date": d["date"],
+                                "Rate": d["rate"],
+                                "Interpolated": d["ipd"]})
     return output

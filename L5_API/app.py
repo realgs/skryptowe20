@@ -4,8 +4,10 @@ from flask import Flask
 from flask_restful import Api
 from L5_API import views
 from L5_API.constants import DAY_LIMIT, HOUR_LIMIT, USER_LIMIT
+from flask_cors import CORS
 
 app = Flask(__name__)
+cors = CORS(app)
 api = Api(app)
 limiter = Limiter(app,
                   key_func=get_remote_address,
