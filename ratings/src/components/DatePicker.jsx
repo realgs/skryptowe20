@@ -17,16 +17,16 @@ const StyledDatePickerWrapper = styled.div`
 
       .DateInput_input {
         font-size: 1rem;
-        border-bottom: 0;
+        border: 0;
         padding: 12px 16px 14px;
       }
     }
 
     .SingleDatePickerInput__withBorder {
+      margin: 0.5em 1em;
       overflow: hidden;
 
-      :hover,
-      .DateInput_input__focused {
+      :hover {
         border: 2px solid ${colors.primary};
       }
 
@@ -37,8 +37,8 @@ const StyledDatePickerWrapper = styled.div`
     }
 
     .SingleDatePicker_picker.SingleDatePicker_picker {
-      // top: 43px;
-      // left: 2px;
+      top: 43px;
+      left: 2px;
     }
   }
 `;
