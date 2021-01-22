@@ -4,6 +4,7 @@ import RatesTable from './RatesTable'
 import SummaryTable from './SummaryTable'
 import Readme from './Readme'
 import LineChart from './LineChart'
+import MultiLineChart from './MultiLineChart'
 
 import { Menu, Dropdown, Layout, Button, Typography,
          DatePicker, Select, Space } from 'antd';
@@ -248,6 +249,29 @@ class App extends React.Component {
                     </Space>
                 </Space>
             </div >
+        } else if (display_content == 4) {
+            content =
+            <>
+                <Title level={4}>Results</Title>
+                <MultiLineChart data={this.state.summary} title={this.state.currency} color="#B08EA2"/>
+            </>
+            options =
+            <div
+             style={{ margin: '24px 16px 0'}}>
+                <Space direction="vertical">
+                <RangePicker onChange={ this.setDateRange } />
+
+                    <Space>
+                        <Select defaultValue="USD" style={{ width: 80 }} onChange={this.setCurrency}>
+                            <Option value="USD">USD</Option>
+                            <Option value="EUR">EUR</Option>
+                            <Option value="AUD">AUD</Option>
+                        </Select>
+                        <Button type="primary" onClick={ this.showSummary }>Show</Button>
+                    </Space>
+                </Space>
+            </div >
+
         } else {
             content = <Readme />
             options = <></>
