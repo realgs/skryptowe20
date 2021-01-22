@@ -288,13 +288,13 @@ class App extends React.Component {
                 <Layout>
 
                     <Header>
-                        <Title>Exchange rates API frontend</Title>
+                        <Title className="title">Exchange rates API frontend</Title>
                     </Header>
 
                     <Layout>
 
                         <Sider width={250}>
-                            <Title level={4}>Options</Title>
+                            <Title level={4} className="title">Options</Title>
                             <Dropdown overlay={menu}>
                                 <Button className="ant-dropdown-link">
                                     Menu <DownOutlined />

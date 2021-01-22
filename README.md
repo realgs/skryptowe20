@@ -1,4 +1,10 @@
+# Frontend showcase
+
+2 min video showcasing the look and features of the implemented frontend:
+https://youtu.be/4P6nF6PYxVI
 # Instalation
+Make sure you have node.js installed if you plan on starting up the frontend server.
+
 Required python packages:
 - asgiref==3.3.1
 - certifi==2020.12.5
@@ -14,13 +20,18 @@ Required python packages:
 All above packages are listed in *requirements.txt*, ready to be imported with python.
 # Setup
 ## Preparing the database:
-1. Make sure the path to the database is correct in `constants.py`
-2. The database will prepare on start of the server
+1. Download Northwind sqlite3 database.
+2. Make sure the path to the database is correct in `constants.py`
+3. The database will prepare on start of the server
 
 ## Starting the API server:
 1. Run `manage.py` located in Lab5/myApi with runserver argument, like so:
 
 `python manage.py runserver`
+
+(optional) To start the frontend server go to Lab5/frontend and use:
+
+`npm start`
 
 # Usage
 ## Exchange rates history
@@ -71,9 +82,19 @@ For example: `/summary/USD/2015-12-18/`
 Sample output:
 ```json
 {
-   "date":"2016-02-18",
-   "original_sum":"202602.31",
-   "currency_sum":"798577.27"
+   "currency":"USD",
+   "data":[
+      {
+         "date":"2016-02-18",
+         "original_sum":"202602.31",
+         "currency_sum":"51401.03"
+      },
+      {
+         "date":"2016-02-19",
+         "original_sum":"342352.03",
+         "currency_sum":"86603.43"
+      }
+   ]
 }
 ```
 Where:
