@@ -39,7 +39,7 @@ interpolated : bool            --> Czy wartość została przeniesiona z poprzed
 
 ### Zadanie 3
 ### GET /profits/day/<date_from>/to/<date_to>
-Gdzie <summary_date> to data w formacie RRRR-MM-DD  
+Gdzie <date_from> i <date_to> to daty w formacie RRRR-MM-DD
 Status 200: Zwraca listę profit_dto  
 Status 400: Dla niepoprawnie sformatowanych dat  
 Status 400: Jeśli pojawią się dni spoza zakresu  

@@ -19,14 +19,16 @@ function App() {
           </Nav>
         </Navbar.Collapse>
       </Navbar>
-      <Router>
-        <Switch>
-        <Route path='/' exact component={ApiInfo} />
-        <Route path='/rates' component={Rates} />
-        <Route path='/income' component={Income} />
-        <Route path='/' component={Error} />
-        </Switch>
-      </Router>
+      <div className='container-fill' style={{height: '100%'}}>
+        <Router>
+          <Switch>
+          <Route path='/' exact component={ApiInfo} />
+          <Route path='/rates' component={Rates} />
+          <Route path='/income' component={Income} />
+          <Route path='/' component={Error} />
+          </Switch>
+        </Router> 
+      </div>
     </div>
   );
 }
