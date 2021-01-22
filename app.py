@@ -1,7 +1,7 @@
 import flask
 import sqlite3
 import datetime
-from flask import abort, request, jsonify
+from flask import abort, request, jsonify, render_template
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_caching import Cache
@@ -57,6 +57,11 @@ def turn_sum_of_transaction_in_dictionary(transactions):
         results.append({'date': row[0], 'sum': row[1]})
 
     return results
+
+
+@app.route('/')
+def index():
+    return render_template('home.html')
 
 
 @app.route('/api/exchangerates/<date>', methods=['GET'])

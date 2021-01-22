@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Hello world!</h1>
+<label for="api_type_dropdown">API type</label>
+<select name="api_type" id="api_type_dropdown">
+    <option value="exchangerates">exchangerates</option>
+    <option value="sum">sum</option>
+</select>
+<br>
+<label for="currency_dropdown">Currency (sum only)</label>
+<select name="currency" id="currency_dropdown">
+    <option value="pln">pln</option>
+    <option value="usd">usd</option>
+</select>
+<br>
+<label for="single_date_only_checkbox">Single date only:</label>
+<input type="checkbox" id="single_date_only_checkbox">
+<br>
+<label for="single_date">Single date:</label>
+<input type="date" id="single_date">
+<br>
+<label for="start_date">Start date:</label>
+<input type="date" id="start_date">
+<br>
+<label for="end_date">End data:</label>
+<input type="date" id="end_date">
+<br>
+<button type="button" id="button_generate_link" onclick="generateLink()">Generate link</button>
+<br>
+<label for="api_link">API link:</label>
+<textarea id="api_link"></textarea>
+<br>
+<label for="response_value">Response:</label>
+<textarea id="response_value"></textarea>
+</body>
+</html>
+
+<script type=text/javascript src="{{url_for('static', filename='js/api_handler.js') }}"></script>
