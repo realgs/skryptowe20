@@ -30,8 +30,10 @@ class Database:
         c = conn.cursor()
         c.execute(
         '''
-        CREATE TABLE if not exists AvgUsdRates (
-            avg_rates REAL NOT NULL,
+        CREATE TABLE if not exists AvgRates (
+            avg_usd REAL NOT NULL,
+            avg_eur REAL NOT NULL,
+            avg_chf REAL NOT NULL,
             date DATE PRIMARY KEY NOT NULL,
             interpolated BOOLEAN NOT NULL DEFAULT FALSE
         )
@@ -41,7 +43,7 @@ class Database:
         conn.close()
 
 
-    def get_sales_usd_pln(self, start_date, end_date):
+    def get_sales_usd_another_currency(self, start_date, end_date, currency):
         conn = sqlite3.connect(self.db_source)
         c = conn.cursor()
 
@@ -50,14 +52,14 @@ class Database:
             SELECT
             date,
                 SUM(IFNULL(UnitPrice, 0) - IFNULL(Discount, 0) + IFNULL(Freight, 0)) AS usd,
-                SUM((IFNULL(UnitPrice, 0) - IFNULL(Discount, 0) + IFNULL(Freight, 0)) * avg_rates) AS pln
+                SUM((IFNULL(UnitPrice, 0) - IFNULL(Discount, 0) + IFNULL(Freight, 0)) * ?) AS another_currency
             FROM `Order Details`
             JOIN Orders USING(OrderID)
-            JOIN AvgUsdRates ON strftime('%Y-%m-%d', OrderDate) = strftime('%Y-%m-%d', date)
+            JOIN AvgRates ON strftime('%Y-%m-%d', OrderDate) = strftime('%Y-%m-%d', date)
             WHERE strftime('%Y-%m-%d', date) BETWEEN ? AND ?
             GROUP BY date
             ORDER BY date
-            ''', (start_date, end_date)
+            ''', (currency, start_date, end_date)
         )
         res = c.fetchall()
         conn.close()
@@ -65,16 +67,16 @@ class Database:
         return res
 
 
-    def get_avg_usd_rates(self, date=None):
+    def get_avg_rates(self, date=None):
         conn = sqlite3.connect(self.db_source)
         c = conn.cursor()
         res = None
 
         if date is None:
-            c.execute("""SELECT * FROM AvGUsdRates ORDER BY date""")
+            c.execute("""SELECT * FROM AvGRates ORDER BY date""")
             res = c.fetchall()
         else:
-            c.execute("""SELECT * FROM AvGUsdRates WHERE strftime(?, date) = strftime(?, ?) """, (self.DATEFORMAT, self.DATEFORMAT, date))
+            c.execute("""SELECT * FROM AvGRates WHERE strftime(?, date) = strftime(?, ?) """, (self.DATEFORMAT, self.DATEFORMAT, date))
             res = c.fetchall()
 
         conn.commit()
@@ -83,11 +85,11 @@ class Database:
         return res
 
 
-    def get_avg_usd_rates_in_interval(self, start_date=None, end_date=None):
+    def get_avg_rates_in_interval(self, start_date=None, end_date=None):
         conn = sqlite3.connect(self.db_source)
         c = conn.cursor()
 
-        c.execute("""SELECT * FROM AvGUsdRates WHERE strftime('%Y-%m-%d', date) BETWEEN ? AND ? ORDER BY date""", (start_date, end_date))
+        c.execute("""SELECT * FROM AvGRates WHERE strftime('%Y-%m-%d', date) BETWEEN ? AND ? ORDER BY date""", (start_date, end_date))
         res = c.fetchall()
 
         conn.commit()
@@ -101,31 +103,38 @@ class Database:
             curr = rates[i]
             next = rates[i + 1]
 
-            curr_date = datetime.strptime(curr[1], self.DATEFORMAT)
-            next_date = datetime.strptime(next[1], self.DATEFORMAT)
+            curr_date = datetime.strptime(curr[3], self.DATEFORMAT)
+            next_date = datetime.strptime(next[3], self.DATEFORMAT)
             delta = next_date - curr_date
 
             if delta.days > 1:
                 next_day = curr_date + timedelta(days=1)
-                if next_day.strftime(self.DATEFORMAT) not in [x[1] for x in rates]:
+                if next_day.strftime(self.DATEFORMAT) not in [x[3] for x in rates]:
                     rates.insert(i + 1, (
                         curr[0],
+                        curr[1],
+                        curr[2],
                         next_day.strftime(self.DATEFORMAT),
                         True
                     ))
         return rates
 
 
-    def insert_usd_rates(self, start_date, end_date):
+    def insert_rates(self, start_date, end_date):
         from nbp import fetch_currency_from_two_tables
 
         conn = sqlite3.connect(self.db_source)
         c = conn.cursor()
 
-        rates = fetch_currency_from_two_tables(start_date, end_date)
+        rates_usd = fetch_currency_from_two_tables(start_date, end_date, currency='usd')
+        rates_eur = fetch_currency_from_two_tables(start_date, end_date, currency='eur')
+        rates_chf = fetch_currency_from_two_tables(start_date, end_date, currency='chf')
+
+        rates = [(rates_usd[x][0], rates_eur[x][0], rates_chf[x][0], rates_eur[x][1], False) for x in range(len(rates_usd))]
+
         new_rates = self._add_missing_dates(rates)
 
-        c.execute('SELECT date FROM AvgUsdRates')
+        c.execute('SELECT date FROM AvgRates')
         db_rates = c.fetchall()
         to_insert = []
 
@@ -133,5 +142,15 @@ class Database:
             if x[1] not in db_rates:
                 to_insert.append(x)
 
-        c.executemany('INSERT INTO AvgUsdRates VALUES (?, ?, ?)', to_insert)
+        c.executemany('INSERT INTO AvgRates VALUES (?, ?, ?, ?, ?)', to_insert)
         conn.commit()
+
+
+if __name__ == "__main__":
+    db_source = "../../Source/bazunia.db"
+
+    db = Database(db_source)
+
+    [(min_date, max_date)] = db.get_min_max_dates()
+
+    print(db.get_avg_rates_in_interval(min_date, max_date))
