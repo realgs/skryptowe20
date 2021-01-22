@@ -8,24 +8,24 @@
 
       <label style="margin-left: 60px; margin-right: 20px;">Select currency:</label>
       <select id="currency">
-        <option value="aud">AUD</option>
-        <option value="aud">BGN</option>
-        <option value="aud">BYN</option>
-        <option value="aud">CAD</option>
-        <option value="aud">CHF</option>
-        <option value="aud">CZK</option>
-        <option value="aud">DKK</option>
-        <option value="aud">EUR</option>
-        <option value="aud">GBP</option>
-        <option value="aud">HRK</option>
-        <option value="aud">HUF</option>
-        <option value="aud">JPY</option>
-        <option value="aud">RON</option>
-        <option value="aud">RUB</option>
-        <option value="aud">SEK</option>
-        <option value="aud">TRY</option>
-        <option value="aud">UAH</option>
-        <option value="aud">USD</option>
+        <option>AUD</option>
+        <option>BGN</option>
+        <option>BYN</option>
+        <option>CAD</option>
+        <option>CHF</option>
+        <option>CZK</option>
+        <option>DKK</option>
+        <option>EUR</option>
+        <option>GBP</option>
+        <option>HRK</option>
+        <option>HUF</option>
+        <option>JPY</option>
+        <option>RON</option>
+        <option>RUB</option>
+        <option>SEK</option>
+        <option>TRY</option>
+        <option>UAH</option>
+        <option>USD</option>
       </select>
 
       <button class="searchButton" v-on:click="loadRateFromApi()" style="margin-left: 50px;">Search</button>
@@ -95,6 +95,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-</style>
