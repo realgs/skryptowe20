@@ -72,7 +72,7 @@ export default {
 }
 
 .menu-text {
-  color: #c1c1c1;
+  color: #f1f1f1;
   font-size: 21px;
   padding: 10px;
   border-bottom: 7px solid #5d5d5d;
@@ -110,15 +110,34 @@ export default {
   outline: 0;
 }
 
+.tableWithFixHead {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 400px;
+  width: 44%;
+}
+
+.tableWithFixHead thead th {
+  position: sticky;
+  top: 0;
+}
+
 .dataTable {
   background-color: #232323;
   margin: 20px;
   table-layout: fixed;
-  width: 40%;
+  width: 100%;
   border: 0;
+  border-collapse: collapse;
 }
 
 tr td {
+  padding: 3%;
+  width: 27%;
+  display: inline-block;
+}
+
+tr th {
   padding: 3%;
   width: 27%;
   display: inline-block;
@@ -159,6 +178,5 @@ input[type="date"]:focus {
 input[type="date"]::-webkit-calendar-picker-indicator {
   background-color: #e7e7e7;
 }
-
 
 </style>

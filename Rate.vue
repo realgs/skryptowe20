@@ -28,25 +28,29 @@
         <option value="aud">USD</option>
       </select>
 
-      <button class="searchButton" v-on:click="searchApiRate" style="margin-left: 50px;">Search</button>
+      <button class="searchButton" v-on:click="loadRateFromApi()" style="margin-left: 50px;">Search</button>
     </div>
     <div style="margin-top: 20px; min-height: 20px;">
       <label id="errorLabel" style="color: #cc2222"></label>
     </div>
-    <table id="currencyTable" class="dataTable">
-      <div>
+    <div class="tableWithFixHead">
+      <table id="currencyTable" class="dataTable">
+        <thead>
         <tr>
-          <td>Date</td>
-          <td>Rate in PLN</td>
-          <td>Was interpolated</td>
+          <th>Date</th>
+          <th>Rates in PLN</th>
+          <th>Was interpolated</th>
         </tr>
+        </thead>
+        <tbody>
         <tr v-for="item in list" v-bind:key="item.date">
           <td>{{ item.date }}</td>
           <td>{{ item.value }}</td>
           <td>{{ item.isInterpolated }}</td>
         </tr>
-      </div>
-    </table>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -64,7 +68,7 @@ export default {
     }
   },
   methods: {
-    searchApiRate: function () {
+    loadRateFromApi: function () {
       const selectedDate = document.getElementById("currencyDate").value;
       const selectElement = document.getElementById("currency");
       const selectedCurrency = selectElement.options[selectElement.selectedIndex].text;

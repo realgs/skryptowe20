@@ -7,7 +7,10 @@ import Sale from "./components/Sale.vue";
 import Sales from "./components/Sales.vue";
 import Rate from "./components/Rate.vue";
 import Rates from "./components/Rates.vue";
+import Chartkick from 'vue-chartkick'
+import Chart from 'chart.js'
 
+Vue.use(Chartkick.use(Chart))
 Vue.use(VueRouter)
 
 const routes = [
