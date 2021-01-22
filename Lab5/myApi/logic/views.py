@@ -5,6 +5,7 @@ from logic.DataAPI.fetcher import get_avg_rates_for_currency
 from logic.DataAPI.database_operations import get_summary, get_summaries
 from logic.DataAPI.exceptions import IncorrectDateException, UnsupportedCurrencyException, FetchFailException
 from logic.limiter import can_request
+from logic.DataAPI.helper import summaries_to_json
 
 def history(request, currency_code, start_date, end_date):
     if not can_request():
@@ -63,6 +64,7 @@ def summary(request, currency_code, start_date, end_date):
                 "}")
     try:
         summary = get_summaries(currency_code, start_date, end_date) #TODO output in json format
+        json = summaries_to_json(currency_code, summary)
     except OperationalError:
         return HttpResponseNotFound("{"
                        '"error":"Internal database error"'
@@ -75,4 +77,4 @@ def summary(request, currency_code, start_date, end_date):
         return HttpResponseNotFound("{"
                        '"error":"Unsupported currency"'
                        "}")
-    return HttpResponse(f"{summary}")
+    return HttpResponse(f"{json}")
