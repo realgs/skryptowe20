@@ -1,4 +1,4 @@
-##PLN to USD rates, sales API
+## PLN to USD rates, sales API
 
 This repository contains files needed to locally run API 
 with USD to PLN rates and sales from Superstore sample database taken from 

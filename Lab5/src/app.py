@@ -3,6 +3,7 @@ from flask_caching import Cache
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from datetime import datetime as dt
+from flask_cors import CORS
 
 from src import config
 from src import database_collector as db
@@ -13,6 +14,8 @@ app.config["DEBUG"] = True
 limiter = Limiter(app, key_func=get_remote_address)
 cache = Cache(config={'CACHE_TYPE': 'simple'})
 cache.init_app(app)
+
+CORS(app, resources={r'/*': {'origins': '*'}})
 
 
 @app.route('/', methods=['GET'])
