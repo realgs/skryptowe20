@@ -28,5 +28,5 @@ You can visit 4 subpages:
 - */client/src/App.vue* - main template from which every page is extended,
 - */client/src/router/index.js* - contains configuration of routing in this application
 - */client/src/components/* - this folder contains Vue components presented in application
-- */clinet/src/assets* - contains additional assets for application
-- */clinet/public/ - contains files shared among the subpages like tab icon
+- */client/src/assets* - contains additional assets for application
+- */client/public/ - contains files shared among the subpages like tab icon
