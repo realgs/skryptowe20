@@ -54,7 +54,8 @@ def get_exchange_rates_from_database(code, interpolated, kwargs):
     if interpolated:
         c.execute(select_cmd.format(", interpolated"))
         data = c.fetchall()
-        output = [{"date": d, "rate": r, "interpolated": i} for d, r, i in data]
+        output = [{"date": d, "rate": r, "interpolated": i}
+                  for d, r, i in data]
     else:
         c.execute(select_cmd.format(""))
         data = c.fetchall()
@@ -111,7 +112,7 @@ def get_sales_in_pln(from_date, till_date):
     c.execute(select_cmd)
     data = c.fetchall()
     conn.close()
-    output = [{"Date": d, "USD sales": v1, f"PLN sales": v2, "USD rate": v3}
+    output = [{"Date": d, "USD_sales": v1, f"PLN_sales": v2, "USD_rate": v3}
               for d, v1, v2, v3 in data]
     return jsonify(output)
 
@@ -142,8 +143,8 @@ def get_sales_in_foreign_curr(code, from_date, till_date):
     c.execute(select_cmd)
     data = c.fetchall()
     conn.close()
-    output = [{"Date": d, "USD sales": v1, f"{code.upper()} sales": v2, "USD rate": v3,
-               f"{code.upper()} rate": v4} for d, v1, v2, v3, v4 in data]
+    output = [{"Date": d, "USD_sales": v1, f"{code.upper()}_sales": v2, "USD_rate": v3,
+               f"{code.upper()}_rate": v4} for d, v1, v2, v3, v4 in data]
     return jsonify(output)
 
 
@@ -164,7 +165,7 @@ def check_rates_request_data(code, kwargs):
     err_code = OK_CODE
     min_date = to_date(FIRST_DAY_OF_NBP_CURRENCY_RATE)
     today_date = to_date(TODAY())
-    
+
     # Code
     if code.lower() not in (TABLE_A + TABLE_B):
         err_msg = f"Given currency code is not available: {code}"
@@ -178,25 +179,25 @@ def check_rates_request_data(code, kwargs):
             err_msg = f"Min date limit reached: min {date_limit.days} days"
 
     if err_msg:
-        return err_msg, NOT_ACCEPTABLE_CODE     
-    
+        return err_msg, NOT_ACCEPTABLE_CODE
+
     # Dates format
     from_date = 0
     till_date = 0
     try:
         if FROM in kwargs:
             from_date = to_date(kwargs[FROM])
-        if TILL in kwargs:  
+        if TILL in kwargs:
             till_date = to_date(kwargs[TILL])
     except ValueError:
         err_msg = "Wrong date format"
         return err_msg, NOT_ACCEPTABLE_CODE
-    
+
     # Date range
     if from_date and (from_date < min_date or today_date < from_date):
         err_msg = "Date over limit"
         return err_msg, NOT_ACCEPTABLE_CODE
-    
+
     if till_date:
         if till_date < min_date or today_date < till_date:
             err_msg = "Date over limit"
@@ -205,6 +206,7 @@ def check_rates_request_data(code, kwargs):
             err_msg = "From date cannot be past till date"
             err_code = NOT_ACCEPTABLE_CODE
     return err_msg, err_code
+
 
 def check_sales_request_data(code, from_date, till_date):
     """
@@ -221,7 +223,7 @@ def check_sales_request_data(code, from_date, till_date):
         str: possible error message, int: err_code
     """
     err_msg = None
-    
+
     # Check date format
     try:
         to_date(from_date)
