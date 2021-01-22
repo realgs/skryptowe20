@@ -1,6 +1,7 @@
 import './App.css';
 import React from 'react'
 import RatesTable from './RatesTable'
+import SummaryTable from './SummaryTable'
 import Readme from './Readme'
 import LineChart from './LineChart'
 
@@ -51,7 +52,8 @@ class App extends React.Component {
     state = {
         content:0,
         currency:"",
-        rates:[]
+        rates:[],
+        summary:[]
     }
 
     range_dates = {
@@ -63,7 +65,7 @@ class App extends React.Component {
         currency:"USD"
     }
 
-    registerButtonClick = () => {
+    showRates = () => {
         var start_date = convertDate(this.range_dates.start_date);
         var end_date = convertDate(this.range_dates.end_date);
 
@@ -73,8 +75,9 @@ class App extends React.Component {
                        .then(json => {
                            let error = json['error'];
                            if(error != null) {
+                                alert(error);
                                 this.setState({
-                                    currency: error,
+                                    currency: "",
                                     rates: []
                                 })
                            } else {
@@ -83,7 +86,30 @@ class App extends React.Component {
                                     rates: json['rates']
                                 })
                            }
+                       });
+    }
 
+    showSummary = () => {
+        var start_date = convertDate(this.range_dates.start_date);
+        var end_date = convertDate(this.range_dates.end_date);
+
+        if(start_date == null || end_date == null) return;
+
+        fetchSummary(this.selector_currency.currency, start_date , end_date).then(result => result.json())
+                       .then(json => {
+                           let error = json['error'];
+                           if(error != null) {
+                               alert(error);
+                                this.setState({
+                                    currency: "",
+                                    summary: []
+                                })
+                           } else {
+                                this.setState({
+                                    currency: json['currency'],
+                                    summary: json['data']
+                                })
+                           }
                        });
     }
 
@@ -173,7 +199,7 @@ class App extends React.Component {
                             <Option value="EUR">EUR</Option>
                             <Option value="AUD">AUD</Option>
                         </Select>
-                        <Button type="primary" onClick={ this.registerButtonClick }>Show</Button>
+                        <Button type="primary" onClick={ this.showRates }>Show</Button>
                     </Space>
                 </Space>
             </div >
@@ -195,7 +221,30 @@ class App extends React.Component {
                             <Option value="EUR">EUR</Option>
                             <Option value="AUD">AUD</Option>
                         </Select>
-                        <Button type="primary" onClick={ this.registerButtonClick }>Show</Button>
+                        <Button type="primary" onClick={ this.showRates }>Show</Button>
+                    </Space>
+                </Space>
+            </div >
+        } else if (display_content == 3) {
+            content =
+            <>
+                <Title level={4}>Results</Title>
+                <SummaryTable data={ {currency:this.state.currency,
+                                      summary:this.state.summary} }/>
+            </>
+            options =
+            <div
+             style={{ margin: '24px 16px 0'}}>
+                <Space direction="vertical">
+                <RangePicker onChange={ this.setDateRange } />
+
+                    <Space>
+                        <Select defaultValue="USD" style={{ width: 80 }} onChange={this.setCurrency}>
+                            <Option value="USD">USD</Option>
+                            <Option value="EUR">EUR</Option>
+                            <Option value="AUD">AUD</Option>
+                        </Select>
+                        <Button type="primary" onClick={ this.showSummary }>Show</Button>
                     </Space>
                 </Space>
             </div >

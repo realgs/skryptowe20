@@ -8,21 +8,20 @@ const columns = [
       dataIndex: 'date',
     },
     {
-      title: 'Value',
-      dataIndex: 'value',
+      title: 'Original sum',
+      dataIndex: 'original_sum',
     },
     {
-      title: 'Interpolated',
-      dataIndex: 'interpolated',
+      title: 'Currency sum',
+      dataIndex: 'currency_sum',
     },
   ];
 
 export default function SummaryTable({ data }) {
-
     return (
         <>
             <Title level={5}>{data.currency}</Title>
-            <Table columns={columns} dataSource={data.rates} scroll={{ y: 500 }} />
+            <Table columns={columns} dataSource={data.summary} scroll={{ y: 500 }} />
         </>
     )
 }

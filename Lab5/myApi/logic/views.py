@@ -63,7 +63,11 @@ def summary(request, currency_code, start_date, end_date):
                 '"error":"Requests limit reached"'
                 "}")
     try:
-        summary = get_summaries(currency_code, start_date, end_date) #TODO output in json format
+        summary = get_summaries(currency_code, start_date, end_date)
+        if len(summary) == 0:
+            return HttpResponseNotFound("{"
+                '"error":"No data for this period"'
+                "}")
         json = summaries_to_json(currency_code, summary)
     except OperationalError:
         return HttpResponseNotFound("{"
