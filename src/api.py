@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from database.database import Database
 from flask import Flask, jsonify, request
 from flask_limiter import Limiter
@@ -25,6 +26,16 @@ cache.init_app(app)
 def home(name):
   return jsonify(hello= "Hello",
               world=name)
+
+
+@app.route('/api/dates')
+@cache.cached(timeout=conf['cache-timeout'])
+def min_max_dates():
+  db = Database(DB_NAME)
+  [(min_date, max_date)] = db.get_min_max_dates()
+
+  return jsonify(min_date=min_date,
+              max_date=max_date)
 
 
 @app.route('/api/rates')

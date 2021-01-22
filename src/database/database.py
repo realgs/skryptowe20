@@ -19,10 +19,12 @@ class Database:
         c.execute("""
             SELECT MIN(OrderDate), MAX(OrderDate) FROM Orders
         """)
-        res = c.fetchall()
+        [(min_date, max_date)] = c.fetchall()
         conn.close()
 
-        return res
+        max_date = (datetime.strptime(max_date, self.DATEFORMAT) - timedelta(days=1)).strftime(self.DATEFORMAT)
+
+        return [(min_date, max_date)]
 
 
     def create_avg_currency_rates_table(self):
