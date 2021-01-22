@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { colors } from "../consts/colors";
 
 const StyledHeader = styled.header`
   --navbar-height: 64px;
   height: var(--navbar-height);
-  background-color: var(--navbar-bg-color);
+  background-color: ${colors.navbarBgColor};
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 
   &.opened .navbar-toggle .icon-bar:first-child,
@@ -80,7 +81,7 @@ const StyledNav = styled.nav`
 `;
 
 const HomeLink = styled(Link)`
-  color: var(--navbar-text-color);
+  color: ${colors.navbarTextColor};
   transition: color 0.2s ease-in-out;
   text-decoration: none;
   display: flex;
@@ -90,7 +91,7 @@ const HomeLink = styled(Link)`
 
   :hover,
   :focus {
-    color: var(--navbar-text-color-focus);
+    color: ${colors.white};
   }
 `;
 
@@ -107,7 +108,7 @@ const StyledButton = styled.button`
 
   :hover .icon-bar,
   :focus .icon-bar {
-    background-color: var(--navbar-text-color-focus);
+    background-color: ${colors.white};
   }
 
   @media screen and (min-width: 700px) {
@@ -122,7 +123,7 @@ const IconBar = styled.span`
   margin: 2px;
   transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out,
     opacity 0.2s ease-in-out;
-  background-color: var(--navbar-text-color);
+  background-color: ${colors.navbarTextColor};
 `;
 
 const NavbarMenu = styled.div`
@@ -141,7 +142,7 @@ const NavbarLinks = styled.ul`
   max-height: 0;
   overflow: hidden;
   position: absolute;
-  background-color: var(--navbar-bg-color);
+  background-color: ${colors.navbarBgColor};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -158,7 +159,7 @@ const NavbarItem = styled.li`
 `;
 
 const NavbarLink = styled(Link)`
-  color: var(--navbar-text-color);
+  color: ${colors.navbarTextColor};
   transition: color 0.2s ease-in-out;
   text-decoration: none;
   display: flex;
@@ -173,8 +174,8 @@ const NavbarLink = styled(Link)`
 
   :focus,
   :hover {
-    color: var(--navbar-text-color-focus);
-    background-color: var(--navbar-bg-contrast);
+    color: ${colors.white};
+    background-color: ${colors.navbarBgContrast};
   }
 `;
 
