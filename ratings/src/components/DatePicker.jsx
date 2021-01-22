@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import "react-dates/initialize";
 import { SingleDatePicker } from "react-dates";
-import moment from "moment";
 import styled from "styled-components";
 import "react-dates/lib/css/_datepicker.css";
 import { colors } from "../consts/colors";
@@ -43,19 +42,16 @@ const StyledDatePickerWrapper = styled.div`
   }
 `;
 
-const DatePicker = () => {
+const DatePicker = ({ date, setDate }) => {
   const [focused, setFocused] = useState(false);
-  const [date, setDate] = useState(moment());
 
   return (
     <StyledDatePickerWrapper>
       <SingleDatePicker
+        displayFormat={() => "DD/MM/YYYY"}
         isOutsideRange={falseFunc}
         numberOfMonths={1}
-        onDateChange={(date) => {
-          console.log(date);
-          setDate(date);
-        }}
+        onDateChange={(date) => setDate(date)}
         onFocusChange={({ focused }) => setFocused(focused)}
         focused={focused}
         date={date}
