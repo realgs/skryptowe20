@@ -65,13 +65,13 @@ def return_rate(date):
     return jsonify(error=API_ERROR_NOT_FOUND), API_ERROR_NOT_FOUND['status']
   else:
     [(usd, eur, chf, date, interpolated)] = res
-    return jsonify(
-      usd=usd,
-      eur=eur,
-      chf=chf,
-      date=date,
-      interpolated= interpolated == 1 if True else False
-    )
+    return jsonify(rates={
+      'usd': usd,
+      'eur': eur,
+      'chf': chf,
+      'date': date,
+      'interpolated': interpolated == 1 if True else False
+    })
 
 
 @app.route('/api/rates/<start>/<end>')
