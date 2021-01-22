@@ -43,23 +43,27 @@ class Database:
         conn.close()
 
 
-    def get_sales_usd_another_currency(self, start_date, end_date, currency):
+    def get_sales_usd_another_currency(self, start_date, end_date, currency='pln'):
         conn = sqlite3.connect(self.db_source)
         c = conn.cursor()
-
+        if currency == 'pln':
+            currency = '1'
+        else:
+            currency = ' `rates`.avg_' + currency
+        print(currency)
         c.execute(
-            '''
+            f'''
             SELECT
             date,
-                SUM(IFNULL(UnitPrice, 0) - IFNULL(Discount, 0) + IFNULL(Freight, 0)) AS usd,
-                SUM((IFNULL(UnitPrice, 0) - IFNULL(Discount, 0) + IFNULL(Freight, 0)) * ?) AS another_currency
+                SUM(IFNULL(UnitPrice, 0) - IFNULL(Discount, 0) + IFNULL(Freight, 0)) AS original,
+                SUM((IFNULL(UnitPrice, 0) - IFNULL(Discount, 0) + IFNULL(Freight, 0)) / {currency} * `rates`.avg_usd ) AS requested
             FROM `Order Details`
             JOIN Orders USING(OrderID)
-            JOIN AvgRates ON strftime('%Y-%m-%d', OrderDate) = strftime('%Y-%m-%d', date)
+            JOIN AvgRates AS rates ON strftime('%Y-%m-%d', OrderDate) = strftime('%Y-%m-%d', date)
             WHERE strftime('%Y-%m-%d', date) BETWEEN ? AND ?
             GROUP BY date
             ORDER BY date
-            ''', (currency, start_date, end_date)
+            ''', (start_date, end_date)
         )
         res = c.fetchall()
         conn.close()

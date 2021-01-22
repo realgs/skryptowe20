@@ -31,11 +31,17 @@ def home(name):
 @cache.cached(timeout=conf['cache-timeout'])
 def return_all_rates():
   db = Database(DB_NAME)
-  rates = db.get_avg_usd_rates()
+  rates = db.get_avg_rates()
   if rates == []:
     return jsonify(error=API_ERROR_NOT_FOUND), API_ERROR_NOT_FOUND['status']
   else:
-    rates = [{'rate':x[0], 'date':x[1], 'interpolated':x[2] == 1 if True else False} for x in rates]
+    rates = [{
+      'usd': x[0],
+      'eur': x[1],
+      'chf': x[2],
+      'date': x[3],
+      'interpolated': x[4] == 1 if True else False
+      } for x in rates]
     return jsonify(rates=rates)
 
 
@@ -43,14 +49,17 @@ def return_all_rates():
 @cache.cached(timeout=conf['cache-timeout'])
 def return_rate(date):
   db = Database(DB_NAME)
-  res = db.get_avg_usd_rates(date)
+  res = db.get_avg_rates(date)
   if res == []:
     return jsonify(error=API_ERROR_NOT_FOUND), API_ERROR_NOT_FOUND['status']
   else:
-    [(rate, date, interpolated)] = res
-    return jsonify(rate=rate,
-                  date=date,
-                  interpolated= interpolated == 1 if True else False
+    [(usd, eur, chf, date, interpolated)] = res
+    return jsonify(
+      usd=usd,
+      eur=eur,
+      chf=chf,
+      date=date,
+      interpolated= interpolated == 1 if True else False
     )
 
 
@@ -58,37 +67,43 @@ def return_rate(date):
 @cache.cached(timeout=conf['cache-timeout'])
 def return_rates(start, end):
   db = Database(DB_NAME)
-  res = db.get_avg_usd_rates_in_interval(start, end)
+  res = db.get_avg_rates_in_interval(start, end)
   if res == []:
     return jsonify(error=API_ERROR_NOT_FOUND), API_ERROR_NOT_FOUND['status']
   else:
-    rates = [{'rate': x[0], 'date': x[1], 'interpolated': x[2] == 1 if True else False} for x in res]
+    rates = [{
+      'usd': x[0],
+      'eur': x[1],
+      'chf': x[2],
+      'date': x[3],
+      'interpolated': x[4] == 1 if True else False
+      } for x in res]
     return jsonify(rates=rates)
 
 
-@app.route('/api/sales/<start_date>/<end_date>')
+@app.route('/api/sales/<start_date>/<end_date>/<currency>')
 @cache.cached(timeout=conf['cache-timeout'])
-def return_sales(start_date, end_date):
+def return_sales(start_date, end_date, currency):
   db = Database(DB_NAME)
-  res = db.get_sales_usd_pln(start_date, end_date)
+  res = db.get_sales_usd_another_currency(start_date, end_date, currency)
   if res == []:
     return jsonify(error=API_ERROR_NOT_FOUND), API_ERROR_NOT_FOUND['status']
   else:
-    sales = [{'date': x[0], 'usd': x[1], 'pln': x[2]} for x in res]
+    sales = [{'date': x[0], 'usd': x[1], currency: x[2]} for x in res]
     return jsonify(sales=sales)
 
 
-@app.route('/api/sales/<date>')
+@app.route('/api/sales/<date>/<currency>')
 @cache.cached(timeout=conf['cache-timeout'])
-def return_sale(date):
+def return_sale(date, currency):
   db = Database(DB_NAME)
-  res = db.get_sales_usd_pln(date, date)
+  res = db.get_sales_usd_another_currency(date, date, currency)
 
   if res == []:
     return jsonify(error=API_ERROR_NOT_FOUND), API_ERROR_NOT_FOUND['status']
   else:
-    [(date, usd, pln)] = res
-    return jsonify(date=date, usd=usd, pln=pln)
+    [(date, usd, curr)] = res
+    return jsonify(date=date, usd=usd, currency=currency, sales=curr)
 
 
 @app.errorhandler(429)
