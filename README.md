@@ -1,0 +1,121 @@
+# Frontend showcase
+
+2 min video showcasing the look and features of the implemented frontend:
+https://youtu.be/4P6nF6PYxVI
+# Instalation
+Make sure you have node.js installed if you plan on starting up the frontend server.
+
+Required python packages:
+- asgiref==3.3.1
+- certifi==2020.12.5
+- chardet==3.0.4
+- Django==3.1.4
+- djangorestframework==3.12.2
+- idna==2.10
+- pytz==2020.4
+- requests==2.25.0
+- sqlparse==0.4.1
+- urllib3==1.26.2
+
+All above packages are listed in *requirements.txt*, ready to be imported with python.
+# Setup
+## Preparing the database:
+1. Download Northwind sqlite3 database.
+2. Make sure the path to the database is correct in `constants.py`
+3. The database will prepare on start of the server
+
+## Starting the API server:
+1. Run `manage.py` located in Lab5/myApi with runserver argument, like so:
+
+`python manage.py runserver`
+
+(optional) To start the frontend server go to Lab5/frontend and use:
+
+`npm start`
+
+# Usage
+## Exchange rates history
+Data is fetched from nbpAPI. Supports all currencies supported by nbpAPI (listed in `constants.py`).
+
+
+`/rates/{currency}/{start_date}/{end_date}/`
+
+Where:
+- `currency` -> ISO compliant currency code,
+- `start_date` -> beginning of period, in format YYYY-MM-DD,
+- `end_date` -> end of period, in format YYYY-MM-DD,
+
+For example: `/rates/USD/2020-01-01/2020-10-10/`
+
+Sample output:
+```json
+{
+   "currency":"USD",
+   "rates":[
+      {
+         "date":"2020-12-01",
+         "value":"3.736",
+         "interpolated":"false"
+      },
+      {
+         "date":"2020-12-02",
+         "value":"3.87",
+         "interpoalted":"false"
+      }
+   ]
+}
+```
+Where:
+- **interpolated** -> whether the value is estimated from previous days or not.
+
+## Transactions summary
+Data is calculated during database preparation on setup. Due to used database's dataset, the date is bounded between 2012-07-04 and 2016-02-19 (listed in `constants.py`).
+
+`/summary/{currency}/{date}/`
+
+Where:
+- `currency` -> supported currency code, specified as `SUMMARY_SUPPORTED_CURRENCIES` in `constants.py`,
+- `date` -> day to summarise, in format YYYY-MM-DD,
+
+For example: `/summary/USD/2015-12-18/`
+
+Sample output:
+```json
+{
+   "currency":"USD",
+   "data":[
+      {
+         "date":"2016-02-18",
+         "original_sum":"202602.31",
+         "currency_sum":"51401.03"
+      },
+      {
+         "date":"2016-02-19",
+         "original_sum":"342352.03",
+         "currency_sum":"86603.43"
+      }
+   ]
+}
+```
+Where:
+- **original_sum** -> sum of all transactions in the original value.
+- **currency_sum** -> sum of all transactions in the requested currency.
+
+# Errors
+When status 404 is returned it means something went wrong. Example message returned stating the error:
+```json
+{
+   "error":"Incorrect date"
+}
+```
+Currently, these are the supported error messages:
+- **Incorrect date** -> input date format is not correct
+- **Unsupported currency** -> currency is not on supported currencies list
+- **Failed to fetch from NBPAPI** -> error connecting with NBPAPI
+- **Incorrect input** -> other input error
+- **Start date should be smaller than end date** -> start date should be smaller than end date
+- **Internal database error** -> something went wrong with database connection
+- **Requests limit reached** -> limit of requests per minute was reached
+
+# Requests limit
+Requests are limited to 100 requests per minute for everyone. The value can be changed by updating `MAX_REQ_PER_MINUTE` in `constants.py`
