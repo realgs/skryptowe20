@@ -10,7 +10,7 @@ For required packages refer to:
 ``client/package.json/dependencies``.
 
 ## Usage
-Run in console:
+Go to ./client/ and run in console:
 ```
 npm run serve
 ```
