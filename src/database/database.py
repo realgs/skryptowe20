@@ -7,7 +7,7 @@ DB_NAME = "../../Source/bazunia.db"
 
 class Database:
     DATEFORMAT = "%Y-%m-%d"
-
+    currencies = ['pln', 'eur', 'chf', 'usd']
 
     def __init__(self, db_source):
         self.db_source = db_source
@@ -46,6 +46,8 @@ class Database:
     def get_sales_usd_another_currency(self, start_date, end_date, currency='pln'):
         conn = sqlite3.connect(self.db_source)
         c = conn.cursor()
+        if currency not in self.currencies:
+            return []
         if currency == 'pln':
             currency = '1'
         else:
