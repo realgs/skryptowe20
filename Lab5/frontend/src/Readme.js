@@ -35,69 +35,69 @@ export default function Readme() {
                 </Text>
             </p>
             <Title level={3}>Setup</Title>
-                <Title level={4}>Preparing the database</Title>
-                <Text>
-                    <p>1. Download <a href="https://github.com/jpwhite3/northwind-SQLite3/blob/master/Northwind_large.sqlite.zip">Northwind sqlite3 database</a>. <br />
+            <Title level={4}>Preparing the database</Title>
+            <Text>
+                <p>1. Download <a href="https://github.com/jpwhite3/northwind-SQLite3/blob/master/Northwind_large.sqlite.zip">Northwind sqlite3 database</a>. <br />
                     2. Make sure the path to the database is correct in <i>constants.py</i><br />
                     3. The database will prepare on start of the server (as well as collect and calculate all neccessary data)</p>
-                </Text>
-                <Title level={4}>Starting the API server</Title>
-                <Text>
-                    <p>1. Run manage.py located in <i>Lab5/myApi</i> with runserver argument, like so:</p>
-                    <i><Paragraph copyable>python manage.py runserver</Paragraph></i>
-                    <p>(optional) To start the frontend server go to <i>Lab5/frontend</i> and use:</p>
-                    <i><Paragraph copyable>npm start</Paragraph></i>
-                </Text>
+            </Text>
+            <Title level={4}>Starting the API server</Title>
+            <Text>
+                <p>1. Run manage.py located in <i>Lab5/myApi</i> with runserver argument, like so:</p>
+                <i><Paragraph copyable>python manage.py runserver</Paragraph></i>
+                <p>(optional) To start the frontend server go to <i>Lab5/frontend</i> and use:</p>
+                <i><Paragraph copyable>npm start</Paragraph></i>
+            </Text>
             <Title level={3}>Usage</Title>
-                <Title level={4}>Exchange rates history</Title>
-                <Text>
-                    <p>Data is fetched from nbpAPI. Supports all currencies supported by nbpAPI (listed in <i>constants.py</i>).
+            <Title level={4}>Exchange rates history</Title>
+            <Text>
+                <p>Data is fetched from nbpAPI. Supports all currencies supported by nbpAPI (listed in <i>constants.py</i>).
                     API endpoint url:</p>
-                    <i><Paragraph copyable>/rates/{"{currency}"}/{"{start_date}"}/{"{end_date}"}</Paragraph></i>
-                    <p>Where:</p>
-                    <b>currency</b> - supported currency code, specified as <b>SUMMARY_SUPPORTED_CURRENCIES</b> in <i>constants.py</i> <br />
-                    <b>start_date</b> - beginning of period, in format YYYY-MM-DD, <br />
-                    <b>end_date</b> - end of period, in format YYYY-MM-DD
+                <i><Paragraph copyable>/rates/{"{currency}"}/{"{start_date}"}/{"{end_date}"}</Paragraph></i>
+                <p>Where:</p>
+                <b>currency</b> - supported currency code, specified as <b>SUMMARY_SUPPORTED_CURRENCIES</b> in <i>constants.py</i> <br />
+                <b>start_date</b> - beginning of period, in format YYYY-MM-DD, <br />
+                <b>end_date</b> - end of period, in format YYYY-MM-DD
                     <p>Example usage: <i>/rates/USD/2020-01-01/2020-10-10/</i></p>
-                    <p>Sample output:</p>
-                    <p><i>{sample_rates_output}</i></p>
-                    <p>Where:</p>
-                    <b>interpolated</b> - whether the value is estimated from previous days or not.
+                <p>Sample output:</p>
+                <p><i>{sample_rates_output}</i></p>
+                <p>Where:</p>
+                <b>interpolated</b> - whether the value is estimated from previous days or not.
                 </Text>
 
-                <Title level={4}>Transactions summary</Title>
-                <Text>
-                    <p>Data is calculated during database preparation on setup. Due to used database's dataset,
+            <Title level={4}>Transactions summary</Title>
+            <Text>
+                <p>Data is calculated during database preparation on setup. Due to used database's dataset,
                          the date is bounded between 2012-07-04 and 2016-02-19 (listed in <i>constants.py</i>).</p>
-                    <i><Paragraph copyable>/summary/{"{currency}"}/{"{start_date}"}/{"{end_date}"}</Paragraph></i>
-                    <p>Where:</p>
-                    <b>currency</b> - supported currency code, specified as <b>SUMMARY_SUPPORTED_CURRENCIES</b> <i>constants.py</i> <br />
-                    <b>start_date</b> - beginning of period, in format YYYY-MM-DD, <br />
-                    <b>end_date</b> - end of period, in format YYYY-MM-DD
+                <i><Paragraph copyable>/summary/{"{currency}"}/{"{start_date}"}/{"{end_date}"}</Paragraph></i>
+                <p>Where:</p>
+                <b>currency</b> - supported currency code, specified as <b>SUMMARY_SUPPORTED_CURRENCIES</b> <i>constants.py</i> <br />
+                <b>start_date</b> - beginning of period, in format YYYY-MM-DD, <br />
+                <b>end_date</b> - end of period, in format YYYY-MM-DD
                     <p>Example usage: <i>/summary/USD/2016-02-18/2016-02-19/</i></p>
-                    <p>Sample output:</p>
-                    <p><i>{sample_summary_output}</i></p>
-                    <p>Where:</p>
-                    <b>original_sum</b> - sum of all transactions in the original value. <br />
-                    <b>currency_sum</b> - sum of all transactions in the requested currency.
+                <p>Sample output:</p>
+                <p><i>{sample_summary_output}</i></p>
+                <p>Where:</p>
+                <b>original_sum</b> - sum of all transactions in the original value. <br />
+                <b>currency_sum</b> - sum of all transactions in the requested currency.
                 </Text>
             <Title level={3}>Errors</Title>
-                <Text>
-                    <p>When status 404 is returned it means something went wrong. Example message returned stating the error:</p>
-                    <p><i>{ sample_error_output }</i></p>
-                    <p>Currently, these are the supported error messages:</p>
-                    <b>Incorrect date</b> - input date format is not correct <br />
-                    <b>No data for this period</b> - you requestes summary out of the bounded period <br />
-                    <b>Unsupported currency</b> - currency is not on supported currencies list <br />
-                    <b>Incorrect input</b> - other input error <br />
-                    <b>Start date should be smaller than end date</b> - start date should be smaller than end date <br />
-                    <b>Internal database error</b> - something went wrong with database connection within our system<br />
-                    <b>Requests limit reached</b> - limit of requests per minute was reached <br />
-                    <b>Failed to fetch from NBPAPI</b> - error connecting with NBPAPI
+            <Text>
+                <p>When status 404 is returned it means something went wrong. Example message returned stating the error:</p>
+                <p><i>{sample_error_output}</i></p>
+                <p>Currently, these are the supported error messages:</p>
+                <b>Incorrect date</b> - input date format is not correct <br />
+                <b>No data for this period</b> - you requestes summary out of the bounded period <br />
+                <b>Unsupported currency</b> - currency is not on supported currencies list <br />
+                <b>Incorrect input</b> - other input error <br />
+                <b>Start date should be smaller than end date</b> - start date should be smaller than end date <br />
+                <b>Internal database error</b> - something went wrong with database connection within our system<br />
+                <b>Requests limit reached</b> - limit of requests per minute was reached <br />
+                <b>Failed to fetch from NBPAPI</b> - error connecting with NBPAPI
                 </Text>
             <Title level={3}>Requests limit</Title>
-                <Text>
-                    Requests are limited to <i><b>100 requests per minute for everyone</b></i>. The value can be changed by updating <b>MAX_REQ_PER_MINUTE</b> in <i>constants.py</i>.
+            <Text>
+                Requests are limited to <i><b>100 requests per minute for everyone</b></i>. The value can be changed by updating <b>MAX_REQ_PER_MINUTE</b> in <i>constants.py</i>.
                 </Text>
         </>
     )

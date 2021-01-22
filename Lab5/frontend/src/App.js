@@ -6,8 +6,10 @@ import Readme from './Readme'
 import LineChart from './LineChart'
 import MultiLineChart from './MultiLineChart'
 
-import { Menu, Dropdown, Layout, Button, Typography,
-         DatePicker, Select, Space } from 'antd';
+import {
+    Menu, Dropdown, Layout, Button, Typography,
+    DatePicker, Select, Space
+} from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
@@ -16,11 +18,11 @@ const { Title } = Typography;
 const { Header, Sider, Content } = Layout;
 
 function fetchRates(currency, start_date, end_date) {
-    return fetch("http://127.0.0.1:8000/rates/" + currency + "/" +  start_date + "/" + end_date + "/")
+    return fetch("http://127.0.0.1:8000/rates/" + currency + "/" + start_date + "/" + end_date + "/")
 }
 
 function fetchSummary(currency, start_date, end_date) {
-    return fetch("http://127.0.0.1:8000/summary/" + currency + "/" +  start_date + "/" + end_date + "/")
+    return fetch("http://127.0.0.1:8000/summary/" + currency + "/" + start_date + "/" + end_date + "/")
 }
 
 function convertDate(date) {
@@ -28,19 +30,19 @@ function convertDate(date) {
 
     var start_date_obj = new Date(date);
     var year = start_date_obj.getFullYear();
-    var month = start_date_obj.getMonth()+1;
+    var month = start_date_obj.getMonth() + 1;
     var day = start_date_obj.getDate();
     var output = "";
 
     output += year;
-    output+="-"
-    if(month < 10) {
+    output += "-"
+    if (month < 10) {
         output += "0" + month;
     } else {
         output += month;
     }
-    output+="-"
-    if(day < 10) {
+    output += "-"
+    if (day < 10) {
         output += "0" + day;
     } else {
         output += day;
@@ -51,71 +53,71 @@ function convertDate(date) {
 
 class App extends React.Component {
     state = {
-        content:0,
-        currency:"",
-        rates:[],
-        summary:[]
+        content: 0,
+        currency: "",
+        rates: [],
+        summary: []
     }
 
     range_dates = {
-        start_date:null,
-        end_date:null
+        start_date: null,
+        end_date: null
     }
 
     selector_currency = {
-        currency:"USD"
+        currency: "USD"
     }
 
     showRates = () => {
         var start_date = convertDate(this.range_dates.start_date);
         var end_date = convertDate(this.range_dates.end_date);
 
-        if(start_date == null || end_date == null) return;
+        if (start_date == null || end_date == null) return;
 
-        fetchRates(this.selector_currency.currency, start_date , end_date).then(result => result.json())
-                       .then(json => {
-                           let error = json['error'];
-                           if(error != null) {
-                                alert(error);
-                                this.setState({
-                                    currency: "",
-                                    rates: []
-                                })
-                           } else {
-                                this.setState({
-                                    currency: json['currency'],
-                                    rates: json['rates']
-                                })
-                           }
-                       });
+        fetchRates(this.selector_currency.currency, start_date, end_date).then(result => result.json())
+            .then(json => {
+                let error = json['error'];
+                if (error != null) {
+                    alert(error);
+                    this.setState({
+                        currency: "",
+                        rates: []
+                    })
+                } else {
+                    this.setState({
+                        currency: json['currency'],
+                        rates: json['rates']
+                    })
+                }
+            });
     }
 
     showSummary = () => {
         var start_date = convertDate(this.range_dates.start_date);
         var end_date = convertDate(this.range_dates.end_date);
 
-        if(start_date == null || end_date == null) return;
+        if (start_date == null || end_date == null) return;
 
-        fetchSummary(this.selector_currency.currency, start_date , end_date).then(result => result.json())
-                       .then(json => {
-                           let error = json['error'];
-                           if(error != null) {
-                               alert(error);
-                                this.setState({
-                                    currency: "",
-                                    summary: []
-                                })
-                           } else {
-                                this.setState({
-                                    currency: json['currency'],
-                                    summary: json['data']
-                                })
-                           }
-                       });
+        fetchSummary(this.selector_currency.currency, start_date, end_date).then(result => result.json())
+            .then(json => {
+                let error = json['error'];
+                if (error != null) {
+                    alert(error);
+                    this.setState({
+                        currency: "",
+                        summary: []
+                    })
+                } else {
+                    this.setState({
+                        currency: json['currency'],
+                        summary: json['data']
+                    })
+                }
+            });
     }
 
     setDateRange = dates => {
-        if(dates == null) return;
+        if (dates == null) return;
         this.range_dates.start_date = dates[0];
         this.range_dates.end_date = dates[1];
     }
@@ -126,31 +128,31 @@ class App extends React.Component {
 
     setDefaultContent = () => {
         this.setState({
-            content:0
+            content: 0
         })
     }
 
     setRatesContent = () => {
         this.setState({
-            content:1
+            content: 1
         })
     }
 
     setRatesChartContent = () => {
         this.setState({
-            content:2
+            content: 2
         })
     }
 
     setSummaryContent = () => {
         this.setState({
-            content:3
+            content: 3
         })
     }
 
     setSummaryChartContent = () => {
         this.setState({
-            content:4
+            content: 4
         })
     }
 
@@ -158,23 +160,23 @@ class App extends React.Component {
 
         const menu = (
             <Menu>
-              <Menu.Item onClick={ this.setDefaultContent }>
-                  API Reference
+                <Menu.Item onClick={this.setDefaultContent}>
+                    API Reference
               </Menu.Item>
-              <Menu.Item onClick={ this.setRatesContent }>
-                  Rates exchange
+                <Menu.Item onClick={this.setRatesContent}>
+                    Rates exchange
               </Menu.Item>
-              <Menu.Item onClick={ this.setRatesChartContent }>
-                Rates exchange chart
+                <Menu.Item onClick={this.setRatesChartContent}>
+                    Rates exchange chart
               </Menu.Item>
-              <Menu.Item onClick={ this.setSummaryContent }>
-                  Transactions summary
+                <Menu.Item onClick={this.setSummaryContent}>
+                    Transactions summary
               </Menu.Item>
-              <Menu.Item onClick={ this.setSummaryChartContent }>
-                  Transactions summary chart
+                <Menu.Item onClick={this.setSummaryChartContent}>
+                    Transactions summary chart
               </Menu.Item>
             </Menu>
-          );
+        );
 
 
         const display_content = this.state.content;
@@ -183,94 +185,98 @@ class App extends React.Component {
 
         if (display_content == 1) {
             content =
-            <>
-                <Title level={4}>Results</Title>
-                <RatesTable data={ {currency:this.state.currency,
-                                    rates:this.state.rates} }/>
-            </>
+                <>
+                    <Title level={4}>Results</Title>
+                    <RatesTable data={{
+                        currency: this.state.currency,
+                        rates: this.state.rates
+                    }} />
+                </>
             options =
-            <div
-             style={{ margin: '24px 16px 0'}}>
-                <Space direction="vertical">
-                <RangePicker onChange={ this.setDateRange } />
+                <div
+                    style={{ margin: '24px 16px 0' }}>
+                    <Space direction="vertical">
+                        <RangePicker onChange={this.setDateRange} />
 
-                    <Space>
-                        <Select defaultValue="USD" style={{ width: 80 }} onChange={this.setCurrency}>
-                            <Option value="USD">USD</Option>
-                            <Option value="EUR">EUR</Option>
-                            <Option value="AUD">AUD</Option>
-                        </Select>
-                        <Button type="primary" onClick={ this.showRates }>Show</Button>
+                        <Space>
+                            <Select defaultValue="USD" style={{ width: 80 }} onChange={this.setCurrency}>
+                                <Option value="USD">USD</Option>
+                                <Option value="EUR">EUR</Option>
+                                <Option value="AUD">AUD</Option>
+                            </Select>
+                            <Button type="primary" onClick={this.showRates}>Show</Button>
+                        </Space>
                     </Space>
-                </Space>
-            </div >
+                </div >
         } else if (display_content == 2) {
             content =
-            <>
-                <Title level={4}>Results</Title>
-                <LineChart data={this.state.rates} title={this.state.currency} color="#B08EA2"/>
-            </>
+                <>
+                    <Title level={4}>Results</Title>
+                    <LineChart data={this.state.rates} title={this.state.currency} color="#B08EA2" />
+                </>
             options =
-            <div
-             style={{ margin: '24px 16px 0'}}>
-                <Space direction="vertical">
-                <RangePicker onChange={ this.setDateRange } />
+                <div
+                    style={{ margin: '24px 16px 0' }}>
+                    <Space direction="vertical">
+                        <RangePicker onChange={this.setDateRange} />
 
-                    <Space>
-                        <Select defaultValue="USD" style={{ width: 80 }} onChange={this.setCurrency}>
-                            <Option value="USD">USD</Option>
-                            <Option value="EUR">EUR</Option>
-                            <Option value="AUD">AUD</Option>
-                        </Select>
-                        <Button type="primary" onClick={ this.showRates }>Show</Button>
+                        <Space>
+                            <Select defaultValue="USD" style={{ width: 80 }} onChange={this.setCurrency}>
+                                <Option value="USD">USD</Option>
+                                <Option value="EUR">EUR</Option>
+                                <Option value="AUD">AUD</Option>
+                            </Select>
+                            <Button type="primary" onClick={this.showRates}>Show</Button>
+                        </Space>
                     </Space>
-                </Space>
-            </div >
+                </div >
         } else if (display_content == 3) {
             content =
-            <>
-                <Title level={4}>Results</Title>
-                <SummaryTable data={ {currency:this.state.currency,
-                                      summary:this.state.summary} }/>
-            </>
+                <>
+                    <Title level={4}>Results</Title>
+                    <SummaryTable data={{
+                        currency: this.state.currency,
+                        summary: this.state.summary
+                    }} />
+                </>
             options =
-            <div
-             style={{ margin: '24px 16px 0'}}>
-                <Space direction="vertical">
-                <RangePicker onChange={ this.setDateRange } />
+                <div
+                    style={{ margin: '24px 16px 0' }}>
+                    <Space direction="vertical">
+                        <RangePicker onChange={this.setDateRange} />
 
-                    <Space>
-                        <Select defaultValue="USD" style={{ width: 80 }} onChange={this.setCurrency}>
-                            <Option value="USD">USD</Option>
-                            <Option value="EUR">EUR</Option>
-                            <Option value="AUD">AUD</Option>
-                        </Select>
-                        <Button type="primary" onClick={ this.showSummary }>Show</Button>
+                        <Space>
+                            <Select defaultValue="USD" style={{ width: 80 }} onChange={this.setCurrency}>
+                                <Option value="USD">USD</Option>
+                                <Option value="EUR">EUR</Option>
+                                <Option value="AUD">AUD</Option>
+                            </Select>
+                            <Button type="primary" onClick={this.showSummary}>Show</Button>
+                        </Space>
                     </Space>
-                </Space>
-            </div >
+                </div >
         } else if (display_content == 4) {
             content =
-            <>
-                <Title level={4}>Results</Title>
-                <MultiLineChart data={this.state.summary} title={this.state.currency} color="#B08EA2"/>
-            </>
+                <>
+                    <Title level={4}>Results</Title>
+                    <MultiLineChart data={this.state.summary} title={this.state.currency} color="#B08EA2" />
+                </>
             options =
-            <div
-             style={{ margin: '24px 16px 0'}}>
-                <Space direction="vertical">
-                <RangePicker onChange={ this.setDateRange } />
+                <div
+                    style={{ margin: '24px 16px 0' }}>
+                    <Space direction="vertical">
+                        <RangePicker onChange={this.setDateRange} />
 
-                    <Space>
-                        <Select defaultValue="USD" style={{ width: 80 }} onChange={this.setCurrency}>
-                            <Option value="USD">USD</Option>
-                            <Option value="EUR">EUR</Option>
-                            <Option value="AUD">AUD</Option>
-                        </Select>
-                        <Button type="primary" onClick={ this.showSummary }>Show</Button>
+                        <Space>
+                            <Select defaultValue="USD" style={{ width: 80 }} onChange={this.setCurrency}>
+                                <Option value="USD">USD</Option>
+                                <Option value="EUR">EUR</Option>
+                                <Option value="AUD">AUD</Option>
+                            </Select>
+                            <Button type="primary" onClick={this.showSummary}>Show</Button>
+                        </Space>
                     </Space>
-                </Space>
-            </div >
+                </div >
 
         } else {
             content = <Readme />
@@ -282,24 +288,24 @@ class App extends React.Component {
                 <Layout>
 
                     <Header>
-                      <Title>Exchange rates API frontend</Title>
+                        <Title>Exchange rates API frontend</Title>
                     </Header>
 
                     <Layout>
 
-                    <Sider width={250}>
+                        <Sider width={250}>
                             <Title level={4}>Options</Title>
                             <Dropdown overlay={menu}>
                                 <Button className="ant-dropdown-link">
-                                Menu <DownOutlined />
+                                    Menu <DownOutlined />
                                 </Button>
                             </Dropdown>
-                            { options }
-                    </Sider>
+                            {options}
+                        </Sider>
 
-                    <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
-                        {content}
-                    </Content>
+                        <Content style={{ margin: '24px 16px 0', overflow: 'initial' }}>
+                            {content}
+                        </Content>
 
                     </Layout>
                 </Layout>
