@@ -1,15 +1,10 @@
-import React, { Component } from "react";
-import Badge from "react-bootstrap/Badge";
-import Button from "react-bootstrap/Button";
-import ButtonGroup from "react-bootstrap/ButtonGroup";
+import React from "react";
 import Table from "react-bootstrap/Table";
-import Dropdown from "react-bootstrap/Dropdown";
-import DropdownButton from "react-bootstrap/DropdownButton";
-import Calendar from "react-calendar";
 import Chart from "chart.js";
+import AbstractBase from "./abstractBase";
 import "react-calendar/dist/Calendar.css";
 
-export default class Sales extends Component {
+export default class Sales extends AbstractBase {
   componentDidMount() {
     var idx = this.props.currencies.findIndex((e) => {
       return e === "USD";
@@ -19,28 +14,23 @@ export default class Sales extends Component {
     this.setState({ currencies: currenciesRemastered });
   }
 
-  state = {
-    currencies: [],
-    chosenCurrency: "Choose Currency",
-    chosenOption: true,
-    resultBadgeVariant: "danger",
-    resultBadgeText: "No results yet",
-    chosenBeginingDate: null,
-    chosenEndingDate: null,
-    items: null,
-    dataset: null,
-    labels: null,
-    chartReady: false,
-    tableReady: false,
-    actualChart : null,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      ...this.state,
+      currencies: [],
+    };
+  }
 
   callApi = () => {
+    if(this.checkParams()){
+      return
+    }
     fetch(
       "/sales/" +
         this.state.chosenCurrency +
         "/" +
-        this.state.chosenBeginingDate +
+        this.state.chosenBeginningDate +
         "/" +
         this.state.chosenEndingDate
     )
@@ -67,117 +57,6 @@ export default class Sales extends Component {
   };
 
   // Components
-  infoBadge = (text) => {
-    return (
-      <h2>
-        <Badge className="mx-2 mt-2" variant="warning">
-          {text}
-        </Badge>
-      </h2>
-    );
-  };
-
-  dropdownCurrencies = () => {
-    return (
-      <DropdownButton
-        className="format m-2"
-        id="dropdown-item-button"
-        title={this.state.chosenCurrency}
-      >
-        {this.state.currencies.map((elem, index) => (
-          <Dropdown.Item as="button" key={index}>
-            <div
-              onClick={(e) => this.updateChosenCurrency(e.target.textContent)}
-            >
-              {elem}
-            </div>
-          </Dropdown.Item>
-        ))}
-      </DropdownButton>
-    );
-  };
-
-  doubleCalendars = () => {
-    return (
-      <div className="d-flex">
-        <div className="d-block mr-5">
-          <h4 style={{ color: "white" }}>
-            <span
-              className="badge m-2 bg-primary d-flex"
-              style={{ justifyContent: "center" }}
-            >
-              Choose Beginning Date:
-            </span>
-          </h4>
-          <Calendar
-            className="m-2"
-            onChange={(value) => this.updateChosenBeginingDate(value)}
-          />
-        </div>
-        <div className="d-block">
-          <h4 style={{ color: "white" }}>
-            <span
-              className="badge m-2 bg-primary d-flex "
-              style={{ justifyContent: "center" }}
-            >
-              Choose Ending Date:
-            </span>
-          </h4>
-          <Calendar
-            className="m-2"
-            onChange={(value) => this.updateChosenEndingDate(value)}
-          />
-        </div>
-      </div>
-    );
-  };
-
-  tryButton = () => {
-    return (
-      <div className="m-2">
-        <Dropdown as={ButtonGroup}>
-          <Button onClick={this.callApi} variant="primary">
-            {"Click here to generate: " +
-              (this.state.chosenOption ? "Table" : "Graph")}
-          </Button>
-          <Dropdown.Toggle split variant="primary" id="dropdown-custom-2" />
-          <Dropdown.Menu className="table-or-graph">
-            <Dropdown.Item eventKey="1">
-              <div
-                onClick={() => {
-                  this.setState({ chosenOption: 1 });
-                  this.setState({ chartReady: false });
-                }}
-              >
-                Table
-              </div>
-            </Dropdown.Item>
-            <Dropdown.Item eventKey="2">
-              <div
-                onClick={() => {
-                  this.setState({ chosenOption: 0 });
-                  this.setState({ tableReady: false });
-                }}
-              >
-                Graph
-              </div>
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </div>
-    );
-  };
-
-  resultBadge = () => {
-    return (
-      <h2 style={{ color: "white" }}>
-        <Badge className="m-2" variant={this.state.resultBadgeVariant}>
-          {this.state.resultBadgeText}
-        </Badge>
-      </h2>
-    );
-  };
-
   salesTable = () => {
     if (
       this.state.items !== null &&
@@ -218,14 +97,6 @@ export default class Sales extends Component {
     return null;
   };
 
-  footer = () => {
-    return (
-      <div className="card-footer border-primary text-muted">
-        More info at my <a href={this.props.github}>github page</a>
-      </div>
-    );
-  };
-
   createChart = () => {
     if (this.state.items != null && !this.state.chosenOption) {
       var labels = [];
@@ -236,7 +107,7 @@ export default class Sales extends Component {
         data_another.push(x.sales);
         labels.push(x.date);
       });
-      if(this.state.actualChart !== null){
+      if (this.state.actualChart !== null) {
         this.state.actualChart.destroy();
       }
 
@@ -282,7 +153,7 @@ export default class Sales extends Component {
         },
       },
     });
-    this.setState({actualChart : chart})
+    this.setState({ actualChart: chart });
   };
 
   lineChart = (labels, data_usd, data_another) => {
@@ -325,7 +196,7 @@ export default class Sales extends Component {
         },
       },
     });
-    this.setState({actualChart : chart})
+    this.setState({ actualChart: chart });
   };
 
   render() {
@@ -333,11 +204,11 @@ export default class Sales extends Component {
       <div className="container">
         <div className="card border-primary mb-5">
           <div className="card-header border-primary">
-            <div>{this.infoBadge("You Are Now At Sales Page")}</div>
+            <div>{this.infoBadge("You Are Now At Sales Page", "warning")}</div>
           </div>
           <div className="card-body">
             <div className="d-flex">
-              <div>{this.dropdownCurrencies()}</div>
+              <div>{this.dropdownCurrencies(this.state.currencies)}</div>
             </div>
             <div>{this.doubleCalendars()}</div>
             <div className="d-flex">
@@ -354,34 +225,6 @@ export default class Sales extends Component {
   }
 
   // Utils
-  updateChosenCurrency = (value) => {
-    this.setState({
-      chosenCurrency: value,
-      tableReady: false,
-      chartReady: false,
-      resultBadgeText: "No results yet",
-      resultBadgeVariant: "danger",
-    });
-  };
-
-  updateChosenBeginingDate = (value) => {
-    this.setState({ chosenBeginingDate: this.formatDate(value) });
-  };
-
-  updateChosenEndingDate = (value) => {
-    this.setState({ chosenEndingDate: this.formatDate(value) });
-  };
-
-  formatDate = (date) => {
-    var d = new Date(date),
-      month = "" + (d.getMonth() + 1),
-      day = "" + d.getDate(),
-      year = d.getFullYear();
-    if (month.length < 2) month = "0" + month;
-    if (day.length < 2) day = "0" + day;
-    return [year, month, day].join("-");
-  };
-
   setUpItems = (items) => {
     var unpackedItems = items.map((elem, index) => {
       var bufItem = { id: index + 1 };
