@@ -33,10 +33,10 @@
     <div style="margin-top: 20px; min-height: 20px;">
       <label id="errorLabel" style="color: #cc2222"></label>
     </div>
-    <div class="tableWithFixHead">
+    <div class="tableWithFixHead" v-if="this.list !== undefined">
       <table id="currencyTable" class="dataTable">
         <thead>
-        <tr>
+        <tr style="background-color: #232323;">
           <th>Date</th>
           <th>Rates in PLN</th>
           <th>Was interpolated</th>

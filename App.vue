@@ -114,17 +114,12 @@ export default {
   overflow-y: auto;
   overflow-x: hidden;
   height: 400px;
-  width: 44%;
-}
-
-.tableWithFixHead thead th {
-  position: sticky;
-  top: 0;
+  width: 73%;
+  margin: auto;
 }
 
 .dataTable {
   background-color: #232323;
-  margin: 20px;
   table-layout: fixed;
   width: 100%;
   border: 0;

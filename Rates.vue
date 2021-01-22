@@ -39,7 +39,7 @@
     <div class="tableWithFixHead" v-if="this.list !== undefined">
       <table id="currencyTable" class="dataTable">
         <thead>
-        <tr>
+        <tr style="position: sticky; top: 0; background-color: #232323;">
           <th>Date</th>
           <th>Rates in PLN</th>
           <th>Was interpolated</th>
@@ -54,7 +54,8 @@
         </tbody>
       </table>
     </div>
-    <column-chart id="ratesChart" v-if="this.list !== undefined" :data="ratesData"></column-chart>
+    <column-chart id="ratesChart" v-if="this.list !== undefined" :data="ratesData"
+                  style="margin-top: 35px;"></column-chart>
   </div>
 </template>
 
@@ -71,6 +72,7 @@ export default {
     return {
       list: undefined,
       ratesData: {},
+      apiRates: [],
       rn: {
         "2021-01-05": 1.5,
         "2021-01-06": 2.5,
@@ -87,10 +89,10 @@ export default {
       if (selectedDateFrom !== "" && selectedDateTo !== "") {
         this.loadRatesFromApi(selectedCurrency, selectedDateFrom, selectedDateTo)
             .then(() => {
-              this.updateRatesData()
+              this.updateRatesData(selectedCurrency)
             })
             .catch(() => {
-              this.updateRatesData()
+              this.updateRatesData(selectedCurrency)
             })
       } else {
         this.changeErrorText('Please select a date')
@@ -114,8 +116,8 @@ export default {
       })
     },
 
-    updateRatesData: function () {
-      this.ratesData = {}
+    updateRatesData: function (selectedCurrency) {
+      this.apiRates = []
       if (this.list !== undefined) {
         this.list.forEach(apiRate => {
           const {
@@ -123,12 +125,20 @@ export default {
             value
           } = apiRate
 
-          this.ratesData[date] = value
+          this.apiRates.push([date, value])
         })
       }
+
+      this.ratesData = [
+        {
+          name: selectedCurrency + '-PLN rates',
+          data: this.apiRates,
+          color: '#ffffff'
+        }
+      ]
+
       const chart = Chartkick.charts["ratesChart"]
       chart.updateData(this.ratesData)
-      console.log('CHART', this.ratesData)
     },
 
     changeErrorText: function (text) {
@@ -140,5 +150,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>
