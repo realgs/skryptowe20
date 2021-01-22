@@ -16,6 +16,7 @@
                  class="mb-2 form-control"/>
           </div>
         </div>
+        <div v-if="this.exists">
         <table class="table table-hover">
           <thead>
           <tr>
@@ -34,6 +35,12 @@
           </tr>
           </tbody>
         </table>
+        </div>
+        <div v-else>
+        <div class="container">
+             <h3>There is no data for selected date</h3>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -62,6 +69,7 @@ export default {
       },
       message: '',
       showMessage: false,
+      exists: false,
     };
   },
   methods: {
@@ -69,8 +77,12 @@ export default {
       const path = `http://127.0.0.1:5000/sales/${this.selected.start_date}`;
       axios.get(path)
         .then((res) => {
-          console.log(res.data);
-          this.sales = res.data;
+          if (res.data.length !== 0) {
+            this.sales = res.data;
+            this.exists = true;
+          } else {
+            this.exists = false;
+          }
         })
         .catch((error) => {
           // eslint-disable-next-line

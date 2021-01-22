@@ -27,6 +27,9 @@
           </div>
         </div>
         <span v-if="this.is_chosen">
+          <div class="container">
+             <line-chart :chart-data="datacollection"></line-chart>
+        </div>
         <table class="table table-hover">
           <thead>
           <tr>
@@ -59,9 +62,13 @@
 
 <script>
 import axios from 'axios';
+import LineChart from './LineChart';
 
 export default {
   name: 'Rates',
+  components: {
+    LineChart,
+  },
   data() {
     return {
       available_dates: {
@@ -79,7 +86,11 @@ export default {
       }],
       showMessage: false,
       is_chosen: '',
+      datacollection: null,
     };
+  },
+  mounted() {
+    this.fillData();
   },
   methods: {
     getMessage() {
@@ -88,14 +99,30 @@ export default {
         const path = `http://127.0.0.1:5000/rates/usd/${this.selected.start_date}/${this.selected.end_date}`;
         axios.get(path)
           .then((res) => {
-            console.log(res.data);
             this.rates = res.data;
+            this.fillData();
           })
           .catch((error) => {
             // eslint-disable-next-line
             console.error(error);
           });
       }
+    },
+    fillData() {
+      this.datacollection = {
+        labels: this.rates.map((R) => R.rating_date),
+        datasets: [
+          {
+            label: 'USD',
+            borderColor: '#0f7900',
+            borderWidth: 3,
+            lineTension: 0,
+            fill: false,
+            pointRadius: 0,
+            data: this.rates.map((R) => R.rate),
+          },
+        ],
+      };
     },
   },
   created() {
