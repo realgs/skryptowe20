@@ -1,6 +1,6 @@
 ## PLN to USD rates, sales data display
 
-This repository contains files needed to front for data provided by API in: https://github.com/AltiTorie/skryptowe20/tree/Lab5
+This repository contains files needed to run frontend application for data provided by API in: https://github.com/AltiTorie/skryptowe20/tree/Lab5
 
 ## Get started
 ### Install packages
