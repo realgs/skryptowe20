@@ -4,11 +4,9 @@ import { Typography } from 'antd';
 const { Title, Text, Paragraph } = Typography;
 
 export default function Readme() {
-    const sample_rates_output =
-    "{ \"currency\":\"USD\", \"rates\":[{\"date\":\"2020-12-01\",\"value\":\"3.736\",\"interpolated\":\"false\"},{\"date\":\"2020-12-02\",\"value\":\"3.87\",\"interpoalted\":\"false\"}]}"
+    const sample_rates_output = "{ \"currency\":\"USD\", \"rates\":[{\"date\":\"2020-12-01\",\"value\":\"3.736\",\"interpolated\":\"false\"},{\"date\":\"2020-12-02\",\"value\":\"3.87\",\"interpoalted\":\"false\"}]}"
 
-    //TODO change to real output
-    const sample_summary_output = "ELO DODAJ MNIE"
+    const sample_summary_output = "{\"currency\":\"USD\",\"data\":[{\"date\":\"2016-02-18\",\"original_sum\":\"202602.31\",\"currency_sum\":\"51401.03\"},{\"date\":\"2016-02-19\",\"original_sum\":\"342352.03\",\"currency_sum\":\"86603.43\"}]}"
     const sample_error_output = "{\"error\":\"Incorrect date\"}"
 
     return (
@@ -76,7 +74,7 @@ export default function Readme() {
                     <b>currency</b> - supported currency code, specified as <b>SUMMARY_SUPPORTED_CURRENCIES</b> <i>constants.py</i> <br />
                     <b>start_date</b> - beginning of period, in format YYYY-MM-DD, <br />
                     <b>end_date</b> - end of period, in format YYYY-MM-DD
-                    <p>Example usage: <i>/summary/USD/2020-01-01/2020-10-10/</i></p>
+                    <p>Example usage: <i>/summary/USD/2016-02-18/2016-02-19/</i></p>
                     <p>Sample output:</p>
                     <p><i>{sample_summary_output}</i></p>
                     <p>Where:</p>
@@ -89,6 +87,7 @@ export default function Readme() {
                     <p><i>{ sample_error_output }</i></p>
                     <p>Currently, these are the supported error messages:</p>
                     <b>Incorrect date</b> - input date format is not correct <br />
+                    <b>No data for this period</b> - you requestes summary out of the bounded period <br />
                     <b>Unsupported currency</b> - currency is not on supported currencies list <br />
                     <b>Incorrect input</b> - other input error <br />
                     <b>Start date should be smaller than end date</b> - start date should be smaller than end date <br />
