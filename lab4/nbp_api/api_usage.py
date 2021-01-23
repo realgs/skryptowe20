@@ -59,3 +59,6 @@ def create_usd_eur_price_graph(days):
 
 def main():
     create_usd_eur_price_graph(183)  # half a year
+
+
+main()

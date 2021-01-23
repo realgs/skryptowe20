@@ -62,7 +62,7 @@ Wymaga podania atrybutu **date**, który wskazuje, o jaki dzień pytamy.
  
 Przykład - 
 Informacje o transakcjach z 12 grudnia 2018 roku:
-http://127.0.0.1:5000/api/v1/resources/salessummary?date=12/12/2018
+http://127.0.0.1:5000/api/v1/resources/salessummary?date=12/12/18
 
 ####Zapytanie o przedział dni
 Przyjmuje następujące atrybuty opcjonalne:

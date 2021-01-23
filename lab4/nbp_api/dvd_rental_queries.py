@@ -7,8 +7,6 @@ import matplotlib.patches as mpatches
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import sessionmaker
 
-import api_usage
-
 DB_URI = "postgres://postgres:bazman@localhost:5432/dvdrental"
 
 

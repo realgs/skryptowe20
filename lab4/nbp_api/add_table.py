@@ -1,8 +1,8 @@
 import sqlalchemy
 from sqlalchemy import MetaData, Table, Column, Integer, Float, DateTime, insert
 import datetime
-
 import api_usage
+
 
 DB_URI = "postgres://postgres:bazman@localhost:5432/dvdrental"
 

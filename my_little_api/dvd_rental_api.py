@@ -28,22 +28,32 @@ max_date = None
 
 # banlist
 ip_list = {}
+white_list = {'127.0.0.1'}
 
 
 @app.before_request
 def count_and_block():
     ip = request.environ.get('REMOTE_ADDR')
-    if ip in ip_list:
-        if ip_list[ip]['is_banned']:
-            abort(429)
-        else:
-            ip_list[ip]['count'] += 1
-            if ip_list[ip]['count'] > 5:
-                ip_list[ip]['is_banned'] = True
+    print("Ip = " + ip)
+    if ip not in white_list:
+        if ip in ip_list:
+            if ip_list[ip]['is_banned']:
                 abort(429)
+            else:
+                ip_list[ip]['count'] += 1
+                if ip_list[ip]['count'] > 5:
+                    ip_list[ip]['is_banned'] = True
+                    abort(429)
     else:
         ip_list[ip] = {'count': 0, 'is_banned': False}
 
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
 
 
 @app.route('/', methods=['GET'])
@@ -222,7 +232,8 @@ async def update(delay):
             payments_cache[i]['amount'] = float(payments_cache[i]['amount'])
             for j in range(exchange_rates_cache.__len__()):
                 if exchange_rates_cache[j]['date'] == payments_cache[i]['payment_date']:
-                    payments_cache[i]['amount_in_PLN'] = payments_cache[i]['amount'] * exchange_rates_cache[j]['usd_to_pln']
+                    payments_cache[i]['amount_in_PLN'] = payments_cache[i]['amount'] * exchange_rates_cache[j][
+                        'usd_to_pln']
                     exchange_rate_found = True
                     break
             if not exchange_rate_found:
