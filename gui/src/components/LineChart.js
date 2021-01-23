@@ -9,4 +9,3 @@ export default {
     this.renderChart(this.chartData, this.chartOptions)
   }
 }
-

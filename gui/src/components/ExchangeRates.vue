@@ -3,10 +3,10 @@
     <h1>Projekt z języków skryptowych</h1>
     <h2>Kursy wymiany</h2> <br>
     <p>
-        Korzystając z poniższych kontrolek, możesz wybrać daty, dla których chcesz uzyskać kursy wymiany dolara na złotówki. Dodtkowe informacje:
+        Korzystając z poniższych kontrolek, możesz wybrać daty, dla których chcesz uzyskać kursy wymiany dolara na złotówki.
         <ul>
-            <li>Zachowany z poprzedniego dnia - ta kolumna informuje o tym, czy kurs jest nowy, czy został pobrany z poprzedniego dnia (w przypadku weekendów i świąt).</li>
             <li>Dostępne są dane dla dat z przedziału 01.01.2014 - 31.12.2015 </li>
+            <li>"Zachowany z poprzedniego dnia" - ta kolumna w tabeli informuje o tym, czy kurs jest nowy, czy został pobrany z poprzedniego dnia (w przypadku weekendów i świąt).</li>
         </ul>
     </p>
 

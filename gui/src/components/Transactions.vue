@@ -3,9 +3,8 @@
     <h1>Projekt z języków skryptowych</h1>
     <h2>Wartość sprzedaży</h2> <br>
     <p>
-        Korzystając z poniższych kontrolek, możesz wybrać daty, dla których chcesz uzyskać wartość transakcji z bazy danych w PLN i USD. Dodatkowe informacje:
+        Korzystając z poniższych kontrolek, możesz wybrać daty, dla których chcesz uzyskać wartość transakcji z bazy danych w PLN i USD. <br>
         <ul>
-            <li>Zachowany z poprzedniego dnia - ta kolumna informuje o tym, czy kurs jest nowy, czy został pobrany z poprzedniego dnia (w przypadku weekendów i świąt).</li>
             <li>Dostępne są dane dla dat z przedziału 01.01.2014 - 31.12.2015 </li>
         </ul>
     </p>
