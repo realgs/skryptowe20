@@ -23,6 +23,7 @@ class ExchangeRate(BaseModel):
     id: PyObjectId = Field(alias='_id')
     date: datetime.date
     pln_to_usd: float
+    interpolated: bool
         
     class Config:
         arbitrary_types_allowed = True

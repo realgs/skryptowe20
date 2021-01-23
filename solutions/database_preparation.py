@@ -75,8 +75,8 @@ def create_transaction_summary_collection(days, start_date):
         transactions_sum = float(data['transactions_sum'].to_decimal())
 
         transaction_collection.insert_one({'date': date,
-                                           'pln': transactions_sum *
-                                                  pln_exchange_rates_collection.find_one({'date': date})['pln_to_usd'],
+                                           'pln': round(transactions_sum *
+                                                  pln_exchange_rates_collection.find_one({'date': date})['pln_to_usd'], 2),
                                            'usd': transactions_sum})
 
 

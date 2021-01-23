@@ -10,6 +10,7 @@ from fastapi.encoders import jsonable_encoder
 import crud
 import schemas
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, Request
 from pymongo import MongoClient
 from slowapi import Limiter
@@ -19,6 +20,21 @@ OBJECTS_LIST_LIMIT = '5 per minute'
 SIMPLE_OBJECT_LIMIT = '50 per minute'
 limiter = Limiter(key_func=get_remote_address, default_limits=["300 per day"])
 app = FastAPI()
+
+origins = [
+    "http://localhost.tiangolo.com",
+    "https://localhost.tiangolo.com",
+    "http://localhost",
+    "http://localhost:8080",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 client = MongoClient()
 db = client['sample_supplies']
@@ -59,6 +75,14 @@ async def read_exchange_rates_in_range(request: Request, start_date: datetime.da
 async def read_transaction_sum_in_day(request: Request, date: datetime.date):
     collection = get_collection('transaction_summary')
     return jsonable_encoder(crud.get_transaction_sum_in_day(collection=collection, date=date))
+
+@limiter.limit(OBJECTS_LIST_LIMIT)
+@app.get('/api/transactions/{start_date}/{end_date}')
+@cache(expire=60)
+async def read_transaction_sum_in_range(request: Request, start_date: datetime.date, end_date: datetime.date):
+    collection = get_collection('transaction_summary')
+    return jsonable_encoder(crud.get_transaction_sum_in_range(collection=collection, start_date=start_date, end_date=end_date))
+
 
 
 @app.on_event("startup")
