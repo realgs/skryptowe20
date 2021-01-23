@@ -9,7 +9,9 @@ export default {
         salesList: [],
         errorMessage: 'error',
         errorMessageHasChanged: false,
-        selectedUSD: true
+        selectedUSD: true,
+        dataForChart: {},
+        showSalesChart: false
     },
     mutations: {
         setSelectedExchangeRateSection(state, payload) {
@@ -30,6 +32,12 @@ export default {
         },
         setSelectedUSD(state, payload){
             state.selectedUSD = payload
+        },
+        setDataForChart(state, payload){
+            state.dataForChart = payload
+        },
+        setShowSalesChart(state, payload){
+            state.showSalesChart = payload
         }
     },
     actions: {

@@ -1,5 +1,7 @@
 <template>
   <div class="currencies">
+    <p class="note">Note that current database has data for sales only in range 2003-01-01 - 2004-07-07 and for exchange rates in range 2003-01-01 - 2005-12-30! </p>
+    <p class="note">First loading data may take some time - free hosting with limitations </p>
     <div class="currencies-menu">
       <div class="item" @click="openExchangeRates" :class="selectedExchangeRateSection ? 'selected' : '' ">
         USD - PLN
@@ -38,7 +40,7 @@
         </div>
       </div>
       <div class="right-side-top">
-        <div v-if="exchangeRatesList.length > 0 || (salesList.length > 0 && showSalesChart)">
+        <div v-if="(exchangeRatesList.length > 0 || (salesList.length > 0 && showSalesChart) && dataForChart)">
           <line-chart :chart-data="dataForChart"/>
         </div>
       </div>
@@ -88,8 +90,6 @@ export default {
         start: new Date(2003, 0, 1),
         end: new Date(2003, 0, 24)
       },
-      dataForChart: null,
-      showSalesChart: false
     }
   },
   computed: {
@@ -135,6 +135,12 @@ export default {
     },
     selectedUSD() {
       return this.$store.state.dataPanel.selectedUSD
+    },
+    dataForChart(){
+      return this.$store.state.dataPanel.dataForChart
+    },
+    showSalesChart(){
+      return this.$store.state.dataPanel.showSalesChart
     }
   },
   methods: {
@@ -173,7 +179,7 @@ export default {
       return true;
     },
     fillDataForExchangeRatesChart() {
-      this.dataForChart = {
+      this.$store.commit('dataPanel/setDataForChart', {
         labels: this.exchangeRatesListOnlyDates,
         title: 'PLN price for one USD',
         datasets: [
@@ -183,10 +189,10 @@ export default {
             data: this.exchangeRatesListOnlyRates
           }
         ]
-      }
+      })
     },
     fillDataForSalesChart() {
-      this.dataForChart = {
+      this.$store.commit('dataPanel/setDataForChart', {
         labels:  this.salesListOnlyDates,
         title: this.selectedUSD ? 'Sales in USD' : 'Sales in PLN',
         datasets: [
@@ -196,7 +202,7 @@ export default {
             data: this.selectedUSD ? this.salesListOnlyUSD : this.salesListOnlyPLN
           }
         ]
-      }
+      })
     },
     adjustContentBottomSize(itemsCount) {
       let contentBottomBox = null;
@@ -210,22 +216,22 @@ export default {
     },
     chooseUSD() {
       if(!this.selectedUSD){
-        this.showSalesChart = false
+        this.$store.commit('dataPanel/setShowSalesChart', false)
         this.$store.commit('dataPanel/setSelectedUSD', true)
         this.fillDataForSalesChart()
         this.$nextTick(()=>{
-          this.showSalesChart = true
+          this.$store.commit('dataPanel/setShowSalesChart', true)
         })
       }
 
     },
     choosePLN() {
       if(this.selectedUSD){
-        this.showSalesChart = false
+        this.$store.commit('dataPanel/setShowSalesChart', false)
         this.$store.commit('dataPanel/setSelectedUSD', false)
         this.fillDataForSalesChart()
         this.$nextTick(()=>{
-          this.showSalesChart = true
+          this.$store.commit('dataPanel/setShowSalesChart', true)
         })
       }
 
@@ -249,8 +255,16 @@ export default {
     salesList() {
       this.adjustContentBottomSize(this.salesList.length)
       this.fillDataForSalesChart()
-      this.showSalesChart = true
+      this.$store.commit('dataPanel/setShowSalesChart', true)
     }
+  },
+  mounted() {
+if(this.selectedExchangeRateSection && this.exchangeRatesList){
+  this.adjustContentBottomSize(this.exchangeRatesList.length)
+}
+else if(!this.selectedExchangeRateSection && this.salesList){
+  this.adjustContentBottomSize(this.salesList.length)
+}
   }
 }
 </script>
@@ -258,6 +272,12 @@ export default {
 <style scoped lang="scss">
 .currencies {
   width: 100%;
+
+  .note{
+    width: 100%;
+    color: #ec0041;
+    font-size: 14px;
+  }
 
   .currencies-menu {
     width: 100%;

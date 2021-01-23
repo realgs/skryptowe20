@@ -96,6 +96,7 @@ b, strong, .bold {
 .page-wrapper {
   width: 100%;
   padding: 30px 60px;
+  padding-top: 15px;
 }
 
 @media only screen and (max-width: 1000px) {
