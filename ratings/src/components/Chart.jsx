@@ -17,17 +17,20 @@ const Chart = ({ data }) => {
         height={500}
         data={data}
         margin={{
-          top: 5,
+          top: 20,
           right: 30,
           left: 20,
-          bottom: 20,
+          bottom: 5,
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" angle={-45} textAnchor="end" />
-        <YAxis interval="preserveEnd" domain={["dataMin", "dataMax"]} />
+        <XAxis dataKey="date" angle={-45} textAnchor="end" height={70} />
+        <YAxis
+          interval="preserveEnd"
+          domain={["dataMin - 0.05", "dataMax + 0.05"]}
+        />
         <Tooltip />
-        <Legend />
+        <Legend align="left" verticalAlign="top" height={40} />
         <Line
           type="monotone"
           dataKey="usd"

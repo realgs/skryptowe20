@@ -67,7 +67,7 @@ const Ratings = () => {
         <StyledButton onClick={reactOnClick}>button</StyledButton>
         <StyledButton primary>primary</StyledButton>
 
-        {!error && (
+        {error && (
           <MyTable
             columns={tableColumns}
             data={
