@@ -43,7 +43,7 @@ const Sales = ({
         "YYYY-MM-DD"
       )}}/${selectedValue}`
     )(setItems, setIsLoaded, setError);
-  }, [startDate, endDate, selectedValue, toggle]);
+  }, [startDate, endDate, selectedValue]);
 
   const tableColumns = useMemo(() => {
     return [
@@ -87,7 +87,7 @@ const Sales = ({
       </Sidebar>
       <MainContent>
         {error ? (
-          <div>Error</div>
+          <div>Error. Try again.</div>
         ) : !isLoaded ? (
           <div>Loading</div>
         ) : toggle ? (

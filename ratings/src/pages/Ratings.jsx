@@ -91,7 +91,7 @@ const Ratings = ({
       </Sidebar>
       <MainContent>
         {error ? (
-          <div>Error</div>
+          <div>Error. Try again.</div>
         ) : !isLoaded ? (
           <div>Loading</div>
         ) : toggle ? (
