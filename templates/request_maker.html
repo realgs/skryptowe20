@@ -27,13 +27,13 @@
     <input type="checkbox" id="single_date_only_checkbox">
     <br>
     <label for="single_date">Single date:</label>
-    <input type="date" id="single_date" disabled>
+    <input type="date" id="single_date" min="2012-07-01" max="2016-02-29" disabled>
     <br>
     <label for="start_date">Start date:</label>
-    <input type="date" id="start_date">
+    <input type="date" id="start_date" min="2012-07-01" max="2016-02-29">
     <br>
     <label for="end_date">End data:</label>
-    <input type="date" id="end_date">
+    <input type="date" id="end_date" min="2012-07-01" max="2016-02-29">
 </div>
 <button type="button" id="button_generate_link" onclick="generateLink()">Generate</button>
 <br>
