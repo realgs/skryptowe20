@@ -8,16 +8,16 @@ import lab5.nbp as nbp
 # Connect to the database
 conv = converters.conversions.copy()
 conv[10] = str
-connection = pymysql.connect(host='localhost',
-                             user='root',
-                             password='',
-                             db='classicmodels',
-                             charset='utf8mb4',
-                             cursorclass=pymysql.cursors.DictCursor,
-                             conv=conv)
 
 
 def create_table_with_exchange_rates():
+    connection = pymysql.connect(host='localhost',
+                                 user='root',
+                                 password='',
+                                 db='classicmodels',
+                                 charset='utf8mb4',
+                                 cursorclass=pymysql.cursors.DictCursor,
+                                 conv=conv)
     start_date = '2003-1-1'
     end_date = '2005-12-30'
     rates = nbp.get_currency_rates_from_date_range('usd', start_date, end_date)
@@ -38,6 +38,13 @@ def create_table_with_exchange_rates():
 
 
 def create_sales_table():
+    connection = pymysql.connect(host='localhost',
+                                 user='root',
+                                 password='',
+                                 db='classicmodels',
+                                 charset='utf8mb4',
+                                 cursorclass=pymysql.cursors.DictCursor,
+                                 conv=conv)
     start_date = '2003-1-1'
     end_date = '2004-07-07'
 
@@ -78,7 +85,13 @@ def create_sales_table():
 
 
 def get_usd_exchange_rate_for_one_day(date):
-
+    connection = pymysql.connect(host='localhost',
+                                 user='root',
+                                 password='',
+                                 db='classicmodels',
+                                 charset='utf8mb4',
+                                 cursorclass=pymysql.cursors.DictCursor,
+                                 conv=conv)
     try:
         with connection.cursor() as cursor:
             sql = """SELECT usd_pln.date date, ROUND(usd_pln.pln,2) cenapl, usd_pln.interpolated interpolated
@@ -87,13 +100,16 @@ def get_usd_exchange_rate_for_one_day(date):
             cursor.execute(sql, date)
             row = cursor.fetchone()
             if row is None:
+                cursor.close()
+                connection.close()
                 return None
             result = {
                 "date": row['date'],
                 "rate": row['cenapl'],
                 "interpolated": row['interpolated'],
             }
-
+            cursor.close()
+            connection.close()
             return result
 
     except MySQLError as e:
@@ -101,7 +117,13 @@ def get_usd_exchange_rate_for_one_day(date):
 
 
 def get_usd_exchange_rate_for_days_range(start_date, end_date):
-
+    connection = pymysql.connect(host='localhost',
+                                 user='root',
+                                 password='',
+                                 db='classicmodels',
+                                 charset='utf8mb4',
+                                 cursorclass=pymysql.cursors.DictCursor,
+                                 conv=conv)
     try:
         with connection.cursor() as cursor:
             sql = """SELECT usd_pln.date date, ROUND(usd_pln.pln,2) cenapl, usd_pln.interpolated interpolated
@@ -111,6 +133,8 @@ def get_usd_exchange_rate_for_days_range(start_date, end_date):
             cursor.execute(sql, (start_date, end_date))
             rows = cursor.fetchall()
             if rows is None:
+                cursor.close()
+                connection.close()
                 return None
 
             result = []
@@ -120,6 +144,8 @@ def get_usd_exchange_rate_for_days_range(start_date, end_date):
                     "rate": row['cenapl'],
                     "interpolated": row['interpolated'],
                 })
+            cursor.close()
+            connection.close()
             return result
 
     except MySQLError as e:
@@ -127,6 +153,13 @@ def get_usd_exchange_rate_for_days_range(start_date, end_date):
 
 
 def get_usd_exchange_min_date():
+    connection = pymysql.connect(host='localhost',
+                                 user='root',
+                                 password='',
+                                 db='classicmodels',
+                                 charset='utf8mb4',
+                                 cursorclass=pymysql.cursors.DictCursor,
+                                 conv=conv)
     try:
         with connection.cursor() as cursor:
             sql = """SELECT usd_pln.date date
@@ -134,13 +167,23 @@ def get_usd_exchange_min_date():
             ORDER BY usd_pln.date           
             """
             cursor.execute(sql)
-            return cursor.fetchone()['date']
+            result = cursor.fetchone()['date']
+            cursor.close()
+            connection.close()
+            return result
 
     except MySQLError as e:
         print('Got error {!r}, errno is {}'.format(e, e.args[0]))
 
 
 def get_usd_exchange_max_date():
+    connection = pymysql.connect(host='localhost',
+                                 user='root',
+                                 password='',
+                                 db='classicmodels',
+                                 charset='utf8mb4',
+                                 cursorclass=pymysql.cursors.DictCursor,
+                                 conv=conv)
     try:
         with connection.cursor() as cursor:
             sql = """SELECT usd_pln.date date
@@ -148,13 +191,23 @@ def get_usd_exchange_max_date():
             ORDER BY usd_pln.date DESC          
             """
             cursor.execute(sql)
-            return cursor.fetchone()['date']
+            result = cursor.fetchone()['date']
+            cursor.close()
+            connection.close()
+            return result
 
     except MySQLError as e:
         print('Got error {!r}, errno is {}'.format(e, e.args[0]))
 
 
 def get_sales_min_date():
+    connection = pymysql.connect(host='localhost',
+                                 user='root',
+                                 password='',
+                                 db='classicmodels',
+                                 charset='utf8mb4',
+                                 cursorclass=pymysql.cursors.DictCursor,
+                                 conv=conv)
     try:
         with connection.cursor() as cursor:
             sql = """SELECT date
@@ -162,13 +215,23 @@ def get_sales_min_date():
             ORDER BY date         
             """
             cursor.execute(sql)
-            return cursor.fetchone()['date']
+            result = cursor.fetchone()['date']
+            cursor.close()
+            connection.close()
+            return result
 
     except MySQLError as e:
         print('Got error {!r}, errno is {}'.format(e, e.args[0]))
 
 
 def get_sales_max_date():
+    connection = pymysql.connect(host='localhost',
+                                 user='root',
+                                 password='',
+                                 db='classicmodels',
+                                 charset='utf8mb4',
+                                 cursorclass=pymysql.cursors.DictCursor,
+                                 conv=conv)
     try:
         with connection.cursor() as cursor:
             sql = """SELECT date
@@ -176,13 +239,23 @@ def get_sales_max_date():
             ORDER BY date DESC          
             """
             cursor.execute(sql)
-            return cursor.fetchone()['date']
+            result = cursor.fetchone()['date']
+            cursor.close()
+            connection.close()
+            return result
 
     except MySQLError as e:
         print('Got error {!r}, errno is {}'.format(e, e.args[0]))
 
 
 def get_sales_sum_for_day_x(date):
+    connection = pymysql.connect(host='localhost',
+                                 user='root',
+                                 password='',
+                                 db='classicmodels',
+                                 charset='utf8mb4',
+                                 cursorclass=pymysql.cursors.DictCursor,
+                                 conv=conv)
 
     try:
         with connection.cursor() as cursor:
@@ -192,8 +265,12 @@ def get_sales_sum_for_day_x(date):
             cursor.execute(sql, date)
             row = cursor.fetchone()
             if row is None:
+                cursor.close()
+                connection.close()
                 return None
 
+            cursor.close()
+            connection.close()
             return row
 
     except MySQLError as e:
@@ -201,6 +278,13 @@ def get_sales_sum_for_day_x(date):
 
 
 def get_sales_for_date_range(start_date, end_date):
+    connection = pymysql.connect(host='localhost',
+                                 user='root',
+                                 password='',
+                                 db='classicmodels',
+                                 charset='utf8mb4',
+                                 cursorclass=pymysql.cursors.DictCursor,
+                                 conv=conv)
 
     try:
         with connection.cursor() as cursor:
@@ -210,8 +294,12 @@ def get_sales_for_date_range(start_date, end_date):
             cursor.execute(sql, (start_date, end_date))
             rows = cursor.fetchall()
             if rows is None:
+                cursor.close()
+                connection.close()
                 return None
 
+            cursor.close()
+            connection.close()
             return rows
 
     except MySQLError as e:

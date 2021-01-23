@@ -102,4 +102,5 @@ def bad_request_404(event):
     return jsonify({'error': "Endpoint not found"}), 404
 
 
-app.run()
+if __name__ == "__main__":
+    app.run()

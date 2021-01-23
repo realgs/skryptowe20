@@ -1,10 +1,10 @@
 <template>
-    <div class="page">
-      <Header/>
-      <div class="page-wrapper" :style="cssVars">
-        <router-view/>
-      </div>
+  <div class="page">
+    <Header/>
+    <div class="page-wrapper" :style="cssVars">
+      <router-view/>
     </div>
+  </div>
 </template>
 
 <script>
@@ -31,7 +31,7 @@ export default {
 </script>
 
 
-<style>
+<style lang="scss">
 @font-face {
   font-family: Roboto;
   src: url('./fonts/Roboto-Regular.ttf');
@@ -93,9 +93,18 @@ b, strong, .bold {
   font-weight: bold;
 }
 
-.page-wrapper{
+.page-wrapper {
   width: 100%;
   padding: 30px 60px;
+}
+
+@media only screen and (max-width: 1000px) {
+  .page {
+    .page-wrapper {
+      width: 100%;
+      padding: 10px 0;
+    }
+  }
 
 
 }
