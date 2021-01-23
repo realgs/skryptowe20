@@ -18,20 +18,35 @@ apiTypeDropdown.onchange = function apiTypeChanged() {
     }
 }
 
+singleDateOnlyCheckbox.onchange = function singleDateCheckboxChanged() {
+    if (singleDateOnlyCheckbox.checked === true) {
+        singleDate.disabled = false;
+        startDate.disabled = true;
+        endDate.disabled = true;
+    } else {
+        singleDate.disabled = true;
+        startDate.disabled = false;
+        endDate.disabled = false;
+    }
+}
+
 function drawChart(jsonResponse) {
     let table_array = jsonResponse['result'];
 
     if (table_array.length > 0) {
-        let labelsArray = new Array(0);
-        let dataArray = new Array(0);
+        let labelsArray = new Array(1);
+        let dataArray = new Array(1);
 
         let cols = Object.keys(table_array[0]);
         let valueName;
+        let valueLabel;
 
         if (cols.length === 3) {
             valueName = 'rate'
+            valueLabel = "Exchange rate";
         } else {
             valueName = 'sum'
+            valueLabel = 'Sum of transactions';
         }
 
         for (let i = 0; i < table_array.length; i++) {
@@ -44,7 +59,7 @@ function drawChart(jsonResponse) {
             "data": {
                 "labels": labelsArray,
                 "datasets": [{
-                    "label": "My First Dataset",
+                    "label": valueLabel,
                     "data": dataArray,
                     "fill": false,
                     "borderColor": "rgb(75, 192, 192)",
@@ -69,7 +84,7 @@ function drawChart(jsonResponse) {
 
                         scaleLabel: {
                             display: true,
-                            labelString: 'Value'
+                            labelString: valueLabel
                         }
                     }]
                 }
