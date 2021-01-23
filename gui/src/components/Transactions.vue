@@ -16,7 +16,6 @@
         v-model="startDate"
         :min=this.limits.minDate 
         :max=this.endDate>
-        <!-- pamietaj o walidacji, by byla mniejsza od daty koncowej --> <br>
     </p>
 
     <p>
@@ -90,11 +89,6 @@ export default {
       range: false,
     }
   },
-  created() {
-  },
-  beforeDestroy() {
-    clearInterval(this.setIntervalId);
-  },
   methods: {
     async getRates() {
       try {
@@ -144,7 +138,6 @@ export default {
   }
 }
 
-
 </script>
 
 <style scoped>
@@ -158,7 +151,6 @@ li {
 a {
     color: #42b983;
 }
-th div { margin-top: -20px; position: absolute; }
 table  {  
   border: 1px solid #13b4fd;
   margin-top: 20px; 

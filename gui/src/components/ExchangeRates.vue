@@ -12,12 +12,10 @@
 
     <p>
       <label for="start">Data początkowa:</label> <br>
-
       <input type="date" id="startDate" 
         v-model="startDate"
         :min=this.limits.minDate 
         :max=this.endDate>
-        <!-- pamietaj o walidacji, by byla mniejsza od daty koncowej --> <br>
     </p>
 
     <p>
@@ -40,7 +38,6 @@
 
     <button v-on:click="getExchangeRates()">Pobierz dane</button> <br>
 
-    <!-- <button v-on:click="counter += 1">Add 1</button> -->
     <h2>Kursy:</h2>
     <table>
       <thead>
@@ -92,11 +89,6 @@ export default {
       range: false,
     }
   },
-  created() {
-  },
-  beforeDestroy() {
-    clearInterval(this.setIntervalId);
-  },
   methods: {
     async getExchangeRates() {
       try {
@@ -138,7 +130,6 @@ export default {
   }
 }
 
-
 </script>
 
 <style scoped>
@@ -152,7 +143,6 @@ li {
 a {
     color: #42b983;
 }
-th div { margin-top: -20px; position: absolute; }
 table  {  
   border: 1px solid #13b4fd;
   margin-top: 20px; 
