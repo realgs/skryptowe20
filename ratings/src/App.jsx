@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import { MainContent, Body } from "./layout/Layout";
 import Home from "./pages/Home";
 import Sales from "./pages/Sales";
 import Ratings from "./pages/Ratings";
@@ -9,7 +8,7 @@ import Ratings from "./pages/Ratings";
 const Main = styled.main`
   min-height: 100%;
   min-width: 100%;
-  background: #fefefe;
+  background-color: #fefefe;
 `;
 
 const StyledContainer = styled.div`
