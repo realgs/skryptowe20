@@ -34,6 +34,7 @@ In this repo you have db.sql file. That is database with all API data. You can i
 * /api/rates/usd/{date} - get exchange rate USD to PLN for one day
 * /api/rates/usd/{start_date}/{end_date} - get exchange rate USD to PLN for period of days
 * /api/sales/{date} - get store sales sum for one day in USD and PLN
+* /api/sales/{start_date}/{end_date} - get store sales sum for period of days in USD and PLN
 
 ## Returned data structure
 ### For exchange rates

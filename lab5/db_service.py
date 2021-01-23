@@ -154,6 +154,34 @@ def get_usd_exchange_max_date():
         print('Got error {!r}, errno is {}'.format(e, e.args[0]))
 
 
+def get_sales_min_date():
+    try:
+        with connection.cursor() as cursor:
+            sql = """SELECT date
+            FROM daily_sales_summary
+            ORDER BY date         
+            """
+            cursor.execute(sql)
+            return cursor.fetchone()['date']
+
+    except MySQLError as e:
+        print('Got error {!r}, errno is {}'.format(e, e.args[0]))
+
+
+def get_sales_max_date():
+    try:
+        with connection.cursor() as cursor:
+            sql = """SELECT date
+            FROM daily_sales_summary
+            ORDER BY date DESC          
+            """
+            cursor.execute(sql)
+            return cursor.fetchone()['date']
+
+    except MySQLError as e:
+        print('Got error {!r}, errno is {}'.format(e, e.args[0]))
+
+
 def get_sales_sum_for_day_x(date):
 
     try:
@@ -167,6 +195,24 @@ def get_sales_sum_for_day_x(date):
                 return None
 
             return row
+
+    except MySQLError as e:
+        print('Got error {!r}, errno is {}'.format(e, e.args[0]))
+
+
+def get_sales_for_date_range(start_date, end_date):
+
+    try:
+        with connection.cursor() as cursor:
+            sql = """SELECT date, original_usd, converted_pln
+            FROM daily_sales_summary
+            WHERE date BETWEEN %s AND %s"""
+            cursor.execute(sql, (start_date, end_date))
+            rows = cursor.fetchall()
+            if rows is None:
+                return None
+
+            return rows
 
     except MySQLError as e:
         print('Got error {!r}, errno is {}'.format(e, e.args[0]))

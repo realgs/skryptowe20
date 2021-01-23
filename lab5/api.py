@@ -3,6 +3,7 @@ from datetime import datetime
 import flask
 from flask import jsonify
 from flask_caching import Cache
+from flask_cors import cross_origin
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
@@ -46,6 +47,7 @@ def get_rate_for_one_day(date):
 
 @app.route('/api/rates/usd/<start_date>/<end_date>', methods=['GET'])
 @limiter.limit(LIMITER_LIMIT)
+@cross_origin()
 @cache.cached(timeout=DEFAULT_CACHE_TIMEOUT)
 def get_rate_for_days_range(start_date, end_date):
     if not (check_date(start_date) and check_date(end_date)):
@@ -72,6 +74,25 @@ def get_sales_sum_for_day_x(date):
         data = db_service.get_sales_sum_for_day_x(date)
         if data is None:
             return jsonify({'message': 'Brak danych dla tej daty'})
+        else:
+            return jsonify(data)
+
+
+@app.route('/api/sales/<start_date>/<end_date>', methods=['GET'])
+@limiter.limit(LIMITER_LIMIT)
+@cross_origin()
+@cache.cached(timeout=DEFAULT_CACHE_TIMEOUT)
+def get_sales_for_days_range(start_date, end_date):
+    if not (check_date(start_date) and check_date(end_date)):
+        return jsonify({'message': 'Entered date is not correct'})
+    elif datetime.strptime(db_service.get_sales_min_date(), "%Y-%m-%d").date() > datetime.strptime(start_date,
+                                                                                                          "%Y-%m-%d").date() or datetime.strptime(
+            db_service.get_sales_max_date(), "%Y-%m-%d").date() < datetime.strptime(end_date, "%Y-%m-%d").date():
+        return jsonify({'message': 'No data for this date range'})
+    else:
+        data = db_service.get_sales_for_date_range(start_date, end_date)
+        if data is None:
+            return jsonify({'message': 'Brak danych dla tego zakresu'})
         else:
             return jsonify(data)
 

@@ -1,0 +1,1 @@
+export const axiosBaseUrl = 'http://localhost:5000'
