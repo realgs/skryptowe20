@@ -179,11 +179,11 @@ const NavbarLink = styled(Link)`
   }
 `;
 
-const Navbar = () => {
+const Navbar = ({ name }) => {
   return (
     <StyledHeader id="navbar">
       <StyledNav>
-        <HomeLink to="/">Website Name</HomeLink>
+        <HomeLink to="/">{name}</HomeLink>
         <StyledButton
           type="button"
           className="navbar-toggle"

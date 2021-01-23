@@ -28,7 +28,7 @@ function App() {
   return (
     <Router>
       <Main>
-        <Navbar />
+        <Navbar name="Ratings/Sales API" />
 
         <Switch>
           <StyledContainer>
