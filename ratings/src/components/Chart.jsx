@@ -13,7 +13,7 @@ const Chart = ({ data }) => {
   return (
     <>
       <LineChart
-        width={800}
+        width={700}
         height={500}
         data={data}
         margin={{

@@ -4,7 +4,7 @@ export const Body = styled.div`
   display: flex;
   padding: 1em;
   flex-grow: 1;
-  max-width: 1000px;
+  max-width: 100vw;
   margin: auto;
 `;
 
@@ -17,4 +17,15 @@ export const Section = styled.div`
 export const MainContent = styled(Section)`
   flex-grow: 1;
   min-width: 800px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+export const Sidebar = styled(Section)`
+  min-width: 200px;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;

@@ -13,7 +13,6 @@ const Main = styled.main`
 
 const StyledContainer = styled.div`
   min-height: 100vh;
-  min-width: 100vw;
   display: flex;
   flex-direction: column;
   justify-content: center;

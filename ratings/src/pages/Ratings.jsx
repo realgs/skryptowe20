@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
-import { MainContent, Body } from "../layout/Layout";
-import StyledButton from "../components/Button";
+import { MainContent, Body, Sidebar } from "../layout/Layout";
 import DatePicker from "../components/DatePicker";
 import moment from "moment";
 import fetchFromApi from "../fetchFromApi/fetchFromApi";
 import MyTable from "../components/Table";
 import Chart from "../components/Chart";
+import ToggleSwitch from "../components/ToggleSwitch";
 
 const Ratings = () => {
   const [startDate, setStartDate] = useState(moment("2013-05-02"));
@@ -13,7 +13,7 @@ const Ratings = () => {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [items, setItems] = useState([]);
-  const [load, setLoad] = useState(false);
+  const [toggle, setToggle] = useState(false);
 
   useEffect(() => {
     const [start, end] = startDate.isBefore(endDate)
@@ -23,13 +23,7 @@ const Ratings = () => {
     fetchFromApi(
       `/api/rates/${start.format("YYYY-MM-DD")}/${end.format("YYYY-MM-DD")}}`
     )(setItems, setIsLoaded, setError);
-
-    console.log(items, isLoaded, error);
-  }, [load, startDate, endDate]);
-
-  const reactOnClick = () => {
-    setLoad(!load);
-  };
+  }, [startDate, endDate]);
 
   const tableColumns = [
     {
@@ -61,16 +55,24 @@ const Ratings = () => {
 
   return (
     <Body>
-      <MainContent>
+      <Sidebar>
+        <label>Pick start date:</label>
         <DatePicker date={startDate} setDate={setStartDate} />
+        <label>Pick end date:</label>
         <DatePicker date={endDate} setDate={setEndDate} />
-        <StyledButton onClick={reactOnClick}>button</StyledButton>
-        <StyledButton primary>primary</StyledButton>
-
+        <ToggleSwitch
+          optionLabels={["Table", "Chart"]}
+          checked={toggle}
+          setChecked={setToggle}
+        />
+      </Sidebar>
+      <MainContent>
         {error ? (
           <div>Error</div>
         ) : !isLoaded ? (
           <div>Loading</div>
+        ) : toggle ? (
+          <Chart data={items.rates} />
         ) : (
           items.rates && (
             <MyTable
@@ -85,8 +87,6 @@ const Ratings = () => {
             />
           )
         )}
-
-        <Chart data={items.rates} />
       </MainContent>
     </Body>
   );
