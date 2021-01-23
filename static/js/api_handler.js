@@ -1,5 +1,6 @@
 let apiLink = document.getElementById('api_link');
-let chart = document.getElementById('chart').getContext('2d');
+let chartContext = document.getElementById('chart').getContext('2d');
+let chart = document.getElementById('chart');
 let responseArea = document.getElementById('response_value');
 let responseTable = document.getElementById('response_table');
 let apiTypeDropdown = document.getElementById('api_type_dropdown');
@@ -9,6 +10,7 @@ let singleDateOnlyCheckbox = document.getElementById('single_date_only_checkbox'
 let singleDate = document.getElementById('single_date');
 let startDate = document.getElementById('start_date');
 let endDate = document.getElementById('end_date');
+let chartInstance = null;
 
 apiTypeDropdown.onchange = function apiTypeChanged() {
     if (apiTypeDropdown.value === 'sum') {
@@ -33,7 +35,7 @@ singleDateOnlyCheckbox.onchange = function singleDateCheckboxChanged() {
 function drawChart(jsonResponse) {
     let table_array = jsonResponse['result'];
 
-    if (table_array.length > 0) {
+    if (table_array.length > 1) {
         let labelsArray = new Array(1);
         let dataArray = new Array(1);
 
@@ -59,7 +61,10 @@ function drawChart(jsonResponse) {
             dataArray.push(table_array[i][valueName])
         }
 
-        new Chart(chart, {
+        labelsArray.length++;
+        dataArray.length++;
+
+        chartInstance = new Chart(chartContext, {
             "type": "line",
             "data": {
                 "labels": labelsArray,
@@ -108,13 +113,26 @@ async function generateLink() {
     let link = `http://127.0.0.1:5000/api/${apiTypePart}/${datesPart}`;
     apiLink.value = link;
 
+    if (chartInstance != null) {
+        chartInstance.destroy();
+    }
 
     const response = await fetch(link);
-    const jsonResponse = await response.json()
-    responseArea.value = JSON.stringify(jsonResponse);
 
-    drawChart(jsonResponse);
-    fillTableWith(jsonResponse);
+    if (response.status === 200) {
+        const jsonResponse = await response.json()
+        responseArea.value = JSON.stringify(jsonResponse);
+
+        fillTableWith(jsonResponse);
+        responseTable.hidden = false;
+
+        if (singleDateOnlyCheckbox.checked === false) {
+            drawChart(jsonResponse);
+        }
+    } else {
+        responseArea.value = response.status + " " + response.statusText + ' (make sure that dates are correctly assigned)';
+        responseTable.hidden = true;
+    }
 }
 
 function getDatesPart() {
