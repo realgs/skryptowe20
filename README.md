@@ -1,4 +1,4 @@
-# Exchange rate and sales API
+# Exchange rates and sales API
 
 This repository contains files, that allow to locally run API with USD to PLN exchange rates and daily sales in both USD and PLN from Northwind sample database.
 
