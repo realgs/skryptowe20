@@ -1,6 +1,6 @@
 <template>
   <div class="transactions">
-    <Transactions msg="Welcome to Your Vue.js App"/>
+    <Transactions />
   </div>
 </template>
 

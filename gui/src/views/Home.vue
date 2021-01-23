@@ -1,12 +1,10 @@
 <template>
   <div class="home">
-    <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
-    <ReadmeAdaptation msg="Welcome to Your Vue.js App"/>
+    <ReadmeAdaptation />
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
 import ReadmeAdaptation from '@/components/ReadmeAdaptation.vue'
 
 export default {
