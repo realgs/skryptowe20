@@ -42,11 +42,16 @@ function drawChart(jsonResponse) {
         let valueLabel;
 
         if (cols.length === 3) {
-            valueName = 'rate'
-            valueLabel = "Exchange rate";
+            valueName = 'rate';
+            valueLabel = 'Exchange rate'
         } else {
-            valueName = 'sum'
-            valueLabel = 'Sum of transactions';
+            valueName = 'sum';
+
+            if (jsonResponse['currency'] === 'PLN') {
+                valueLabel = "Sum of transactions (PLN)";
+            } else {
+                valueLabel = "Sum of transactions (USD)";
+            }
         }
 
         for (let i = 0; i < table_array.length; i++) {
@@ -75,6 +80,7 @@ function drawChart(jsonResponse) {
                         },
                         display: true,
                         scaleLabel: {
+                            fontSize: 30,
                             display: true,
                             labelString: 'Date'
                         }
@@ -83,6 +89,7 @@ function drawChart(jsonResponse) {
                         display: true,
 
                         scaleLabel: {
+                            fontSize: 30,
                             display: true,
                             labelString: valueLabel
                         }
