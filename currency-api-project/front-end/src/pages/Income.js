@@ -75,7 +75,7 @@ export default function Income()
                             <Tooltip/>
                             <Legend verticalAlign="top" height={36}/>
                             <Line type="linear" dot={false} dataKey="profit_usd" stroke="#27165c" name="Profit USD"/>
-                            <Line type="linear" dot={false} dataKey="profit_pln" stroke="red" name="Profit pln"/>
+                            <Line type="linear" dot={false} dataKey="profit_pln" stroke="red" name="Profit PLN"/>
                         </LineChart>
                     </Row>
                 </Col>
