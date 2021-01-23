@@ -25,7 +25,7 @@ export const MultiSelect = ({ selectedValues, handleChange, options }) => {
 
 export const SingleSelect = ({ selectedValue, handleChange, options }) => {
   return (
-    <Select
+    <StyledSelect
       onChange={handleChange}
       value={options.find((obj) => obj.value === selectedValue)}
       classNamePrefix="select"

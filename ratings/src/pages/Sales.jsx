@@ -28,7 +28,6 @@ const Sales = ({
 
   const [selectedValue, setSelectedValue] = useState(options[0].value);
   const handleChange = (e) => {
-    console.log(e);
     setSelectedValue(e.value);
   };
 
@@ -44,10 +43,9 @@ const Sales = ({
         "YYYY-MM-DD"
       )}}/${selectedValue}`
     )(setItems, setIsLoaded, setError);
-  }, [startDate, endDate, selectedValue]);
+  }, [startDate, endDate, selectedValue, toggle]);
 
   const tableColumns = useMemo(() => {
-    console.log(typeof selectedValue);
     return [
       {
         Header: "Sales",
