@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from database.database import Database
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, redirect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_caching import Cache
@@ -20,12 +20,9 @@ limiter = Limiter(
 cache = Cache(config=conf['cache'])
 cache.init_app(app)
 
-
-@app.route('/api/home/<name>')
-@cache.cached(timeout=conf['cache-timeout'])
-def home(name):
-  return jsonify(hello= "Hello",
-              world=name)
+@app.route('/')
+def home():
+  return redirect("http://localhost:3000")
 
 
 @app.route('/api/dates')
