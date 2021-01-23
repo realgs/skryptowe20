@@ -102,10 +102,8 @@ b, strong, .bold {
   .page {
     .page-wrapper {
       width: 100%;
-      padding: 10px 0;
+      padding: 10px 3px;
     }
   }
-
-
 }
 </style>

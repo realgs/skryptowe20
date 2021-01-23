@@ -286,6 +286,7 @@ export default {
     }
   }
 
+
   .currencies-content-top {
     width: 100%;
     margin-top: 30px;
@@ -423,6 +424,14 @@ export default {
           color: #949494;
           margin-right: 20px;
         }
+      }
+    }
+  }
+
+  @media only screen and (max-width: 1000px) {
+    .currencies{
+      .currencies-content-top ,.content-bottom{
+        padding: 0 5px;
       }
     }
   }
