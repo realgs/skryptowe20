@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Currency rates</h1>
+    <h1>Sales in currency</h1>
 
     <div>
       <label for="salesDateFrom" style="margin: 20px;">Select start date:</label>
@@ -55,8 +55,10 @@
         </tbody>
       </table>
     </div>
-    <line-chart id="salesChart" v-if="this.list !== undefined" :data="salesData"
-                style="margin-top: 35px;"></line-chart>
+    <div style="margin-top: 50px;">
+      <line-chart id="salesChart" v-if="this.list !== undefined" :data="salesData"
+                  style="margin: auto; width: 73%; background-color: #232323"></line-chart>
+    </div>
   </div>
 </template>
 
@@ -169,9 +171,12 @@ export default {
     },
 
     changeErrorText: function (text) {
+      if(text.includes("per")){
+        text = "Too many requests, the limit is " + text
+      }
       const errorText = document.getElementById("errorLabel");
       errorText.innerText = text
     }
-  }
+  },
 }
 </script>

@@ -89,6 +89,9 @@ export default {
     },
 
     changeErrorText: function (text) {
+      if(text.includes("per")){
+        text = "Too many requests, the limit is " + text
+      }
       const errorText = document.getElementById("errorLabel");
       errorText.innerText = text
     }

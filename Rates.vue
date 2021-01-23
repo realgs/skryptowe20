@@ -54,8 +54,10 @@
         </tbody>
       </table>
     </div>
+    <div style="margin-top: 50px;">
     <column-chart id="ratesChart" v-if="this.list !== undefined" :data="ratesData"
-                  style="margin-top: 35px;"></column-chart>
+                  style="margin: auto; width: 73%; background-color: #232323"></column-chart>
+    </div>
   </div>
 </template>
 
@@ -129,7 +131,8 @@ export default {
         {
           name: selectedCurrency + '-PLN rates',
           data: this.apiRates,
-          color: '#ffffff'
+          color: '#ffffff',
+          textStyle: '#ffffff'
         }
       ]
 
@@ -138,6 +141,9 @@ export default {
     },
 
     changeErrorText: function (text) {
+      if(text.includes("per")){
+        text = "Too many requests, the limit is " + text
+      }
       const errorText = document.getElementById("errorLabel");
       errorText.innerText = text
     }
