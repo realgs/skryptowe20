@@ -1,13 +1,83 @@
 let apiLink = document.getElementById('api_link');
+let chart = document.getElementById('chart').getContext('2d');
 let responseArea = document.getElementById('response_value');
 let responseTable = document.getElementById('response_table');
 let apiTypeDropdown = document.getElementById('api_type_dropdown');
 let currencyDropdown = document.getElementById('currency_dropdown');
+let currencyDiv = document.getElementById('currency_div');
 let singleDateOnlyCheckbox = document.getElementById('single_date_only_checkbox');
 let singleDate = document.getElementById('single_date');
 let startDate = document.getElementById('start_date');
 let endDate = document.getElementById('end_date');
 
+apiTypeDropdown.onchange = function apiTypeChanged() {
+    if (apiTypeDropdown.value === 'sum') {
+        currencyDiv.hidden = false;
+    } else {
+        currencyDiv.hidden = true;
+    }
+}
+
+function drawChart(jsonResponse) {
+    let table_array = jsonResponse['result'];
+
+    if (table_array.length > 0) {
+        let labelsArray = new Array(0);
+        let dataArray = new Array(0);
+
+        let cols = Object.keys(table_array[0]);
+        let valueName;
+
+        if (cols.length === 3) {
+            valueName = 'rate'
+        } else {
+            valueName = 'sum'
+        }
+
+        for (let i = 0; i < table_array.length; i++) {
+            labelsArray.push(table_array[i]['date']);
+            dataArray.push(table_array[i][valueName])
+        }
+
+        new Chart(chart, {
+            "type": "line",
+            "data": {
+                "labels": labelsArray,
+                "datasets": [{
+                    "label": "My First Dataset",
+                    "data": dataArray,
+                    "fill": false,
+                    "borderColor": "rgb(75, 192, 192)",
+                    "lineTension": 0.1
+                }]
+            },
+            "options": {
+                maintainAspectRatio: true,
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        },
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Date'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Value'
+                        }
+                    }]
+                }
+            }
+        });
+
+    }
+}
 
 async function generateLink() {
     let datesPart = getDatesPart();
@@ -21,6 +91,7 @@ async function generateLink() {
     const jsonResponse = await response.json()
     responseArea.value = JSON.stringify(jsonResponse);
 
+    drawChart(jsonResponse);
     fillTableWith(jsonResponse);
 }
 
