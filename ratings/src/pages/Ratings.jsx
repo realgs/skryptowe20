@@ -16,7 +16,6 @@ const Ratings = () => {
   const [load, setLoad] = useState(false);
 
   useEffect(() => {
-    console.log(startDate.format("YYYY-MM-DD"));
     const [start, end] = startDate.isBefore(endDate)
       ? [startDate, endDate]
       : [endDate, startDate];
@@ -24,8 +23,9 @@ const Ratings = () => {
     fetchFromApi(
       `/api/rates/${start.format("YYYY-MM-DD")}/${end.format("YYYY-MM-DD")}}`
     )(setItems, setIsLoaded, setError);
+
+    console.log(items, isLoaded, error);
   }, [load, startDate, endDate]);
-  console.log(items, isLoaded, error);
 
   const reactOnClick = () => {
     setLoad(!load);
@@ -67,20 +67,23 @@ const Ratings = () => {
         <StyledButton onClick={reactOnClick}>button</StyledButton>
         <StyledButton primary>primary</StyledButton>
 
-        {error && (
-          <MyTable
-            columns={tableColumns}
-            data={
-              items.rates &&
-              items.rates.map((e) => ({
+        {error ? (
+          <div>Error</div>
+        ) : !isLoaded ? (
+          <div>Loading</div>
+        ) : (
+          items.rates && (
+            <MyTable
+              columns={tableColumns}
+              data={items.rates.map((e) => ({
                 date: e.date,
                 usd: e.usd,
                 eur: e.eur,
                 chf: e.chf,
                 interpolated: e.interpolated ? "True" : "False",
-              }))
-            }
-          />
+              }))}
+            />
+          )
         )}
 
         <Chart data={items.rates} />
