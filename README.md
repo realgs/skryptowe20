@@ -30,13 +30,13 @@ Następnie należy uruchomić plik app.py, podczas którego działania dostępne
 ### /api/exchangerates/{date}
 ### /api/exchangerates/{start_date}/{end_date}
 Powyższe zapytania w polu 'result' zwracają informacje o znalezionych kursach dolara do złotówki. 
-Rządanie z pojedynczą datą zwróci przelicznik z danego dnia, rządanie z dwoma zwróci dane z podanego zakresu (włacznie z <end_date>).
+Żądanie z pojedynczą datą zwróci przelicznik z danego dnia, żądanie z dwoma zwróci dane z podanego zakresu (włacznie z <end_date>).
 Dla każdego pola w 'result' dostępne są trzy informacje:
 - **date** - data 
 - **rate** - kurs z danego dnia
 - **is_interpolated** - true, jeżeli w danym dniu nie był dostępny kurs (kurs jest wtedy z poprzedniego dostępnego dnia); w innym przypadku false
 
-Oprócz tego w odpowiedzi znajdują się użyte w rządaniu wartości (date lub start_date z end_date).
+Oprócz tego w odpowiedzi znajdują się użyte w żądaniu wartości (date lub start_date z end_date).
 
 ### /api/sum/{currency}/{date}
 ### /api/sum/{currency}/{start_date}/{end_date}
@@ -44,13 +44,13 @@ Te żądania zwracają sumę wartości transakcji z danego dnia. W polu 'result'
 - **date** - data
 - **sum** - suma wartości transakcji z danego dnia
 
-Oprócz tego w odpowiedzi znajdują się użyte w rządaniu wartości (date lub start_date z end_date).
+Oprócz tego w odpowiedzi znajdują się użyte w żądaniu wartości (date lub start_date z end_date).
 
 ##  Ograniczenia API
 ### date, start_date, end_date
 Daty powinny być w formacie RRRR-MM-DD. 
 Przy miesiącach jednocyfrowych możliwe jest pominięcie zera przy wpisywaniu miesiąca ("2014-01-13" jest równoważne "2014-1-13").
-W rządaniach korzystających ze start_date i end_date, end_date nie może wystąpić przed start_date.
+W żądaniach korzystających ze start_date i end_date, end_date nie może wystąpić przed start_date.
 W przypadku błędnego formatu daty lub złej kolejności dat w zakresie, zostanie zwrócony kod błędu: 400.
 Daty w bazie danych pochodzą z okresu od 2012-07-01 do 2016-02-29. Możliwe jest jednak zapytanie o daty spoza tego zakresu, wtedy daty spoza zakresu w bazie nie zostaną uwzględnione.
 Przykładowo, zapytanie o dane między 2012-05-10 do 2012-07-03, zwróci dane od 2012-07-01 do 2012-07-03. 
@@ -75,4 +75,4 @@ Możliwe jest wysłanie 20 żądań na minutę, liczone osobno dla każdego uży
 
 ## Cache
 W programie używany jest system cache używający Flask-Caching. 
-W przypadku wywoływania rządań z jedną, konkretną datą, wynik działania jest przechowywany w pamięci przez 5 minut - ponowienie takiego rządania nie wywołuje połączenia z bazą danych.
+W przypadku wywoływania żądań z jedną, konkretną datą, wynik działania jest przechowywany w pamięci przez 5 minut - ponowienie takiego żądania nie wywołuje połączenia z bazą danych.
