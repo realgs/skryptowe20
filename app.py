@@ -64,6 +64,11 @@ def index():
     return render_template('home.html')
 
 
+@app.route('/request_maker')
+def request_maker():
+    return render_template('request_maker.html')
+
+
 @app.route('/api/exchangerates/<date>', methods=['GET'])
 @cache.memoize(timeout=300)
 def api_single_exchange_rate(date):
