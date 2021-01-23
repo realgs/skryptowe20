@@ -93,7 +93,12 @@ const Sales = ({
         ) : !isLoaded ? (
           <div>Loading</div>
         ) : toggle ? (
-          <Chart data={items.sales} selectedValues={["usd", selectedValue]} />
+          <Chart
+            data={items.sales}
+            selectedValues={["usd", selectedValue]}
+            xLabel="Date"
+            yLabel="Sales"
+          />
         ) : (
           items.sales && (
             <MyTable

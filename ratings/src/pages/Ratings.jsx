@@ -95,7 +95,12 @@ const Ratings = ({
         ) : !isLoaded ? (
           <div>Loading</div>
         ) : toggle ? (
-          <Chart data={items.rates} selectedValues={selectedValues} />
+          <Chart
+            data={items.rates}
+            selectedValues={selectedValues}
+            xLabel="Date"
+            yLabel="Ratings"
+          />
         ) : (
           items.rates && (
             <MyTable

@@ -10,11 +10,12 @@ import {
 } from "recharts";
 import { colors } from "../consts/colors";
 
-const Chart = ({ data, selectedValues }) => {
+const Chart = ({ data, selectedValues, xLabel, yLabel }) => {
   function formatXAxis(tickItem) {
     const decimalPoints = 2;
     return tickItem.toFixed(decimalPoints);
   }
+
   return (
     <>
       <LineChart
@@ -29,13 +30,20 @@ const Chart = ({ data, selectedValues }) => {
         }}
       >
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="date" angle={-45} textAnchor="end" height={70} />
+        <XAxis
+          dataKey="date"
+          angle={-45}
+          textAnchor="end"
+          height={70}
+          label={{ value: xLabel, angle: -45 }}
+        />
         <YAxis
+          label={{ value: yLabel, angle: -45 }}
           angle={-45}
           tickFormatter={formatXAxis}
           textAnchor="end"
           interval="preserveEnd"
-          domain={["dataMin - 0.05", "dataMax + 0.05"]}
+          domain={["dataMin", "dataMax"]}
         />
         <Tooltip />
         <Legend align="left" verticalAlign="top" height={40} />
