@@ -11,12 +11,12 @@ session = Session()
 
 
 def get_transaction_logs():
-    logs = session.query(TransactionLogs).filter(TransactionLogs.order_date > '2004-05-06').filter(
-        TransactionLogs.order_date < '2004-10-07').order_by(asc('order_date'))
+    logs = session.query(TransactionLogs).filter(TransactionLogs.order_date > '2004-05-05').filter(
+        TransactionLogs.order_date < '2005-05-07').order_by(asc('order_date'))
     return logs
 
 
 def get_currency_rates():
-    rates = session.query(CurrencyRateTable).filter(CurrencyRateTable.date > '2004-05-06').filter(
-        CurrencyRateTable.date < '2004-10-07')
+    rates = session.query(CurrencyRateTable).filter(CurrencyRateTable.date > '2004-05-05').filter(
+        CurrencyRateTable.date < '2005-05-07')
     return rates

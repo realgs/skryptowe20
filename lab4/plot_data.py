@@ -79,3 +79,9 @@ def plot():
     plot_2_currencies(usd_data, eur_data)
     plot_data = prepare_data(transaction_logs, currency_rates)
     plot_transactions(plot_data)
+
+
+def get_plot_data():
+    transaction_logs = db.get_transaction_logs()
+    currency_rates = db.get_currency_rates()
+    return prepare_data(transaction_logs, currency_rates)
