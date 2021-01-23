@@ -8,6 +8,7 @@ Możliwe jest takźe uzyskanie samego interesującego nas kursu.
 - _table_manipulator.py_ - plik dodający dane o kursach i sumie sprzedaży do bazy danych
 - _app.py_ - właściwa aplikacja udostępniająca API
 - _Northwind.sqlite_ - baza danych Northwind, do pobrania tutaj: https://github.com/jpwhite3/northwind-SQLite3 (Northwind_large.sqlite.zip)
+- pliki w folderach: _templates_ i _static_ - pliki odpowiedzialne za wyświetlanie i obsługę strony
 
 Wszystkie pliki należy umieścić w jednym folderze
 
