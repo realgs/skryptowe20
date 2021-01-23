@@ -9,4 +9,5 @@ export const colors = {
   navbarBgColor: "hsl(0, 0%, 15%)",
   navbarTextColor: "hsl(0, 0%, 85%)",
   navbarBgContrast: "hsl(0, 0%, 25%)",
+  chartColors: ["#8884d8", "#82ca9d", "#ff1717"],
 };

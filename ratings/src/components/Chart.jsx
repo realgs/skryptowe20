@@ -8,8 +8,13 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import { colors } from "../consts/colors";
 
-const Chart = ({ data }) => {
+const Chart = ({ data, selectedValues }) => {
+  function formatXAxis(tickItem) {
+    const decimalPoints = 2;
+    return tickItem.toFixed(decimalPoints);
+  }
   return (
     <>
       <LineChart
@@ -26,25 +31,25 @@ const Chart = ({ data }) => {
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="date" angle={-45} textAnchor="end" height={70} />
         <YAxis
+          angle={-45}
+          tickFormatter={formatXAxis}
+          textAnchor="end"
           interval="preserveEnd"
           domain={["dataMin - 0.05", "dataMax + 0.05"]}
         />
         <Tooltip />
         <Legend align="left" verticalAlign="top" height={40} />
-        <Line
-          type="monotone"
-          dataKey="usd"
-          stroke="#8884d8"
-          dot={false}
-          strokeWidth={2}
-        />
-        <Line
-          type="monotone"
-          dataKey="chf"
-          stroke="#82ca9d"
-          dot={false}
-          strokeWidth={2}
-        />
+        {Array.isArray(selectedValues) &&
+          selectedValues.map((e, index) => (
+            <Line
+              key={index}
+              type="monotone"
+              dataKey={e}
+              stroke={colors.chartColors[index]}
+              dot={false}
+              strokeWidth={2}
+            />
+          ))}
       </LineChart>
     </>
   );

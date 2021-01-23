@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import styled, { css } from "styled-components";
 import { colors } from "../consts/colors";
@@ -7,6 +7,7 @@ const ToggleSwitchWrapper = styled.div`
   display: flex;
   width: fit-content;
   flex-direction: row;
+  margin: 0.5rem 0;
 `;
 
 const StyledLabel = styled.label`
@@ -74,7 +75,12 @@ const ToggleSwitch = ({ optionLabels, checked, setChecked }) => {
         <StyledLabel checked={checked}>{optionLabels[0]}</StyledLabel>
       )}
       <CheckBoxWrapper>
-        <CheckBox id="checkbox" type="checkbox" onClick={toggleOnClick} />
+        <CheckBox
+          id="checkbox"
+          type="checkbox"
+          onChange={toggleOnClick}
+          checked={checked}
+        />
         <CheckBoxLabel htmlFor="checkbox" />
       </CheckBoxWrapper>
 

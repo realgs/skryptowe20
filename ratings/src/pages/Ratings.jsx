@@ -1,19 +1,34 @@
 import { useState, useEffect } from "react";
 import { MainContent, Body, Sidebar } from "../layout/Layout";
 import DatePicker from "../components/DatePicker";
-import moment from "moment";
 import fetchFromApi from "../fetchFromApi/fetchFromApi";
 import MyTable from "../components/Table";
 import Chart from "../components/Chart";
 import ToggleSwitch from "../components/ToggleSwitch";
+import { MultiSelect } from "../components/Select";
 
-const Ratings = () => {
-  const [startDate, setStartDate] = useState(moment("2013-05-02"));
-  const [endDate, setEndDate] = useState(moment("2013-05-06"));
+const Ratings = ({
+  startDate,
+  setStartDate,
+  endDate,
+  setEndDate,
+  toggle,
+  setToggle,
+}) => {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [items, setItems] = useState([]);
-  const [toggle, setToggle] = useState(false);
+
+  const options = [
+    { value: "usd", label: "USD" },
+    { value: "chf", label: "CHF" },
+    { value: "eur", label: "EUR" },
+  ];
+
+  const [selectedValues, setSelectedValues] = useState([options[0].value]);
+  const handleChange = (e) => {
+    setSelectedValues(Array.isArray(e) ? e.map((x) => x.value) : []);
+  };
 
   useEffect(() => {
     const [start, end] = startDate.isBefore(endDate)
@@ -38,12 +53,12 @@ const Ratings = () => {
           accessor: "usd",
         },
         {
-          Header: "EUR",
-          accessor: "eur",
-        },
-        {
           Header: "CHF",
           accessor: "chf",
+        },
+        {
+          Header: "EUR",
+          accessor: "eur",
         },
         {
           Header: "Interpolated",
@@ -60,11 +75,19 @@ const Ratings = () => {
         <DatePicker date={startDate} setDate={setStartDate} />
         <label>Pick end date:</label>
         <DatePicker date={endDate} setDate={setEndDate} />
+
         <ToggleSwitch
           optionLabels={["Table", "Chart"]}
           checked={toggle}
           setChecked={setToggle}
         />
+        {toggle && (
+          <MultiSelect
+            selectedValues={selectedValues}
+            handleChange={handleChange}
+            options={options}
+          />
+        )}
       </Sidebar>
       <MainContent>
         {error ? (
@@ -72,7 +95,7 @@ const Ratings = () => {
         ) : !isLoaded ? (
           <div>Loading</div>
         ) : toggle ? (
-          <Chart data={items.rates} />
+          <Chart data={items.rates} selectedValues={selectedValues} />
         ) : (
           items.rates && (
             <MyTable

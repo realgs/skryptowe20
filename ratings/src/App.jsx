@@ -1,3 +1,5 @@
+import { useState } from "react";
+import moment from "moment";
 import styled from "styled-components";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
@@ -19,6 +21,10 @@ const StyledContainer = styled.div`
 `;
 
 function App() {
+  const [startDate, setStartDate] = useState(moment("2013-05-05"));
+  const [endDate, setEndDate] = useState(moment("2013-05-31"));
+  const [toggle, setToggle] = useState(false);
+
   return (
     <Router>
       <Main>
@@ -30,10 +36,24 @@ function App() {
               <Home />
             </Route>
             <Route path="/ratings">
-              <Ratings />
+              <Ratings
+                startDate={startDate}
+                setStartDate={setStartDate}
+                endDate={endDate}
+                setEndDate={setEndDate}
+                toggle={toggle}
+                setToggle={setToggle}
+              />
             </Route>
             <Route path="/sales">
-              <Sales />
+              <Sales
+                startDate={startDate}
+                setStartDate={setStartDate}
+                endDate={endDate}
+                setEndDate={setEndDate}
+                toggle={toggle}
+                setToggle={setToggle}
+              />
             </Route>
           </StyledContainer>
         </Switch>

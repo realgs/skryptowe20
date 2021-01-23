@@ -23,7 +23,7 @@ export const MainContent = styled(Section)`
 `;
 
 export const Sidebar = styled(Section)`
-  min-width: 200px;
+  min-width: 300px;
 
   @media (max-width: 768px) {
     display: none;
