@@ -95,37 +95,36 @@
           <v-expansion-panel>
             <v-expansion-panel-header>Response</v-expansion-panel-header>
             <v-expansion-panel-content>
-              <table class="table table-hover">
-                <thead>
-                <tr>
-                  <th scope="col">Currency</th>
-                  <th scope="col">Date</th>
-                  <th scope="col">Rate</th>
-                  <th scope="col">Interpolated</th>
-                  <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="rt in response" v-bind:key="rt.date">
-                  <td>{{ rt.currency }}</td>
-                  <td>{{ rt.date }}</td>
-                  <td>{{ rt.rate }}</td>
-                  <td>
-                    <span v-if="rt.interpolated">Yes</span>
-                    <span v-else>No</span>
-                  </td>
-                </tr>
-                </tbody>
-              </table>
-            </v-expansion-panel-content>
-            <v-expansion-panel-header>Table</v-expansion-panel-header>
-            <v-expansion-panel-content>
               <v-data-table
                 :headers="headers"
                 :items="this.response"
-                :items-per-page="5"
+                :page.sync="page"
+                hide-default-footer
+                :items-per-page="itemsPerPage"
                 class="elevation-1"
-              ></v-data-table>
+                @page-count="pageCount = $event"
+              >
+                <template v-slot:item.interpolated="{ item }">
+                  <v-simple-checkbox
+                    v-model="item.interpolated"
+                    disabled
+                  ></v-simple-checkbox>
+                </template>
+              </v-data-table>
+              <div class="text-center pt-2">
+                <v-pagination
+                  v-model="page"
+                  :length="pageCount"
+                ></v-pagination>
+                <v-text-field
+                  :value="itemsPerPage"
+                  label="Items per page"
+                  type="number"
+                  min="1"
+                  max="100"
+                  @input="itemsPerPage = parseInt($event, 10)"
+                ></v-text-field>
+              </div>
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
@@ -146,6 +145,9 @@ export default {
   name: 'ExchangeRatesClient',
   data() {
     return {
+      page: 1,
+      pageCount: 0,
+      itemsPerPage: 10,
       search: '',
       headers: [
         {
@@ -288,22 +290,16 @@ export default {
       this.errors = [];
       this.chart_data = null;
     },
-    resetData() {
-      this.selected.start_date = '';
-      this.selected.end_date = '';
-      this.selected.currency = '';
-      this.selected.range_of_days = '';
-      this.hasResult = false;
-      this.errors = [];
-      this.resetChart();
-    },
     async rateOneDay() {
       this.hasResult = true;
       const path = `${Utils.SALES_EXCHANGE_RATES_URL}/${Utils.RATES_PATH}/${this.selected.currency}/${this.selected.start_date}`;
       await axios.get(path)
         .then((result) => {
           this.response = result.data.rates.map((el) => ({
-            currency: el.currency, date: el.date, rate: el.rate, interpolated: el.interpolated,
+            currency: el.currency,
+            date: el.date,
+            rate: el.rate,
+            interpolated: el.interpolated,
           }));
           this.prepareRatesChartData();
         })
@@ -318,7 +314,10 @@ export default {
       await axios.get(path)
         .then((result) => {
           this.response = result.data.rates.map((el) => ({
-            currency: el.currency, date: el.date, rate: el.rate, interpolated: el.interpolated,
+            currency: el.currency,
+            date: el.date,
+            rate: el.rate,
+            interpolated: el.interpolated,
           }));
           this.prepareRatesChartData();
         })

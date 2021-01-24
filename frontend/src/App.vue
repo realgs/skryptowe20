@@ -24,7 +24,7 @@
         <v-spacer></v-spacer>
       </v-container>
       <v-btn
-        href="https://github.com/joannasroka/skryptowe20/tree/L5"
+        href="https://github.com/joannasroka/skryptowe20/tree/L6"
         target="_blank"
         text
       >
@@ -50,9 +50,15 @@
     </v-app-bar>
     <v-main>
       <v-tabs-items v-model="tab">
-        <v-tab-item><Home/></v-tab-item>
-        <v-tab-item><ExchangeRates/></v-tab-item>
-        <v-tab-item><Sales/></v-tab-item>
+        <v-tab-item>
+          <Home/>
+        </v-tab-item>
+        <v-tab-item>
+          <ExchangeRates/>
+        </v-tab-item>
+        <v-tab-item>
+          <Sales/>
+        </v-tab-item>
       </v-tabs-items>
     </v-main>
   </v-app>

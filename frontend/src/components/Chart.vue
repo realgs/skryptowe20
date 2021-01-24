@@ -5,10 +5,8 @@ export default {
   name: 'Chart',
   extends: Line,
   props: {
-    chartdata: {
-    },
-    options: {
-    },
+    chartdata: {},
+    options: {},
   },
   mounted() {
     this.renderChart(this.chartdata, this.options);
