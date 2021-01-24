@@ -132,7 +132,8 @@
     </v-row>
     <br><br>
     <chart :chartdata="this.chart_data" :options="this.options"
-           v-if="this.chart_data !== null"></chart>
+           v-if="this.chart_data !== null">
+    </chart>
   </v-container>
 </template>
 

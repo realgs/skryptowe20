@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from flask import jsonify, abort, render_template
+from flask_cors import CORS, cross_origin
 from flask_caching import Cache
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -16,7 +17,10 @@ config = {
 }
 
 app = flask.Flask(__name__, static_folder='../frontend/dist/', static_url_path='/')
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 app.config.from_mapping(config)
+
 cache = Cache(app)
 
 limiter = Limiter(
@@ -57,12 +61,14 @@ def __date_string_to_datetime_converter(date_string):
 
 
 @app.route('/')
+@cross_origin()
 def home():
     return app.send_static_file('index.html')
 
 
 @app.route('/exchange-rates/<currency>/<date>', methods=['GET'])
 # @shared_limit
+@cross_origin()
 @cache.cached()
 def rate_one_day(currency, date):
     return rate_from_date_to_date(currency, date, date)
@@ -70,6 +76,7 @@ def rate_one_day(currency, date):
 
 @app.route('/exchange-rates/<currency>/<start_date>/<end_date>', methods=['GET'])
 # @shared_limit
+@cross_origin()
 @cache.cached()
 def rate_from_date_to_date(currency, start_date, end_date):
     __check_currency(currency)
@@ -84,6 +91,7 @@ def rate_from_date_to_date(currency, start_date, end_date):
 
 @app.route('/sales/<date>', methods=['GET'])
 # @shared_limit
+@cross_origin()
 @cache.cached()
 def sale_one_day(date):
     return sale_from_date_to_date(date, date)
@@ -91,6 +99,7 @@ def sale_one_day(date):
 
 @app.route('/sales/<start_date>/<end_date>', methods=['GET'])
 # @shared_limit
+@cross_origin()
 @cache.cached()
 def sale_from_date_to_date(start_date, end_date):
     start_date_dt = __date_string_to_datetime_converter(start_date)
