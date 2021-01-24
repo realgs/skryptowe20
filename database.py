@@ -43,3 +43,4 @@ def getDataFromPeriod(start_date, end_date):
     if sales == {}:
         return NO_DATA_FOUND
     return sales
+    
