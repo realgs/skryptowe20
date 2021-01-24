@@ -1,5 +1,4 @@
 from django.http import HttpResponse
-
 from .models import ExchangeRate
 from .serializers import ExchangeRateSerializer
 from rest_framework.decorators import api_view
@@ -30,6 +29,16 @@ def exchange_rates_list_date_filtered(request, date_from, date_to):
     print(date_to)
     try:
         rates = ExchangeRate.objects.filter(date__range=[date_from, date_to])
+    except ExchangeRate.DoesNotExist:
+        return HttpResponse(status=404)
+    serializer = ExchangeRateSerializer(rates, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def volume_by_date(request, day_date):
+    try:
+        rates = ExchangeRate.objects.filter(date__range=[day_date, day_date])
     except ExchangeRate.DoesNotExist:
         return HttpResponse(status=404)
     serializer = ExchangeRateSerializer(rates, many=True)
