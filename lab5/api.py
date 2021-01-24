@@ -4,6 +4,7 @@ from flask import jsonify, abort
 from flask_caching import Cache
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from flask_cors import CORS
 import db_getters
 
 INVALID_REQUEST_CODE = 400
@@ -48,11 +49,12 @@ HOME_SITE_INFO = f"""<h1>USD currency rates and product sales API</h1>
 
 app = flask.Flask(__name__)
 app.config.from_mapping(config)
+CORS(app)
 
 limiter = Limiter(
     app,
     key_func=get_remote_address,
-    default_limits=["200 per day", "50 per hour"]
+    default_limits=["20000 per day", "1000 per hour"]
 )
 
 appLimiter = limiter.shared_limit(

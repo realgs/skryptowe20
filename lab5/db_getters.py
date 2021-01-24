@@ -36,7 +36,9 @@ def get_sales_from_day(date):
                     SUM(UnitPrice * Quantity*(1-Discount)) * Exchange AS PlnPrice
                     FROM "Order Details" NATURAL JOIN Orders JOIN UsdPlnExchangeRate ON OrderDate >= RateDate
                     WHERE OrderDate = '{date}'"""
+    print(query)
     result = pd.read_sql_query(query, connection)
+    print(result)
     return result.to_dict(orient="records")
 
 
