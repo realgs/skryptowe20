@@ -317,13 +317,13 @@ export default {
           data: pln,
           fill: false,
         },
-          {
-            label: 'USD',
-            borderColor: '#1649b3',
-            pointBackgroundColor: '#000000',
-            data: usd,
-            fill: false,
-          },
+        {
+          label: 'USD',
+          borderColor: '#1649b3',
+          pointBackgroundColor: '#000000',
+          data: usd,
+          fill: false,
+        },
         ],
       };
       this.options.scales.yAxes[0].scaleLabel.labelString = 'Sales value';
