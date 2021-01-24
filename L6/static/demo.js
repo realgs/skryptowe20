@@ -191,4 +191,3 @@ var chart = new Vue
 
 });
 
-// nie robić wykresu dla 1 punktu
