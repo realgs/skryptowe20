@@ -4,18 +4,13 @@
     fluid
   >
     <v-row class="text-center">
+      <v-col cols="12" lg="12">
+        <h1 class="text-center">Exchange rates </h1>
+      </v-col>
       <v-col
         cols="12"
         lg="6"
       >
-        <h1 class="text-center">Exchange rates
-        </h1>
-        <b-alert class="mb-5" variant="danger" :show="errors != null"
-        ><ul>
-          <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
-        </ul></b-alert
-        >
-        <br><br>
         <v-select
           :items="range_of_days"
           label="Select a range of days"
@@ -27,6 +22,7 @@
           :items="currencies"
           label="Select currency"
           v-model="selected.currency"
+          @change="resetChart"
           required
         ></v-select>
 
@@ -37,7 +33,6 @@
           offset-y
           max-width="290px"
           min-width="auto"
-          @change="resetChart"
         >
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
@@ -54,20 +49,19 @@
             min="2014-12-28"
             max="2016-12-28"
             show-current="2014-12-28"
-            @input="rate_one_day"
+            @change="resetChart"
           ></v-date-picker>
         </v-menu>
         <p>Selected date: <strong>{{ selected.start_date }}</strong></p>
 
         <v-menu
-          v-if="selected.range_of_days === 'from date to date'"
+          v-if="selected.range_of_days === 'From date to date'"
           ref="menu"
           :close-on-content-click="false"
           transition="scale-transition"
           offset-y
           max-width="290px"
           min-width="auto"
-          @change="resetChart"
         >
           <template v-slot:activator="{ on, attrs }">
             <v-text-field
@@ -81,60 +75,63 @@
           <v-date-picker
             v-model="selected.end_date"
             no-title
-            @input="rate_from_date_to_date"
+            min="2014-12-28"
+            max="2016-12-28"
+            show-current="2014-12-28"
+            @change="resetChart"
           ></v-date-picker>
         </v-menu>
-        <p v-if="selected.range_of_days === 'from date to date'">Selected end date:
+        <p v-if="selected.range_of_days === 'From date to date'">Selected end date:
           <strong>{{ selected.end_date }}</strong></p>
-        <b-form @submit="onSubmit">
-          <b-button type="submit" variant="primary">Send request</b-button>
-        </b-form>
-        <table class="table table-hover">
-          <thead>
-          <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Rate</th>
-            <th scope="col">Interpolated</th>
-            <th></th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="rt in response" v-bind:key="rt.date">
-            <td>{{ rt.currency }}</td>
-            <td>{{ rt.date }}</td>
-            <td>{{ rt.rate }}</td>
-            <td>
-              <span v-if="rt.interpolated">Yes</span>
-              <span v-else>No</span>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-          <b-table
-            hover
-            :items="response"
-            head-variant="light"
-            outlined
-            :fields="fields"
-          >
-            <template #cell(interpolated)="data">
-              <b-form-checkbox
-                v-model="data.item.interpolated"
-                disabled
-              ></b-form-checkbox>
-            </template>
-          </b-table>
-
+        <v-btn color="primary" v-on:click="sendRequest">Send request</v-btn>
+        <li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+        <br><br>
+      </v-col>
+      <v-col
+        cols="12"
+        lg="6"
+      >
+        <v-expansion-panels>
+          <v-expansion-panel>
+            <v-expansion-panel-header>Response</v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <table class="table table-hover">
+                <thead>
+                <tr>
+                  <th scope="col">Currency</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Rate</th>
+                  <th scope="col">Interpolated</th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="rt in response" v-bind:key="rt.date">
+                  <td>{{ rt.currency }}</td>
+                  <td>{{ rt.date }}</td>
+                  <td>{{ rt.rate }}</td>
+                  <td>
+                    <span v-if="rt.interpolated">Yes</span>
+                    <span v-else>No</span>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
+            </v-expansion-panel-content>
+            <v-expansion-panel-header>Table</v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-data-table
+                :headers="headers"
+                :items="this.response"
+                :items-per-page="5"
+                class="elevation-1"
+              ></v-data-table>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </v-col>
     </v-row>
-    <v-row align="center" class="ma-4">
-      <v-expansion-panels>
-        <v-expansion-panel>
-          <v-expansion-panel-header>Response</v-expansion-panel-header>
-          <v-expansion-panel-content><pre>{{response}}</pre></v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-expansion-panels>
-    </v-row>
+    <br><br>
     <chart :chartdata="this.chart_data" :options="this.options"
            v-if="this.chart_data !== null"></chart>
   </v-container>
@@ -149,7 +146,28 @@ export default {
   name: 'ExchangeRatesClient',
   data() {
     return {
-      errors: null,
+      search: '',
+      headers: [
+        {
+          text: 'Date',
+          align: 'start',
+          filterable: false,
+          value: 'date',
+        },
+        {
+          text: 'Currency',
+          value: 'currency',
+        },
+        {
+          text: 'Rate',
+          value: 'rate',
+        },
+        {
+          text: 'Interpolated',
+          value: 'interpolated',
+        },
+      ],
+      errors: [],
       showError: false,
       response: null,
       hasResult: false,
@@ -211,25 +229,82 @@ export default {
     },
   },
   methods: {
-    async onSubmit(event) {
-      event.preventDefault();
-      const errors = [];
-      if (this.selected.start_date == null) errors.push('Starting date is empty');
-      if (this.selected.end_date == null) errors.push('Ending date is empty');
-      if (errors.length > 0) {
-        this.errors = errors;
+    checkAllRequired() {
+      return this.selected.start_date !== '' && this.selected.range_of_days !== ''
+        && this.selected.currency !== '' && ((this.selected.range_of_days === 'From date to date'
+          && this.selected.end_date !== '') || this.selected.range_of_days === 'One day');
+    },
+    checkDateRange() {
+      return this.selected.start_date <= this.selected.end_date;
+    },
+    checkDate(date) {
+      return date >= Utils.MIN_DATE && date <= Utils.MAX_DATE;
+    },
+    checkRequiredData() {
+      let errorMessages = [];
+      errorMessages = [];
+      if (this.selected.start_date === '') errorMessages.push('Please select start date.');
+      if (this.selected.range_of_days === '') errorMessages.push('Please select range of days.');
+      if (this.selected.currency === '') errorMessages.push('Please select currency.');
+      if (this.selected.range_of_days === 'From date to date') {
+        if (this.selected.end_date === '') errorMessages.push('Please select end date.');
+      }
+      if (this.checkAllRequired()) {
+        errorMessages = [];
+        if (!this.checkDate(this.selected.start_date)) {
+          errorMessages.push('Start date is out of range.');
+        }
+        if (this.selected.range_of_days === 'From date to date') {
+          if (!this.checkDate(this.selected.end_date)) {
+            errorMessages.push('End date is out of range.');
+          }
+          if (!this.checkDateRange()) {
+            errorMessages.push('Start date cant be after end date.');
+          }
+        }
+      }
+      if (errorMessages.length > 0) {
+        this.errors = errorMessages;
       }
     },
-
-    resetChart() {
-      this.chartdata = null;
+    sendRequest() {
+      this.checkRequiredData();
+      if (this.errors.length === 0) {
+        switch (this.selected.range_of_days) {
+          case 'One day':
+            this.resetChart();
+            this.rateOneDay();
+            break;
+          case 'From date to date':
+            this.resetChart();
+            this.rateFromDateToDate();
+            break;
+          default:
+            break;
+        }
+      }
     },
-    async rate_one_day() {
+    resetChart() {
+      this.errors = [];
+      this.chart_data = null;
+    },
+    resetData() {
+      this.selected.start_date = '';
+      this.selected.end_date = '';
+      this.selected.currency = '';
+      this.selected.range_of_days = '';
+      this.hasResult = false;
+      this.errors = [];
+      this.resetChart();
+    },
+    async rateOneDay() {
       this.hasResult = true;
       const path = `${Utils.SALES_EXCHANGE_RATES_URL}/${Utils.RATES_PATH}/${this.selected.currency}/${this.selected.start_date}`;
       await axios.get(path)
         .then((result) => {
-          this.response = result.data.rates;
+          this.response = result.data.rates.map((el) => ({
+            currency: el.currency, date: el.date, rate: el.rate, interpolated: el.interpolated,
+          }));
           this.prepareRatesChartData();
         })
         .catch((error) => {
@@ -237,13 +312,14 @@ export default {
           console.error(error);
         });
     },
-
-    async rate_from_date_to_date() {
+    async rateFromDateToDate() {
       this.hasResult = true;
       const path = `${Utils.SALES_EXCHANGE_RATES_URL}/${Utils.RATES_PATH}/${this.selected.currency}/${this.selected.start_date}/${this.selected.end_date}`;
       await axios.get(path)
         .then((result) => {
-          this.response = result.data.rates;
+          this.response = result.data.rates.map((el) => ({
+            currency: el.currency, date: el.date, rate: el.rate, interpolated: el.interpolated,
+          }));
           this.prepareRatesChartData();
         })
         .catch((error) => {
@@ -257,16 +333,13 @@ export default {
       let rates = [];
       rates = [];
       this.response.forEach((el) => {
-        console.log(el);
-        console.log(el.date);
-        console.log(el.rate);
         dates.push(el.date);
         rates.push(el.rate);
       });
       this.chart_data = {
         labels: dates,
         datasets: [{
-          label: 'Exchange rates chart',
+          label: this.selected.currency,
           borderColor: '#004D40',
           pointBackgroundColor: '#EF6C00',
           data: rates,
@@ -274,8 +347,7 @@ export default {
         },
         ],
       };
-      console.log(this.chart_data);
-      this.options.scales.yAxes[0].scaleLabel.labelString = 'Sales value';
+      this.options.scales.yAxes[0].scaleLabel.labelString = 'Exchange rate';
       this.options.scales.xAxes[0].scaleLabel.labelString = 'Date';
     },
   },
