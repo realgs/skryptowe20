@@ -53,13 +53,22 @@ Dodatkowo, kreator tworzy tabelę i wykres, obrazując otrzymane dane.
 <br>
 <h2>Ograniczenia API</h2>
 <h3>date, start_date, end_date</h3>
-Daty powinny być w formacie RRRR-MM-DD. Przy miesiącach jednocyfrowych możliwe jest pominięcie zera przy wpisywaniu miesiąca ("2014-01-13" jest równoważne "2014-1-13"). W żądaniach korzystających ze start_date i end_date, end_date nie może wystąpić przed start_date. W przypadku błędnego formatu daty lub złej kolejności dat w zakresie, zostanie zwrócony kod błędu: 400. Daty w bazie danych pochodzą z okresu od 2012-07-01 do 2016-02-29. Możliwe jest jednak zapytanie o daty spoza tego zakresu, wtedy daty spoza zakresu w bazie nie zostaną uwzględnione. Przykładowo, zapytanie o dane między 2012-05-10 do 2012-07-03, zwróci dane od 2012-07-01 do 2012-07-03. Zapytanie przy użyciu tylko jednej daty, jeżeli jest ona spoza zakresu, zwróci pusty wynik.
+Daty powinny być w formacie RRRR-MM-DD. Przy miesiącach jednocyfrowych możliwe jest pominięcie zera przy wpisywaniu
+miesiąca ("2014-01-13" jest równoważne "2014-1-13"). W żądaniach korzystających ze start_date i end_date, end_date nie
+może wystąpić przed start_date. W przypadku błędnego formatu daty lub złej kolejności dat w zakresie, zostanie zwrócony
+kod błędu: 400. Daty w bazie danych pochodzą z okresu od 2012-07-01 do 2016-02-29. Możliwe jest jednak zapytanie o daty
+spoza tego zakresu, wtedy daty spoza zakresu w bazie nie zostaną uwzględnione. Przykładowo, zapytanie o dane między
+2012-05-10 do 2012-07-03, zwróci dane od 2012-07-01 do 2012-07-03. Zapytanie przy użyciu tylko jednej daty, jeżeli jest
+ona spoza zakresu, zwróci pusty wynik.
 
 <h3>currency</h3>
-Dostępne są jedynie dwie waluty do wyboru: PLN (złotówki) i USD (dolary amerykańskie). Wielkość liter nie ma tutaj znaczenia: "PLN", "pln", "pLn" są sobie równoważne. W przypadku błędnie podanej waluty, zostanie zwrócony kod błędu: 400.
+Dostępne są jedynie dwie waluty do wyboru: PLN (złotówki) i USD (dolary amerykańskie). Wielkość liter nie ma tutaj
+znaczenia: "PLN", "pln", "pLn" są sobie równoważne. W przypadku błędnie podanej waluty, zostanie zwrócony kod błędu:
+400.
 
 <h3>liczba żądań</h3>
-Możliwe jest wysłanie 20 żądań na minutę, liczone osobno dla każdego użytkownika. W przypadku przkroczeniu limitu otrzymamy wynik: Too Many Requests.
+Możliwe jest wysłanie 20 żądań na minutę, liczone osobno dla każdego użytkownika. W przypadku przkroczeniu limitu
+otrzymamy wynik: Too Many Requests.
 <br>
 <br>
 <br>
