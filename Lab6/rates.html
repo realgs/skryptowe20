@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Exchange rates</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="dist/Chart.js"></script>
+</head>
+<body>
+    <div class="menu_bg">
+        <div class="menu">
+            <a class="menu-link" href="index.html">
+                <div class="menu-item">
+                    <span>Home</span>
+                    <img src="images/home2.png" alt="Homepage image">
+                </div>
+            </a>
+            <a class="menu-link" href="sales.html">
+                <div class="menu-item">
+                    <span>Sales data</span>
+                    <img src="images/sales2.png" alt="Sales page image">
+                </div>
+            </a>
+            <a class="menu-link" href="rates.html">
+                <div class="menu-item active">
+                    <span>Exchange rates</span>
+                    <img src="images/exchange-rate.png" alt="Rates page image">
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="content">
+        <h1>Exchange rates</h1>
+        <div class="box">
+            <a class="section-title">Generating USD -> PLN rates data</a>
+            <a style="padding-bottom:10px;display:block;">If you would like to know the currency rate from one day, just enter "date from"</a>
+            <p class="date_choose">Date from</p>
+            <p class="date_choose">Date to</p><br>
+            <input class="date_choose" type="date" id="start_date" name="date" min="2011-10-01" max="2014-05-28">
+            <input class="date_choose" type="date" id="end_date" name="date" min="2011-10-01" max="2014-05-28"><br>
+            <input type="submit" id="sub" name="submit_button" class="generate-button" value="Generate">
+            <div id="error_message"></div>
+        </div>
+    </div>
+    <div class="content" id="data">
+    </div>
+
+    <script>
+        document.getElementById("sub").onclick = function() {
+            generate()
+        };
+
+        async function getapidata(url) {
+            fetch(url)
+                .then(response => response.json())
+                .then(data => run(data));
+        }
+
+        function run(data) {
+            show(data);
+            createChart(data);
+        }
+
+        function generate() {
+            const start_date = document.getElementById("start_date").value;
+            let end_date = document.getElementById("end_date").value;
+            let data_is_correct = true;
+            document.getElementById("error_message").innerHTML = ""
+            if (start_date === "") {
+                data_is_correct = false;
+                showErrorMessage('Enter a valid start date.<br>', "error_message")
+            }
+            if (end_date === "") {
+                end_date = start_date
+            }
+            if (end_date < start_date && start_date !== "" && end_date !== "") {
+                data_is_correct = false;
+                showErrorMessage('"date from" must be earlier than "date to"<br>', "error_message")
+            }
+            let first_box;
+            let currency_data_table;
+            let second_box;
+            if (data_is_correct) {
+                console.log()
+                const api_url = "http://127.0.0.1:5000/rates/pln/" + start_date + "/" + end_date;
+                const apiData = getapidata(api_url);
+
+                first_box = document.createElement("div");
+                first_box.setAttribute("class", "box");
+                first_box.setAttribute("id", "fst-box");
+                currency_data_table = document.createElement("table");
+                currency_data_table.setAttribute("id", "rates_table");
+                document.getElementById("data").innerHTML = "";
+                document.getElementById("data").appendChild(first_box);
+                document.getElementById("fst-box").appendChild(currency_data_table);
+                document.getElementById("rates_table").innerHTML = apiData["result"];
+
+                second_box = document.createElement("div");
+                second_box.setAttribute("class", "box");
+                second_box.setAttribute("id", "scd-box");
+                second_box.innerHTML = '<canvas id="myChart" width="400" height="400"></canvas>';
+                document.getElementById("data").appendChild(second_box);
+
+                document.getElementById("error_message").innerHTML = ""
+            }
+        }
+
+        function showErrorMessage(content_to_display, who_display) {
+            const new_element = document.createElement("a");
+            new_element.style.color = "#FC6749";
+            new_element.innerHTML = content_to_display;
+            document.getElementById(who_display).appendChild(new_element);
+            document.getElementById("data").innerHTML = "";
+        }
+
+        function show(data) {
+            let tab =  "<thead><tr><th>Date</th><th>Middle rate</th><th>Is interpolated</th></tr></thead>";
+            const mid_tab = [];
+            for (let r of data["result"]["rates"]) {
+                tab += '<tr><td>' + r["date"] + '</td><td>' + r["mid"] + '</td><td>' + r["interpolated"] + '</td></tr>';
+                mid_tab.push(r["mid"]);
+            }
+            document.getElementById("rates_table").innerHTML = tab;
+        }
+
+        function createChart(data) {
+            const dataFromChart = saveToChart(data);
+            const dateDataFromChart = getApiDate(data);
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: dataFromChart[0],
+                    datasets: [{
+                        label: 'Exchange rate',
+                        data: dataFromChart[1],
+                        backgroundColor: function (context) {
+                            var index = context.dataIndex;
+                            var value = dataFromChart[2][index]
+                            return value === true ? 'rgba(255, 99, 132, 0.8)' :
+                                'rgba(54, 162, 235, 0.8)';
+                        }
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+        }
+
+
+        function saveToChart(data) {
+            const date = [];
+            for (let r of data["result"]["rates"]) {
+                date.push(r["date"]);
+            }
+            const mid = [];
+            for (let r of data["result"]["rates"]) {
+                mid.push(r["mid"]);
+            }
+            const interpolated = [];
+            for (let r of data["result"]["rates"]) {
+                interpolated.push(r["interpolated"]);
+            }
+
+            return [date, mid, interpolated];
+        }
+
+        function getApiDate(data) {
+            const dates = [];
+            for (let r of data["result"]["rates"]) {
+                dates.push(r["date"]);
+            }
+            return dates;
+        }
+    </script>
+</body>
+</html>
