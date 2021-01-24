@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rates and sales API</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div class="menu_bg">
+        <div class="menu">
+            <a class="menu-link" href="index.html">
+                <div class="menu-item active">
+                    <span>Home</span>
+                    <img src="images/home.png" alt="Homepage image">
+                </div>
+            </a>
+            <a class="menu-link" href="sales.html">
+                <div class="menu-item">
+                    <span>Sales data</span>
+                    <img src="images/sales2.png" alt="Sales page image">
+                </div>
+            </a>
+            <a class="menu-link" href="rates.html">
+                <div class="menu-item">
+                    <span>Exchange rates</span>
+                    <img src="images/exchange-rate2.png" alt="Rates page image">
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="content">
+        <h1>Rates and sales API</h1>
+        <div class="box">
+            <p>An application that allows you to download currency rates and the total daily sales from the store database using the API</p>
+            <h3>Data sources</h3>
+            <p>Used database supplemented with needed tables:</p>
+            <a class="other-link" href="https://github.com/Microsoft/sql-server-samples/releases/download/adventureworks/AdventureWorks2019.bak">
+                <p>https://github.com/Microsoft/sql-server-samples/releases/download/adventureworks/AdventureWorks2019.bak</p>
+            </a>
+            <p style="display: inline">
+                <span>Exchange rates are obtained from </span>
+                <a class="other-link" href="http://api.nbp.pl/">http://api.nbp.pl/</a>
+                <span> supplemented with interpolated </span>
+                <span>rates not found in NBP API.</span>
+            </p>
+            <h4>Where can I find the source code?</h4>
+            <a class="other-link" href="https://github.com/ShakiMan/skryptowe20/tree/Lab5">https://github.com/ShakiMan/skryptowe20/tree/Lab5</a>
+            <h2>Get started</h2>
+            <h3>Install packages</h3>
+            <p>In source code folder's directory run:</p>
+            <p class="api-info">pip install -r requirements.txt</p>
+            <h2>Usage</h2>
+            <h3>Useful information</h3>
+            <p style="display: inline">
+                <span>By default, the application starts at: </span>
+                <span class="api-info">http://127.0.0.1:5000/</span>
+            </p>
+            <p>Date format: YYYY-MM-DD (e.g. 2013-07-23)</p>
+            <p>Currency format: XXX (e.g. PLN)</p>
+            <h3>Available API functionalities</h3>
+            <p>- Request for currency rates:</p>
+            <p class="api-info">http://127.0.0.1:5000/rates/currency/date_from/date_to</p>
+            <p>- Request for currency sales:</p>
+            <p class="api-info">http://127.0.0.1:5000/sales/currency/date</p>
+            <p>All that functionalities is also available here on that page.</p>
+        </div>
+    </div>
+</body>
+</html>

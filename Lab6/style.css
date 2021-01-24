@@ -1,0 +1,150 @@
+
+.menu .menu-link {
+    display: inline-block;
+    position: center;
+    width: 200px;
+}
+
+.menu a, .menu a:link, .menu:visited {
+    underline: none !important;
+    text-decoration: none !important;
+}
+
+.menu .menu-link span, .menu .menu-link span:link, .menu .menu-link span:visited {
+    text-decoration: none !important;
+    color: rgba(255,255,255,0.6);
+    underline: none !important;
+}
+
+.menu .menu-item {
+    position: relative;
+    width: 200px;
+    list-style: none;
+    transition: opacity ease .2s;
+    display: table-cell;
+    vertical-align: middle;
+    height: 60px;
+    padding-left: 15px;
+    padding-right: 30px;
+    text-decoration: none;
+    underline: none;
+    border-radius: 20px;
+}
+
+.menu .menu-link:hover .menu-item {
+}
+
+.menu .menu-item.active span{
+    color: #ffffff !important;
+}
+
+.menu img {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    vertical-align: middle;
+    border-radius: .25rem;
+    top: 6px;
+    right: 10px;
+    display: inline-block;
+}
+
+.menu {
+    font-weight: 400;
+    top: 0;
+    display: block;
+    overflow: hidden;
+    width: 610px;
+    height: 60px;
+    margin-left: auto;
+    margin-right: auto;
+    transition: transform ease .2s;
+    color: #8492a6;
+}
+
+.menu_bg {
+    background-color: #25233c;
+    width: 100%;
+    height: 60px;
+    position: fixed;
+    top: 0;
+}
+
+.content {
+    display: block;
+    width: 70%;
+    max-width: 1080px;
+    margin-right: auto;
+    margin-left: auto;
+    height: 100%;
+    border-radius: 30px;
+}
+
+body {
+    background-color: #f0f0ff;
+    top: 0;
+    left: 0;
+    margin: 0;
+    font-family: sans-serif;
+}
+
+.date_choose {
+    width: 13%;
+    display: inline-block;
+}
+
+.box {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 30px;
+    margin-bottom: 30px;
+}
+
+h1 {
+    font-size: 24px;
+    color: #170c6b;
+    margin-bottom: 30px;
+    margin-top: 100px;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+}
+
+h2, h3, h4, h5, h6 {
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+    margin-top: 30px;
+}
+
+p {
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.generate-button {
+    margin-top: 10px;
+    padding: 5px;
+    background-color: #6259ca;
+    border: 0px solid;
+    border-radius: 8px;
+    color: #ffffff;
+}
+
+#rates_table td {
+    width: 200px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    text-align: center;
+}
+
+#rates_table {
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 610px;
+}
+
+.select-div {
+    margin-top: 10px;
+}
