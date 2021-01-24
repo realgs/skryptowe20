@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'View.css' %}">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+</head>
+
+<body class="back">
+  <nav class="navbar navbar-light bg-dark">
+    <form class="container-fluid justify-content-start">
+
+      <div class="spacing">
+        <a class="btn btn-large btn-info" href="http://127.0.0.1:8000/">Menu</a>
+      </div>
+      <div class="spacing">
+        <a class="btn btn-large btn-warning" href="http://127.0.0.1:8000/charts">Chart</a>
+      </div>
+    </form>
+  </nav>
+
+  <div class="container">
+    <h1>Rate</h1>
+    <div class="row">
+      <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          <div id='output' class="alert alert-primary" role="alert"></div>
+          <h5 class="card-title">Rate </h5>
+          <p class="card-text">Test Rate in 2019-05-05</p>
+          <input id='submit' name=submit type="submit" value="Check"
+            style="background:#ff9933; color:white; border:2px solid transparent; height:30px; width:80px">
+        </div>
+      </div>
+
+
+      <div class="card" style="width: 30rem;">
+        <div class="card-body">
+          <div id='output2' class="alert alert-primary" role="alert"></div>
+          <input id="RateDate" type="text" value="2020-07-05">
+          <h5 class="card-title">Rate </h5>
+          <p class="card-text">Rate in Date</p>
+          <input id='rateSubmit' name=rateSubmit type="submit" value="Check"
+            style="background:#ff9933; color:white; border:2px solid transparent; height:30px; width:80px">
+        </div>
+      </div>
+
+      <div class="card" style="width: 30rem;">
+        <div class="card-body">
+          <div id='outputRange' class="alert alert-primary" role="alert"></div>
+          <div id='outputRange2' class="alert alert-primary" role="alert"></div>
+          <input id="multi1" value="2020-04-03" type="text">
+          <input id="multi2" value="2020-04-07" type="text">
+          <h5 class="card-title">Rate Range</h5>
+          <p class="card-text">Rate Range between two dates</p>
+          <input id='multi' name=rateSubmit type="submit" value="Check"
+            style="background:#ff9933; color:white; border:2px solid transparent; height:30px; width:80px">
+        </div>
+      </div>
+    </div>
+
+    <h1>Sales</h1>
+    <div class="row">
+      <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          <h5>USD Sales</h3>
+            <div id='salesUSD' class="alert alert-primary" role="alert"></div>
+            <h5>PLN Sales</h5>
+            <div id='salesPLN' class="alert alert-primary" role="alert"></div>
+            <h5 class="card-title">Sales </h5>
+            <p class="card-text">Sales in 2019-05-05 </p>
+            <input id='sales' name=submit type="submit" value="Check"
+              style="background:#ff9933; color:white; border:2px solid transparent; height:30px; width:80px">
+        </div>
+      </div>
+
+      <div class="card" style="width: 18rem;">
+        <div class="card-body">
+          <h5>USD Sales</h3>
+            <div id='salesUSDoutput' class="alert alert-primary" role="alert"></div>
+            <h5>PLN Sales</h5>
+            <div id='salesPLNoutput' class="alert alert-primary" role="alert"></div>
+            <input id="SalesDateRange" type="text">
+            <h5 class="card-title">Sales </h5>
+            <p class="card-text">Sales in Date </p>
+            <input id='sales2' name=submit type="submit" value="Check"
+              style="background:#ff9933; color:white; border:2px solid transparent; height:30px; width:80px">
+        </div>
+      </div>
+      
+      <div class="card" style="width: 30rem;">
+        <div class="card-body">
+          <h5>Dates:</h5>
+          <div id='outputRangeSales' class="alert alert-primary" role="alert"></div>
+          <h5>PLN Sales</h5>
+          <div id='outputRangeSales2' class="alert alert-primary" role="alert"></div>
+          <h5>PLN Sales</h5>
+          <div id='outputRangeSales3' class="alert alert-primary" role="alert"></div>
+          <input id="multiSales" value="2020-04-03" type="text">
+          <input id="multiSales2" value="2020-04-07" type="text">
+          <h5 class="card-title">Sales Range</h5>
+          <p class="card-text">Sales Range between two dates</p>
+          <input id='multiSal' name=rateSubmit type="submit" value="Check"
+            style="background:#ff9933; color:white; border:2px solid transparent; height:30px; width:80px">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+  <script type="application/javascript" src={% static 'ValuesApi.js' %}></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>
