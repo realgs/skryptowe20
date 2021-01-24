@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% load static %}
+        <link rel="stylesheet" type="text/css" href="{% static 'index.css' %}">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">     
+    </head>
+    <body class="back">
+       
+        <nav class="navbar navbar-light bg-dark">
+            <form class="container-fluid justify-content-start">
+              <button class="btn btn-outline-success me-2" type="button">Main button</button>
+              <div class="spacing">
+                <a class="btn btn-large btn-info"  href="second/">Rate and Sales Currency</a>
+              </div>
+              <div class="spacing" >
+                <a class="btn btn-large btn-warning" href="charts/">Chart</a>
+              </div>
+            </form>
+        </nav>
+        
+        <div class="spacing">
+         <h1 class = "introduction" >API Rates and Sales</h1>
+         <h2>Introduction</h2> 
+         <p class = "intro" >My api is used to get the value of currencies rates and the total sales in a small Cortland store in 2020-2018.</p>
+         <h2 class = " " >Running the server</h2>
+         <p>Navigate to project directory and create virtual environment:</p>
+         <div class="container">
+            <p class ="parametr">python -m venv venv<br>
+                venv\Scripts\Activate</p>
+         </div>
+
+        <p>also you need to install following dependencies:</p>
+
+        <div class="container">
+            <p class ="parametr">pip install django<br>
+                pip install djangorestframework</p>
+        </div>
+
+        <p>Migrate and run application:</p>
+        <div class="container">
+            <p class ="parametr">  python manage.py migrate <br>
+                python manage.py runserver</p>
+        </div>
+
+        <h1 class="introduction">Example API Usage</h1>
+
+        <h2>Rates</h2>
+        <p>For the convenience and testing of the application, I have set a default day if we do not provide parameters.</p>
+        <div class="container">
+            <p class ="parametr">http://127.0.0.1:8000/rate</p>
+        </div>
+
+       <p>Returned data:</p>
+        <div class="container">
+        <p class ="parametr">{<br>
+            "ID": 214,<br>
+            "Date": "2019-05-11",<br>
+            "Rate USD": 3.8242,<br>
+            "Interpolated": true<br>
+        }</p>
+        </div>
+        <p>If we want to choose a specific day, than:</p>
+
+        <div class="container">
+        <p class ="parametr">http://127.0.0.1:8000/rate/{date}</p>
+        </div>
+
+        <p>Example:</p>
+        <div class="container">
+            <p class ="parametr">http://127.0.0.1:8000/rate/2018-12-12</p>
+        </div>
+
+        <p>Returned data:</p>
+        <div class="container">
+            <p class ="parametr">{<br>
+                "ID": 64,<br>
+                "Date": "2018-12-12",<br>
+                "Rate USD": 3.7934,<br>
+                "Interpolated": false<br>
+            }</p>
+        </div>
+
+        <p>If we want to choose a date range:</p>
+        <div class="container">
+            <p class ="parametr">http://127.0.0.1:8000/rate/dates/{fromeDate}/{toDate}</p>
+        </div>
+        <p>Example:</p>
+        <div class="container">
+            <p class ="parametr">http://127.0.0.1:8000/rate/dates/2019-06-15/2019-06-18</p>
+        </div>
+        <p>Returned data:</p>
+        <div class="container">
+            <p class ="parametr">[<br>
+                {<br>
+                    "Date": "2019-06-15",<br>
+                    "Rate": 3.7727,<br>
+                    "Interpolated": "True"<br>
+                },<br>
+                {<br>
+                    "Date": "2019-06-16",<br>
+                    "Rate": 3.7727,<br>
+                    "Interpolated": "True"<br>
+                },<br>
+                {<br>
+                    "Date": "2019-06-17",<br>
+                    "Rate": 3.7989,<br>
+                    "Interpolated": "False"<br>
+                },<br>
+                {<br>
+                    "Date": "2019-06-18",<br>
+                    "Rate": 3.8097,<br>
+                    "Interpolated": "False"<br>
+                }<br>
+            ]</p>
+        </div>
+
+        <h2>Sales</h2>
+        <p>Total sales on the default date. (for quick testing)</p>
+        <div class="container">
+            <p class ="parametr">http://127.0.0.1:8000/sales/</p>
+        </div>
+        <p>Returned data:</p>
+        <div class="container">
+            <p class ="parametr">{<br>
+                "ID": 522,<br>
+                "Date": "2019-05-07",<br>
+                "In PLN sales": 56163,<br>
+                "IN USD sales": 214980.73<br>
+            }</p>
+        </div>
+        <p>If we want to choose a specific day, than:</p>
+        <div class="container">
+            <p class ="parametr">http://127.0.0.1:8000/sales/{date}</p>
+        </div>
+        <p>Example:</p>
+        <div class="container">
+            <p class ="parametr">http://127.0.0.1:8000/sales/2019-05-05</p>
+        </div>
+        <p>Returned data:</p>
+        <div class="container">
+            <p class ="parametr">{<br>
+                "ID": 524,<br>
+                "Date": "2019-05-05",<br>
+                "In PLN sales": 55449,<br>
+                "IN USD sales": 211687.65<br>
+            }</p>
+        </div>
+    </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script> 
+    </body>
+</html>

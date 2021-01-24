@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% load static %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'View.css' %}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+</head>
+
+<body class="back">
+    <nav class="navbar navbar-light bg-dark">
+        <form class="container-fluid justify-content-start">
+
+            <div class="spacing">
+                <a class="btn btn-large btn-info" href="http://127.0.0.1:8000/">Menu</a>
+            </div>
+            <div class="spacing">
+                <a class="btn btn-large btn-warning" href="http://127.0.0.1:8000/second">Sales and Rates</a>
+            </div>
+        </form>
+    </nav>
+
+
+    <h1 id="chart">CHARTS</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg">
+                <div class="card" style="width: 35rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Rate </h5>
+                        <div id="Worning" class="alert alert-primary" role="alert"></div>
+                        <input id="RateDate1" value="2019-04-05" type="text">
+                        <input id="RateDate2" value="2019-10-05" type="text">
+                        <p class="card-text">Rate in Date</p>
+                        <input id='rateSubmit' name=rateSubmit type="submit" value="Draw"
+                            style="background:#ff9933; color:white; border:2px solid transparent; height:30px; width:80px">
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg">
+                <div class="card" style="width: 35rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">Sales</h5>
+                        <div id="Worning2" class="alert alert-primary" role="alert"></div>
+                        <input id="RateDate11" value="2019-01-05" type="text">
+                        <input id="RateDate22" value="2019-06-05" type="text">
+
+                        <p class="card-text">Sale of all products</p>
+                        <input id='rateSubmit2' name=rateSubmit type="submit" value="Draw"
+                            style="background:#ff9933; color:white; border:2px solid transparent; height:30px; width:80px">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="chart-container" style="position: relative; height:1000px; width:1000px">
+                <canvas id="myChart"></canvas>
+            </div>>
+        </div>
+    </div>
+    </div>
+
+
+
+
+
+    <script>
+        function draw() {
+            var daty = [];
+            var values = [];
+            var temp = document.querySelector('#RateDate1').value;
+            var temp2 = document.querySelector('#RateDate2').value;
+            var tt = "/";
+            var url = 'http://127.0.0.1:8000/rate/dates/';
+            var merged = url.concat(temp, tt, temp2);
+            fetch(merged)
+                .then(response => response.json())
+                .then(json => {
+                    if (json["Wrong value"] == "Wrong link") {
+                        document.querySelector('#Worning').innerHTML = "Błędna data lub format";
+                    } else {
+                        document.querySelector('#Worning').innerHTML = "OK";
+                        const daty = json.map(e => e.Date);
+                        const values = json.map(e => e.Rate);
+
+                        var count = 0;
+
+                        for (var prop in daty) {
+                            if (daty.hasOwnProperty(prop))
+                                ++count;
+                        }
+
+                        if (count < 4) {
+                            const ctx = document.getElementById('myChart').getContext('2d');
+                            const myChart = new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                    labels: daty,
+                                    datasets: [{
+                                        label: 'Dolar',
+                                        data: values,
+                                        backgroundColor: [
+                                            'rgba(255, 99, 132, 0.2)',
+                                            'rgba(255, 170, 32, 0.2)',
+                                            'rgba(55, 10, 32, 0.2)',
+                                        ],
+                                        borderColor: [
+                                            'rgba(255, 99, 132, 1)',
+                                            'rgba(255, 170, 32, 1)',
+                                            'rgba(55, 10, 32, 1)',
+                                        ],
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    scales: {
+                                        yAxes: [{
+                                            ticks: {
+                                                beginAtZero: true
+                                            }
+                                        }]
+                                    }
+                                }
+                            });
+
+                        }
+                        else {
+                            const ctx = document.getElementById('myChart').getContext('2d');
+                            const myChart = new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: daty,
+                                    datasets: [{
+                                        label: 'Dolar',
+                                        data: values,
+                                        backgroundColor: [
+                                            'rgba(255, 99, 132, 0.2)',
+                                        ],
+                                        borderColor: [
+                                            'rgba(255, 99, 132, 1)',
+
+                                        ],
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    scales: {
+                                        yAxes: [{
+                                            ticks: {
+                                                beginAtZero: true
+                                            }
+                                        }]
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+        }
+
+        function drawSales() {
+            var temp = document.querySelector('#RateDate11').value;
+            var temp2 = document.querySelector('#RateDate22').value;
+            var tt = "/";
+            var url = 'http://127.0.0.1:8000/sales/dates/';
+            var merged = url.concat(temp, tt, temp2);
+            fetch(merged)
+                .then(response => response.json())
+                .then(json => {
+                    if (json["Wrong value"] == "Wrong link") {
+                        document.querySelector('#Worning2').innerHTML = "Błędna data lub format";
+                    } else {
+                        document.querySelector('#Worning2').innerHTML = "OK";
+                        const daty = json.map(e => e.Date);
+                        const values = json.map(e => e.USD);
+                        const values2 = json.map(e => e.PLN);
+
+                        var count = 0;
+
+                        for (var prop in daty) {
+                            if (daty.hasOwnProperty(prop))
+                                ++count;
+                        }
+                        if (count < 5) {
+                            const ctx = document.getElementById('myChart').getContext('2d');
+                            const myChart = new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                    labels: daty,
+                                    datasets: [{
+                                        label: 'Dolar',
+                                        data: values,
+                                        backgroundColor: [
+                                            'rgba(255, 99, 132, 0.2)',
+                                            'rgba(255, 170, 32, 0.2)',
+                                            'rgba(55, 10, 32, 0.2)',
+                                        ],
+                                        borderColor: [
+                                            'rgba(255, 99, 132, 1)',
+                                            'rgba(255, 170, 32, 1)',
+                                            'rgba(55, 10, 32, 1)',
+                                        ],
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    scales: {
+                                        yAxes: [{
+                                            ticks: {
+                                                beginAtZero: true
+                                            }
+                                        }]
+                                    }
+                                }
+                            });
+
+                        }
+                        else {
+                            const ctx = document.getElementById('myChart').getContext('2d');
+                            const myChart = new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: daty,
+                                    datasets: [{
+                                        label: 'Dolar',
+                                        data: values,
+                                        backgroundColor: [
+                                            'rgba(255, 99, 132, 0.2)',
+
+                                        ],
+                                        borderColor: [
+                                            'rgba(255, 99, 132, 1)',
+
+                                        ],
+                                        borderWidth: 1
+                                    }, {
+                                        label: 'PLN',
+                                        data: values2,
+                                        backgroundColor: [
+                                            'rgba(255, 150, 1, 0.2)',
+
+                                        ],
+                                        borderColor: [
+                                            'rgba(255, 150, 1, 1)',
+
+                                        ],
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    scales: {
+                                        yAxes: [{
+                                            ticks: {
+                                                beginAtZero: true
+                                            }
+                                        }]
+                                    }
+                                }
+
+                            });
+                        }
+                    }
+                });
+        }
+        document.querySelector('#rateSubmit').onclick = () => draw();
+        document.querySelector('#rateSubmit2').onclick = () => drawSales();
+    </script>
+</body>
+
+</html>

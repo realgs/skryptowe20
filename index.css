@@ -1,0 +1,22 @@
+.introduction {
+    text-align: center;
+}
+
+.back {
+    background-color: rgb(231, 171, 93);
+}
+
+h2 {
+    margin-left: 100px;
+    margin-right: 100px;
+}
+
+.parametr {
+    background-color: rgb(211, 75, 58);
+    padding: 10px;
+}
+
+p {
+    margin-left: 200px;
+    margin-right: 200px;
+}
