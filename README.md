@@ -1,4 +1,4 @@
-﻿# Exchange rates and sales API
+# Exchange rates and sales API
 ## Description
 
 Exchange rates and sales API is a service for historical foreign exchange rates published by the National Bank of Poland (http://api.nbp.pl/) and sales data in **json** format. Sales data come from the database (*‘database.db’*) shared in this repository.
@@ -7,6 +7,7 @@ Exchange rate data and sales data are available **from 2014-12-28 to 2016-12-28*
 ## Project structure
 * `wsgi.py` - startup script
 * `my_requirements.txt` - contains a set of required packages
+* `frontend/` - Vue.js user interface
 * `lab5_solutions/api.py` - script responsible for the functioning of the API
 * `lab5_solutions/currency.py` - currencies available in the application
 * `lab5_solutions/database.db` - database file containing sales and exchange rates data
@@ -15,6 +16,7 @@ Exchange rate data and sales data are available **from 2014-12-28 to 2016-12-28*
 * `lab5_solutions/nbp_api.py` - script containing the function to manage client for the NBP API
 * `lab5_solutions/utils.py` - contains useful variables
 * `lab5_solutions/templates/home.html` - HTML document for the start page
+
 
 
 
