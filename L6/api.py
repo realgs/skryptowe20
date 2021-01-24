@@ -40,7 +40,7 @@ def beutify_markings(markings):
 
     for (date, rate, currency_code, interpolated) in markings:
         if interpolated: markings_array.append( { 'date': date, 'rate': rate, 'currency': currency_code, 'interpolated': True } )
-        else: interpolated: markings_array.append( { 'date': date, 'rate': rate, 'currency': currency_code, 'interpolated': False } )
+        else: markings_array.append( { 'date': date, 'rate': rate, 'currency': currency_code, 'interpolated': False } )
 
     return markings_array
 
@@ -54,19 +54,20 @@ def get_sales_from_cache(date_from):
         return row
 
 
+
+@app.route('/')
+def home():
+    return render_template("public/index.html")
+
+@app.route('/demo')
+def demo():
+    return render_template("public/demo.html")
+
 @app.route("/ping")
 @limiter.exempt
 def ping():
     return {"response":"PONG"}
 
-
-@app.route('/', methods=['GET'])
-def home():
-    return render_template("public/index.html")
-
-@app.route('/demo', methods=['GET'])
-def demo():
-    return render_template("public/demo.html")
 
 @app.errorhandler(400)
 def bad_request(e):

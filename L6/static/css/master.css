@@ -1,0 +1,71 @@
+@font-face {
+    font-family: "Bahnschrift";
+    src: url("../fonts/BAHNSCHRIFT.TTF");
+}
+
+* {
+    box-sizing: border-box;
+}
+
+p, ul, ol, li, a, table {
+    font-family: "Bahnschrift";
+    margin-top: 0;
+}
+
+h1, h2, h3, h4, h1 *, h2 *, h3 *, h4 * {
+    font-family: "Lucida Grande";
+    margin: 0;
+}
+
+a:link {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.pickable{
+    border-bottom: 0 solid black;
+    border-width: 0;
+    transition: 0.1s ease-in border-width;
+}
+
+.pickable:hover, .picked {
+    text-decoration: none;
+    border-width: 1.5px;
+}
+
+td {
+    padding: 0.3em;
+    background-color: rgba(230, 220, 100, 0.3);
+    text-align: right;
+}
+
+td.interpolated {
+    background-image: url('../img/tick@2x.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.hidden {
+    display: none !important;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+}
+
+#app {
+    order: 2;
+}
+
+#demo_chart {
+    order: 1;
+    /* max-height: 300px; */
+    max-width: 800px;
+    height: auto;
+}

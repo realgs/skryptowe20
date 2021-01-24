@@ -26,15 +26,15 @@ def get_daily_currency_markings(currency_code, date, max_hops = DEFAULT_MAX_HOPS
             previous_day = (date - datetime.timedelta(1))
 
             if max_hops > 0:
-                return { date: (get_daily_currency_markings(currency_code, previous_day, max_hops - 1)[previous_day][0], False) }
+                return { date: (get_daily_currency_markings(currency_code, previous_day, max_hops - 1)[previous_day][0], True) }
             else:
-                return {date: (-1.0, False)}
+                return {date: (-1.0, True)}
         else:
             print('GET', currency_code, 'from', date_string, 'error', response.status_code)
             return {}
     else:
         rate = response.json()['rates'][0]
-        return { string_to_datetime(rate['effectiveDate']) : (rate['mid'], True) }
+        return { string_to_datetime(rate['effectiveDate']) : (rate['mid'], False) }
 
 def fill_uneffecive_markings(markings, currency_code, date_from, date_to):
     if markings:
@@ -46,7 +46,7 @@ def fill_uneffecive_markings(markings, currency_code, date_from, date_to):
 
             if date_from not in markings:
                 print("filling marking for ", date_from)
-                markings[date_from] = (markings[date_from - datetime.timedelta(1)][0], False)
+                markings[date_from] = (markings[date_from - datetime.timedelta(1)][0], True)
 
     return dict(sorted(markings.items()))
 
@@ -62,7 +62,7 @@ def get_currency_markings(currency_code, date_from, date_to):
             print('GET', currency_code, 'from', date_from_string, 'to', date_to_string, 'error', response.status_code)
         else:
             for rate in response.json()['rates']:
-                markings[string_to_datetime(rate['effectiveDate'])] = (rate['mid'], True)
+                markings[string_to_datetime(rate['effectiveDate'])] = (rate['mid'], False)
 
     except Exception as exception:
         print('something went wrong with the request: ', exception)

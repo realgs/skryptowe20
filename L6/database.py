@@ -94,7 +94,7 @@ def insert_into_markings(markings_dictionary, currency_code='USD'):
 
 def select_sales_data(date_from, date_to):
     select_body = "\
-        SELECT exchange_date, IFNULL(mid_price * SUM(sales), 0), IFNULL(SUM(sales), 0) \
+        SELECT exchange_date, IFNULL(SUM(sales)/mid_price, 0), IFNULL(SUM(sales), 0) \
         FROM SalesOrder LEFT JOIN markings \
         ON markings.exchange_date = SalesOrder.order_date \
         WHERE SalesOrder.order_date BETWEEN '" + date_from.strftime("%Y-%m-%d") + "' AND '" + date_to.strftime("%Y-%m-%d") + \
@@ -124,7 +124,7 @@ def get_sales_from_period(date_from, date_to):
 
     for (currency_code, ) in get_available_currencies():
         select_body = "\
-            SELECT exchange_date, IFNULL(mid_price * SUM(sales), 0) \
+            SELECT exchange_date, IFNULL(SUM(sales)/mid_price, 0) \
             FROM SalesOrder LEFT JOIN markings \
             ON markings.exchange_date = SalesOrder.order_date \
             WHERE currency_code = '" + currency_code + "' AND SalesOrder.order_date BETWEEN '" + date_from.strftime("%Y-%m-%d") + "' AND '" + date_to.strftime("%Y-%m-%d") + \
@@ -153,7 +153,7 @@ def get_daily_sales(date):
 
         for (currency_code, ) in get_available_currencies():
             select_body = "\
-                SELECT exchange_date, IFNULL(mid_price * SUM(sales), 0) \
+                SELECT exchange_date, IFNULL(SUM(sales)/mid_price, 0) \
                 FROM SalesOrder LEFT JOIN markings \
                 ON markings.exchange_date = SalesOrder.order_date \
                 WHERE currency_code = '" + currency_code + "' AND SalesOrder.order_date = '" + date.strftime("%Y-%m-%d") + \
@@ -166,7 +166,13 @@ def get_daily_sales(date):
         connection.close()
         return sales_data
 
-    else: return { 'date' : date.strftime("%Y-%m-%d"), 'PLN' : 0 }
+    else:
+        sales_data = { 'date' : date.strftime("%Y-%m-%d"), 'PLN' : 0 }
+
+        for (currency_code, ) in get_available_currencies():
+            sales_data.update({ currency_code: 0 })
+
+        return sales_data
 
 def refill_markings(currency_code, database_from, database_to):
     assure_markings()
@@ -279,4 +285,8 @@ if __name__ == "__main__":
     print(check_currency_availability("USD"))
     print(get_oldest_marking_date("USD"))
     print(get_oldest_marking_date())
-    # print(get_table("markings"))
+    print(get_table("markings"))
+
+    # database_from = currency_API.string_to_datetime('2014-10-16')
+    # database_to = currency_API.string_to_datetime('2014-12-16')
+    # print(currency_API.get_currency_markings_from_date_range('USD', database_from, database_to))
