@@ -6,6 +6,7 @@ import MyTable from "../components/Table";
 import Chart from "../components/Chart";
 import ToggleSwitch from "../components/ToggleSwitch";
 import { SingleSelect } from "../components/Select";
+import moment from "moment";
 
 const Sales = ({
   startDate,
@@ -77,8 +78,9 @@ const Sales = ({
         <DatePicker date={endDate} setDate={setEndDate} />
         {itemsMinMaxDates && (
           <p>
-            Note that dates are between range: {itemsMinMaxDates["min_date"]} -{" "}
-            {itemsMinMaxDates["max_date"]}
+            Note that dates are between range:{" "}
+            {moment(itemsMinMaxDates["min_date"]).format("l")} -{" "}
+            {moment(itemsMinMaxDates["max_date"]).format("l")}
           </p>
         )}
 
