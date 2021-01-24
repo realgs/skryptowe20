@@ -1,1 +1,11 @@
 .DS_Store
+.idea/
+venv
+lab4/__pycache__/
+Django_API/__pycache__/manage.cpython-37.pyc
+lab4/usd_euro_to_pln_chart.svg
+lab4/
+Django_API/api_exchange/__pycache__/
+Django_API/api_exchange/migrations/
+Django_API/cache/
+Django_API/Django_API/__pycache__/
