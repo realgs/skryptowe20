@@ -14,6 +14,7 @@ const Ratings = ({
   setEndDate,
   toggle,
   setToggle,
+  itemsMinMaxDates,
 }) => {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -75,6 +76,12 @@ const Ratings = ({
         <DatePicker date={startDate} setDate={setStartDate} />
         <label>Pick end date:</label>
         <DatePicker date={endDate} setDate={setEndDate} />
+        {itemsMinMaxDates && (
+          <p>
+            Note that dates are between range: {itemsMinMaxDates["min_date"]} -{" "}
+            {itemsMinMaxDates["max_date"]}
+          </p>
+        )}
 
         <ToggleSwitch
           optionLabels={["Table", "Chart"]}

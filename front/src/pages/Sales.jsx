@@ -14,6 +14,7 @@ const Sales = ({
   setEndDate,
   toggle,
   setToggle,
+  itemsMinMaxDates,
 }) => {
   const decimalPoints = 4;
   const [error, setError] = useState(null);
@@ -74,6 +75,13 @@ const Sales = ({
         <DatePicker date={startDate} setDate={setStartDate} />
         <label>Pick end date:</label>
         <DatePicker date={endDate} setDate={setEndDate} />
+        {itemsMinMaxDates && (
+          <p>
+            Note that dates are between range: {itemsMinMaxDates["min_date"]} -{" "}
+            {itemsMinMaxDates["max_date"]}
+          </p>
+        )}
+
         <SingleSelect
           selectedValue={selectedValue}
           handleChange={handleChange}

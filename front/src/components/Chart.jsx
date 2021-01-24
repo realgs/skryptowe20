@@ -20,7 +20,7 @@ const Chart = ({ data, selectedValues, xLabel, yLabel }) => {
 
   return (
     <>
-      {Array.isArray(data) && data.length == 1 ? (
+      {Array.isArray(data) && data.length === 1 ? (
         <BarChart
           width={700}
           height={500}
