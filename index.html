@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Api project</title>
+
+  <link href="./static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <link href="./static/css/scrolling-nav.css" rel="stylesheet">
+
+</head>
+
+<body id="page-top">
+
+  <div id="app">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+      <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="#page-top">Home page</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive"
+          aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#about">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link js-scroll-trigger" href="#examples">Examples</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <header class="bg-primary text-white">
+      <div class="container text-center">
+        <h1>Api project</h1>
+        <p class="lead">Michał Chrobot</p>
+      </div>
+    </header>
+
+    <section id="about">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <h1>About this page</h1>
+            <p class="lead">This API allows you to obtain data on the USD exchange rate against PLN from NBP API
+              supplemented with data from weekends and holidays.
+              You can also access total sales data from provided database using this api.</p><br>
+            <h3>Manual</h3>
+            <hr />
+            <p>
+              API requests return data in JSON format. Data on exchange rates are available from the beginning of the
+              records kept by the NBP until yesterday.
+              Data collected from the database and concerning sales are available from <strong>2012-07-04</strong> to
+              <strong>2016-02-19</strong>.
+            </p>
+            <h6>Actually supported currencies:</h6>
+            <ul>
+              <li>USD</li>
+            </ul>
+            <h6>API uses rate limiting: </h6>
+            <ul>
+              <li>Currency rate inquiries for a specific day or sales inquiries from a database for a specific day:
+                <strong>10 per minute</strong>
+              </li>
+              <li>Date range currency rate queries or date range database sales queries: <strong>60 per minute</strong>
+              </li>
+              <li>General limit on all Api inquiries: <strong>200 per minute</strong></li>
+            </ul>
+            <p>After the limit has been surpassed new request will result in <strong>429</strong> Too Many Requests
+              error.
+            </p>
+            <h6>Request parameters:</h6>
+            <ul>
+              <li><i>{ratingDate}</i>, <i>{salesDate}</i>, <i>{dateFrom}</i>, <i>{dateTo}</i> - date in YYYY-MM-DD
+                format
+              </li>
+            </ul>
+            <h6>Possible requests:</h6>
+            <hr />
+            <ul>
+              <li><i>http://127.0.0.1:5000/rates/USD/{ratingDate}</i><br />
+                Returns USD rate from given day with
+                'interpolated' parameter. That parameter is true if the currency rate was not available on NBP
+                API and has been substituted with currency rate from previous day. Otherwise it is false.<br>
+                <strong>Example: <a
+                    href="http://127.0.0.1:5000/rates/USD/2016-12-01">http://127.0.0.1:5000/rates/USD/2016-12-01</a></strong>
+              </li>
+              <li><i>http://127.0.0.1:5000/rates/USD/{dateFrom}/{dateTo}</i><br />
+                Returns USD rates in given time period with 'interpolated' parameter. If <i>{startDate}</i> or
+                <i>{endDate}</i>
+                is outside the supported range result will contain <strong>416</strong> Requested Range Not Satisfiable
+                error.<br>
+                <strong>Example: <a
+                    href="http://127.0.0.1:5000/rates/USD/2018-12-01/2018-12-28">http://127.0.0.1:5000/rates/USD/2018-12-01/2018-12-28</a></strong>
+              </li>
+              </li>
+              <li><i>http://127.0.0.1:5000/sales/{salesDate}</i><br />
+                Returns sales from given day in USD and PLN. If no sales occurred on given day the result will contain
+                <strong>404</strong> No data found error.<br>
+                <strong>Example: <a
+                    href="http://127.0.0.1:5000/sales/2015-11-11">http://127.0.0.1:5000/sales/2015-11-11</a></strong>
+              </li>
+              </li>
+              <li><i>http://127.0.0.1:5000/sales/{dateFrom}/{dataTo}</i><br />
+                Returns sales from given time span in
+                USD and PLN from every day and also USD and PLN total sum. Only data in the database and within the
+                given
+                range will be returned.
+                If no sales occurred on given day the result will contain <strong>404</strong> No data found error.<br>
+                <strong>Example: <a
+                    href="http://127.0.0.1:5000/sales/2013-04-01/2013-05-28">http://127.0.0.1:5000/sales/2013-04-01/2013-05-28</a></strong>
+              </li>
+              </li>
+              </li>
+            </ul>
+            <hr />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="examples" class="bg-light">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-8 mx-auto">
+            <h2>Try it yourself</h2>
+            <p class="lead">
+            <div>
+              <input name="dataType" class="form-check-input" type="radio" id="dataType" required checked
+                @change="sales()">
+              <label for="dataType">Sales</label>
+            </div>
+            <div>
+              <input name="dataType" class="form-check-input" type="radio" id="dataType" required @change="rates()">
+              <label for="dataType">USD ratings</label>
+            </div>
+
+            <div id="salesPicker">
+              <label for="start">Date 1:</label>
+              <input type="date" id="start" name="trip-start" :value=[[endDateSales]] :min=[[startDateSales]]
+                :max=[[endDateSales]] @input="setStartDate($event.target.value)">
+              <label for="end">Date 2:</label>
+              <input type="date" id="end" name="trip-start" :value=[[endDateSales]] :min=[[startDateSales]]
+                :max=[[endDateSales]] @input="setEndDate($event.target.value)">
+              <button type="button" class="btn btn-warning" @click="fetchSalesData()">Get data</button>
+            </div>
+
+
+            <div id="ratesPicker" style="visibility: hidden;">
+              <label for="start">Date 1:</label>
+              <input type="date" id="start" name="trip-start" :value=[[endRatingsDate]] :min=[[startRatingsDate]]
+                :max=[[endRatingsDate]] @input="setStartDate($event.target.value)">
+              <label for="end">Date 2:</label>
+              <input type="date" id="end" name="trip-start" :value=[[endRatingsDate]] :min=[[startRatingsDate]]
+                :max=[[endRatingsDate]] @input="setEndDate($event.target.value)">
+              <button type="button" class="btn btn-warning" @click="fetchUSDRatesData()">Get data</button>
+            </div>
+            <div id="curve_chart" style="width: 900px; height: 500px"></div><br>
+            <div id="table_div"></div>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="py-5 bg-dark">
+      <div class="container">
+        <p class="m-0 text-center text-white">
+          Good luck</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+  <script src="https://www.gstatic.com/charts/loader.js"></script> 
+  <script src="../static/vendor/jquery/jquery.min.js"></script>
+  <script src="../static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../static/vendor/jquery-easing/jquery.easing.min.js"></script>
+  <script src="../static/js/scrolling-nav.js"></script>   
+  <script src="../static/js/chart.js"></script>
+  <script src="../static/js/converters.js"></script>
+  <script src="../static/js/table.js"></script>
+  <script src="../static/js/vue.js"></script>
+</body>
+
+</html>
