@@ -1,0 +1,292 @@
+<html lang="pl" dir="ltr">   
+    <head>
+        <meta charset="utf-8">
+        <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename = 'stylesheet.css') }}">
+        <title>Moje API - strona główna</title>
+    </head>
+    <body>
+        <main>
+            <h1>Moje API - strona główna</h1>
+            <p>
+                <details>
+                    <summary>Moje API - README (english)</summary>
+                    <h2>Moje API</h2>
+
+                    <h3>Introduction</h3>
+                    Moje API is used to get information on USD/PLN exchange rates in 2013-2016<br>
+                    and the value of total sales of products in those years
+
+                    <h3>Technologies</h3>
+                    <ul>
+                    <li>Python 3.7.4<br>
+                        To install Python, visit <a href='https://www.python.org/downloads/'>https://www.python.org/downloads/</a><br>
+                        You can check the Python version on the command line with the command: python --version</li>
+                    <li>pip<br>
+                        If you downloaded Python from the site above, it should be already installed.<br>
+                        If you want to install pip, please visit <a href='https://pypi.org/project/pip/'>https://pypi.org/project/pip/</a>
+                            or <a href = 'https://pip.pypa.io/en/stable/installing/'>https://pip.pypa.io/en/stable/installing/</a><br>
+                        You can check the pip version on the command line with the command: pip --version</li>
+                    <li>Flask</li>
+                    <li>Flask-Limiter</li>
+                    <li>sqlite3</li>
+                    <li>datetime</li>
+                    <li>requests</li>
+                    </ul>
+                        To install the missing libraries from the command line, type: pip install {library name}
+                    
+                    <h3>Launch</h3>
+                    In order to start the application, run the api.py file.<br>
+                    You can do it, for example, in the command line with the command: python {path to api.py}<br>
+                    To verify, if the application is working correctly, go to <a href='http://127.0.0.1:5000/'>http://127.0.0.1:5000/</a><br>
+                    A short api manual should appear on the page.
+                    
+                    <h3>Description of the API features</h3>
+                    The site response is returned in JSON format.<br>
+                    The response code on success is 200.
+                    
+                    <h4>Request parameters</h4>
+                    <ol>
+                    <li>{date}, {start_date}, {end_date} - date in the format YYYY-MM-DD (ISO 8601 standard)</li>
+                    </ol>
+
+                    <h4>Available requests</h4>
+                    <ol>
+                    <li>Request for dollar exchange rate on {date}:<br>
+                        http://127.0.0.1:5000/api/v1/exchangerates/USD/{date}/</li>
+                    <li>Request for dollar exchange rates from {start_date} to {end_date}:<br>
+                        http://127.0.0.1:5000/api/v1/exchangerates/USD/{start_date}/{end_date}/</li>
+                    <li>Request for total sales on {date}:<br>
+                        http://127.0.0.1:5000/api/v1/salesdata/{date}/</li>
+                    <li>Request for total sales from {start_date} to {end_date}:<br>
+                        http://127.0.0.1:5000/api/v1/salesdata/{start_date}/{end_date}/</li>
+                    </ol>
+
+                    <h4>Response parameters</h4>
+                    <ol>
+                    <li>date - exchange/sale date</li>
+                    <li>interpolated - (true - approximate, value from recent known qutation; false - equal NBP rate)</li>
+                    <li>PLN - total sales value in PLN</li>
+                    <li>rate - exchange rate</li>
+                    <li>USD - total sales value in US dollars</li>
+                    </ol>
+                    
+                    <h4>Error messages</h4>
+                    <ol>
+                    <li>For a request with an unknown path structure, the response code is 404 and the following message is returned:<br>
+                        The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+                    <li>If the available number of queries per time unit is exceeded, the response code is 429 and the following message is returned:<br>
+                        10 per 1 minute
+                    <li>For a request with a date outside the range, the following message is returned:<br>
+                        404 NotFound - No data available
+                    <li>For a request containing an incorrect date format, the following message is returned:<br>
+                        400 Bad Request - Invalid date format / Invalid date format
+                    <li>For a request containing an invalid date range, the following message is returned:<br>
+                        400 BadRequest - Wrong date range / Invalid date range
+                    </ol>
+
+                    <h4>Time limits</h4>
+                    For a given request, limit per time unit per user (IP address) is equal 10 / min.
+                    
+                    <h4>Other restrictions</h4>
+                    In order to improve the program work, communication with the database is limited.<br>
+                    The received data may be out of date - the data refresh time is no more than an hour.
+                    
+                    <h3>Examples of use</h3>
+                    <ol>
+                    <li>Request for dollar exchange rate on 2015-12-12:<br>
+                        <a href='http://127.0.0.1:5000/api/v1/exchangerates/USD/2015-12-12/'>
+                            http://127.0.0.1:5000/api/v1/exchangerates/USD/2015-12-12/</a></li>
+                    <li>Request for dollar exchange rates from 2014-01-01 to 2014-12-31:<br>
+                        <a href='http://127.0.0.1:5000/api/v1/exchangerates/USD/2014-01-01/2014-12-31/'>
+                            http://127.0.0.1:5000/api/v1/exchangerates/USD/2014-01-01/2014-12-31/</a></li>
+                    <li>Request for total sales on 2016-03-20:<br>
+                        <a href='http://127.0.0.1:5000/api/v1/salesdata/2016-03-20/'>
+                            http://127.0.0.1:5000/api/v1/salesdata/2016-03-20/</a></li>
+                    <li>Request for total sales from 2013-01-01 to 2013-01-31:<br>
+                        <a href='http://127.0.0.1:5000/api/v1/salesdata/2013-01-01/2013-01-31/'>
+                            http://127.0.0.1:5000/api/v1/salesdata/2013-01-01/2013-01-31/</a></li>
+                    </ol>
+                    
+                    <h3>Structure</h3>
+                    The project consists of the following files:
+                    <ol>
+                    <li>api.py - a file with the code responsible for communication with the user,</li>
+                    <li>sales_data_base.py - file with the code responsible for communication with the database,</li>
+                    <li>sales_data.db - database file.</li>
+                    </ol>
+
+                    <h3>Possible modifications</h3>
+                    
+                    <h4>Modification of the query limit per unit of time</h4>
+                    In order to modify the query limit, in the api.py file, on line 26, change the text "10 per minute" to the target text.<br>
+                    Possible combinations: [count] [per | /] [n (optional)] [second | minute | hour | day | month | year]<br>
+                    Examples: "1 per second", "5 per 10 second", "100 per day"
+                    
+                    <h4>Modification of the maximum data storage time in the server cache</h4>
+                    To modify the maximum time, change the fragment (hours=1) in the api.py file on line 10.<br>
+                    Examples: (minutes=1), (seconds=30), (days=7), (hours=2, minutes=30)
+                </details>
+            </p>
+            <p>
+                <details>
+                    <summary>Moje API - README (język polski)</summary>
+                    <h2>Moje API</h2>
+                    
+                    <h3>Wprowadzenie</h3>
+                    Moje API służy do pozyskania informacji na temat notowań USD/PLN w latach 2013-2016<br>
+                    oraz wartości łącznej sprzedaży produktów w tych latach
+                    
+                    <h3>Technologie</h3>
+                    <ol>
+                    <li>Python 3.7.4<br>
+                        W celu zainstalowania Pythona odwiedź stronę <a href='https://www.python.org/downloads/'>https://www.python.org/downloads/</a> <br>
+                        Wersję Pythona można sprawdzić w wierszu poleceń za pomocą komendy: python --version</li>
+                    <li>pip<br>
+                        Jeżeli pobierałeś Pythona z zaproponowanej strony, powinieneś mieć go już zainstalowanego.<br>
+                        Jeżeli nie masz zainstalowanego pip, skorzystaj ze strony <a href='https://pypi.org/project/pip/'>https://pypi.org/project/pip/</a>
+                            lub <a href = 'https://pip.pypa.io/en/stable/installing/'>https://pip.pypa.io/en/stable/installing/</a><br>
+                        Wersję pip można sprawdzić w wierszu poleceń za pomocą komendy: pip --version</li>
+                    <li>Flask</li>
+                    <li>Flask-Limiter</li>
+                    <li>sqlite3</li>
+                    <li>datetime</li>
+                    <li>requests</li>
+                    </ol>
+                        W celu zainstalowania brakujących bibliotek w wierszu poleceń wpisz: pip install {nazwa biblioteki}
+                    
+                    <h3>Uruchomienie</h3>
+                    W celu rozpoczęcia działania aplikacji uruchom plik api.py.<br>
+                    Możesz to zrobić np. w wierszu poleceń za pomocą komendy: python {ścieżka do pliku api.py}<br>
+                    W celu przetestowania działania aplikacji przejdź na stronę <a href='http://127.0.0.1:5000/'>http://127.0.0.1:5000/</a><br>
+                    Na stronie powinna pojawić się krótka instrukcja obsługi api.
+                    
+                    <h3>Opis funkcji API</h3>
+                    Odpowiedź serwisu jest zwracana w formacie JSON.<br>
+                    Kod odpowiedzi w przypadku powodzenia to 200.
+                    
+                    <h4>Parametry zapytań</h4>
+                    <ol>
+                    <li>{date}, {start_date}, {end_date} - data w formacie RRRR-MM-DD (standard ISO 8601)</li>
+                    </ol>
+
+                    <h4>Dostępne zapytania</h4>
+                    <ol>
+                    <li>Zapytanie o kurs dolara w dniu {date}:<br>
+                        <a href='http://127.0.0.1:5000/api/v1/exchangerates/USD/2015-12-12/'>
+                            http://127.0.0.1:5000/api/v1/exchangerates/USD/2015-12-12/</a></li>
+                    <li>Zapytanie o kursy dolara od {start_date} do {end_date}:<br>
+                        <a href='http://127.0.0.1:5000/api/v1/exchangerates/USD/2014-01-01/2014-12-31/'>
+                            http://127.0.0.1:5000/api/v1/exchangerates/USD/2014-01-01/2014-12-31/</a></li>
+                    <li>Zapytanie o sumę sprzedaży w dniu {date}:<br>
+                        <a href='http://127.0.0.1:5000/api/v1/salesdata/2016-03-20/'>
+                            http://127.0.0.1:5000/api/v1/salesdata/2016-03-20/</a></li>
+                    <li>Zapytanie o sumy sprzedaży od {start_date} do {end_date}:<br>
+                        <a href='http://127.0.0.1:5000/api/v1/salesdata/2013-01-01/2013-01-31/'>
+                            http://127.0.0.1:5000/api/v1/salesdata/2013-01-01/2013-01-31/</a></li>
+                    </ol>
+                    
+                    <h4>Parametry odpowiedzi</h4>
+                    <ol>
+                    <li>date - data notowania/sprzedaży</li>
+                    <li>interpolated - typ notowania (true - przybliżone na podstawie poprzedniego znanego kursu, false - zgodne z kursem NBP)</li>
+                    <li>PLN - łączna wartość sprzedaży w złotówkach</li>
+                    <li>rate - kurs wymiany</li>
+                    <li>USD - łączna wartość sprzedaży w dolarach amerykańskich</li>
+                    </ol>
+
+                    <h4>Komunikaty błędów</h4>
+                    <ol>
+                    <li>W przypadku zapytania o nieznanej strukturze ścieżki zwracany jest kod odpowiedzi 404 i komunikat:<br>
+                        The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.</li>
+                    <li>W przypadku przekroczenia dostępnej liczby zapytań na jednostkę czasu zwracany jest kod odpowiedzi 429 i komunikat:<br>
+                        10 per 1 minute</li>
+                    <li>W przypadku zapytania o datę spoza zakresu zwracany jest komunikat:<br>
+                        404 NotFound - Brak danych / No data available</li>
+                    <li>W przypadku zapytania zawierającego nieprawidłowo sformułowaną datę zawracany jest komunikat:<br>
+                        400 Bad Request - Niewlasciwy format daty / Invalid date format</li>
+                    <li>W przypadku zapytania zawierającego nieprawidłowy zakres dat zwracany jest komunikat:<br>
+                        400 BadRequest - Bledny zakres dat / Invalid date range</li>
+                    </ol>
+
+                    <h4>Limity czasowe</h4>
+                    Dla danego zapytania na użytkownika (adres IP) nałożony jest limit zapytań na jednostkę czasu: 10/min.
+                    
+                    <h4>Inne ograniczenia</h4>
+                    W celu usprawnienia działania programu komunikacja z bazą danych jest ograniczona.<br>
+                    Otrzymane dane mogą być nieaktualne - czas odświeżenia danych wynosi nie więcej niż godzinę.
+                    
+                    <h3>Przykłady użycia</h3>
+                    <ol>
+                    <li>Zapytanie o kurs dolara w dniu 2015-12-12:<br>
+                        http://127.0.0.1:5000/api/v1/exchangerates/USD/2015-12-12/</li>
+                    <li>Zapytanie o kursy dolara od 2014-01-01 do 2014-12-31:<br>
+                        http://127.0.0.1:5000/api/v1/exchangerates/USD/2014-01-01/2014-12-31/</li>
+                    <li>Zapytanie o sumę sprzedaży w dniu 2016-03-20:<br>
+                        http://127.0.0.1:5000/api/v1/salesdata/2016-03-20/</li>
+                    <li>Zapytanie o sumy sprzedaży od 2013-01-01 do 2013-01-31:<br>
+                        http://127.0.0.1:5000/api/v1/salesdata/2013-01-01/2013-01-31/</li>
+                    </ol>
+                    
+                    <h3>Struktura</h3>
+                    Projekt składa się z następujących plików:
+                    <ol>
+                    <li>api.py - plik z kodem odpowiedzialnym za komunikację z użytkownikiem,</li>
+                    <li>sales_data_base.py - plik z kodem odpowiedzialnym za komunikację z bazą danych,</li>
+                    <li>sales_data.db - plik zawierąjcy bazę danych.</li>
+                    </ol>
+
+                    <h3>Możliwe modyfikacje</h3>
+                    
+                    <h4>Modyfikacja limitu zapytań na jednostkę czasu</h4>
+                    W celu modyfikacji limitu zapytań należy w pliku api.py, w linijce 26, zmienić tekst "10 per minute" na docelowy.<br>
+                    Możliwe kombinacje: [count] [per|/] [n (optional)] [second|minute|hour|day|month|year]<br>
+                    Przykłady: "1 per second", "5 per 10 second", "100 per day"
+                    
+                    <h4>Modyfikacja maksymalnego czasu przechowywania danych w pamięci podręcznej serwera</h4>
+                    W ceu modyfiacji maksymalnego czasu należy zmienić w pliku api.py, w linijce 10, fragment (hours=1).<br>
+                    Przykłady: (minutes=1), (seconds=30), (days=7), (hours=2, minutes=30) 
+                </details>
+            </p>
+            <p>
+                <h2>Wyświetlanie danych</h2>
+                W celu wyświetlenia danych dotyczących kursu dolara lub sumy sprzedaży zaznacz odpowiednie pole, wybierz zakres dat i klinknij przycisk "Zobacz".<br>
+                Jeżeli wybrany został więcej niż jeden dzień, pod tabelą z danymi wyświetli się wykres.
+            </p>
+
+            <section id="exchangerates_table">
+                <form>
+                    <label>Wybierz typ zapytania: </label><br>
+                    <label><input type="radio" name="type" value="exchangerates" v-model="data_option">kurs dolara</label><br>
+                    <label><input type="radio" name="type" value="sales" v-model="data_option">suma sprzedaży</label><br>
+                    <label>Wprowadź zakres dat: </label><br>
+                    <label>od <input type="date" name="start_date" min="2013-01-01" :max="end_date" v-model="start_date"></label><br>
+                    <label>do <input type="date" name="end_date" :min="start_date" max="2016-12-31" v-model="end_date"></label><br>
+                </form>
+                <button v-on:click="update_table">Zobacz</button>
+                <p class = 'error_message'>[[error_message]]</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th v-for="item in theads">[[item]]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in tbodys">
+                            <td v-for="key in keys" v-if='key=="PLN" || key=="USD"'>[[ item[key].toFixed(2) ]]</td>
+                            <td v-else-if='key=="interpolated" && item[key]'>tak</td>
+                            <td v-else-if='key=="interpolated" && !item[key]'></td>
+                            <td v-else>[[ item[key] ]]</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            <canvas id="myChart"></canvas>
+
+        </main>
+    </body>
+    <script src="{{ url_for('static', filename = 'view_script.js') }}"></script>
+
+</html>
