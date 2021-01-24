@@ -15,7 +15,7 @@ config = {
     "CACHE_DEFAULT_TIMEOUT": TWENTY_FOUR_HOURS
 }
 
-app = flask.Flask(__name__)
+app = flask.Flask(__name__, static_folder='../frontend/dist/', static_url_path='/')
 app.config.from_mapping(config)
 cache = Cache(app)
 
@@ -58,7 +58,7 @@ def __date_string_to_datetime_converter(date_string):
 
 @app.route('/')
 def home():
-    return render_template("home.html")
+    return app.send_static_file('index.html')
 
 
 @app.route('/exchange-rates/<currency>/<date>', methods=['GET'])
