@@ -28,6 +28,7 @@ export default function Rates()
     const [dateTo, setDateTo] = useState(new Date());
     const [textAreaValue, setTextAreaValue] = useState([]);
     const [errorCode, setErrorCode] = useState();
+    const [chartHidden, setChartHidden] = useState(true);
     
     return (
         <Container fluid style={{textAlign: 'left'}}>
@@ -48,12 +49,21 @@ export default function Rates()
                                     setErrorCode(res.status)
                                     if (res.status == '200') {
                                         setTextAreaValue(res.data);
+                                        if (res.data.length > 1)
+                                        {
+                                            setChartHidden(false);
+                                        }
+                                        else
+                                        {
+                                            setChartHidden(true);
+                                        }
                                     }
                                     else {
                                         setTextAreaValue(res.status + res.data);
+                                        setChartHidden(true);
                                     }
                                 })
-                                .catch(err => {setErrorCode(500); setTextAreaValue(err);})
+                                .catch(err => {setErrorCode(500); setTextAreaValue(err); setChartHidden(true);})
                         }}>Try it out</Button>
                     </Row>
                 </Col>
@@ -64,11 +74,11 @@ export default function Rates()
                     <Row>
                         <textarea value={parseResponse(textAreaValue, errorCode)} style={{width: '1050px', height:'200px', resize: 'none'}} readOnly/>
                     </Row>
-                    <Row>
+                    <Row hidden={chartHidden}>
                         <h3>Diagram:</h3><br/>
                     </Row>
-                    <Row>
-                        <LineChart width={1000} height={400} data={textAreaValue}>
+                    <Row hidden={chartHidden}>
+                        <LineChart width={1000} height={400} data={textAreaValue} style={{}}>
                             <XAxis dataKey="date" name="Date"/>
                             <YAxis domain={['dataMin - 0.3', 'dataMax + 0.4']}/>
                             <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
