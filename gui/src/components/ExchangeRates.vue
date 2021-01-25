@@ -104,7 +104,7 @@ export default {
         console.log(err);
       }
 
-      if (this.range) {
+      if (this.range && this.exchangeRates.length>1) {
         this.prepareChartData();
         this.chart.show = true;
       }
