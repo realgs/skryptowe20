@@ -54,7 +54,6 @@ def get_one_day_currency_rate(currency_id, date):
     return api_json_result["rates"][0]["mid"], is_interpolated
 
 
-
 def get_rate_list(json):
     currency_data = []
     number_of_next_date = 0

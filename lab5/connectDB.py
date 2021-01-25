@@ -66,7 +66,7 @@ def __download_currency_table(cursor):
 
 def get_currency_rate_data_between_date(cursor, date_from_string, date_to_string):
     cursor.execute(f"SELECT * FROM {SALES_DATABASE}.{NAME_CURRENCY_TABLE} WHERE RateDate"
-                   f" BETWEEN \'{date_from_string}\' AND \'{date_to_string}\' ORDER BY RateDate")
+                   f" BETWEEN \'{date_from_string}\' AND \'{date_to_string}\' AND CurrencyId = \'PLN\' ORDER BY RateDate")
     rate_data_list = []
     for row in cursor:
         rate_data_list.append(row)
@@ -75,7 +75,7 @@ def get_currency_rate_data_between_date(cursor, date_from_string, date_to_string
 
 def get_currency_rate_of_day(cursor, date, currency_id):
     result = cursor.execute(f"SELECT CurrencyRateValue FROM {SALES_DATABASE}.{NAME_CURRENCY_TABLE} WHERE RateDate = "
-                   f" \'{date}\' AND CurrencyId = \'{currency_id.upper()}\'")
+                            f" \'{date}\' AND CurrencyId = \'{currency_id.upper()}\'")
     result_list = []
     for row in result:
         result_list.append(row)

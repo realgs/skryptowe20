@@ -19,7 +19,7 @@ def get_daily_turnover(cursor, date, currency_id):
     if not is_find:
         turnover = count_daily_turnover(cursor, date)
         cursor.execute(f"INSERT INTO {SALES_DATABASE}.{NAME_DAILY_TURNOVER_TABLE} "
-                       f"(TurnoverDate, TotalTurnover, CurrencyId) "
+                       f"(TurnoverDate, TotalTurnover, Rate) "
                        f"VALUES (\'{date}\',{turnover[1]},\'{currency_id}\')")
         cursor.commit()
         return turnover[1]

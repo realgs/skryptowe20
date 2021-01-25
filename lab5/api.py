@@ -2,6 +2,7 @@ from flask import Flask
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_restful import Api, Resource
+from flask_cors import CORS
 import datetime as dt
 
 from company import get_daily_turnover
@@ -13,7 +14,11 @@ AVAILABLE_CURRENCIES = ['AUD', 'BYN', 'BGN', 'HRK', 'DKK',
                         'JPY', 'CAD', 'NOK', 'CZK', 'RUB',
                         'RON', 'PLN', 'CHF', 'SEK', 'TRY',
                         'EUR', 'UAH', 'HUF', 'GBP']
-
+config = {
+    "DEBUG": True,
+    "CACHE_TYPE": "simple",
+    "CACHE_DEFAULT_TIMEOUT": 300
+}
 app = Flask(__name__)
 api = Api(app)
 cursor = connect()
@@ -22,6 +27,7 @@ limiter = Limiter(
     key_func=get_remote_address,
     default_limits=["10 per minutes"]
 )
+CORS(app)
 
 
 class CurrencyRates(Resource):
@@ -89,6 +95,59 @@ class DailyTurnover(Resource):
 
 
 api.add_resource(DailyTurnover, "/turnover/<string:date>/<string:currency_id>")
+
+
+class DailyTurnover2(Resource):
+    def get(self, currency_id, date_from, date_to):
+        currency_id = currency_id.upper()
+        if AVAILABLE_CURRENCIES.__contains__(str(currency_id)):
+            if check_date_format(date_from) and check_date_format(date_to):
+                if check_date_range(date_from) and check_date_range(date_to):
+                    date_from = dt.datetime.strptime(str(date_from), '%Y-%m-%d')
+                    actual_date = date_from
+                    date_to = dt.datetime.strptime(str(date_to), '%Y-%m-%d')
+                    default_currency_turnover_list = []
+                    value_currency_turnover_list = []
+                    number_of_days = (date_to - date_from).days + 1
+                    for i in range(number_of_days):
+                        default_currency_turnover_list.append(float("{:.2f}".format(get_daily_turnover(cursor, str(actual_date)[:10],
+                                                                                                   currency_id))))
+                        value_currency_turnover_list.append(float("{:.2f}".format(default_currency_turnover_list[i] *
+                                                                                 get_currency_rate_of_day(cursor, str(actual_date)[:10],
+                                                                                                          currency_id))))
+                        actual_date = actual_date + dt.timedelta(1)
+                    result = {
+                        "status": 200,
+                        "result": {
+                            "turnover": []
+                        }
+                    }
+                    for i in range(number_of_days):
+                        two_currency = [
+                            {
+                                "date": str(date_from + dt.timedelta(i))[:10],
+                                "currency": "USD",
+                                "value": default_currency_turnover_list[i]
+                            },
+                            {
+                                "date": str(date_from + dt.timedelta(i))[:10],
+                                "currency": currency_id,
+                                "value": value_currency_turnover_list[i]
+                            }
+                        ]
+                        result["result"]["turnover"].append(two_currency)
+
+                    return result
+                else:
+                    return {"status": 400, "description": "Data out of range selected. Allowed range from " +
+                                                          MY_DB_DATE_FROM + " to " + MY_DB_DATE_TO}
+            else:
+                return {"status": 400, "description": "Invalid date format entered. Admissible: YYYY-MM-DD"}
+        else:
+            return {"status": 404, "description": "Currency not found"}
+
+
+api.add_resource(DailyTurnover2, "/turnover/<string:currency_id>/<string:date_from>/<string:date_to>")
 
 
 def currency_rate_list_to_json_format(data):
