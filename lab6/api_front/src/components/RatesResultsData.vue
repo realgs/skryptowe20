@@ -51,7 +51,7 @@
                         {
                             label: "USD/PLN exchange rate over time",
                             data: [],
-                            backgroundColor: "#42b983"
+                            backgroundColor: "#336600"
                         },
                     ],
                 };
