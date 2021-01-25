@@ -59,7 +59,8 @@ export default function Income()
                 <div style={{marginLeft: '20px'}}>
                 <br/>
                     <a href='rates' style={{color: 'black'}}><h5>{"GET /rates/from/<date_from>/to/<date_to>"}</h5></a>
-                    {"Gdzie <date_from> i <date_to> to daty w formacie RRRR-MM-DD"}
+                    {"Gdzie <date_from> i <date_to> to daty w formacie RRRR-MM-DD"} <br/>
+                    Zwraca kurs USD w podanym przedziale czasowym.
                     <div style={{marginLeft: '20px'}}>
                         <br/><h6>Model rate_dto:</h6>
                         <TableContainer component={Paper} style={{width: '900px'}}>
@@ -110,7 +111,8 @@ export default function Income()
                 <div style={{marginLeft: '20px'}}>
                 <br/>
                     <a href='income' style={{color: 'black'}}><h5>{"GET /profits/day/<date_from>/to/<date_to>"}</h5></a>
-                    {"Gdzie <date_from> i <date_to> to daty w formacie RRRR-MM-DD"}
+                    {"Gdzie <date_from> i <date_to> to daty w formacie RRRR-MM-DD"} <br/>
+                    Zwraca dochody sklepu w podanym przedziale czasowym w PLN i USD.
                     <div style={{marginLeft: '20px'}}>
                         <br/><h6>Model profit_dto:</h6>
                         <TableContainer component={Paper} style={{width: '900px'}}>

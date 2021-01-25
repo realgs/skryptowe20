@@ -15,6 +15,9 @@ W celu poprawnego działania w środowisku testowym wymagame jest rozszerzenie d
 
 ## Opis działania aplikacji
 
-Tutaj będzie opis działania i screeny xD
+###API składa się z 3 widoków
 
-Todo dodać opis endpointów w route /
+- Home - Zawiera ogólne informacje o API
+- Rates, Income - pozwala wyklikać dane zwracane przez API i przedstawia je na wykresie
+
+Między widokami można się przełączać przez przyciski na panelu górnym
