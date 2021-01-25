@@ -14,22 +14,22 @@ const Home = () => {
   return (
     <Body>
       <MainContent>
-        <h1>The RESTful ratings and sales API</h1>
+        <h1>The RESTful exchange rates and sales API</h1>
         <StyledArticle>
           <h3>Endpoints</h3>
           <ul>
             <li>
-              <p>Get all rates.</p>
+              <p>Get all exchange rates.</p>
               <pre>http://{hostPort}/api/rates</pre>
             </li>
             <li>
-              <p>Get rate from the specified date.</p>
+              <p>Get exchange rate from the specified date.</p>
               <pre>
                 http://{hostPort}/api/rates/{openBracket}date{closeBracket}
               </pre>
             </li>
             <li>
-              <p>Get rates for the specified dates range.</p>
+              <p>Get exchange rates for the specified dates range.</p>
               <pre>
                 http://{hostPort}/api/rates/{openBracket}start_date
                 {closeBracket}/{openBracket}end_date{closeBracket}
