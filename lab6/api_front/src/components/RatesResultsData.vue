@@ -34,8 +34,11 @@
                 ],
             };
         },
-        watch: { //render chart when there is data
+        watch: { //render chart when there is data, destroy when not first
             resultsData() {
+                if (this.chart != null)
+                    this.chart.destroy();
+
                 if (this.resultsData.length > 0)
                     this.renderRatesChart();
             },
@@ -60,13 +63,12 @@
 
                 var ctx = this.$refs.ratesChart.getContext("2d");
                 this.chart = new Chart(ctx, {
-                    type: "line",
+                    type: "bar",
                     data: chartData,
                     options: {
                         scales: {
                             xAxes: [
                                 {
-                                    offset: true,
                                     scaleLabel: {
                                         display: true,
                                         labelString: "Date [YYYY-MM-DD]",
