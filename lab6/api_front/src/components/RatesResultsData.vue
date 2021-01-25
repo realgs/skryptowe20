@@ -94,7 +94,7 @@
 
 <style scoped>
     .rates-chart {
-        margin: 0 25% 50px 25%;
+        margin: 0 20% 50px 20%;
     }
 
     .table {
