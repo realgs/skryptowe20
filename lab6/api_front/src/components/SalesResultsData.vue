@@ -51,7 +51,7 @@
                         {
                             label: "Sales in USD",
                             data: [],
-                            backgroundColor: "#42b983"
+                            backgroundColor: "#336600"
                         },
                         {
                             label: "Sales in PLN",
