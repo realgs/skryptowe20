@@ -74,7 +74,7 @@
                     options: {
                         title: {
                             display: true,
-                            text: "Sales in both USD and PLN over time",
+                            text: "Sales in both PLN and USD over time",
                         },
                         scales: {
                             xAxes: [
@@ -90,7 +90,7 @@
                                 {
                                     scaleLabel: {
                                         display: true,
-                                        labelString: "USD/PLN exchange rate",
+                                        labelString: "Total sales in PLN and USD",
                                     },
                                 },
                             ],
@@ -104,7 +104,7 @@
 
 <style scoped>
     .sales-chart {
-        margin: 0 25% 50px 25%;
+        margin: 0 20% 50px 20%;
     }
 
     .table {
