@@ -20,7 +20,7 @@ CACHE_LIFETIME = 120 # seconds
 sales_cache = {}
 
 app = flask.Flask(__name__)
-app.config["DEBUG"] = True
+# app.config["DEBUG"] = True
 limiter = Limiter(
     app,
     key_func = get_remote_address,
