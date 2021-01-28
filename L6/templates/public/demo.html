@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <!-- META DATA -->
+        <meta charset="utf-8">
+        <meta name="author" content = "japko-7">
+        <meta name="viewport" content = "width=device-width, initial-scale=1.0">
+        <meta name="description" content = "Forex&Sales API">
+        <meta name="keywords" content="Forex&Sales API">
+        <meta http-equiv="content-language" content="en">
+        <meta name="robots" content="all">
+        <title>Forex&Sales API - demo</title>
+
+        <!-- LINKS -->
+        <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename = 'img/tick@2x.png') }}"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename = 'css/master.css') }}">
+
+
+        <!-- SCRIPTS -->
+        <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script> -->
+        <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+        <script type="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+    </head>
+    <body>
+
+        <header>
+            <h1>Forex&Sales API - demo</h1>
+            <h2>More to see @ <a href="https://github.com/japko-7/skryptowe20/tree/L6">GitHub</a>.</h2>
+        </header>
+
+        <nav>
+            <a href="{{ url_for('.home') }}">back home</a>
+        </nav>
+
+        <main>
+            <section id="app">
+                <form class="" action="index.html" method="post">
+                    <a href="#" v-on:click="switch_content" class="pickable" v-bind:class="{ picked: content === 'rates'}">rates</a>
+                    <a href="#" v-on:click="switch_content" class="pickable" v-bind:class="{ picked: content === 'sales'}">sales</a>
+                    <label>
+                        <select class="" name="currency_code" v-model="currency_code" v-on:change="refresh" v-for="code in currency_codes">
+                            <option v-bind:value="code">[[code]]</option>
+                        </select>
+                    </label>
+                    <label>
+                        date from
+                        <input type="date" name="date_from" value="" v-bind:min="min_date_from" :max="date_to" v-model="date_from" v-on:change="update_content">
+                    </label>
+                    <label>
+                        date to
+                        <input type="date" name="date_to" value="" :min="date_from" v-bind:max=" max_date_to" v-model="date_to" v-on:change="update_content">
+                    </label>
+
+                    <button type="button" name="button" v-on:click="refresh">re-fetch</button>
+                </form>
+
+                <table>
+                    <caption>[[ content ]] <span v-if="content==='rates'">of [[ currency_code ]] </span> </caption>
+                    <thead>
+                        <tr v-if="content==='rates'">
+                            <th>date</th>
+                            <th>rate</th>
+                            <th>interpolated</th>
+                        </tr>
+                        <tr v-else>
+                            <th>date</th>
+                            <th>PLN</th>
+                            <th>[[ currency_code ]]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-if="content==='rates'" v-for="item in chart_data">
+                            <td>[[ item.date ]]</td>
+                            <td>[[ item.rate.toFixed(4) ]]</td>
+                            <td v-bind:class="{ interpolated: item.interpolated }"></td>
+                        </tr>
+                        <tr v-if="content==='sales'" v-for="item in chart_data">
+                            <td>[[ item.date ]]</td>
+                            <td>[[ item.PLN.toFixed(2) ]]</td>
+                            <td>[[ item[currency_code].toFixed(2) ]]</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            <section>
+                <canvas id="demo_chart"></canvas>
+            </section>
+        </main>
+
+        <script src="{{ url_for('static', filename = 'demo.js') }}"></script>
+    </body>
+</html>

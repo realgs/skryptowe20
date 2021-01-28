@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <!-- META DATA -->
+        <meta charset="utf-8">
+        <meta name="author" content = "japko-7">
+        <meta name="viewport" content = "width=device-width, initial-scale=1.0">
+        <meta name="description" content = "Forex&Sales API">
+        <meta name="keywords" content="Forex&Sales API">
+        <meta http-equiv="content-language" content="en">
+        <meta name="robots" content="all">
+        <title>Forex&Sales API</title>
+
+        <!-- LINKS -->
+        <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename = 'img/tick@2x.png') }}"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename = 'css/master.css') }}">
+        
+    </head>
+    <body>
+
+        <header>
+            <h1>Forex&Sales API - welcome!</h1>
+            <h2>More to see @ <a href="https://github.com/japko-7/skryptowe20/tree/L6s">GitHub</a>.</h2>
+        </header>
+
+        <nav>
+            <a href="demo">give it a try</a>
+        </nav>
+
+        <main>
+            <h2>What is it?</h2>
+            <p>It is an API made to serve sales and forex data. It's based on <a href = "http://api.nbp.pl/">NBP's  data</a> and uses a mock database to present its capabilities.</p>
+
+            <h2>Technologies</h2>
+            <h3>To make it simple, only simple technologies. These include:</h3>
+            <ul>
+                <li><a href = "https://www.python.org/dwonloads/">Python</a> programming language (version <strong>3.7.4</strong> or higher)</li>
+                <li><a href = "https://flask.palletsprojects.com/en/1.1.x/">Flask framework</a> - an API service framework</li>
+                <li><a href = "https://flask-limiter.readthedocs.io/en/stable/">Flask-Limiter</a> - a server-load limiter extension to Flask</li>
+                <li><a href = "https://www.sqlite.org/index.html">sqlite3</a> - a database engine</li>
+                <li><a href = "https://requests.readthedocs.io/en/master/">requests</a> - an API client framework (to obtain data from NBP's database)</li>
+            </ul>
+
+            <h2>Project structure</h2>
+            <ul>
+                <li><em>main.py</em> - the file to launch the whole service</li>
+                <li><em>api.py</em> - the API service script</li>
+                <li><em>database.py</em> - a script for connecting with the database</li>
+                <li><em>currency_API.py</em> - a client for NBP API, implementing the <em>requests</em> framework</li>
+                <li><em>sales_data.db</em> - a mock database</li>
+                <li><em>README.md</em> - what you are reading right now</li>
+            </ul>
+
+            <h2>How can I get it working?</h2>
+            <ol>
+                <li>Start with obtaining python (it comes preinstalled with MacOS) - if you don't have it yet, you can download and install from <a href = "https://www.python.org/dwonloads/">https://www.python.org/dwonloads/</a>. Remember to get <strong>3.7.4</strong> or higher. It should come together with pip - it's a package manager that enables you to download all the other necessary libraries.</li>
+                <li>Check your python installation with <code>python --version</code> in your command line. Also, check pip using a similar command, <code>pip --version</code>. If somehow pip doesn't seem be there, you can get it following instructions on <a href = "https://pip.pypa.io/en/stable/installing/">https://pip.pypa.io/en/stable/installing/</a>.</li>
+                <li>Now you can proceed to obtaining specific packages. Use <code>pip install {library_name}</code> for each one that is missing (see <strong>Technologies</strong> above). You can list already installed packages launching python in command line (simply with <code>python</code>) and running <code>help("modules")</code>.</li>
+                <li>Once you've gone thru the installation process, you can launch the application with a command <code>python main.py</code>. Make sure to go into the installation (or cloned repo) directory first, or use a global file path instead, e.g. <samp>~/documents/Forex&Sales API/main.py</samp>.</li>
+                <li>If it's running properly, you'll be able to see in the console where the service is running - typically it's `localhost:5000`. What's more, in the console it's about to appear every single request made to the API.</li>
+                <li>That's it! Go to `localhost:5000` and check it.</li>
+            </ol>
+
+            <h2>How do I use it?</h2>
+            <p>There are actually 2 ways of using it.</p>
+            <ul>
+                <li>Get currency markings - it uses the <code>/api/v1/exchangerates/</code> URI</li>
+                <li>Get currency markings - it uses the <code>/api/v1/salesdata/</code> URI</li>
+            </ul>
+            <p>Apart from that you can also visit homepage (<a href="/"><code>/</code></a>), play a demo (<a href="demo"><code>/demo</code></a>) or ping (<a href="ping"><code>/ping</code></a>) the API to check if it's responding.</p>
+
+
+            <h3>Request parameters</h3>
+            <ul>
+                <li><code>{top_count}</code> is an *integer* value, <strong>greater or equal to 0</strong>; it is the number of pieces of data provided in the response; if  the value exceeds number of available items of request, a maximum amount is returned as the first item</li>
+                <li><code>{date}</code>, <code>{start_date}</code>, <code>{end_date}</code> are dates of the <code>YYYY-MM-DD</code> format defined by the <a href="http://pl.wikipedia.org/wiki/ISO_8601">ISO 8601</a> standard; in addition, {start_date} should be greater or equal to {end_date}; a single <code>{date}</code> is the day of data to be requested, while <code>{start_date}</code> and <code>{end_date}</code> define respectively the start and the end of the requested period of time</li>
+                <li><code>{currency_code}</code> - a <strong>3-letter</strong> code uniquely representing the currency, defined by standard <a href="http://pl.wikipedia.org/wiki/ISO_4217">ISO 4217</a></li>
+            </ul>
+
+            <h3>Getting currency markings</h3>
+            <p>You can request available forex tables in various configurations.</p>
+
+            <ul>
+                <li>
+                    <h4>all available currencies data (<code>{currency}/PLN</code>)</h4>
+                    <ul>
+                        <li><code>/api/v1/exchangerates/tables/</code> - request for all available forex data</li>
+                        <li><code>/api/v1/exchangerates/tables/today</code> - request for all available forex data of today</li>
+                        <li><code>/api/v1/exchangerates/tables/last/{top_count}</code> - request for all available forex data, limited by<code>{top_count}</code></li>
+                        <li><code>/api/v1/exchangerates/tables/{date}</code> - request for all available forex data of the provided<code>{date}</code></li>
+                        <li><code>/api/v1/exchangerates/tables/{start_date}/{end_date}</code> - request for all available forex data of the period of time between provided <code>{start_date}</code> and <code>{end_date}</code></li>
+                    </ul>
+                </li>
+                <li>
+                    <h4>specific currency data (<code>{currency}/PLN</code>)</h4>
+                    <ul>
+                        <li><code>/api/v1/exchangerates/rates/{currency_code}/</code> - request for all available <code>{currency_code}/PLN</code> data</li>
+                        <li><code>/api/v1/exchangerates/rates/{currency_code}/today</code> - request for all available<code>{currency_code}/PLN</code>data of today</li>
+                        <li><code>/api/v1/exchangerates/rates/{currency_code}/last/{top_count}</code> - request for all available<code>{currency_code}/PLN</code> data, limited by<code>{top_count}</code></li>
+                        <li><code>/api/v1/exchangerates/rates/{currency_code}/{date}</code> - request for all available<code>{currency_code}/PLN</code>data of the provided<code>{date}</code></li>
+                        <li><code>/api/v1/exchangerates/rates/{currency_code}/{start_date}/{end_date}</code> - request for all available<code>{currency_code}/PLN</code>data of the period of time between provided<code>{start_date}</code>and<code>{end_date}</code></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>Getting sales data</h3>
+            <ul>
+                <li><code>/api/v1/salesdata/{date}</code> - request for all available sales data of the provided <code>{date}</code></li>
+                <li><code>/api/v1/salesdata/{start_date}/{end_date}</code> - request for all available sales data of the period of time between provided <code>{start_date}</code> and <code>{end_date}</code></li>
+            </ul>
+
+            <h3>Examples of use</h3>
+            <ul>
+                <li><code>/api/v1/exchangerates/tables/2015-10-13/2015-12-13</code> - request for all available forex data of the period of time between 2015-10-13 and 2015-12-13</li>
+                <li><code>/api/v1/exchangerates/rates/USD/2015-10-13/2015-12-13</code> - request for all available USD/PLN data of the period of</li>
+                <li><code>/api/v1/salesdata/2015-10-13/2015-12-13</code> - request for all available sales data of the period of time between 2015-10-13 and 2015-12-13</li>
+            </ul>
+
+
+            <h3>Possible response formats</h3>
+            <ul>
+                <li>
+                    a <strong>marking</strong> request results in a list of or a single JSON object of the structure
+                    <pre>
+    {
+        'date' : {date},
+        'rate' : {rate},
+        'currency' : {currency_code},
+        'interpolated' : {true | false}
+    }
+                    </pre>
+                    <ul>
+                        <li><code>date</code> is the date that the data applies to</li>
+                        <li><code>rate</code> is the value of the <code>{currency_code}/PLN</code> marking</li>
+                        <li><code>currency</code> is the <code>{currency_code}</code> requested, or one of the response of a <code>tables</code> request</li>
+                        <li><code>interpolated</code> - determines whether the rate is accurate (false) or aproximated (true) using data from the previous days</li>
+                    </ul>
+                    <p>if the value exceeds number of available items of request, a maximum amount is returned as the first item: <code>{'markings served' : {markings_served}}</code></p>
+                </li>
+                <li>
+                    a <strong>sales</strong> request evaluates to a list of or a single JSON object of the structure
+                    <pre>
+    {
+        'date' : {date},
+        'PLN' : {value},
+        {currency} : {value},
+        …
+    }
+                    </pre>
+                    <ul>
+                        <li><code>date</code> is the date that the data applies to</li>
+                        <li><code>PLN</code> is the total value of the sales in <strong>PLN</strong></li>
+                        <li><code>currency</code> is the total value of the sales in <code>{currency_code}</code>; listed for every currency data available for the <code>date</code></li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>Possible error messages</h3>
+            <p>Error message is a JSON response coded as follows:</p>
+            <pre>
+    {
+        'error':
+        {
+            'code' : {code},
+            'message' : {message}
+        }
+    }
+            </pre>
+            <p>where <code>{code}</code> is the HTTP response code and <code>{message}</code> is the message telling what went wrong with the request.</p>
+
+            <h4>Meaning of error messages</h4>
+            <ul>
+                <li>
+                    <h5>General request errors</h5>
+                    <ul>
+                        <li><code>400:</code> Bad request.</li>
+                        <li><code>403:</code> You don't have permission to the resource.</li>
+                        <li><code>404:</code> The resource could not be found.</li>
+                        <li><code>429:</code> Limit of requests exceeded.</li>
+                        <li><code>500:</code> Internal server error. Please try again later.</li>
+                    </ul>
+                </li>
+                <li>
+                    <h5>Service specific messages</h5>
+                    <ul>
+                        <li><code>400:</code> Invalid request parameters (see <strong>Request parameters</strong> above).</li>
+                        <li><code>404:</code> No data available for the request.</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h2>Deeper configuration</h2>
+            <p>In scripts <code>currency_API.py</code> and <code>database.py</code> a wide variety of commands can be found, so that you can use them combined together in order to provide other currency data or even another database. Just place the function calls in <code>main.py</code> near (or instead of) basic configuration. Furthermore, in the <code>api.py</code> file following preferences might be changed:</p>
+            <ul>
+                <li><code>TABLES_URI</code> - this represents the URI used for currency requests</li>
+                <li><code>RATES_URI</code> - this represents the URI used for specific currency requests</li>
+                <li><code>SALES_URI</code> - this represents the URI used for sales requests</li>
+                <li><code>DAILY_LIMIT</code>,  <code>MINUTE_LIMIT</code> - exemplary limits, used together few lines below in <code>default_limits = [DAILY_LIMIT, MINUTE_LIMIT]</code> - it can be any value following  the rule: <pre>[count] [per|/] [n (optional)] [second|minute|hour|day|month|year]</pre>; defaults are <code>200 per day</code> and <code>30 per minute</code> per an IP address</li>
+                <li><code>CACHE_LIFETIME</code> - how long [in seconds] the calculated sales data is supposed to be cached on the API server; default is <code>120</code>.</li>
+            </ul>
+
+            <h2>Closing remarks</h2>
+            <p>This is a personal project for university classes. It's not planned to be developed further. If you'd like the author to do so, set up an issue or whatever you want, just to let them know. Feel free to fork and request pulls.</p>
+        </main>
+
+    </body>
+</html>
