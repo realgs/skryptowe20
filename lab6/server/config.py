@@ -1,6 +1,6 @@
 DATABASE_FILE_PATH = 'database.sqlite'
-DEBUG_MODE = True  # [True | False]
-FRONT_ADDRESS = 'localhost'
+DEBUG_MODE = False  # [True | False]
+FRONT_ADDRESS = 'vuejs'
 
 ######## LIMITER #####################
 ENABLE_LIMITER = True  # [True | False]
