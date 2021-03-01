@@ -1,4 +1,4 @@
-# Lab6 - API - Frontend
+# SampleSales - API - Frontend
 
 ## Ogólne informacje
 
